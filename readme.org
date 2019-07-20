@@ -1,1 +1,14 @@
 #+TITLE: Let Over Lambda Translation Project
+
+This is a project of translation *[[lol][lol(let over lambda)]]*.
+Cause the original copy is a pdf, I download html format from the official
+website, and using /pandoc/ and convert them into markdown, pdf and org format.
+So, if you find any extra or wrong formats, please help me to correct it.
+Also, I'm glad that someone could help me on improving this translations.
+
+Any questions, please /[[mailto:yu.qi-liu@outlook.com][contact me]]/
+
+
+#+LINK: lol https://letoverlambda.com/
+
+
