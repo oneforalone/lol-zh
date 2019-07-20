@@ -8,8 +8,6 @@
 
 ## Programs That Program
 
-<script type="text/javascript">function toggle_note(n) { if (document.getElementById("note_"+n).style.display == "") { document.getElementById("note_"+n).style.display = "none"; } else { document.getElementById("note_"+n).style.display = ""; } }</script>
-
 ### Lisp Is Not Functional
 
 One of the most common mischaracterisations of lisp is calling it a functional programming language. Lisp is not functional. In fact it can be argued that lisp is one of the least functional languages ever created. This misunderstanding has interesting roots and is a good example of how a small misnomer can have long-lasting influence and end up causing confusion long after the reasons behind the misnomer have passed into irrelevance. What is a functional language? The only definition that makes sense is

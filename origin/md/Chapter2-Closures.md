@@ -8,8 +8,6 @@
 
 ## Closures
 
-<script type="text/javascript">function toggle_note(n) { if (document.getElementById("note_"+n).style.display == "") { document.getElementById("note_"+n).style.display = "none"; } else { document.getElementById("note_"+n).style.display = ""; } }</script>
-
 ### Closure-Oriented Programming
 
 _One of the conclusions that we reached was that the "object" need not be a primitive notion in a programming language; one can build objects and their behaviour from little more than assignable value cells and good old lambda expressions. —Guy Steele on the design of Scheme_

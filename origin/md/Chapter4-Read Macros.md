@@ -8,8 +8,6 @@
 
 ## Read Macros
 
-<script type="text/javascript">function toggle_note(n) { if (document.getElementById("note_"+n).style.display == "") { document.getElementById("note_"+n).style.display = "none"; } else { document.getElementById("note_"+n).style.display = ""; } }</script>
-
 ### Run-Time at Read-Time
 
 _Syntactic sugar causes cancer of the semicolon. —Alan Perlis_

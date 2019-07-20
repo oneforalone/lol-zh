@@ -18,9 +18,7 @@
     :CUSTOM_ID: sec_1
     :END:
 
-/Lisp's core occupies some kind of local optimum in the space of
-programming languages. ---Modest words from John McCarthy, inventor of
-lisp/
+/Lisp's core occupies some kind of local optimum in the space of programming languages. ---Modest words from John McCarthy, inventor of lisp/
 
 This is a book about programming /macros/ in lisp. Unlike most
 programming books that only give them a cursory overview, this book is a

@@ -8,8 +8,6 @@
 
 ## Introduction
 
-<script type="text/javascript">function toggle_note(n) { if (document.getElementById("note_"+n).style.display == "") { document.getElementById("note_"+n).style.display = "none"; } else { document.getElementById("note_"+n).style.display = ""; } }</script>
-
 ### Macros
 
 _Lisp's core occupies some kind of local optimum in the space of programming languages. —Modest words from John McCarthy, inventor of lisp_

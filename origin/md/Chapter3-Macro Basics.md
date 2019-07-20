@@ -8,8 +8,6 @@
 
 ## Macro Basics
 
-<script type="text/javascript">function toggle_note(n) { if (document.getElementById("note_"+n).style.display == "") { document.getElementById("note_"+n).style.display = "none"; } else { document.getElementById("note_"+n).style.display = ""; } }</script>
-
 ### Iterative Development
 
 _Lisp has assisted a number of our most gifted fellow humans in thinking previously impossible thoughts. —Edsger Dijkstra_

@@ -8,8 +8,6 @@
 
 ## Anaphoric Macros
 
-<script type="text/javascript">function toggle_note(n) { if (document.getElementById("note_"+n).style.display == "") { document.getElementById("note_"+n).style.display = "none"; } else { document.getElementById("note_"+n).style.display = ""; } }</script>
-
 ### More Phors?
 
 Some of the most interesting macros from Paul Graham's _On Lisp_ are _anaphoric macros_. An anaphoric macro is one that deliberately captures a variable from forms supplied to the macro. Thanks to their _transparent specifications_, these deliberately captured variables allow us windows of control over the macro expansion. Through these windows we can manipulate the expansion through _combinations_.
