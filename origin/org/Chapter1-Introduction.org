@@ -127,8 +127,7 @@ obvious. An auxiliary theme of this book, one that applies to any
 programming language, is that in programming, style is not something to
 pursue directly. Style is necessary only where understanding is
 missing[[https://letoverlambda.com/textmode.cl/guest/chap1.html#][^{1}]]
-^{/A corollary to this is that sometimes the only way to effectively use
-something you don't understand is to copy styles observed elsewhere./} .
+^{/A corollary to this is that sometimes the only way to effectively use something you don't understand is to copy styles observed elsewhere./} .
 
 Like C pointers, the macro is a feature of lisp that is often poorly
 understood, the wisdom on its proper use being very distributed and
@@ -146,15 +145,15 @@ programming. That is what this book hopes to fix.
 
 There are very few good references or tutorials on macro construction.
 Paul Graham's /On Lisp/^{[ON-LISP]} is one of the exceptions. Every word
-of /On Lisp/ is required reading for anyone interested in macros. /On
-Lisp/ and Graham's other writings were the most important inspirations
+of /On Lisp/ is required reading for anyone interested in macros. /On Lisp/
+and Graham's other writings were the most important inspirations
 for the creation of the book you are reading now. Thanks to Paul Graham
 and other lisp writers, the power that macros provide programmers is
 widely discussed, yet is unfortunately still widely misunderstood.
 Despite the wisdom regarding macro programming that can be gleaned from
 a simple perusal of /On Lisp/, few programmers make the connection
-between the macro and their real-life programming problems. While /On
-Lisp/ will show you the different types of macros, this book will show
+between the macro and their real-life programming problems. While /On Lisp/
+will show you the different types of macros, this book will show
 you how to use them.
 
 Macro writing is a reflective and iterative process. All complex macros
@@ -185,8 +184,7 @@ C programmers who are new to lisp often make the mistake of assuming
 that the primary purpose of a macro is to improve the efficiency of code
 at
 run-time[[https://letoverlambda.com/textmode.cl/guest/chap1.html#][^{2}]]
-^{/C programmers make this mistake because they are used to a "macro
-system" that is good for little else./} . While macros are often very
+^{/C programmers make this mistake because they are used to a "macro system" that is good for little else./} . While macros are often very
 useful for this task, by far the most common use of a macro is to make
 the job of programming a desired application easier. Because large
 portions of the patterns in most programs are redundantly copied and the
@@ -274,14 +272,7 @@ was not only trying to formalise ideas, but also the very expression of
 ideas, found it necessary to abstract this concept of a communicative
 language between writer and reader. He called it the U-Language.
 
-/Every investigation, including the present one, has to be communicated
-from one person to another by means of language. It is expedient to
-begin our study by calling attention to this obvious fact, by giving a
-name to the language being used, and by being explicit about a few of
-its features. We shall call the language being used the U-Language.
-[...] There would be no point in calling attention to it, if it were not
-for the fact that language is more intimately related to our job than of
-most others./
+/Every investigation, including the present one, has to be communicated from one person to another by means of language. It is expedient to begin our study by calling attention to this obvious fact, by giving a name to the language being used, and by being explicit about a few of its features. We shall call the language being used the U-Language. [...] There would be no point in calling attention to it, if it were not for the fact that language is more intimately related to our job than of most others./
 
 Throughout this book we will introduce key new concepts or points that
 otherwise deserve emphasis in /this special font/. When referencing
@@ -300,15 +291,13 @@ EXAMPLE-PROGRAM-LISTING
             (listing)))))
 #+END_EXAMPLE
 
-In this book new pieces of code are introduced in the form of /program
-listings/. Code that is designed for re-use, or for an example of proper
+In this book new pieces of code are introduced in the form of /program listings/. Code that is designed for re-use, or for an example of proper
 implementation, is presented as in the definition of our function
 *example-program-listing*. But sometimes we wish to demonstrate the use
 of a bit of code or just want to discuss properties of some expressions
 without departing the flow of the written
 text[[https://letoverlambda.com/textmode.cl/guest/chap1.html#][^{4}]]
-^{/And this is a foot-note, a relevant but concise departure from the
-main text./} . In those cases, the code, or example uses of the code,
+^{/And this is a foot-note, a relevant but concise departure from the main text./} . In those cases, the code, or example uses of the code,
 will appear like so:
 
 #+BEGIN_EXAMPLE
@@ -417,12 +406,7 @@ meta-languages from different perspectives, including other
 meta-languages, but there is only one U-Language. Curry makes this clear
 for his system as well:
 
-/We can continue to form hierarchies of languages with any number of
-levels. However, no matter how many levels there are, the U-Language
-will be the highest level: if there are two levels, it will be the
-meta-language; if there are three levels, it will be the
-meta-meta-language; and so on. Thus the terms U-Language and
-meta-language must be kept distinct./
+/We can continue to form hierarchies of languages with any number of levels. However, no matter how many levels there are, the U-Language will be the highest level: if there are two levels, it will be the meta-language; if there are three levels, it will be the meta-meta-language; and so on. Thus the terms U-Language and meta-language must be kept distinct./
 
 This is a book about lisp, of course, and lisp's logic system is very
 different than that described by Curry so we will adopt few other
