@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 
 # translate.py
 
@@ -32,7 +33,7 @@ def translate(src, dest):
 if __name__ == "__main__":
     pwd = os.path.abspath(os.path.dirname(__file__))
 
-    for i in range(1, 9):
+    for i in range(5, 9):
         src_file = os.path.join(pwd, "en/lol-chap-%d.txt" % i)
         dest_file = os.path.join(pwd, "zh/lol-chap-%d-zh.txt" % i)
         translate(src_file, dest_file)
