@@ -11,6 +11,7 @@ Let Over Lambda 中文文档
 .. toctree::
    :maxdepth: 2
 
+   readme.rst
    Chapter01/index.rst
    Chapter02/index.rst
    Chapter03/index.rst
