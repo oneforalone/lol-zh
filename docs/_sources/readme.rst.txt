@@ -4,7 +4,7 @@
 如何加入
 ==================================
 
-:Author: Yuqi Liu
+:Author: Yuqi Liu <yuqi.lyle@outlook.com>
 
 
 本文档使用 `Sphinx <http://www.sphinx-doc.org/>`_ 将 ``docsrc/_sources`` 下的 `reStructuredText <http://docutils.sourceforge.net/rst.html>`_ 文件生成的文档。当然，为了照顾免去大部分人学习 ``reStructuredText`` 的格式，同时也支持使用 `markdown` 格式。
@@ -17,7 +17,7 @@
 
 .. note::
 
-  这些预备知识其实很基础，所谓的 Python 的基础知识指代的是：python 的安装、配置系统环境变量、pip 的使用。而对于 ``git`` 和 ``github`` 的基础知识，无非就是：``git clone``、``git add``、``git commit``、``git push`` 以及在 Github 上`克隆库 (fork) <https://guides.github.com/activities/forking/#fork>`_ 和发起 `pull request <https://guides.github.com/activities/forking/#making-a-pull-request>`_ 。
+  这些预备知识其实很基础，所谓的 Python 的基础知识指代的是：python 的安装、配置系统环境变量、pip 的使用。而对于 ``git`` 和 ``github`` 的基础知识，无非就是：``git clone``、``git add``、``git commit``、``git push`` 以及在 Github 上 `克隆库 (fork) <https://guides.github.com/activities/forking/#fork>`_ 和发起 `pull request <https://guides.github.com/activities/forking/#making-a-pull-request>`_ 。
 
 所以你需要现在系统上安装好 ``Git``、``Make`` 和 ``Python3``
 

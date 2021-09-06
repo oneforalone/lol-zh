@@ -42,7 +42,7 @@
     
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="如何加入" href="readme.html" /> 
+    <link rel="next" title="第一章：概述" href="Chapter01/index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -88,7 +88,6 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="readme.html">如何加入</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Chapter01/index.html">第一章：概述</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Chapter02/index.html">第二章：闭包</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Chapter03/index.html">第三章：宏基础</a></li>
@@ -169,12 +168,6 @@
 <span id="lol-zh"></span><h1>Let Over Lambda 中文文档<a class="headerlink" href="#let-over-lambda" title="永久链接至标题">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="readme.html">如何加入</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="readme.html#id2">预备知识</a></li>
-<li class="toctree-l2"><a class="reference internal" href="readme.html#id3">Sphinx 安装</a></li>
-<li class="toctree-l2"><a class="reference internal" href="readme.html#id4">获取源代码</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="Chapter01/index.html">第一章：概述</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Chapter01/macros.html">1.1 宏</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Chapter01/u-language.html">1.2 U 语言</a></li>
@@ -193,6 +186,62 @@
 <li class="toctree-l1"><a class="reference internal" href="Appendices/index.html">附录</a></li>
 </ul>
 </div>
+</div>
+<div class="section" id="id1">
+<h1>如何加入<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<p>本文档使用 <a class="reference external" href="http://www.sphinx-doc.org/">Sphinx</a> 将 <code class="docutils literal notranslate"><span class="pre">docsrc/_sources</span></code> 下的 <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> 文件生成的文档。当然，为了照顾免去大部分人学习 <code class="docutils literal notranslate"><span class="pre">reStructuredText</span></code> 的格式，同时也支持使用 <cite>markdown</cite> 格式。</p>
+<div class="section" id="id2">
+<h2>预备知识<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>首先，<code class="docutils literal notranslate"><span class="pre">Sphinx</span></code> 是个 Python 三方库，所以，你需要懂得 Python 的基础知识。然后因为这个文档是 <a class="reference external" href="https://github.com/">Github</a> 上，所以你需要有 <a class="reference external" href="https://git-scm.com/">Git</a> 和 <code class="docutils literal notranslate"><span class="pre">Github</span></code> 的基础知识。</p>
+<div class="admonition note">
+<p class="admonition-title">注解</p>
+<p>这些预备知识其实很基础，所谓的 Python 的基础知识指代的是：python 的安装、配置系统环境变量、pip 的使用。而对于 <code class="docutils literal notranslate"><span class="pre">git</span></code> 和 <code class="docutils literal notranslate"><span class="pre">github</span></code> 的基础知识，无非就是：<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span></code>、<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">add</span></code>、<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span></code>、<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span></code> 以及在 Github 上 <a class="reference external" href="https://guides.github.com/activities/forking/#fork">克隆库 (fork)</a> 和发起 <a class="reference external" href="https://guides.github.com/activities/forking/#making-a-pull-request">pull request</a> 。</p>
+</div>
+<p>所以你需要现在系统上安装好 <code class="docutils literal notranslate"><span class="pre">Git</span></code>、<code class="docutils literal notranslate"><span class="pre">Make</span></code> 和 <code class="docutils literal notranslate"><span class="pre">Python3</span></code></p>
+</div>
+<div class="section" id="id3">
+<h2>Sphinx 安装<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>本人的使用 <code class="docutils literal notranslate"><span class="pre">Python3.9</span></code> 进行开发的。为了避免后续环境版本不统一，推荐使用 python3.9，同时使用 <code class="docutils literal notranslate"><span class="pre">virtualenv-3</span></code> 安装Sphinx:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 -m pip install virtualenv
+$ python3 -m virtualenv sphinx
+$ source sphinx/bin/activate
+(sphinx) $ pip install -U Sphinx sphinx-autobuild sphinx_rtd_theme recommonmark
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注解</p>
+<p>Windows 下无法执行 source 命令，需要用以下步骤进入虚拟环境:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd sphinx/Scripts
+$ activate.bat
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>获取源代码<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>在 Github 上先 fork <a class="reference external" href="https://github.com/oneforalone/lol-zh/">代码库</a> 到自己的 Github 上，然后将 Github 上的库 clone 到本地:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(sphinx)$ git clone https://github.com/&lt;your-github-id&gt;/lol-zh.git
+(sphinx)$ cd lol-zh/docsrc
+</pre></div>
+</div>
+<p>在对应的章节目录下创建对应的章节文档，如第一章第一节:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(sphinx)$ cd lol-zh/docsrc/_sources
+(sphinx)$ touch Chapter01/macros.rst
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注解</p>
+<p>如果是 markdown 格式的则创建 .md 为后缀的文件。其中英文文档为 <code class="docutils literal notranslate"><span class="pre">lol-zh/ori/lol.pdf</span></code>，同时，我使用爬虫爬过有道翻译，结果保存在 <code class="docutils literal notranslate"><span class="pre">lol-zh/text</span></code> 目录下。</p>
+</div>
+<p>编译完后进行本地预览:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(sphinx)$ sphinx-autobuild _source _build/html
+</pre></div>
+</div>
+<p>其中 <code class="docutils literal notranslate"><span class="pre">_source</span></code>、 <code class="docutils literal notranslate"><span class="pre">_build/html</span></code> 均在 <code class="docutils literal notranslate"><span class="pre">lol-zh/docsrc</span></code> 目录下，所以以上命令是在 <code class="docutils literal notranslate"><span class="pre">lol-zh/docsrc</span></code> 目录下执行的。确认没问题后执行:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(sphinx) $ make github
+</pre></div>
+</div>
+<p>之后就是 <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">add</span> <span class="pre">&lt;添加的文件&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span> <span class="pre">-m</span> <span class="pre">&quot;&lt;添加的文件&gt;&quot;</span></code>、<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span></code></p>
 <p>todolist</p>
 <ul class="simple">
 <li><p>Chapter01 翻译</p></li>
@@ -206,6 +255,7 @@
 <li><p>Appendices 翻译</p></li>
 </ul>
 </div>
+</div>
 
 
            </div>
@@ -213,7 +263,7 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="readme.html" class="btn btn-neutral float-right" title="如何加入" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Chapter01/index.html" class="btn btn-neutral float-right" title="第一章：概述" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
