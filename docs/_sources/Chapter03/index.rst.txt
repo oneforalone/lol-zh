@@ -6,3 +6,9 @@
 
 :Author: Doug Hoyte
 :Translator: Yuqi Liu
+
+.. toctree::
+   :maxdepth: 2
+
+   domain-specific
+   unwanted-capture

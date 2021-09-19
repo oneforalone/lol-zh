@@ -1,0 +1,272 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>5.3 隐式上下文 &mdash; Let Over Lambda 中文文档 V0.1 文档</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/translations.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="第六章：回指(Anaphoric) 宏" href="../Chapter06/index.html" />
+    <link rel="prev" title="5.2 自上而下的编程" href="top-down-programming.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter04/index.html">第四章：Read 宏</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第五章：Programs that program</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="non-functional.html">5.1 Lisp 不是函数式编程语言</a></li>
+<li class="toctree-l2"><a class="reference internal" href="top-down-programming.html">5.2 自上而下的编程</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5.3 隐式上下文</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Let Over Lambda 中文文档</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">第五章：Programs that program</a> &raquo;</li>
+        
+      <li>5.3 隐式上下文</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/Chapter05/implicit-contexts.rst.txt" rel="nofollow"> 查看页面源码</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="implicit-contexts">
+<span id="id1"></span><h1>5.3 隐式上下文<a class="headerlink" href="#implicit-contexts" title="永久链接至标题">¶</a></h1>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Doug Hoyte</p>
+</dd>
+<dt class="field-even">Translator</dt>
+<dd class="field-even"><p>Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
+</dd>
+</dl>
+<p>宏可以使用隐式上下文的技术。在常用的代码中，或者说是需要绝对简洁且没有很细节的代码中，有时要隐式地在表达式的某些部分添加 lisp 代码，这样就不必每次使用抽象时都去编写它。之前也有介绍过隐式上下文，而且也很清楚的表达了，即便是不使用宏，隐式上下文也是 lisp 编程的基础部分： <code class="docutils literal notranslate"><span class="pre">let</span></code> 和 <code class="docutils literal notranslate"><span class="pre">lambda</span></code> 表达式就有个隐式的 <code class="docutils literal notranslate"><span class="pre">progn</span></code>。因为这两个表达式是顺序的执行表达式的主题并返回最后的那个结果。<code class="docutils literal notranslate"><span class="pre">defun</span></code> 会在表达式外添加隐式的 <code class="docutils literal notranslate"><span class="pre">lambda</span></code>，因此不需要在已命名的函数中使用 lambda 格式。</p>
+<p>本节介绍的是本书中后面要用到的遍历代码的宏——<code class="docutils literal notranslate"><span class="pre">tree-leaves</span></code> 的推导以及构造。和 <code class="docutils literal notranslate"><span class="pre">flatten</span></code> 一样，<code class="docutils literal notranslate"><span class="pre">tree-leaves</span></code> 宏会检查一段 lisp 代码，将这段代码当作一个树（<code class="docutils literal notranslate"><span class="pre">tree</span></code>），然后做一些改动后返回一个新树。原表达式的列表结构不会被更改：<code class="docutils literal notranslate"><span class="pre">flatten</span></code> 和 <code class="docutils literal notranslate"><span class="pre">tree-leaves</span></code> 都是构建新的结构。这两者之间的不同之处在于，<code class="docutils literal notranslate"><span class="pre">flatten</span></code> 会将嵌套列表中的嵌套移除然后返回一个不是真正的 lisp 的扁平（<code class="docutils literal notranslate"><span class="pre">flat</span></code>）列表，而 <code class="docutils literal notranslate"><span class="pre">tree-leaves</span></code> 则是保留了表达式的结构，但修改了特定原语（<code class="docutils literal notranslate"><span class="pre">atom</span></code>）的值。</p>
+<div class="admonition note">
+<p class="admonition-title">注解</p>
+<p>这里的树指的是数据结构中的树。原语指的是一个词，为最小单位，不可再分割。具体参考: <a class="reference external" href="https://www.gnu.org/software/emacs/manual/html_node/eintr/Lisp-Atoms.html">https://www.gnu.org/software/emacs/manual/html_node/eintr/Lisp-Atoms.html</a></p>
+</div>
+<p>现在，先从简单的初稿开始吧。<code class="docutils literal notranslate"><span class="pre">tree-leaves%</span></code> 是个函数，</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">tree</span><span class="o">-</span><span class="n">leaves</span><span class="o">%</span> <span class="p">(</span><span class="n">tree</span> <span class="n">result</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">if</span> <span class="n">tree</span>
+    <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="n">listp</span> <span class="n">tree</span><span class="p">)</span>
+      <span class="p">(</span><span class="n">cons</span>
+        <span class="p">(</span><span class="n">tree</span><span class="o">-</span><span class="n">leaves</span><span class="o">%</span> <span class="p">(</span><span class="n">car</span> <span class="n">tree</span><span class="p">)</span>
+                      <span class="n">result</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">tree</span><span class="o">-</span><span class="n">leaves</span><span class="o">%</span> <span class="p">(</span><span class="n">cdr</span> <span class="n">tree</span><span class="p">)</span>
+                      <span class="n">result</span><span class="p">))</span>
+      <span class="n">result</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>该函数会递归的去遍历提供的 <code class="docutils literal notranslate"><span class="pre">tree</span></code> 表达式参数，然后将同类型的构造成列表结构。当遇到原语时，函数会返回 <code class="docutils literal notranslate"><span class="pre">result</span></code> 参数的值，而不是返回原语的值：</p>
+<div class="admonition note">
+<p class="admonition-title">注解</p>
+<p>在 <code class="docutils literal notranslate"><span class="pre">if</span></code> 结构中，如果 <code class="docutils literal notranslate"><span class="pre">else</span></code> 部分没有的话，那么 <code class="docutils literal notranslate"><span class="pre">else</span></code> 的部分就返回 <code class="docutils literal notranslate"><span class="pre">nil</span></code>，即空列表。</p>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">tree</span><span class="o">-</span><span class="n">leaves</span><span class="o">%</span>
+    <span class="s1">&#39;(2 (nil t (a . b)))</span>
+    <span class="s1">&#39;leaf)</span>
+
+<span class="p">(</span><span class="n">LEAF</span> <span class="p">(</span><span class="n">NIL</span> <span class="n">LEAF</span> <span class="p">(</span><span class="n">LEAF</span> <span class="o">.</span> <span class="n">LEAF</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>所以，<code class="docutils literal notranslate"><span class="pre">tree-leaves%</span></code> 返回了个新的树结构，其中所有的原语都被转换成了提供的参数 <code class="docutils literal notranslate"><span class="pre">leaf</span></code>。注意，<code class="docutils literal notranslate"><span class="pre">cons</span></code> 结构中 <code class="docutils literal notranslate"><span class="pre">car</span></code> 位置的原语 <code class="docutils literal notranslate"><span class="pre">nil</span></code> 没有变，和 <code class="docutils literal notranslate"><span class="pre">cdr</span></code> 位置一样，都不会变( <code class="docutils literal notranslate"><span class="pre">cdr</span></code> 为 <code class="docutils literal notranslate"><span class="pre">nil</span></code> 时即表示空列表）。</p>
+<p>当然，更改每个元素是没有什么意义的。我们真正想要的是一种选择特定原语的方法，并选择性地对其进行转换，之后再将转换后的原语插入到新的列表结构中，对不相关的就不用去管他了。在 lisp 中，编写个可自定义的使用函数的最直接的方法就是有插件——即用户可以使用自定义的代码来控制实用程序的功能。<code class="docutils literal notranslate"><span class="pre">COMMON</span> <span class="pre">LISP</span></code> 内置的 <code class="docutils literal notranslate"><span class="pre">sort</span></code> 函数就是典型的代表。以下的代码中，小于函数对 <code class="docutils literal notranslate"><span class="pre">sort</span></code> 来说就是个插件：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">sort</span> <span class="s1">&#39;(5 1 2 4 3 8 9 6 7) #&#39;</span><span class="o">&lt;</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">6</span> <span class="mi">7</span> <span class="mi">8</span> <span class="mi">9</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>使用函数作为参数来控制程序的行为的这个理念很方便，因为这样就可以创建写适合手头任务的匿名函数。或者说，当需要更强大的功能时，可以创建个生成匿名函数的函数。这种行为被称为函数组合（<code class="docutils literal notranslate"><span class="pre">function</span> <span class="pre">composition</span></code>）。尽管函数组合没有宏组合（<code class="docutils literal notranslate"><span class="pre">macro</span> <span class="pre">composition</span></code>）那么有趣，但这仍是个很有用的技术，且这个技术是专业 lisp 程序员必须掌握的。</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../Chapter06/index.html" class="btn btn-neutral float-right" title="第六章：回指(Anaphoric) 宏" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="top-down-programming.html" class="btn btn-neutral float-left" title="5.2 自上而下的编程" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; 版权所有 2021, Yuqi Liu.
+
+    </p>
+  </div>
+    
+    
+    
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
