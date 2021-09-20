@@ -5,7 +5,7 @@
 ==================================
 
 :Author: Doug Hoyte
-:Translator: Yangting Xu
+:Translator: Xuting Yang
 :Proof-Reading: Yuqi Liu <yuqi.lyle@outlook.com>
 
 .. code-block::
