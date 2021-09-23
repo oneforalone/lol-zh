@@ -5,12 +5,12 @@
 ==================================
 
 :Author: Doug Hoyte
-:Translator: Yuqi Liu
-
+:Translator: Yuqi Liu <yuqi.lyle@outlook.com>
 
 .. toctree::
    :maxdepth: 2
 
    non-functional
-   top-down-programming
-   implicit-contexts
+   top-down
+   implicit
+   macrolet

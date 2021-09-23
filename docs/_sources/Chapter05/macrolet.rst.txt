@@ -1,16 +1,12 @@
-.. _chapter_05:
+.. _macrolet:
 
 ==================================
-第五章：Programs that program
+5.4 使用 ``macrolet`` 遍历代码
 ==================================
 
 :Author: Doug Hoyte
 :Translator: Yuqi Liu <yuqi.lyle@outlook.com>
 
-.. toctree::
-   :maxdepth: 2
+.. code-block::
 
-   non-functional
-   top-down
-   implicit
-   macrolet
+  Lisp 不是门语言，而是构建语言的原料。  —— Alan Kay

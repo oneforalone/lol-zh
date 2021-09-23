@@ -1,4 +1,4 @@
-.. _lisp_is_not_functional:
+.. _non_functional:
 
 ==================================
 5.1 Lisp 不是函数式编程语言
