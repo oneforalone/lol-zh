@@ -12,3 +12,4 @@
 
    domain-specific
    unwanted-capture
+   control-structures
