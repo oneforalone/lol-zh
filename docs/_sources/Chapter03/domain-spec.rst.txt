@@ -1,7 +1,7 @@
-.. _control_structures:
+.. _domain_spec:
 
 ==================================
-3.2 Control Structures
+3.2 Domain Specific Language
 ==================================
 
 :Author: Doug Hoyte

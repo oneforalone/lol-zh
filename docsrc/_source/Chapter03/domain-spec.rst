@@ -1,4 +1,4 @@
-.. _domain_specific:
+.. _domain_spec:
 
 ==================================
 3.2 Domain Specific Language

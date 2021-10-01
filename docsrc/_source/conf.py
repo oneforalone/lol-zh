@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'Let Over Lambda 中文文档'
-copyright = '2021, Yuqi Liu'
+copyright = '2021, Yuqi Liu, Xuting Yang'
 author = 'Yuqi Liu'
 
 # The full version, including alpha/beta/rc tags

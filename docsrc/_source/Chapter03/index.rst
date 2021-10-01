@@ -10,6 +10,6 @@
 .. toctree::
    :maxdepth: 2
 
-   domain-specific
-   unwanted-capture
-   control-structures
+   domain-spec
+   capture
+   cntrl-struct

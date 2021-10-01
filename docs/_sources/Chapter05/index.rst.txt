@@ -14,4 +14,5 @@
    top-down
    implicit
    macrolet
-   recursive-expansion
+   expansion
+   solutions
