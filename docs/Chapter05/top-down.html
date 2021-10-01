@@ -99,7 +99,7 @@
 <li class="toctree-l2"><a class="reference internal" href="implicit.html">5.3 隐式上下文</a></li>
 <li class="toctree-l2"><a class="reference internal" href="macrolet.html">5.4 使用 <code class="docutils literal notranslate"><span class="pre">macrolet</span></code> 遍历代码</a></li>
 <li class="toctree-l2"><a class="reference internal" href="expansion.html">5.5 递归展开</a></li>
-<li class="toctree-l2"><a class="reference internal" href="solutions.html">5.5 Recursive Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solutions.html">5.6 递归方案</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
@@ -188,7 +188,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>你教不会初学者自顶向下编程，因为他们不知道哪一端是上。 --C.A.R. Hoare
 </pre></div>
 </div>
-<p>在 <a class="reference internal" href="../Chapter03/domain-specific.html"><span class="doc">3.2 Domain Specific Language</span></a> 中，当我们第一次考虑特定域语言时，我们创建了个简单的宏 <code class="docutils literal notranslate"><span class="pre">unit-of-time</span></code> 。这个宏允许我们用一种直观的、基于符号的语法，可以方便地以不同的单位指定时间段：</p>
+<p>在 <a class="reference internal" href="../Chapter03/domain-spec.html"><span class="doc">3.2 Domain Specific Language</span></a> 中，当我们第一次考虑特定域语言时，我们创建了个简单的宏 <code class="docutils literal notranslate"><span class="pre">unit-of-time</span></code> 。这个宏允许我们用一种直观的、基于符号的语法，可以方便地以不同的单位指定时间段：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">unit</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">time</span> <span class="mi">1</span> <span class="n">d</span><span class="p">)</span>
 
 <span class="mi">86400</span>
@@ -208,7 +208,7 @@
 <span class="n">us</span> <span class="mi">1</span><span class="o">/</span><span class="mi">1000000</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">Defunits%</span></code> 会展开成定义宏的代码，就像在 <a class="reference internal" href="../Chapter03/domain-specific.html"><span class="doc">3.2 Domain Specific Language</span></a> 中编写的 <code class="docutils literal notranslate"><span class="pre">unit-of-time</span></code> ，允许我们将任意的时间单位转换为秒。还能写的更好吗？</p>
+<p><code class="docutils literal notranslate"><span class="pre">Defunits%</span></code> 会展开成定义宏的代码，就像在 <a class="reference internal" href="../Chapter03/domain-spec.html"><span class="doc">3.2 Domain Specific Language</span></a> 中编写的 <code class="docutils literal notranslate"><span class="pre">unit-of-time</span></code> ，允许我们将任意的时间单位转换为秒。还能写的更好吗？</p>
 <p>在设计头脑风暴中，创新在大多数编程语言中都停滞不前。刚刚我们创建了一种将不同单位的乘数值映射到代码中的方法，这种方法让我们能够方便地转换单位。但作为一个专业的 lisp 程序员会意识到这个映射本身就是一个程序，并且可以用我们经常增强lisp程序的方法来增强它。</p>
 <p>当我们输入多种不同的单位是，用来指定对应的单位就会很有用。现在，让我们规定一个因子，这个因子用来增加单位的种类，可以是一个列表，该列表中的值与单位相对应，如下所示：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defunits</span><span class="o">%%</span> <span class="n">time</span> <span class="n">s</span>
@@ -221,7 +221,7 @@
 </div>
 <p>上面这个单位的列表看起来就比较自然了。我们以分钟为基础单位，秒、时基于分钟，天基于小时。为了使用迭代的方法实现这个宏，首先需要用 <code class="docutils literal notranslate"><span class="pre">defunits%</span></code> 来实现非链的版本，然后用 <code class="docutils literal notranslate"><span class="pre">defunits%%</span></code> 实现链版本，最后添加适当的错误检查，就有了最终的版本：<code class="docutils literal notranslate"><span class="pre">defunits</span></code>。</p>
 <p>注意，这种新语言可以提供更多方便的语法来添加新的单元类型。这种语言还允许我们延迟四舍五入对计算的影响，并允许 lisp 使用尽可能精确的算法。例如, furlong 相当于 1/8 英里，所以我们使用链版本来对其进行编码，也就是说，近似的距离，就可以得到更准确的结果，或者说更重要的是，与其他计算结果尽可能保持一致，都使用英里做单位。这是因为我们可以添加找到的最精确的转换因子，而不需要自己进行任何转换，宏让我们在其他语言中无法实现的表达式级别上构建转换例程。</p>
-<p>使用 <a class="reference internal" href="../Chapter03/unwanted-capture.html"><span class="doc">3.5 异常捕获</span></a> 中的 <code class="docutils literal notranslate"><span class="pre">gensym</span></code> ，<code class="docutils literal notranslate"><span class="pre">defunits%</span></code> 就很容易编写。Graham 的 <code class="docutils literal notranslate"><span class="pre">symb</span></code> 函数可以将转换宏生成个新的名字。例如，当 <code class="docutils literal notranslate"><span class="pre">time</span></code> 是内置的表示单位，那么转换宏就是 <code class="docutils literal notranslate"><span class="pre">unit-of-time</span></code>。 <code class="docutils literal notranslate"><span class="pre">defunits%</span></code> 是由最初定义的 <code class="docutils literal notranslate"><span class="pre">unit-of-time</span></code> 构建的，<code class="docutils literal notranslate"><span class="pre">unit-of-time</span></code> 是在 <a class="reference internal" href="../Chapter03/domain-specific.html"><span class="doc">3.2 Domain Specific Language</span></a> 中定义的，在 <code class="docutils literal notranslate"><span class="pre">defunits%</span></code> 中，由 <code class="docutils literal notranslate"><span class="pre">defmacro!</span></code> 和反引号组成，用来替换宏调用时需要重新生成的部分。</p>
+<p>使用 <a class="reference internal" href="../Chapter03/capture.html"><span class="doc">3.5 异常捕获</span></a> 中的 <code class="docutils literal notranslate"><span class="pre">gensym</span></code> ，<code class="docutils literal notranslate"><span class="pre">defunits%</span></code> 就很容易编写。Graham 的 <code class="docutils literal notranslate"><span class="pre">symb</span></code> 函数可以将转换宏生成个新的名字。例如，当 <code class="docutils literal notranslate"><span class="pre">time</span></code> 是内置的表示单位，那么转换宏就是 <code class="docutils literal notranslate"><span class="pre">unit-of-time</span></code>。 <code class="docutils literal notranslate"><span class="pre">defunits%</span></code> 是由最初定义的 <code class="docutils literal notranslate"><span class="pre">unit-of-time</span></code> 构建的，<code class="docutils literal notranslate"><span class="pre">unit-of-time</span></code> 是在 <a class="reference internal" href="../Chapter03/domain-spec.html"><span class="doc">3.2 Domain Specific Language</span></a> 中定义的，在 <code class="docutils literal notranslate"><span class="pre">defunits%</span></code> 中，由 <code class="docutils literal notranslate"><span class="pre">defmacro!</span></code> 和反引号组成，用来替换宏调用时需要重新生成的部分。</p>
 <div class="admonition note">
 <p class="admonition-title">注解</p>
 <p>Graham 是 On Lisp 的作者，会经常出现一些上面的内容，如果有时间的话，推荐去看一下这本书。</p>
