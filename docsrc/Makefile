@@ -21,5 +21,7 @@ help:
 
 # for github pages
 github:
+	@rm -rf ../docs/*
+	@rm -rf _build/html
 	@make html
 	@cp -a _build/html/. ../docs
