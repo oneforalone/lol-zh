@@ -5,4 +5,15 @@
 ==================================
 
 :Author: Doug Hoyte
-:Translator: Yuqi Liu
+:Translator: Yuqi Liu <yuqi.lyle@outlook.com>
+
+.. toctree::
+   :maxdepth: 2
+
+   phors
+   backquote
+   alet
+   indirection
+   hotpatching
+   sub-lexical
+   pandoric
