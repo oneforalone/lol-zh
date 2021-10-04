@@ -88,11 +88,9 @@ Sphinx 安装
 
 todolist
 
-* Chapter01 翻译
 * Chapter02 翻译
 * Chapter03 翻译
 * Chapter04 翻译
-* Chapter05 翻译
 * Chapter06 翻译
 * Chapter07 翻译
 * Chapter08 翻译
