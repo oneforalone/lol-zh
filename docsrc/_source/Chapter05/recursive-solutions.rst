@@ -1,0 +1,178 @@
+.. _recursive_solutions:
+
+==================================
+5.6 递归方案
+==================================
+
+:Author: Doug Hoyte
+:Translator: Yuqi Liu <yuqi.lyle@outlook.com>
+
+上节我们定义的 ``cxr`` 宏似乎包含了函数 ``car`` 和 ``cdr`` 的组合，以及普通的一元列表（flat list）访问器函数 ``nth`` 和 ``nthcdr``。但是像 ``first``, ``second`` 和 ``tenth`` 这样的英语访问器呢？这些函数没有用吗？绝对不是。当表示访问列表中第四个元素的操作时，不论是在写代码或是读代码的效率上，用 ``fourth`` 肯定要比数 ``cadddr`` 中三个 D 要更好。
+
+事实上，英文单词访问器最大的问题是：COMMON LISP 中只有 10 个访问器 —— 从 ``first`` 到 ``tenth``。但是本节或者说本书的主题之一是，lisp onion 的每一层都可以使用其他层。lisp 中没有原语。如果我们想定义更多的单词访问器，如 ``eleventh``，很容易就能做到，就像之前展示的那样。用 ``defun`` 定义的 ``eleventh`` 函数与 ANSI 中定义的 ``first`` 和 ``tenth`` 访问器没有差别。因为没有原语，我们可以在宏定义中使用所有的 lisp，所以我们可以在宏定义中使用像 ``loop`` 和 ``format`` 这样的高级特性。
+
+.. code-block::
+
+  (defmacro def-english-list-accessors (start end)
+    (if (not (<= 1 start end))
+      (error "Bad start/end range"))
+    `(progn
+      ,@(loop for i from start to end collect
+          `(defun
+            ,(symb
+              (map 'string
+                  (lambda (c)
+                      (if (alpha -char -p c)
+                        (char-upcase c)
+                        #\ -))
+                  (format nil "~:r" i)))
+            (arg)
+            (cxr (1 a ,(- i 1) d) arg)))))
+
+宏 ``def-english-list-accessors`` 使用格式字符串 ``"~:r"`` 将数字 ``i`` 转换为对应英文单词的字符串。按照 lisp 的习惯，我们将所有非字母字符改为连字符。然后将这个字符串转换为一个符号，然后在 ``defun`` 结构中使用它，这个字符串运用 ``cxr`` 宏实现了适当的访问器功能。
+
+例如，假设我们突然想到要访问列表的第十一个元素。当然，我们可以用 ``nth`` 或是 ``cdr`` 的组合以及英文单词访问器，但这会导致代码风格的不一致。我们可以重写代码来避免使用英语访问器，但是选择用这种抽象可能是有原因的。
+
+终于，我们可以自定义缺少的必要的访问器了。在其他语言中，这通常意味着大量的复制粘贴，或者可能是一些特殊情况下的代码生成脚本，而这两者都不是特别优雅。但在 lisp 中，我们有宏：
+
+.. code-block::
+
+  * (macroexpand
+    '(def-english-list-accessors 11 20))
+  (PROGN
+    (DEFUN ELEVENTH (ARG) (CXR (1 A 10 D) ARG))
+    (DEFUN TWELFTH (ARG) (CXR (1 A 11 D) ARG))
+    (DEFUN THIRTEENTH (ARG) (CXR (1 A 12 D) ARG))
+    (DEFUN FOURTEENTH (ARG) (CXR (1 A 13 D) ARG))
+    (DEFUN FIFTEENTH (ARG) (CXR (1 A 14 D) ARG))
+    (DEFUN SIXTEENTH (ARG) (CXR (1 A 15 D) ARG))
+    (DEFUN SEVENTEENTH (ARG) (CXR (1 A 16 D) ARG))
+    (DEFUN EIGHTEENTH (ARG) (CXR (1 A 17 D) ARG))
+    (DEFUN NINETEENTH (ARG) (CXR (1 A 18 D) ARG))
+    (DEFUN TWENTIETH (ARG) (CXR (1 A 19 D) ARG)))
+  T
+
+能够创建这些英语访问器降低了 ANSI COMMON LISP 中只有十个访问器限制的影响。如果想要更多的英语访问器，只需使用 ``def- english-list-accessors`` 宏来创建它们。
+
+那 ANSI 里面关于 ``car`` 和 ``cdr`` 的组合最多只能是 5 个的限制怎么处理呢？有时，在编写处理复杂列表的程序时，我们就不想访问器有这个限制。例如，当使用函数 ``cadadr``、``second-of-second`` 来访问列表，然后改变数据形式，改变后的数据的引用是 ``second-of-third`` 或 ``cadaddr``，这时就遇到了 COMMON LISP 的限制。
+
+和英文单词访问器的操作一样，我们可以写个程序来定义额外的 ``car`` 和 ``cdr`` 组合。问题在于，与英文访问器不同，像 ``caddr`` 这样的组合函数，其深度的增加会导致需要定义的函数数量呈指数级增加。具体来说，可以使用函数 ``cxr-calculator`` 找到需要定义的深度为 n 访问器数量。
+
+.. code-block::
+
+  (defun cxr-calculator (n)
+    (loop for i from 1 to n
+          sum (expt 2 i)))
+
+这里我们可以看到深度为 4 的组合需要有 30 种：
+
+.. code-block::
+
+  * (cxr-calculator 4)
+
+  30
+
+为了让你了解所需函数的数量增长有多快，参考下面这段代码：
+
+.. code-block::
+
+  * (loop for i from 1 to 16
+          collect (cxr-calculator i))
+
+  (2 6 14 30 62 126 254 510 1022 2046
+   4094 8190 16382 32766 65534 131070)
+
+显然，要想 ``cxr`` 函数在深度上包含 ``car`` 和 ``cdr`` 的所有组合，我们需要一种不同于处理英文访问器问题的方法。定义 ``car`` 和 ``cdr`` 的所有组合到某个可行的深度是不行的。
+
+.. code-block::
+
+  (defun cxr-symbol-p (s)
+    (if (symbolp s)
+      (let ((chars (coerce
+                      (symbol -name s)
+                      'list)))
+        (and
+          (< 6 (length chars))
+          (char= #\C (car chars))
+          (char= #\R (car (last chars)))
+          (null (remove -if
+                  (lambda (c)
+                    (or (char= c #\A)
+                        (char= c #\D)))
+                  (cdr (butlast chars))))))))
+
+首先，我们应该对 ``cxr`` 符号定义有个明确的说明。``cxr-symbol-p`` 是个简洁的定义：``cxr`` 是所有以 C 开头，R 结尾，中间包含五个及以上个 A 或 D 的符号。我们不考虑少于五个 A 或 D 的 ``cxr`` 符号，因为这些函数已经确定在 COMMON LISP 中定义了。
+
+接下来，因为我们打算用 ``cxr`` 来实现任意 ``car`` 和 ``cdr`` 组合的功能，所以创建了函数 ``cxr-symbol-to-cxr-list``
+
+.. code-block::
+
+  (defun cxr-symbol-to-cxr-list (s)
+    (labels ((collect (l)
+              (if l (list*
+                      1
+                      (if (char= (car l) #\A)
+                        'A
+                        'D)
+                      (collect (cdr l))))))
+    (collect
+      (cdr       ; chop off C
+        (butlast ; chop off R
+          (coerce
+              (symbol -name s)
+              'list))))))
+
+`` cxr-symbol-to-cxr-list`` 函数用来将 ``cxr`` 符号（由 ``cxr-symbol-p`` 定义）转换为一个可以用作 ``cxr`` 第一个参数的列表。下面是它的用法：
+
+.. code-block::
+
+  * (cxr-symbol-to-cxr-list
+      'caddadr)
+  (1 A 1 D 1 D 1 A 1 D)
+
+注意 ``cxr-symbol-to-cxr-list`` 中 ``list*`` 函数的用法。``list*`` 基本和 ``list`` 一致，除了它的最后一个参数会插入到已创建列表中最后一个 ``cons`` 单元格的 ``cdr`` 位置。当编写递归函数构建一个列表（其中每个堆栈结构可能想向列表中添加多个元素）时， ``list*`` 就非常方便，。在我们的例子中，每个结构都想向列表中添加两个元素：数字 1 和符号 A 或 D。
+
+最后，我们认为有效地提供任意深度的 ``cxr`` 函数的唯一方法是，对提供的表达式进行代码遍历并只定义必要的函数。``with-all-cxrs`` 宏使用 Graham 的 ``flatten`` 实用程序对所提供的表达式进行代码遍历，方法与 :doc:`../Chapter03/unwanted-capture` 中的 ``defmacro/g!`` 宏一样。``with -all-cxrs`` 找到所有满足 ``cxr-symbol-p`` 的符号，用 ``cxr`` 宏创建它们引用的函数，然后用标签形式将这些函数绑定到提供的代码周围。
+
+.. code-block::
+
+  (defmacro with-all-cxrs (&rest forms)
+    `(labels
+      (,@(mapcar
+          (lambda (s)
+            `(,s (l)
+              (cxr ,(cxr-symbol-to-cxr-list s)
+                    l)))
+          (remove -duplicates
+            (remove-if-not
+              #'cxr-symbol-p
+        ,@forms))
+
+现在可以在传给 ``with-all-cxrs`` 的结构中封装表达式，并假定这些表达式可以访问任何可能的 ``cxr`` 函数。如果我们想的话，我们可以很简单的返回这些函数然后用在别处：
+
+.. code-block::
+
+  * (with-all-cxrs #'cadadadadadr)
+
+  #<Interpreted Function>
+
+或者，如下面的宏展开所示，我们可以用这个无限类嵌入任意复杂的 lisp 代码:
+
+.. code-block::
+
+  * (macroexpand
+    '(with-all-cxrs
+        (cons
+          (cadadadr list)
+          (caaaaaaaar list))))
+  (LABELS
+    ((CADADADR (L)
+      (CXR (1 A 1 D 1 A 1 D 1 A 1 D) L))
+    (CAAAAAAAAR (L)
+      (CXR (1 A 1 A 1 A 1 A 1 A 1 A 1 A 1 A) L)))
+    (CONS
+      (CADADADR LIST)
+      (CAAAAAAAAR LIST)))
+  T
+
+通常，一个听起来很难的任务，如定义无限个英文列表访问器和 ``car-cdr`` 组合，其实就是将简单的问题聚合到一起。与之相反，对单个难题，可以通过递归处理问题来解决一系列较简单的问题。通过思考如何将一个问题转化为一系列更简单的问题，我们采用了经过验证的解决方法：分而治之。

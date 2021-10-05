@@ -5,7 +5,7 @@
 ==================================
 
 :Author: Doug Hoyte
-:Translator: Yuqi Liu
+:Translator: Xuting Yang, Yuqi Liu <yuqi.lyle@outlook.com>
 
 .. toctree::
    :maxdepth: 2

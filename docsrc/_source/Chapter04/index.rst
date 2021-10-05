@@ -5,4 +5,14 @@
 ==================================
 
 :Author: Doug Hoyte
-:Translator: Yuqi Liu
+:Translator: Yuqi Liu <yuqi.lyle@outlook.com>
+
+.. toctree::
+   :maxdepth: 2
+
+   runtime
+   backquote
+   reading-strings
+   cl-ppcre
+   cyclic-expressions
+   reader-security

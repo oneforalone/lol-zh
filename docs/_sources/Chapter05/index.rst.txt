@@ -12,8 +12,8 @@
 
    non-functional
    top-down
-   implicit
+   implicit-contexts
    macrolet
-   expansion
-   solutions
+   recursive-expansion
+   recursive-solutions
    dlambda

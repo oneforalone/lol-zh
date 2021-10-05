@@ -5,4 +5,15 @@
 ==================================
 
 :Author: Doug Hoyte
-:Translator: Yuqi Liu
+:Translator: Yuqi Liu<yuqi.lyle@outlook.com>
+
+.. toctree::
+   :maxdepth: 2
+
+   lisp-is-fast
+   macros-make-lisp-fast
+   disassembler
+   pointer-scope
+   tlists-cons-pools
+   sorting-networks
+   writing-benchmarking

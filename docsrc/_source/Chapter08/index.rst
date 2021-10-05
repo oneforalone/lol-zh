@@ -6,3 +6,12 @@
 
 :Author: Doug Hoyte
 :Translator: Yuqi Liu
+
+.. toctree::
+   :maxdepth: 2
+
+   weird
+   cons-threaded
+   duality-of-syntax
+   going-forth
+   going-forther
