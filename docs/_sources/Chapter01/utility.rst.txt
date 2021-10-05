@@ -5,4 +5,68 @@
 ==================================
 
 :Author: Doug Hoyte
-:Translator: Yuqi Liu
+:Translator: Xuting Yang
+:Proof-Reading: Yuqi Liu <yuqi.lyle@outlook.com>
+
+《On Lisp》是本你要么理解，要么不理解的书。你要么崇拜它，要么害怕它。从它的书名开始，《On Lisp》是关于创建编程抽象的，这些抽象是 Lisp 之上的层次。在创建了这些抽象之后，就可以自由地创建更多的编程抽象，这些抽象是早期抽象的连续层次。
+
+在几乎所有值得使用的语言中，语言的大部分功能都是用语言本身实现的；Blub 语言通常有大量用 Blub 编写的标准库。当连程序员都不想用目标语言编程时，你可能也不会想这样做。
+
+但即使考虑了其他语言的标准库，lisp 也是不同的。从其他语言是由原语（ primitive )组成的意义上讲，lisp 是由元原语（meta-primitive）组成的。一旦宏如 COMMON LISP 那样被标准化，语言的其他部分就可以从根本上被引导发展起来了。大多数语言只是试图提供一套足够灵活的这些原语，而 lisp 提供了一个允许任何和所有种类的原语的元编程系统。另一种思考方式是，lisp完全摒弃了原语的概念。在 lisp 中，元编程系统并没有停止在任何所谓的原语上。这些用于构建语言的宏编程技术有可能，事实上也是人们所希望的，它可以一直延续到用户应用程序中。即使是由最高级别的用户编写的应用程序，也是 lisp 洋葱上的宏层，通过迭代而不断增长。
+
+从这个角度来看，语言中存在原语是一个问题。只要有原语，系统的设计就会有障碍和非正交性。当然，有时这是有道理的。大多数程序员都能把单个机器码指令当作原语，让他们的C或lisp编译器来处理。但是lisp用户要求对其他几乎所有的东西进行控制。就给予程序员的控制权而言，没有其他语言能像lisp那样完整。
+
+听从《On Lisp》的建议，本书是作为洋葱上的另一层设计的。就像程序在其他程序上分层一样，本书也是《On Lisp》的更深一层。这本书的中心主题是当设计良好的实用程序结合在一起时，可以发挥出大于各部分之和的生产力优势。本节介绍了一系列来自《On Lisp》和其他资料的有用工具。
+
+.. code-block::
+
+  (defun mkstr (&rest args)
+  (with-output-to-string (s)
+  (dolist (a args) (prince a s))))
+  (defun symb (krest args)
+  (values (intern (apply #'mkstr args))))
+
+``symb`` 是创建符号的通用方法，分层在 ``mkstr`` 之上。由于符号可以被任何任意的字符串引用，而且以编程方式创建符号是非常有用的，因此 ``symb`` 是宏编程的一个基本工具，在本书中被大量使用。
+
+.. code-block::
+
+  (defun group (source n)
+    (if (zerop n) (error "zero length"))
+    (labels ((rec (source acc)
+              (let ((rest (nthcdr n source)))
+                (if (consp rest)
+                    (rec rest (cons
+                                (subseq source 0 n)
+                                  acc))
+                    (nreverse
+                      (cons source acc))))))
+      (if source (rec source nil) nil)))
+
+``group`` 是另一个在编写宏时经常出现的工具。原因一是需要镜像运算符，如 COMMON LISP 的 ``setf`` 和 ``psetf``，它们已经对参数进行了分组。原因二是分组通常是结构化相关数据的最佳方式。由于我们经常使用这种功能，所以尽可能地使之抽象化是有意义的。Graham 的分组将按由参数 ``n`` 指定的分组量进行分组。在 ``setf`` 这样的情况下，参数被分组成对，``n`` 是 2。
+
+.. code-block::
+
+  (defun flatten (x)
+    (labels ((rec (x acc)
+            (cond ((null x) acc)
+                  ((atom x) (cons x acc))
+                  (t (rec
+                        (car x)
+                        (rec (cdr x) acc))))))
+    (rec x nil)))
+
+``flatten`` 是《On Lisp》中最重要的实用工具之一。给定一个任意嵌套的列表结构，``flatten`` 将返回一个新的包含所有可以通过该列表结构到达的原子的列表。如果我们把列表结构看成是一棵树，那么 ``flatten`` 将返回该树中所有叶子的列表。如果这棵树代表 lisp 代码，通过检查表达式中某些对象的存在，``flatten`` 完成了一种代码遍历（code-walking），这是本书中反复出现的主题。
+
+.. code-block::
+
+  (defun fact (x)
+    (if (= x 0)
+      1
+      (* x (fact (- x 1)))))
+
+  (defun choose (n r)
+    (/ (fact n)
+      (fact (- n r))
+      (fact r)))
+
+``fact`` 和 ``choose`` 是阶乘和二项式系数函数的显示实现。
