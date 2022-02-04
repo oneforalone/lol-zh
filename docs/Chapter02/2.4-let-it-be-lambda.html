@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh" >
+<html class="writer-html5" lang="zh-CN" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
@@ -15,6 +15,7 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/translations.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
@@ -54,7 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 与 Forth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
@@ -100,7 +101,7 @@
     <span class="n">acc</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>For example, in <strong>register-allocated-fixnum</strong> we provide some hints to the compiler that allow it to sum the integers from 1 to 100 very efficiently. When compiled, this function will allocate the data in registers, eliminating the need for pointers altogether. Even though it seems we've asked lisp to create an indefinite extent environment to hold <strong>acc</strong> and <strong>i</strong>, a lisp compiler will be able to optimise this function by storing the values solely in CPU registers. The result might be this machine code:</p>
+<p>For example, in <strong>register-allocated-fixnum</strong> we provide some hints to the compiler that allow it to sum the integers from 1 to 100 very efficiently. When compiled, this function will allocate the data in registers, eliminating the need for pointers altogether. Even though it seems we’ve asked lisp to create an indefinite extent environment to hold <strong>acc</strong> and <strong>i</strong>, a lisp compiler will be able to optimise this function by storing the values solely in CPU registers. The result might be this machine code:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">;</span> <span class="mi">090</span><span class="n">CEB52</span><span class="p">:</span>       <span class="mi">31</span><span class="n">C9</span>             <span class="n">XOR</span> <span class="n">ECX</span><span class="p">,</span> <span class="n">ECX</span>
 <span class="p">;</span>       <span class="mi">54</span><span class="p">:</span>       <span class="n">B804000000</span>       <span class="n">MOV</span> <span class="n">EAX</span><span class="p">,</span> <span class="mi">4</span>
 <span class="p">;</span>       <span class="mi">59</span><span class="p">:</span>       <span class="n">EB05</span>             <span class="n">JMP</span> <span class="n">L1</span>
@@ -110,19 +111,19 @@
 <span class="p">;</span>       <span class="mi">65</span><span class="p">:</span>       <span class="mi">7</span><span class="n">EF4</span>             <span class="n">JLE</span> <span class="n">L0</span>
 </pre></div>
 </div>
-<p>Notice that 4 represents 1 and 400 represents 100 because fixnums are shifted by two bits in compiled code. This has to do with <em>tagging</em>, a way to pretend that something is a pointer but actually store data inside it. Our lisp compiler's tagging scheme has the nice benefit that no shifting needs to occur to index word aligned memory[DESIGN-OF-CMUCL]. We'll get to know our lisp compiler better in <a class="reference internal" href="../Chapter07/index.html"><span class="doc std std-doc">chapter 7, Macro Efficiency Topics</span></a>.</p>
+<p>Notice that 4 represents 1 and 400 represents 100 because fixnums are shifted by two bits in compiled code. This has to do with <em>tagging</em>, a way to pretend that something is a pointer but actually store data inside it. Our lisp compiler’s tagging scheme has the nice benefit that no shifting needs to occur to index word aligned memory[DESIGN-OF-CMUCL]. We’ll get to know our lisp compiler better in <a class="reference internal" href="../Chapter07/index.html"><span class="doc std std-doc">chapter 7, Macro Efficiency Topics</span></a>.</p>
 <p>But if lisp determines that you might want to refer to this environment later on it will have to use something less transient than a register. A common structure for storing pointers in environments is an array. If each environment has an array and all the variable references enclosed in that environment are just references into this array, we have an efficient environment with potentially indefinite extent.</p>
 <p>As mentioned above, <strong>let</strong> will return the evaluation of the last form in its body. This is common for many lisp special forms and macros, so common that this pattern is often referred to as an <em>implicit progn</em> due to the <strong>progn</strong> special form designed to do nothing but this<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">5</a>. Sometimes the most valuable thing to have a let form return is an anonymous function which takes advantage of the lexical environment supplied by the let form. To create these functions in lisp we use <em>lambda</em>.</p>
-<p><em>Lambda</em> is a simple concept that can be intimidating because of its flexibility and importance. The lambda from lisp and scheme owes its roots to Alonzo Church's logic system but has evolved and adapted into its altogether own lisp specification. Lambda is a concise way to repeatably assign temporary names (bindings) to values for a specific lexical context and underlies lisp's concept of a function. A lisp function is very different from the mathematical function description that Church had in mind. This is because lambda has evolved as a powerful, practical tool at the hands of generations of lispers, stretching and extending it much further than early logicians could have foreseen.</p>
+<p><em>Lambda</em> is a simple concept that can be intimidating because of its flexibility and importance. The lambda from lisp and scheme owes its roots to Alonzo Church’s logic system but has evolved and adapted into its altogether own lisp specification. Lambda is a concise way to repeatably assign temporary names (bindings) to values for a specific lexical context and underlies lisp’s concept of a function. A lisp function is very different from the mathematical function description that Church had in mind. This is because lambda has evolved as a powerful, practical tool at the hands of generations of lispers, stretching and extending it much further than early logicians could have foreseen.</p>
 <p>Despite the reverence lisp programmers have for lambda, there is nothing inherently special about the notation. As we will see, lambda is just one of many possible ways to express this sort of variable naming. In particular, we will see that macros allow us to customise the renaming of variables in ways that are effectively impossible in other programming languages. But after exploring this, we will return to lambda and discover that it is very close to the optimal notation for expressing such naming. This is no accident. Church, as dated and irrelevant as he might seem to our modern programming environment, really was on to something. His mathematical notation, along with its numerous enhancements in the hands of generations of lisp professionals, has evolved into a flexible, general tool<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">6</a>.</p>
-<p>Lambda is so useful that, like many of lisp's features, most modern languages are beginning to import the idea from lisp into their own systems. Some language designers feel that lambda is too lengthy, instead using <strong>fn</strong> or some other abbreviation. On the other hand, some regard lambda as a concept so fundamental that obscuring it with a lesser name is next to heresy. In this book, although we will describe and explore many variations on lambda, we happily call it lambda, just as generations of lisp programmers before us.</p>
-<p>But what is lisp's lambda? First off, as with all names in lisp, lambda is a <em>symbol</em>. We can quote it, compare it, and store it in lists. Lambda only has a special meaning when it appears as the first element of a list. When it appears there, the list is referred to as a <em>lambda form</em> or as a <em>function designator</em>. But this form is not a function. This form is a list data structure that can be converted into a function using the <strong>function</strong> special form:</p>
+<p>Lambda is so useful that, like many of lisp’s features, most modern languages are beginning to import the idea from lisp into their own systems. Some language designers feel that lambda is too lengthy, instead using <strong>fn</strong> or some other abbreviation. On the other hand, some regard lambda as a concept so fundamental that obscuring it with a lesser name is next to heresy. In this book, although we will describe and explore many variations on lambda, we happily call it lambda, just as generations of lisp programmers before us.</p>
+<p>But what is lisp’s lambda? First off, as with all names in lisp, lambda is a <em>symbol</em>. We can quote it, compare it, and store it in lists. Lambda only has a special meaning when it appears as the first element of a list. When it appears there, the list is referred to as a <em>lambda form</em> or as a <em>function designator</em>. But this form is not a function. This form is a list data structure that can be converted into a function using the <strong>function</strong> special form:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">function</span> <span class="s1">&#39;(lambda (x) (+ 1 x)))</span>
 
 <span class="c1">#&lt;Interpreted Function&gt;</span>
 </pre></div>
 </div>
-<p>COMMON LISP provides us a convenience shortcut for this with the #' (sharp-quote) read macro. Instead of writing <strong>function</strong> as above, for the same effect we can take advantage of this shortcut:</p>
+<p>COMMON LISP provides us a convenience shortcut for this with the #’ (sharp-quote) read macro. Instead of writing <strong>function</strong> as above, for the same effect we can take advantage of this shortcut:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="c1">#&#39;(lambda (x) (+ 1 x))</span>
 
 <span class="c1">#&lt;Interpreted Function&gt;</span>
@@ -140,14 +141,14 @@
 <span class="c1">#&lt;Interpreted Function&gt;</span>
 </pre></div>
 </div>
-<p>There are few good reasons to prefix your lambda forms with #' thanks to the <strong>lambda</strong> macro. Because this book makes no effort to support pre-ANSI COMMON LISP environments, backwards compatibility reasons are easily rejected. But what about stylistic objections? Paul Graham, in <em>ANSI COMMON LISP</em>[GRAHAM-ANSI-CL], considers this macro, along with its brevity benefits, a &quot;specious sort of elegance at best&quot;. Graham's objection seems to be that since you still need to sharp-quote functions referenced by symbols, the system seems asymmetric. However, I believe that not sharp-quoting lambda forms is actually a stylistic improvement because it highlights the asymmetry that exists in the second namespace specification. Using sharp-quote for symbols is for referring to the second namespace, whereas functions created by lambda forms are, of course, nameless.</p>
+<p>There are few good reasons to prefix your lambda forms with #’ thanks to the <strong>lambda</strong> macro. Because this book makes no effort to support pre-ANSI COMMON LISP environments, backwards compatibility reasons are easily rejected. But what about stylistic objections? Paul Graham, in <em>ANSI COMMON LISP</em>[GRAHAM-ANSI-CL], considers this macro, along with its brevity benefits, a “specious sort of elegance at best”. Graham’s objection seems to be that since you still need to sharp-quote functions referenced by symbols, the system seems asymmetric. However, I believe that not sharp-quoting lambda forms is actually a stylistic improvement because it highlights the asymmetry that exists in the second namespace specification. Using sharp-quote for symbols is for referring to the second namespace, whereas functions created by lambda forms are, of course, nameless.</p>
 <p>Without even invoking the <strong>lambda</strong> macro, we can use lambda forms as the first argument in a function call. Just like when a symbol is found in this position and lisp assumes we are referencing the <strong>symbol-function</strong> cell of the symbol, if a lambda form is found, it is assumed to represent an anonymous function:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">((</span><span class="k">lambda</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">(</span><span class="o">+</span> <span class="mi">1</span> <span class="n">x</span><span class="p">))</span> <span class="mi">2</span><span class="p">)</span>
 
 <span class="mi">3</span>
 </pre></div>
 </div>
-<p>But note that just as you can't call a function to dynamically return the symbol to be used in a regular function call, you can't call a function to return a lambda form in the function position. For both of these tasks, use either <strong>funcall</strong> or <strong>apply</strong>.</p>
+<p>But note that just as you can’t call a function to dynamically return the symbol to be used in a regular function call, you can’t call a function to return a lambda form in the function position. For both of these tasks, use either <strong>funcall</strong> or <strong>apply</strong>.</p>
 <p>A benefit of lambda expressions that is largely foreign to functions in C and other languages is that lisp compilers can often optimise them out of existence completely. For example, although <strong>compiler-test</strong> looks like it applies an increment function to the number 2 and returns the result, a decent compiler will be smart enough to know that this function always returns the value 3 and will simply return that number directly, invoking no functions in the process. This is called <em>lambda folding</em>:</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span><span class="w"> </span><span class="n">compiler</span><span class="o">-</span><span class="n">test</span><span class="w"> </span><span class="p">()</span><span class="w"></span>
 <span class="w">  </span><span class="p">(</span><span class="n">funcall</span><span class="w"></span>
@@ -179,7 +180,7 @@
 <span class="c1">#&lt;Closure Over Function&gt;</span>
 </pre></div>
 </div>
-<p>If you try to call compile on a closure, you will get an error saying you can't compile functions defined in non-null lexical environments[CLTL2-P677]. You can't compile closures, only the functions that create closures. When you compile a function that creates closures, the closures it creates will also be compiled[ON-LISP-P25].
+<p>If you try to call compile on a closure, you will get an error saying you can’t compile functions defined in non-null lexical environments[CLTL2-P677]. You can’t compile closures, only the functions that create closures. When you compile a function that creates closures, the closures it creates will also be compiled[ON-LISP-P25].
 The use of a let enclosing a lambda above is so important that we will spend the remainder of this chapter discussing the pattern and variations on it.</p>
 </section>
 

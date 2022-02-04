@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh" >
+<html class="writer-html5" lang="zh-CN" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
@@ -15,6 +15,7 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/translations.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
@@ -54,7 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 与 Forth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
@@ -97,7 +98,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">sleep</span> <span class="p">(</span><span class="o">*</span> <span class="mi">3</span> <span class="mi">60</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>Because compilers know how to <em>fold constants</em>, these two invocations are just as efficient. To be even more explicit about what we're doing, we might define a function <strong>sleep-minutes</strong>:</p>
+<p>Because compilers know how to <em>fold constants</em>, these two invocations are just as efficient. To be even more explicit about what we’re doing, we might define a function <strong>sleep-minutes</strong>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">sleep</span><span class="o">-</span><span class="n">minutes</span> <span class="p">(</span><span class="n">m</span><span class="p">)</span>
   <span class="p">(</span><span class="n">sleep</span> <span class="p">(</span><span class="o">*</span> <span class="n">m</span> <span class="mi">60</span><span class="p">)))</span>
 </pre></div>
@@ -131,7 +132,7 @@
          <span class="p">((</span><span class="n">us</span><span class="p">)</span> <span class="mi">1</span><span class="o">/</span><span class="mi">1000000</span><span class="p">)))))</span>
 </pre></div>
 </div>
-<p>But in lisp the most obvious way to signal the desired unit is to use a symbol. A symbol in lisp exists mostly to be something not <strong>eq</strong> to other symbols. <strong>Eq</strong> is the fastest lisp comparison operator and roughly corresponds to a pointer comparison. Since pointers can be compared very quickly, symbols provide a very fast and convenient way to let two or more different lisp expressions know you're referring to the same thing. In lisp we might define the <strong>sleep-units%</strong> function so we can specify the units in our forms:</p>
+<p>But in lisp the most obvious way to signal the desired unit is to use a symbol. A symbol in lisp exists mostly to be something not <strong>eq</strong> to other symbols. <strong>Eq</strong> is the fastest lisp comparison operator and roughly corresponds to a pointer comparison. Since pointers can be compared very quickly, symbols provide a very fast and convenient way to let two or more different lisp expressions know you’re referring to the same thing. In lisp we might define the <strong>sleep-units%</strong> function so we can specify the units in our forms:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">sleep</span><span class="o">-</span><span class="n">units</span><span class="o">%</span> <span class="mi">2</span> <span class="s1">&#39;m)</span>
 <span class="p">(</span><span class="n">sleep</span><span class="o">-</span><span class="n">units</span><span class="o">%</span> <span class="mi">500</span> <span class="s1">&#39;us)</span>
 </pre></div>
@@ -149,11 +150,11 @@
 <span class="o">...</span>
 </pre></div>
 </div>
-<p>Notice how the unit given to <strong>sleep-units%</strong> must be quoted. This is because when lisp evaluates a function it first evaluates all arguments and then binds the results to variables for use inside the function. Numbers and strings and some other primitives evaluate to themselves which is why we don't need to quote the numeric values given to <strong>sleep-units%</strong>. But notice that they are evaluated so you are permitted to quote them if you like:</p>
+<p>Notice how the unit given to <strong>sleep-units%</strong> must be quoted. This is because when lisp evaluates a function it first evaluates all arguments and then binds the results to variables for use inside the function. Numbers and strings and some other primitives evaluate to themselves which is why we don’t need to quote the numeric values given to <strong>sleep-units%</strong>. But notice that they are evaluated so you are permitted to quote them if you like:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">sleep</span><span class="o">-</span><span class="n">units</span><span class="o">%</span> <span class="s1">&#39;.5 &#39;</span><span class="n">h</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Symbols, however, don't typically evaluate to themselves<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html#">1</a>. When lisp evaluates a symbol it assumes you are referring to a variable and tries to look up the value associated with that variable given your lexical context (unless the variable is declared special, in which case the dynamic environment).</p>
+<p>Symbols, however, don’t typically evaluate to themselves<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html#">1</a>. When lisp evaluates a symbol it assumes you are referring to a variable and tries to look up the value associated with that variable given your lexical context (unless the variable is declared special, in which case the dynamic environment).</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro sleep-units (value unit)
   `(sleep
      (* ,value
@@ -166,11 +167,11 @@
            ((us) 1/1000000)))))
 </pre></div>
 </div>
-<p>To avoid quoting the unit, we need a macro. Unlike a function, a macro does not evaluate its arguments. Taking advantage of this fact, we replace the <strong>sleep-units%</strong> function with the <strong>sleep-units</strong> macro. Now we don't need to quote the unit:</p>
+<p>To avoid quoting the unit, we need a macro. Unlike a function, a macro does not evaluate its arguments. Taking advantage of this fact, we replace the <strong>sleep-units%</strong> function with the <strong>sleep-units</strong> macro. Now we don’t need to quote the unit:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">sleep</span><span class="o">-</span><span class="n">units</span> <span class="mf">.5</span> <span class="n">h</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Although the main purpose of this macro is to avoid having to quote the <strong>unit</strong> argument, this macro is even more efficient than the function because there is no run-time dispatch at all: the unit and therefore the multiplier are known at compile time. Of course whenever we discover this sort of too-good-to-be-true situation, it probably really is too good to be true. This gain in efficiency isn't free. By foregoing the run-time dispatch we have lost the ability to determine the time unit at run-time. This makes it impossible to execute the following code using our macro:</p>
+<p>Although the main purpose of this macro is to avoid having to quote the <strong>unit</strong> argument, this macro is even more efficient than the function because there is no run-time dispatch at all: the unit and therefore the multiplier are known at compile time. Of course whenever we discover this sort of too-good-to-be-true situation, it probably really is too good to be true. This gain in efficiency isn’t free. By foregoing the run-time dispatch we have lost the ability to determine the time unit at run-time. This makes it impossible to execute the following code using our macro:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">sleep</span><span class="o">-</span><span class="n">units</span> <span class="mi">1</span> <span class="p">(</span><span class="k">if</span> <span class="nb">super</span><span class="o">-</span><span class="n">slow</span><span class="o">-</span><span class="n">mode</span> <span class="s1">&#39;d &#39;</span><span class="n">h</span><span class="p">))</span>
 </pre></div>
 </div>

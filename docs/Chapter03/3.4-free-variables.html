@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh" >
+<html class="writer-html5" lang="zh-CN" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
@@ -15,6 +15,7 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/translations.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
@@ -54,7 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 与 Forth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
@@ -89,7 +90,7 @@
 <p>Author: Doug Hoyte</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
 <hr class="docutils" />
-<p>A <em>free variable</em> is any variable or function referenced in an expression that doesn't have a global special binding or an enclosing lexical binding. In the following expression, <strong>x</strong> is free:</p>
+<p>A <em>free variable</em> is any variable or function referenced in an expression that doesn’t have a global special binding or an enclosing lexical binding. In the following expression, <strong>x</strong> is free:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="o">+</span> <span class="mi">1</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -98,8 +99,8 @@
   <span class="p">(</span><span class="o">+</span> <span class="mi">1</span> <span class="n">x</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>The terminology of freedom and capture may seem strange at first. After all, freedom implies consciousness and an ability to make decisions—something a simple expression is obviously lacking. But freedom doesn't refer to what the expression can do, rather what we, as programmers, can do with the expression. For example, we can take the expression <strong>(+ 1 x)</strong> and embed it anywhere we want, allowing our expression to access a binding named <strong>x</strong> in the surrounding code. We then say that the code has <em>captured</em> our free variable. After the free variables in an expression are captured, as in the above <strong>let</strong> form, other surrounding code has no option of capturing our variable <strong>x</strong>. Our formerly free variable has already been captured. It is now completely unambiguous which <strong>x</strong> it refers to. Because of this, there isn't really any need for lisp to keep the reference to the symbol <strong>x</strong> in the code at all. As was described in detail in <a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#sec_3">section 2.3, Lexical and Dynamic Scope</a>, lisp compilers will forget the symbols that were used to represent lexical variables.</p>
-<p>Although any language with expressions can have expressions with free variables, lisp's macro capabilities mean that free variables are much more useful in lisp than in other languages. In most languages we are forced to obey <em>referential transparency</em>. If there is no global or object variable <strong>x</strong> defined in a Blub program, the following code is unconditionally incorrect:</p>
+<p>The terminology of freedom and capture may seem strange at first. After all, freedom implies consciousness and an ability to make decisions—something a simple expression is obviously lacking. But freedom doesn’t refer to what the expression can do, rather what we, as programmers, can do with the expression. For example, we can take the expression <strong>(+ 1 x)</strong> and embed it anywhere we want, allowing our expression to access a binding named <strong>x</strong> in the surrounding code. We then say that the code has <em>captured</em> our free variable. After the free variables in an expression are captured, as in the above <strong>let</strong> form, other surrounding code has no option of capturing our variable <strong>x</strong>. Our formerly free variable has already been captured. It is now completely unambiguous which <strong>x</strong> it refers to. Because of this, there isn’t really any need for lisp to keep the reference to the symbol <strong>x</strong> in the code at all. As was described in detail in <a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#sec_3">section 2.3, Lexical and Dynamic Scope</a>, lisp compilers will forget the symbols that were used to represent lexical variables.</p>
+<p>Although any language with expressions can have expressions with free variables, lisp’s macro capabilities mean that free variables are much more useful in lisp than in other languages. In most languages we are forced to obey <em>referential transparency</em>. If there is no global or object variable <strong>x</strong> defined in a Blub program, the following code is unconditionally incorrect:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">some_function_or_method</span><span class="p">()</span> <span class="p">{</span>
   <span class="n">anythind</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">);</span>
 <span class="p">}</span>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh" >
+<html class="writer-html5" lang="zh-CN" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
@@ -15,6 +15,7 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/translations.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
@@ -54,7 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 与 Forth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
@@ -90,9 +91,9 @@
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
 <hr class="docutils" />
 <p>Users of object systems store values they want shared between all objects of a certain class into so-called <em>class variables</em> or <em>static variables</em><a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">8</a>. In lisp, this concept of sharing state between closures is handled by environments in the same way that closures themselves store state. Since an environment is accessible indefinitely, as long as it is still possible to reference it, we are guaranteed that it will be available as long as is needed.</p>
-<p>If we want to maintain a global direction for all counters, <strong>up</strong> to increment each closure's counter and <strong>down</strong> to decrement, then we might want to use a let over lambda over let over lambda pattern:
+<p>If we want to maintain a global direction for all counters, <strong>up</strong> to increment each closure’s counter and <strong>down</strong> to decrement, then we might want to use a let over lambda over let over lambda pattern:
 In the above example, we have extended <strong>counter-class</strong> from the previous section. Now calling closures created with <strong>counter-class</strong> will either increment its counter binding or decrement it, depending on the value of the direction binding which is shared between all counters. Notice that we also take advantage of another <strong>lambda</strong> inside the direction environment by creating a function called <strong>toggle-counter-direction</strong> which changes the current direction for all counters.</p>
-<p>While this combination of <strong>let</strong> and <strong>lambda</strong> is so useful that other languages have adopted it in the form of class or static variables, there exist other combinations of <strong>let</strong> and <strong>lambda</strong> that allow you to structure code and state in ways that don't have direct analogs in object systems<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">9</a>. Object systems are a formalisation of a subset of let and lambda combinations, sometimes with gimmicks like <em>inheritance</em> bolted on<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">10</a>. Because of this, lisp programmers often don't think in terms of classes and objects. Let and lambda are fundamental; objects and classes are derivatives. As Steele says, the &quot;object&quot; need not be a primitive notion in programming languages. Once assignable value cells and good old lambda expressions are available, object systems are, at best, occasionally useful abstractions and, at worst, special-case and redundant.</p>
+<p>While this combination of <strong>let</strong> and <strong>lambda</strong> is so useful that other languages have adopted it in the form of class or static variables, there exist other combinations of <strong>let</strong> and <strong>lambda</strong> that allow you to structure code and state in ways that don’t have direct analogs in object systems<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">9</a>. Object systems are a formalisation of a subset of let and lambda combinations, sometimes with gimmicks like <em>inheritance</em> bolted on<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">10</a>. Because of this, lisp programmers often don’t think in terms of classes and objects. Let and lambda are fundamental; objects and classes are derivatives. As Steele says, the “object” need not be a primitive notion in programming languages. Once assignable value cells and good old lambda expressions are available, object systems are, at best, occasionally useful abstractions and, at worst, special-case and redundant.</p>
 </section>
 
 

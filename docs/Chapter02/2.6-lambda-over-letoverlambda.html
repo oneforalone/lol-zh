@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh" >
+<html class="writer-html5" lang="zh-CN" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
@@ -15,6 +15,7 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/translations.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
@@ -54,7 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 与 Forth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
@@ -89,7 +90,7 @@
 <p>Author: Doug Hoyte</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
 <hr class="docutils" />
-<p>In some object systems there is a sharp distinction between objects, collections of procedures with associated state, and classes, the data structures used to create objects. This distinction doesn't exist with closures. We saw examples of forms you can evaluate to create closures, most of them following the pattern let over lambda, but how can our program create these objects as needed?</p>
+<p>In some object systems there is a sharp distinction between objects, collections of procedures with associated state, and classes, the data structures used to create objects. This distinction doesn’t exist with closures. We saw examples of forms you can evaluate to create closures, most of them following the pattern let over lambda, but how can our program create these objects as needed?</p>
 <p>The answer is profoundly simple. If we can evaluate them in the REPL, we can evaluate them inside a function too. What if we create a function whose sole purpose is to evaluate a let over lambda and return the result? Because we use <strong>lambda</strong> to represent functions, it would look something like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="k">lambda</span> <span class="p">()</span>
   <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">counter</span> <span class="mi">0</span><span class="p">))</span>
@@ -105,7 +106,7 @@
 </pre></div>
 </div>
 <p>Where did the first <strong>lambda</strong> go? <strong>Defun</strong> supplies an <em>implicit lambda</em> around the forms in its body. When you write regular functions with <strong>defun</strong> they are still lambda forms underneath but this fact is hidden beneath the surface of the <strong>defun</strong> syntax.</p>
-<p>Unfortunately, most lisp programming books don't provide realistic examples of closure usage, leaving readers with the inaccurate impression that closures are only good for toy examples like counters. Nothing could be further from the truth. Closures are the building blocks of lisp. Environments, the functions defined inside those environments, and macros like <strong>defun</strong> that make using them convenient, are all that are needed for modelling any problem. This book aims to stop beginning lisp programmers used to object-based languages from acting upon their gut instinct of reaching for systems like CLOS. While CLOS does have certain things to offer the professional lisp programmer, do not use it when a lambda will suffice.</p>
+<p>Unfortunately, most lisp programming books don’t provide realistic examples of closure usage, leaving readers with the inaccurate impression that closures are only good for toy examples like counters. Nothing could be further from the truth. Closures are the building blocks of lisp. Environments, the functions defined inside those environments, and macros like <strong>defun</strong> that make using them convenient, are all that are needed for modelling any problem. This book aims to stop beginning lisp programmers used to object-based languages from acting upon their gut instinct of reaching for systems like CLOS. While CLOS does have certain things to offer the professional lisp programmer, do not use it when a lambda will suffice.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">block</span><span class="o">-</span><span class="n">scanner</span> <span class="p">(</span><span class="n">trigger</span><span class="o">-</span><span class="n">string</span><span class="p">)</span>
   <span class="p">(</span><span class="n">let</span><span class="o">*</span> <span class="p">((</span><span class="n">trig</span> <span class="p">(</span><span class="n">coerce</span> <span class="n">trigger</span><span class="o">-</span><span class="n">string</span> <span class="s1">&#39;list))</span>
          <span class="p">(</span><span class="n">curr</span> <span class="n">trig</span><span class="p">))</span>

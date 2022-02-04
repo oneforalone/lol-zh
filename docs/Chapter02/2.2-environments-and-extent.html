@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh" >
+<html class="writer-html5" lang="zh-CN" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
@@ -15,6 +15,7 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/translations.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
@@ -54,7 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 与 Forth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
@@ -107,10 +108,10 @@
 <span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
-<p>The difference between C environments and lisp environments is that unless you explicitly tell lisp otherwise it always assumes you mean to use indefinite extent. In other words, lisp always assumes you mean to call <strong>malloc()</strong> as above. It can be argued that this is inherently less efficient than using temporary extent, but the benefits almost always exceed the marginal performance costs. What's more, lisp can often determine when data can safely be allocated on the stack and will do so automatically. You can even use <em>declarations</em> to tell lisp to do this explicitly. We will discuss declarations in more detail in <a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap7.html">chapter 7, Macro Efficiency Topics</a>.</p>
-<p>But because of lisp's dynamic nature, it doesn't have explicit pointer values or types like C. This can be confusing if you, as a C programmer, are used to casting pointers and values to indicate types. Lisp thinks about all this slightly differently. In lisp, a handy mantra is the following:</p>
+<p>The difference between C environments and lisp environments is that unless you explicitly tell lisp otherwise it always assumes you mean to use indefinite extent. In other words, lisp always assumes you mean to call <strong>malloc()</strong> as above. It can be argued that this is inherently less efficient than using temporary extent, but the benefits almost always exceed the marginal performance costs. What’s more, lisp can often determine when data can safely be allocated on the stack and will do so automatically. You can even use <em>declarations</em> to tell lisp to do this explicitly. We will discuss declarations in more detail in <a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap7.html">chapter 7, Macro Efficiency Topics</a>.</p>
+<p>But because of lisp’s dynamic nature, it doesn’t have explicit pointer values or types like C. This can be confusing if you, as a C programmer, are used to casting pointers and values to indicate types. Lisp thinks about all this slightly differently. In lisp, a handy mantra is the following:</p>
 <blockquote>
-<div><p><em>Variables don't have types. Only values have types.</em></p>
+<div><p><em>Variables don’t have types. Only values have types.</em></p>
 </div></blockquote>
 <p>Still, we have to return something to hold pointers. In lisp there are many data structures that can store pointers. One of the most favoured by lisp programmers is a simple structure: the <em>cons cell</em>. Each cons cell holds exactly two pointers, affectionately called car and cdr. When <strong>environment-with-indefinite-extent</strong> is invoked, a cons cell will be returned with the car pointing to whatever was passed as <strong>input</strong> and the cdr pointing to <strong>nil</strong>. And, most importantly, this cons cell (and with it the pointer to <strong>input</strong>) has indefinite extent so we can continue to refer to it as long as we need to:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">environment</span><span class="o">-</span><span class="k">with</span><span class="o">-</span><span class="n">indefinite</span><span class="o">-</span><span class="n">extent</span> <span class="p">(</span><span class="nb">input</span><span class="p">)</span>

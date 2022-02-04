@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh" >
+<html class="writer-html5" lang="zh-CN" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
@@ -15,6 +15,7 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/translations.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
@@ -54,7 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 与 Forth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
@@ -93,7 +94,7 @@
 <div><p><em>Lisp has assisted a number of our most gifted fellow humans in thinking</em>
 <em>previously impossible thoughts. —Edsger Dijkstra</em></p>
 </div></blockquote>
-<p>The construction of a macro is an iterative process: all complex macros come from simpler macros. After starting with an idea, a rough implementation can be created from which the ultimate macro will emerge, like a sculpture from a block of stone. If the rough implementation isn't flexible enough, or results in inefficient or dangerous expansions, the professional macro programmer will slightly modify the macro, adding features or removing bugs until it satisfies all requirements.</p>
+<p>The construction of a macro is an iterative process: all complex macros come from simpler macros. After starting with an idea, a rough implementation can be created from which the ultimate macro will emerge, like a sculpture from a block of stone. If the rough implementation isn’t flexible enough, or results in inefficient or dangerous expansions, the professional macro programmer will slightly modify the macro, adding features or removing bugs until it satisfies all requirements.</p>
 <p>The necessity of this iterative process for macro construction is partly because this is the most efficient programming style in general and partly because programming macros is more complicated than other types of programming. Because macro programming requires the programmer to think about multiple levels of code executed at multiple points in time, the complexity issues scale more rapidly than other types of programming. An iterative process helps ensure that your conceptual model is more closely aligned to what is actually being created than if the entire macro was written without this constant feedback.</p>
 <p>In this chapter we will write some basic macros by introducing two common macro concepts: <em>domain specific languages</em> and <em>control structures</em>. Once these general macro areas are described, we take a step back and discuss the process of writing macros itself. Techniques like variable capture and free variable injection are introduced, along with the definition of a new, slightly more convenient syntax for defining lisp macros that is used throughout the remainder of this book.</p>
 </section>

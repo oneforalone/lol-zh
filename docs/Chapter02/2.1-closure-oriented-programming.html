@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh" >
+<html class="writer-html5" lang="zh-CN" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
@@ -15,6 +15,7 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/translations.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
@@ -54,7 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 与 Forth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
@@ -90,11 +91,11 @@
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
 <hr class="docutils" />
 <blockquote>
-<div><p><em>One of the conclusions that we reached was that the &quot;object&quot; need not be a primitive notion in a programming language; one can build objects and their behaviour from little more than assignable value cells and good old lambda expressions. —Guy Steele on the design of Scheme</em></p>
+<div><p><em>One of the conclusions that we reached was that the “object” need not be a primitive notion in a programming language; one can build objects and their behaviour from little more than assignable value cells and good old lambda expressions. —Guy Steele on the design of Scheme</em></p>
 </div></blockquote>
-<p>Sometimes it's called a <em>closure</em>, other times a saved lexical environment. Or, as some of us like to say, <em>let over lambda</em>. Whatever terminology you use, mastering this concept of a closure is the first step to becoming a professional lisp programmer. In fact, this skill is vital for the proper use of many modern programming languages, even ones that don't explicitly contain let or lambda, such as Perl or Javascript.</p>
+<p>Sometimes it’s called a <em>closure</em>, other times a saved lexical environment. Or, as some of us like to say, <em>let over lambda</em>. Whatever terminology you use, mastering this concept of a closure is the first step to becoming a professional lisp programmer. In fact, this skill is vital for the proper use of many modern programming languages, even ones that don’t explicitly contain let or lambda, such as Perl or Javascript.</p>
 <p>Closures are one of those few curious concepts that are paradoxically difficult because they are so simple. Once a programmer becomes used to a complex solution to a problem, simple solutions to the same problem feel incomplete and uncomfortable. But, as we will soon see, closures can be a simpler, more direct solution to the problem of how to organise data and code than objects. Even more important than their simplicity, closures represent a better abstraction to use when constructing macros—the topic of this book.</p>
-<p>The fact that we can build objects and classes with our closure primitives doesn't mean that object systems are useless to lisp programmers. Far from it. In fact, COMMON LISP includes one of the most powerful object systems ever devised: <em>CLOS</em>, the COMMON LISP Object System. Although I am very impressed with the flexibility and features of CLOS, I seldom find a need to use its more advanced features<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">1</a>, thanks to assignable value cells and good old lambda expressions.</p>
+<p>The fact that we can build objects and classes with our closure primitives doesn’t mean that object systems are useless to lisp programmers. Far from it. In fact, COMMON LISP includes one of the most powerful object systems ever devised: <em>CLOS</em>, the COMMON LISP Object System. Although I am very impressed with the flexibility and features of CLOS, I seldom find a need to use its more advanced features<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">1</a>, thanks to assignable value cells and good old lambda expressions.</p>
 <p>While much of this book assumes a reasonable level of lisp skill, this chapter attempts to teach the theory and use of closures from the very basics as well as to provide a common terminology for closures that will be used throughout the rest of this book. This chapter also examines the efficiency implications of closures and considers how well modern compilers optimise them.</p>
 </section>
 

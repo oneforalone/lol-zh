@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh" >
+<html class="writer-html5" lang="zh-CN" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
@@ -15,6 +15,7 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/translations.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
@@ -53,7 +54,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 与 Forth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
@@ -89,9 +90,9 @@
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
 <hr class="docutils" />
 <p><em>Backquote</em>, sometimes known as <em>quasiquote</em><a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">2</a>, and displayed as `, is a relative new-comer to mainstream lisp programming, and the concept is still almost completely foreign to languages other than lisp.</p>
-<p>Backquote has a bizarre history of development in parallel with lisp. It is reported[QUASIQUOTATION] that early on nobody believed that nested backquotes worked right until a sharp programmer realised that they actually did work right—people's ideas of what was right were wrong. The nested backquote is notoriously difficult to understand. Even Steele, the father of COMMON LISP, complains about it[CLTL2-P530].</p>
-<p>In principle, lisp doesn't need backquote. Anything that can be done with backquote can be done with other list building functions. However, backquote is so useful for macro programming, which in lisp means all programming, that lisp professionals have come to rely on it heavily.</p>
-<p>First off, we need to understand regular quotation. In lisp, when we prefix a form with the quote character (') we are informing lisp that the following form should be treated as raw data, and not code to be evaluated. Rather, quote reads in as code that, when evaluated, returns a form. We sometimes say that quote <em>stops</em> or <em>turns off</em> the evaluation of a form.</p>
+<p>Backquote has a bizarre history of development in parallel with lisp. It is reported[QUASIQUOTATION] that early on nobody believed that nested backquotes worked right until a sharp programmer realised that they actually did work right—people’s ideas of what was right were wrong. The nested backquote is notoriously difficult to understand. Even Steele, the father of COMMON LISP, complains about it[CLTL2-P530].</p>
+<p>In principle, lisp doesn’t need backquote. Anything that can be done with backquote can be done with other list building functions. However, backquote is so useful for macro programming, which in lisp means all programming, that lisp professionals have come to rely on it heavily.</p>
+<p>First off, we need to understand regular quotation. In lisp, when we prefix a form with the quote character (’) we are informing lisp that the following form should be treated as raw data, and not code to be evaluated. Rather, quote reads in as code that, when evaluated, returns a form. We sometimes say that quote <em>stops</em> or <em>turns off</em> the evaluation of a form.</p>
 <p>Backquote can be used as a substitute for quote in lisp. Unless certain special characters, called <em>unquote</em> characters, appear in a form, backquote stops evaluation in the same way as quote. As the name suggests, these unquote characters reverse the evaluation semantics. We sometimes say that an unquote <em>restarts</em> or <em>turns back on</em> the evaluation of a form.</p>
 <p>There are three main types of unquote: regular unquote, splicing unquote, and destructive splicing unquote.</p>
 <p>To perform a regular unquote, we use the comma operator:</p>
@@ -117,7 +118,7 @@
 (A B C D E)
 </pre></div>
 </div>
-<p>Neither ., nor ,&#64; modify the list being spliced in. For instance, after evaluating the backquote in both of the previous forms, <strong>s</strong> will still be bound to the three element list <strong>(B C D)</strong>. Although it is not strictly required to by the standard, the <strong>(B C D)</strong> in the <strong>(A B C D)</strong> form above is allowed to share structure with the spliced-in list, <strong>s</strong>. However, in the list <strong>(A B C D E)</strong>, this list structure is guaranteed to be freshly allocated when the backquote is evaluated since ,&#64; is forbidden to modify the lists being spliced in. Splicing unquote is non-destructive because generally we want to think about backquote as being a re-usable template for creating lists. Destructively modifying the list structure of data that isn't freshly allocated on every evaluation of the backquote code can have undesirable effects upon future expansions.</p>
+<p>Neither ., nor ,&#64; modify the list being spliced in. For instance, after evaluating the backquote in both of the previous forms, <strong>s</strong> will still be bound to the three element list <strong>(B C D)</strong>. Although it is not strictly required to by the standard, the <strong>(B C D)</strong> in the <strong>(A B C D)</strong> form above is allowed to share structure with the spliced-in list, <strong>s</strong>. However, in the list <strong>(A B C D E)</strong>, this list structure is guaranteed to be freshly allocated when the backquote is evaluated since ,&#64; is forbidden to modify the lists being spliced in. Splicing unquote is non-destructive because generally we want to think about backquote as being a re-usable template for creating lists. Destructively modifying the list structure of data that isn’t freshly allocated on every evaluation of the backquote code can have undesirable effects upon future expansions.</p>
 <p>However, COMMON LISP also provides a destructive version of splicing unquote which can be used anywhere splicing unquote can. To splice destructively, use ,. instead. Destructive splicing works the same as regular splicing except that the list being spliced in may be modified during the evaluation of the backquote template. As well as being only one character different from regular splicing, this notation is a clever re-use of the . character from the ., cdr position unquoting we looked at above.
 To see this in action, here we destructively modify the list pointed to by to-splice:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* (defvar to-splice &#39;(B C D))
@@ -136,15 +137,15 @@ TO-SPLICE
   `(a ,.&#39;(b c d) e))
 </pre></div>
 </div>
-<p>The first time <strong>dangerous-use-of-bq</strong> is called, the expected answer is returned: <strong>(A B C D E)</strong>. But since it uses destructive splicing and modifies a list that isn't freshly generated—the quoted list—we can expect various undesirable consequences. In this case, the second time <strong>dangerous-use-of-bq</strong> is evaluated, the <strong>(B C D)</strong> form is now really a <strong>(B C D E)</strong> form, and when backquote tries to destructively splice this list onto the remainder of the backquote template, <strong>(E)</strong>—its own tail—it creates a list containing a <em>cycle</em>. We discuss cycles in more detail in <a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#sec_5">section 4.5, Cyclic Expressions</a>.</p>
-<p>However, there are many cases where destructive splicing is perfectly safe. Don't let <strong>dangerous-use-of-bq</strong> scare you if you need more efficiency in your backquote forms. There are many operations that create fresh list structure that you are probably planning on throwing out anyways. For instance, splicing the results of a mapcar is so common and safe that the following could probably become a programming idiom:</p>
+<p>The first time <strong>dangerous-use-of-bq</strong> is called, the expected answer is returned: <strong>(A B C D E)</strong>. But since it uses destructive splicing and modifies a list that isn’t freshly generated—the quoted list—we can expect various undesirable consequences. In this case, the second time <strong>dangerous-use-of-bq</strong> is evaluated, the <strong>(B C D)</strong> form is now really a <strong>(B C D E)</strong> form, and when backquote tries to destructively splice this list onto the remainder of the backquote template, <strong>(E)</strong>—its own tail—it creates a list containing a <em>cycle</em>. We discuss cycles in more detail in <a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#sec_5">section 4.5, Cyclic Expressions</a>.</p>
+<p>However, there are many cases where destructive splicing is perfectly safe. Don’t let <strong>dangerous-use-of-bq</strong> scare you if you need more efficiency in your backquote forms. There are many operations that create fresh list structure that you are probably planning on throwing out anyways. For instance, splicing the results of a mapcar is so common and safe that the following could probably become a programming idiom:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defun safer-use-of-bq ()
   `(a
     ,.(mapcar #&#39;identity &#39;(b c d))
     e))
 </pre></div>
 </div>
-<p>But there is a reason it hasn't. The most common use of backquote is for authoring macros, the part of lisp programming where speed matters least and where clarity matters most. If thinking about the <em>side-effects</em> of your splicing operations distracts you even for a split second while creating and interpreting macros, it is probably not worth the trouble. This book sticks with regular splicing. The most common use of backquote is in macro construction but this is not its only use. Backquote is actually a useful domain specific language for the domain of mashing together lists, one made even more useful given the possibility of destructive splicing.</p>
+<p>But there is a reason it hasn’t. The most common use of backquote is for authoring macros, the part of lisp programming where speed matters least and where clarity matters most. If thinking about the <em>side-effects</em> of your splicing operations distracts you even for a split second while creating and interpreting macros, it is probably not worth the trouble. This book sticks with regular splicing. The most common use of backquote is in macro construction but this is not its only use. Backquote is actually a useful domain specific language for the domain of mashing together lists, one made even more useful given the possibility of destructive splicing.</p>
 <p>How does backquote work? Backquote is a read macro. Backquoted forms read in as code that, when evaluated, becomes the desired list. Going back to the example of the previous section on read-time evaluation, we can turn off <em>pretty printing</em>, quote the value of the backquote form, and print it out to see exactly how backquote forms read<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">4</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">let</span> <span class="p">(</span><span class="o">*</span><span class="nb">print</span><span class="o">-</span><span class="n">pretty</span><span class="o">*</span><span class="p">)</span> <span class="p">;</span> <span class="n">bind</span> <span class="n">to</span> <span class="n">nil</span>
     <span class="p">(</span><span class="nb">print</span>
@@ -187,7 +188,7 @@ TO-SPLICE
 <span class="n">T</span>
 </pre></div>
 </div>
-<p>Exercise: In the following evaluation, why is the backquote expanded into a regular quote? Isn't it quoted?</p>
+<p>Exercise: In the following evaluation, why is the backquote expanded into a regular quote? Isn’t it quoted?</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="s1">&#39;`q</span>
 <span class="s1">&#39;Q</span>
 </pre></div>

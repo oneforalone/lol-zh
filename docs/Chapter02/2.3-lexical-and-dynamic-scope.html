@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh" >
+<html class="writer-html5" lang="zh-CN" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
@@ -15,6 +15,7 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/translations.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
@@ -54,7 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 与 Forth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
@@ -122,7 +123,7 @@ In addition to lexical scope, COMMON LISP provides <em>dynamic scope</em>. This 
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">setq</span> <span class="n">temp</span><span class="o">-</span><span class="n">special</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>So far, this special variable doesn't seem that special. It seems to be just another variable, bound in some sort of global namespace. This is because we have only bound it once—its default special global binding. Special variables are most interesting when they are re-bound, or <em>shadowed</em>, by new environments. If we define a function that simply evaluates and returns <strong>temp-special</strong>:</p>
+<p>So far, this special variable doesn’t seem that special. It seems to be just another variable, bound in some sort of global namespace. This is because we have only bound it once—its default special global binding. Special variables are most interesting when they are re-bound, or <em>shadowed</em>, by new environments. If we define a function that simply evaluates and returns <strong>temp-special</strong>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">temp</span><span class="o">-</span><span class="n">special</span><span class="o">-</span><span class="n">returner</span> <span class="p">()</span>
   <span class="n">temp</span><span class="o">-</span><span class="n">special</span><span class="p">)</span>
 </pre></div>
@@ -132,7 +133,7 @@ In addition to lexical scope, COMMON LISP provides <em>dynamic scope</em>. This 
 <span class="mi">1</span>
 </pre></div>
 </div>
-<p>This is sometimes referred to as evaluating the form in a <em>null lexical environment</em>. The null lexical environment obviously doesn't contain any lexical bindings. Here the value of <strong>temp-special</strong> returned is that of its global special value, 1. But if we evaluate it in a non-null lexical environment—one that contains a binding for our special variable—the specialness of <strong>temp-special</strong> reveals itself<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">3</a>:</p>
+<p>This is sometimes referred to as evaluating the form in a <em>null lexical environment</em>. The null lexical environment obviously doesn’t contain any lexical bindings. Here the value of <strong>temp-special</strong> returned is that of its global special value, 1. But if we evaluate it in a non-null lexical environment—one that contains a binding for our special variable—the specialness of <strong>temp-special</strong> reveals itself<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">3</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">temp</span><span class="o">-</span><span class="n">special</span> <span class="mi">2</span><span class="p">))</span>
     <span class="p">(</span><span class="n">temp</span><span class="o">-</span><span class="n">special</span><span class="o">-</span><span class="n">returner</span><span class="p">))</span>
 
@@ -152,7 +153,7 @@ In addition to lexical scope, COMMON LISP provides <em>dynamic scope</em>. This 
 <span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
-<p>While the memory locations or register assignments for lexical bindings are known at compile-time<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">4</a>, special variable bindings are determined at run-time—in a sense. Thanks to a clever trick, special variables aren't as inefficient as they seem. A special variable actually always does refer to the same location in memory. When you use <strong>let</strong> to bind a special variable, you are actually compiling in code that will store a copy of the variable, over-write the memory location with a new value, evaluate the forms in the let body, and, finally, restore the original value from the copy.</p>
+<p>While the memory locations or register assignments for lexical bindings are known at compile-time<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">4</a>, special variable bindings are determined at run-time—in a sense. Thanks to a clever trick, special variables aren’t as inefficient as they seem. A special variable actually always does refer to the same location in memory. When you use <strong>let</strong> to bind a special variable, you are actually compiling in code that will store a copy of the variable, over-write the memory location with a new value, evaluate the forms in the let body, and, finally, restore the original value from the copy.</p>
 <p>Special variables are perpetually associated with the symbol used to name them. The location in memory referred to by a special variable is called the <strong>symbol-value</strong> cell of a symbol. This is in direct contrast to lexical variables. Lexical variables are only indicated with symbols at compile-time. Because lexical variables can only be accessed from inside the lexical scope of their bindings, the compiler has no reason to even remember the symbols that were used to reference lexical variables so it will remove them from compiled code. We will stretch the truth of this statement in <a class="reference internal" href="../Chapter06/6.7-pandoric-macros.html"><span class="doc std std-doc">section 6.7, Pandoric Macros</span></a>.</p>
 <p>Although COMMON LISP does offer the invaluable feature of dynamic scope, lexical variables are the most common. Dynamic scoping used to be a defining feature of lisp but has, since COMMON LISP, been almost completely replaced by lexical scope. Since lexical scoping enables things like lexical closures (which we examine shortly), as well as more effective compiler optimisations, the superseding of dynamic scope is mostly seen as a good thing. However, the designers of COMMON LISP have left us a very transparent window into the world of dynamic scoping, now acknowledged for what it really is: special.</p>
 </section>
