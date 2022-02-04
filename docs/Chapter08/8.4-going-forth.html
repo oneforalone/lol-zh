@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8.4 开始构建 forth &mdash; Let Over Lambda 中文文档  文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="8.5 forth 的拓展" href="8.5-going-forther.html" />
+    <link rel="prev" title="8.3 语法二元性" href="8.3-duality-of-syntax-defined.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter04/index.html">第四章：Read 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第八章：Lisp 的变迁</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="8.1-weird-by-design.html">8.1 奇怪的设计</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8.2-cons-threaded-code.html">8.2 cons 线程代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8.3-duality-of-syntax-defined.html">8.3 语法二元性</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8.4 开始构建 forth</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8.5-going-forther.html">8.5 forth 的拓展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8.6-going-lisp.html">8.6 在 forth 中写 lisp 代码</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">第八章：Lisp 的变迁</a> &raquo;</li>
+      <li>8.4 开始构建 forth</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Chapter08/8.4-going-forth.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="forth">
+<h1>8.4 开始构建 forth<a class="headerlink" href="#forth" title="永久链接至标题"></a></h1>
+<hr class="docutils" />
+<p>Author: Doug Hoyte</p>
+<p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
+<hr class="docutils" />
+<p>在本节中，我们将通过填补上一节中 <code class="docutils literal notranslate"><span class="pre">new-forth</span></code>宏中留下的漏洞来真正开始工作。 在验证了 forth 线程机制有效之后，我们引导了一个 forth 编程环境，并在此过程中解释了forth 即时性是什么以及它与 lisp 宏的关系。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>;; Prim-form: (name immediate . forms)
+(defmacro forth-install-prims ()
+	`(progn
+  		,@(mapcar
+				#`(let ((thread (lambda ()
+													,@(cddr a1))))
+						(setf dict
+									(make-forth-word
+										:name &#39;,(car a1)
+                    :prev dict
+										:immediate ,(cadr a1)
+                    :thread thread))
+						(setf (gethash thread dtable)
+            			&#39;,(cddr a1)))
+				forth-prim-forms)))
+</pre></div>
+</div>
+<p>在 <code class="docutils literal notranslate"><span class="pre">new-forth</span></code> 的定义中，我们在宏中留下了个漏洞，将由 <code class="docutils literal notranslate"><span class="pre">forth-install-prim</span></code> 来填补。 我们想使用命名抽象而不丢掉词法环境，所以它必须是一个宏。 该宏的目的是在创建新的forth实例时编译原语并将其安装到 forth 字典中。 <code class="docutils literal notranslate"><span class="pre">forth-install-prims</span></code> 展开为 <code class="docutils literal notranslate"><span class="pre">progn</span></code> 格式，每个子结构都是将原始单词附加到 dict 链表上的指令，将提供的代码包装在 lambda 中，并设置单词的名称和立即槽。 此外，由 lambda 为每个单词创建的函数，称为 thread，被添加到我们的 dtable 哈希表中（很快就会解释）。 因为所有这些函数都将在最初的 <code class="docutils literal notranslate"><span class="pre">new-forth</span></code> 宏的范围内创建，所以它们可以完全访问由我们的抽象寄存器指定的 forth 环境。 请注意，线程绑定不会从任何用户提供的代码中捕获线程，因此不需要使用 <code class="docutils literal notranslate"><span class="pre">gensym</span></code> 来命名它。</p>
+<p>我们已经说过，forth 提供了一个与 lisp 不完全不同的元编程系统，并且该系统基于一个称为即时性的概念。 在传统的 forth 中，有一个称为状态的变量，它要么为零，要么非零。 如果它为零，则认为 forth 处于常规解释（执行）状态。 如果在这种状态下给定一个单词，该单词将被查找并执行。 但是，如果基变量不为零，则称 forth 变量处于编译状态。 如果在这种状态下呈现一个单词，呈现单词的地址将附加到正在编译的当前线程——通常是字典中最近创建的单词。 然而，有一个例外，这是关于即时性的重要一点。 如果处于编译状态并得到一个立即字，则该字将被执行而不是编译。 因此，与 lisp 一样，forth 允许在编译时执行任意的 forth 代码。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">def</span><span class="o">-</span><span class="n">forth</span><span class="o">-</span><span class="n">prim</span> <span class="p">[</span> <span class="n">t</span> <span class="p">;</span> <span class="o">&lt;-</span> <span class="n">t</span> <span class="n">means</span> <span class="n">immediate</span>
+	<span class="p">(</span><span class="n">setf</span> <span class="n">compiling</span> <span class="n">nil</span><span class="p">))</span>
+<span class="p">(</span><span class="n">def</span><span class="o">-</span><span class="n">forth</span><span class="o">-</span><span class="n">prim</span> <span class="p">]</span> <span class="n">nil</span> <span class="p">;</span> <span class="o">&lt;-</span> <span class="ow">not</span> <span class="n">immediate</span>
+	<span class="p">(</span><span class="n">setf</span> <span class="n">compiling</span> <span class="n">t</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>因为我们在 lisp 上构建了 forth 抽象机，所以我们忍受 fixnum 值到真假（布尔值）的任意映射。在 lisp 中，有一个动态类型系统，可以享受所有值到真假的任意映射。代替 forth 变量状态，我们的forth系统使用编译抽象寄存器将编译状态存储为 lisp 通用布尔值。用于控制编译状态的传统forth词是 <code class="docutils literal notranslate"><span class="pre">[</span></code> 和 <code class="docutils literal notranslate"><span class="pre">]</span></code>，即开闭方括号。 <code class="docutils literal notranslate"><span class="pre">[</span></code> 为退出编译模式，因此必须是一个立即字。 <code class="docutils literal notranslate"><span class="pre">]</span></code> 回到编译模式，因此仅在处于解释模式时才执行，并且不必立即执行。这种符号的选择现在可能看起来很奇怪，但在高级 forth 代码中会变得更加清晰。这些方括号可以指定要在编译 forth 线程的过程中执行的代码块。在某种意义上，这些括号就像 lisp 的反引号和反引号操作符。以下是这些词通常在 forth 代码中的使用方式：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">...</span> <span class="n">compiled</span> <span class="n">words</span> <span class="o">...</span>
+<span class="p">[</span> <span class="n">interpret</span> <span class="n">these</span> <span class="n">words</span> <span class="p">]</span>
+<span class="o">...</span> <span class="n">more</span> <span class="n">compiled</span> <span class="n">words</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>与大部分的 forth 一样，这些词是透明地指定的，这允许我们以特别的方式使用它们。 例如，这些词的平衡与 lisp 括号不同。 如果我们想要的话，可以在相反的方向使用它们：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">...</span> <span class="n">interpret</span> <span class="n">these</span> <span class="n">words</span> <span class="o">...</span>
+<span class="p">]</span> <span class="nb">compile</span> <span class="n">these</span> <span class="n">words</span> <span class="p">[</span>
+<span class="o">...</span> <span class="n">more</span> <span class="n">interpreted</span> <span class="n">words</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>我们甚至有嵌套的界面了，但这并不是真正的嵌套，因为只有一个布尔状态：正在编译或未编译。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">...</span> <span class="n">compiled</span> <span class="n">words</span> <span class="o">...</span>
+<span class="p">[</span> <span class="n">interpret</span> <span class="n">these</span> <span class="n">words</span>
+  <span class="p">]</span> <span class="nb">compile</span> <span class="n">these</span> <span class="n">words</span> <span class="p">[</span>
+  <span class="n">interpret</span> <span class="n">these</span> <span class="n">words</span>
+<span class="p">]</span>
+<span class="o">...</span> <span class="n">more</span> <span class="n">compiled</span> <span class="n">words</span> <span class="o">...</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro forth-compile-in (v)
+	`(setf (forth-word-thread dict)
+				 (nconc (forth-word-thread dict)
+          			 (list ,v))))
+</pre></div>
+</div>
+<p>我们的 forth 使用 <code class="docutils literal notranslate"><span class="pre">forth-compile-in</span></code>宏作为缩写宏。 这个宏将 forth 单词编译到当前的线程中，即创建的最后一个单词的线程。 因为我们的线程由 cons 单元表示，所以可以使用 lisp 函数 <code class="docutils literal notranslate"><span class="pre">nconc</span></code> 简单地将指向目标单词线程的指针追加到当前的线程上。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro forth-handle-found ()
+	`(if (and compiling
+						(not (forth-word-immediate word)))
+     (forth-compile-in (forth-word-thread word))
+     (progn
+     		(setf pc (list (forth-word-thread word)))
+        (forth-inner-interpreter))))
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">new-forth</span></code> 宏中留下的另一个漏洞是，如果它能够在字典中查找提供的单词，它应该做什么。 这个漏洞由 <code class="docutils literal notranslate"><span class="pre">forth-handle-found</span></code>修复。 该宏实现了上述的即时性。 如果正在编译并且查找的单词不是立即的，我们将它编译到当前的线程中。 否则，将程序计数器 pc 设置为指向查找单词的线程并运行内部解释器来执行该单词。 回想一下，这个宏将被展开成一个词法环境，其中词绑定到查找的 forth 词上。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro forth-handle-not-found ()
+	`(cond
+			((and (consp v) (eq (car v) &#39;quote))
+   				(if compiling
+						(forth-compile-in (cadr v))
+            (push (cadr v) pstack)))
+	((and (consp v) (eq (car v) &#39;postpone))
+		 (let ((word (forth-lookup (cadr v) dict)))
+			 (if (not word)
+				 (error &quot;Postpone failed: ~a&quot; (cadr v)))
+			 (forth-compile-in (forth-word-thread word))))
+  ((symbolp v)
+	  (error &quot;Word ~a not found&quot; v))
+	(t
+		(if compiling
+			(forth-compile-in v)
+      (push v pstack)))))
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">new-forth</span></code> 中的最后一个漏洞是如果在其字典中没有找到单词时，它应该做什么。 <code class="docutils literal notranslate"><span class="pre">forth-handle-not-found</span></code> 修复了这个漏洞并实现了一些特殊情况。回想一下，<code class="docutils literal notranslate"><span class="pre">forth-handle-not-found</span></code> 将展开为包含绑定 <code class="docutils literal notranslate"><span class="pre">v</span></code> 的词法环境，该绑定 <code class="docutils literal notranslate"><span class="pre">v</span> </code>引用传递给 forth 的值。我们还知道，如果调用此代码，<code class="docutils literal notranslate"><span class="pre">v</span></code> 将不会引用字典中的任何单词。如果 <code class="docutils literal notranslate"><span class="pre">v</span></code> 是一个符号，则 <code class="docutils literal notranslate"><span class="pre">forth-handle-not-found</span></code> 将抛出异常。如果该值不是符号，则操作是将 <code class="docutils literal notranslate"><span class="pre">v</span></code> 压入参数堆栈，或者，如果正在编译，则将其编译到当前线程中。但是，检查了两种特殊情况。如果 <code class="docutils literal notranslate"><span class="pre">v</span></code> 是带有第一个元素引号的列表，我们将引用的值压入参数堆栈。这样我们就可以将符号推送到参数堆栈上，而不会将它们解释为单词。第二种特殊情况是如果 <code class="docutils literal notranslate"><span class="pre">v</span></code> 是第一个元素 postpone 的列表。postpone 是个 ANSI Forth 词，它结合并澄清了几个传统的 forth 词。postpone 用于始终编译一个单词，即使该单词是立即的。因此，如果我们处于编译模式，一个 postpone 的立即字将被编译到当前的线程中，即使它是立即的。下面是一个postpone  <code class="docutils literal notranslate"><span class="pre">[</span></code> 字的例子：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">...</span> <span class="n">compiling</span> <span class="o">...</span>
+<span class="p">(</span><span class="n">postpone</span> <span class="p">[)</span>
+<span class="o">...</span> <span class="n">still</span> <span class="n">compiling</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>在 <code class="docutils literal notranslate"><span class="pre">new-forth</span></code> 宏中填补了所有漏洞之后，现在可以使用 <code class="docutils literal notranslate"><span class="pre">new-forth</span></code> 宏创建新的 forth 实例。 之前我们用 <code class="docutils literal notranslate"><span class="pre">defvar</span></code> 创建了一个名为<code class="docutils literal notranslate"><span class="pre">my-forth</span></code>的特殊变量。 即使我们没有，我们也可以隐含地声明它是特殊的，同时使用 top-level 的  <code class="docutils literal notranslate"><span class="pre">setq</span></code> 为它分配一个值：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">setq</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span> <span class="p">(</span><span class="n">new</span><span class="o">-</span><span class="n">forth</span><span class="p">))</span>
+<span class="c1">#&lt;Interpreted Function&gt;</span>
+</pre></div>
+</div>
+<p>现在可以用 <code class="docutils literal notranslate"><span class="pre">go-forth</span></code>宏来调用 forth 了：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+    <span class="mi">2</span> <span class="mi">3</span> <span class="o">*</span> <span class="nb">print</span><span class="p">)</span>
+ <span class="mi">6</span>
+ <span class="n">NIL</span>
+</pre></div>
+</div>
+<p>但到目前为止，我们只定义了单词<code class="docutils literal notranslate"><span class="pre">dup</span></code>、<code class="docutils literal notranslate"><span class="pre">*</span></code>和<code class="docutils literal notranslate"><span class="pre">print</span></code>。 为了做些有用的事情，我们需要更多的原语。 与 lisp 一样，生产质量的 forth 实现具有为方便程序员而定义的大量单词。 经过几十年的使用，许多常见的编程模式已经被识别出来，抽象成单词，然后被引入到常见的方言中。 像 lisp 一样，能够扩展定义为语言一部分的语言已经导致了许多有价值的实验。 因为我们正在研究的正是这种理念和过程，所以我们不会定义很多经验丰富的 Forth 程序员所依赖的词语。 相反，我们的目标是解释 forth 的元编程系统所需的最小原语集，以便可以将其与 lisp 宏进行比较。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">def</span><span class="o">-</span><span class="n">forth</span><span class="o">-</span><span class="n">prim</span> <span class="n">create</span> <span class="n">nil</span>
+	<span class="p">(</span><span class="n">setf</span> <span class="nb">dict</span> <span class="p">(</span><span class="n">make</span><span class="o">-</span><span class="n">forth</span><span class="o">-</span><span class="n">word</span> <span class="p">:</span><span class="n">prev</span> <span class="nb">dict</span><span class="p">)))</span>
+<span class="p">(</span><span class="n">def</span><span class="o">-</span><span class="n">forth</span><span class="o">-</span><span class="n">prim</span> <span class="n">name</span> <span class="n">nil</span>
+	<span class="p">(</span><span class="n">setf</span> <span class="p">(</span><span class="n">forth</span><span class="o">-</span><span class="n">word</span><span class="o">-</span><span class="n">name</span> <span class="nb">dict</span><span class="p">)</span> <span class="p">(</span><span class="n">pop</span> <span class="n">pstack</span><span class="p">)))</span>
+<span class="p">(</span><span class="n">def</span><span class="o">-</span><span class="n">forth</span><span class="o">-</span><span class="n">prim</span> <span class="n">immediate</span> <span class="n">nil</span>
+	<span class="p">(</span><span class="n">setf</span> <span class="p">(</span><span class="n">forth</span><span class="o">-</span><span class="n">word</span><span class="o">-</span><span class="n">immediate</span> <span class="nb">dict</span><span class="p">)</span> <span class="n">t</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>这里定义了另外三个原语，它们都不是直接的或裸露的：<code class="docutils literal notranslate"><span class="pre">create</span></code>、<code class="docutils literal notranslate"><span class="pre">name</span></code>和 <code class="docutils literal notranslate"><span class="pre">immediate</span></code>。 <code class="docutils literal notranslate"><span class="pre">create</span></code>原语将一个无名词附加到字典中。<code class="docutils literal notranslate"><span class="pre">name</span></code>从参数堆栈中弹出一个值，并将字典中最后一个单词的名称设置为该值。 <code class="docutils literal notranslate"><span class="pre">immediate</span></code>简单地将定义的最后一个单词设置为立即单词。 默认情况下，单词不是立即的。</p>
+<p>回想一下，我们可以在 <code class="docutils literal notranslate"><span class="pre">my-forth</span></code>环境中使用<code class="docutils literal notranslate"><span class="pre">go-forth</span></code>宏执行代码。 下面，我们将数字 3 平方并打印结果：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+		<span class="mi">3</span> <span class="n">dup</span> <span class="o">*</span> <span class="nb">print</span><span class="p">)</span>
+<span class="mi">9</span>
+</pre></div>
+</div>
+<p>是否已经有足够的 forth 来开始用 forth 词本身来引导？ 虽然还没有真正定义单词，但由于线程代码的透明规范，可以开始使用 forth 编写 forth 单词。 例如，下面我们将使用 <code class="docutils literal notranslate"><span class="pre">create</span></code> 将一个新的空词追加到字典中：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+    <span class="n">create</span><span class="p">)</span>
+<span class="n">NIL</span>
+</pre></div>
+</div>
+<p>现在使用 <code class="docutils literal notranslate"><span class="pre">]</span></code> 开始编译，在线程中添加单词 <code class="docutils literal notranslate"><span class="pre">dup</span></code>和 <code class="docutils literal notranslate"><span class="pre">*</span></code>，然后使用<code class="docutils literal notranslate"><span class="pre">[</span></code>退出编译模式：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+    <span class="p">]</span> <span class="n">dup</span> <span class="o">*</span> <span class="p">[)</span>
+<span class="n">NIL</span>
+</pre></div>
+</div>
+<p>现在我们的字典中有一个新词——一个具有完整的 forth 线程的词，当我们的内部解释器执行该线程时，它将对堆栈顶部的数字进行平方。 但是这个词不是很有用，除非有办法访问它。 可以给这个词一个名字。 给定的名字将是用来访问新线程的值：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+    <span class="s1">&#39;square name)</span>
+<span class="n">NIL</span>
+</pre></div>
+</div>
+<p>注意传给 forth 的第一个值是如何被引用的。 回想一下，我们决定这种行为应该导致将符号 <code class="docutils literal notranslate"><span class="pre">square</span></code> 推入参数堆栈。 然后这个符号被单词名称所消耗。 现在我们的单词被命名了，可以像使用任何其他单词一样使用符号 <code class="docutils literal notranslate"><span class="pre">square</span></code> 来计算它：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+    <span class="mi">3</span> <span class="n">square</span> <span class="nb">print</span><span class="p">)</span>
+<span class="mi">9</span> <span class="n">NIL</span>
+</pre></div>
+</div>
+<p>所以创建新词的通用技术是以下格式：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">create</span>
+<span class="p">]</span> <span class="o">...</span> <span class="n">compiled</span> <span class="n">words</span> <span class="o">...</span> <span class="p">[</span>
+<span class="s1">&#39;whatever name</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">forth</span><span class="o">-</span><span class="n">stdlib</span><span class="o">-</span><span class="n">add</span>
+	<span class="n">create</span>
+		<span class="p">]</span> <span class="n">create</span> <span class="p">]</span> <span class="p">[</span>
+  <span class="s1">&#39;{ name)</span>
+</pre></div>
+</div>
+<p>但是我们可以使用一些 forth 元编程来改进这个接口。 新的 forth 词 <code class="docutils literal notranslate"><span class="pre">{</span></code>的定义被添加到标准库中。 它的线程由两个指针组成，第一个指向单词 <code class="docutils literal notranslate"><span class="pre">create</span></code>，第二个指向单词 <code class="docutils literal notranslate"><span class="pre">]</span></code>。 所以当这个词的线程被执行时，它会在字典中追加一个新词，并让我们进入编译模式。 Forth 通常为此使用<code class="docutils literal notranslate"><span class="pre">:</span></code>词，但这与 lisp 中<code class="docutils literal notranslate"><span class="pre">:</span></code>的使用冲突，因此我们选择使用<code class="docutils literal notranslate"><span class="pre">{</span></code>来开始词定义。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">forth</span><span class="o">-</span><span class="n">stdlib</span><span class="o">-</span><span class="n">add</span>
+	<span class="p">{</span> <span class="p">(</span><span class="n">postpone</span> <span class="p">[)</span> <span class="p">[</span>
+  <span class="s1">&#39;} name immediate)</span>
+</pre></div>
+</div>
+<p>类似地，我们在标准库中添加了一个补充词<code class="docutils literal notranslate"><span class="pre">}</span></code>（替换了传统 forth 的 <code class="docutils literal notranslate"><span class="pre">:</span></code>）。 实际上没有理由定义这个词——它唯一的作用就是让我们脱离编译状态。 我们已经有了 <code class="docutils literal notranslate"><span class="pre">[</span></code> 来为我们做这件事。 尽管如此，定义 <code class="docutils literal notranslate"><span class="pre">{</span></code> 还是有用的，因为它通过创建一对单词 { 和 } 为我们提供了正常的平衡括号，这使得定义新单词变得直观。</p>
+<p>我们现在可以创建个 forth 来利用这些新的标准库特性（丢弃我们之前对单词 <code class="docutils literal notranslate"><span class="pre">square</span></code> 的定义）：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">setq</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span> <span class="p">(</span><span class="n">new</span><span class="o">-</span><span class="n">forth</span><span class="p">))</span>
+<span class="c1">#&lt;Interpreted Function&gt;</span>
+</pre></div>
+</div>
+<p>以下是使用定义词 <code class="docutils literal notranslate"><span class="pre">{</span></code> 和 <code class="docutils literal notranslate"><span class="pre">}</span></code> 的新词时的结构：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+    <span class="p">{</span> <span class="n">dup</span> <span class="o">*</span> <span class="p">}</span> <span class="s1">&#39;square name)</span>
+<span class="n">NIL</span>
+<span class="o">*</span> <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+    <span class="mi">5</span> <span class="n">square</span> <span class="nb">print</span><span class="p">)</span>
+<span class="mi">25</span>
+</pre></div>
+</div>
+<p>并且新线程可以像引用原语一样容易地引用自定义创建的单词。 以下是如何将单词 <code class="docutils literal notranslate"><span class="pre">quartic</span></code> 定义为带有两个指向 <code class="docutils literal notranslate"><span class="pre">square</span></code>单词指针的线程：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+    <span class="p">{</span> <span class="n">square</span> <span class="n">square</span> <span class="p">}</span> <span class="s1">&#39;quartic name)</span>
+<span class="n">NIL</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">(Expt</span> <span class="pre">1/2</span> <span class="pre">4)</span></code> 的结果是 <code class="docutils literal notranslate"><span class="pre">1/16</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+    <span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="n">quartic</span> <span class="nb">print</span><span class="p">)</span>
+<span class="mi">1</span><span class="o">/</span><span class="mi">16</span>
+<span class="n">NIL</span>
+</pre></div>
+</div>
+<p>因为非符号被直接编译到forth线程中，并且内部解释器将非函数视为数据项以在遇到时压入堆栈，我们可以将数字包含在单词定义中：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+    <span class="p">{</span> <span class="mi">3</span> <span class="p">}</span> <span class="s1">&#39;three name</span>
+    <span class="n">three</span> <span class="n">three</span> <span class="o">*</span> <span class="nb">print</span><span class="p">)</span>
+<span class="mi">9</span>
+<span class="n">NIL</span>
+</pre></div>
+</div>
+<p>回想一下，我们使用 <code class="docutils literal notranslate"><span class="pre">eql</span></code> 函数查找传递给 forth 的所有元素，以查看它们之前是否在字典中被命名过。 这样做的结果是可以使用任何 lisp 对象来命名一个单词。 在这里，我们使用数字：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+    <span class="p">{</span> <span class="mf">4.0</span> <span class="p">}</span> <span class="s1">&#39;4 name</span>
+		<span class="mi">4</span> <span class="mi">4</span> <span class="o">*</span> <span class="nb">print</span><span class="p">)</span>
+<span class="mf">16.0</span>
+<span class="n">NIL</span>
+</pre></div>
+</div>
+<p>Forth 是学习如何使用指针作用域的优秀语言。 Forth 定义了两个简单的运算符，用于从内存中读取和写入值：<code class="docutils literal notranslate"><span class="pre">&#64;</span></code> (读取) 和 <code class="docutils literal notranslate"><span class="pre">!</span></code>（存储）。 因为我们的 forth 字存储在 cons 单元中而不是内存字中，所以使用 fetch 取消引用指针是通过获取指针的 car 来实现的。 用 store 设置它是通过使用 <code class="docutils literal notranslate"><span class="pre">setf</span></code> 设置它的 car 来实现的。 Fetch 将从参数堆栈中弹出一个值，假设它是一个 cons 单元，获取它的 car，然后将其压入堆栈。 Store 将从参数堆栈中弹出一个值，假设它是一个 cons 单元格，从堆栈中弹出另一个值，并将其存储到第一个值的 car 中。 例如，以下是如何创建和打印循环列表：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="o">*</span><span class="nb">print</span><span class="o">-</span><span class="n">circle</span><span class="o">*</span> <span class="n">t</span><span class="p">))</span>
+    <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+      <span class="s1">&#39;(nil) dup dup ! print))</span>
+<span class="c1">#1=(#1#)</span>
+<span class="n">NIL</span>
+</pre></div>
+</div>
+<p>所以现在我们正在使用线程代码进行编程。 还是说我们真的这样吗？ 我们离开过 lisp 吗？ 两种语言之间的区别是如此模糊，以至于几乎无法辨别。 本章的其余部分在进一步解释元编程时试图使这种区别更模糊。</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="8.3-duality-of-syntax-defined.html" class="btn btn-neutral float-left" title="8.3 语法二元性" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="8.5-going-forther.html" class="btn btn-neutral float-right" title="8.5 forth 的拓展" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

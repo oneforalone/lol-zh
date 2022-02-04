@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8.2 cons 线程代码 &mdash; Let Over Lambda 中文文档  文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="8.3 语法二元性" href="8.3-duality-of-syntax-defined.html" />
+    <link rel="prev" title="8.1 奇怪的设计" href="8.1-weird-by-design.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter04/index.html">第四章：Read 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第八章：Lisp 的变迁</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="8.1-weird-by-design.html">8.1 奇怪的设计</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8.2 cons 线程代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8.3-duality-of-syntax-defined.html">8.3 语法二元性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8.4-going-forth.html">8.4 开始构建 forth</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8.5-going-forther.html">8.5 forth 的拓展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8.6-going-lisp.html">8.6 在 forth 中写 lisp 代码</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">第八章：Lisp 的变迁</a> &raquo;</li>
+      <li>8.2 cons 线程代码</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Chapter08/8.2-cons-threaded-code.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="cons">
+<h1>8.2 cons 线程代码<a class="headerlink" href="#cons" title="永久链接至标题"></a></h1>
+<hr class="docutils" />
+<p>Author: Doug Hoyte</p>
+<p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
+<hr class="docutils" />
+<p>在上一节中，我们专注于抽象寄存器。 这些寄存器是个重点，这就是为什么 forth 哲学认为它们如此基础，但这些寄存器实际上只是个更普遍的概念的组成部分：抽象机器。 不同的 forth 系统最显着的特性可能是它们对线程代码的实现。 线程代码的含义与抢占式调度共享内存进程的传统含义非常不同。 Forth 线程与并发无关。 这是讨论代码编译和元编程的框架。</p>
+<p>虽然 lisp 提供了对符号的树数据结构的访问权限，但在汇编到内存之前，程序是从这些符号编译而来的，而 forth 不提供符号操作。 相反，forth 提供了将代码组装到内存中的过程的访问权限。 虽然对于外人来说，最明显的特征是它的堆栈和后缀符号，但实际上是线程决定了它的本质。 Forth 是关于堆栈的，就像 lisp 关于列表一样。 它们恰好是用于解决元编程问题的最适用的数据结构——forth 和 lisp 的真正意义所在。</p>
+<p>经典的线程风格被称为间接线程代码，但大多数现代 forth 都是用直接线程代码实现的。不同之处在于间接级别。这种间接的低级效率影响取决于底层处理器，这里不会详细介绍。有很多关于 forth 线程[STARTING-FORTH][MOVING-FORTH] 的好教程。在内存中，这些线程样式都由相邻的单元组成，这些单元是代表指针的固定机器字。一小段称为内部解释器的紧凑机器代码通常是为正在使用的处理器量身定制的，因为它的重要工作是：跟随这些forth线程的指针，并在执行过程中解释它们的含义。遇到单元时的默认行为是将当前程序计数器位置推入返回堆栈，然后将程序计数器指向单元中包含的任何内容。当内部解释器到达线程的末尾时，会弹出返回堆栈并在这个位置恢复执行——它停止的地方。</p>
+<p>可以想象，这种类型的程序存储使得程序非常小。 编译后的 forth 单词只是一个连续的固定数组，其中大部分表示指向其他单词的指针。 这一直是forth的优势之一。 由于程序线程进入内存的透明性，forth 允许对编程权衡进行精细控制，包括最重要的权衡之一：执行速度与程序大小。 线程代码让我们尽可能优化抽象问题，从而产生极快的小程序。 但正如 lisp 宏不仅仅是效率一样，forth 线程也是如此。 与 lisp 程序员一样，forth 程序员倾向于将自己视为实现者，而不仅仅是用户。 Forth 和 lisp 都是关于控制的——制定自己的规则。</p>
+<p>forth 程技术至少有两种其他常见类型：令牌（token）线程代码和子程序线程代码。在权衡速度与大小时，这些代表了相反的方向。有时这些线程技术与间接和直接线程代码同时存在。令牌线程涉及通过使用比指针更小的固定数字来表示线程中的单词，从而添加另一层间接性。另一端是子程序线程。这种类型的线程代码正在变得流行，最好的现代 forth 编译器部分使用子程序线程。代替指向内部解释器要遵循的字的连续指针，子程序线程代码存储内联机器指令以调用这些指针。在子程序线程代码中，内部解释器消失了——它实际上是由硬件（或虚拟机）实现的。子程序线程代码通常被认为是个不透明的块，只有特殊的、不可编程的编译器才能操作。特别是当对代码进行各种优化时，这些不透明的块开始看起来不像统一的、基于单元的线程。几乎所有非 forth 编译器都只编译为子程序线程代码，并且不要想象你会想要做任何其他事情，导致这个特殊的定义：</p>
+<blockquote>
+<div><p>A Flub is a language that only considers subroutine threaded code or a language implementation that only provides subroutine threaded code.</p>
+</div></blockquote>
+<p>例如，C 是个 Flub，因为它只为程序员提供创建函数的方法——子程序线程代码的不透明块。 当然，我们可以用 C 实现一个内部解释器来处理间接线程代码并使用这个程序引导一种基于堆栈的语言，但是我们不再用 C 编程。几乎所有的 Blub 语言都是 Flubs。 如刚刚所描述的，作为抽象机器的 forth 不是 Flub。 正如我们将看到的，forth 为程序员/实现者提供了对其程序如何编译的大量控制权。</p>
+<p>lisp 是 Flub 吗？ 有趣的是，lisp 可能是第一个非 Flub 编程语言，但大部分都变成了 Flub。 尽管标准没有严格要求，但大多数 Common Lisp 编译器仅将函数编译为不透明的机器代码块，因此是 Flubs。 但是在很早期的 lisp 版本中，函数被存储为列表——这是种奇怪的代码线程，与 forth 线程并不完全不同。 虽然这确实允许一些非常聪明的运行时技巧，包括赋予循环代码意义，但它的效率低得令人绝望。 与 forth 的许多类型的线程不同——几乎在所有架构上都有效地实现了——lisp 函数的这种内部表示是不能容忍的，并且lisp 被更改为允许（非常）高效的代码。 结果，对于元程序员来说，Common Lisp 的大多数实现都是 Flubs。</p>
+<p>但是，无法添加到语言中的功能与我们可以通过宏添加的功能之间存在差异。使用宏，我们可以随意扩展语言，并且它仍然是 lisp。 Common Lisp 缺少线程代码，就像它缺少延续和一流的宏一样：它们被故意从语言中省略，并留给宏编写者根据需要实现。本章及其代码最重要的结果之一是代表，即使它们是 Flub，lisp 语言也可以通过宏转换为非 Flub 语言。 Non-Blub 意味着非 Flub，或者换句话说，如果你不能将一种语言变成非 Flub，那么它必须是 Blub。然而，反过来却不一定成立。像这样的非 Flub 语言仍然是 Blubs，将它们变成目前已知的非 Blubs 的最直接方法是用它们实现 lisp 环境 —— 然后你就在编程 lisp。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro forth-inner-interpreter ()
+	`(loop
+		do (cond
+					((functionp (car pc))
+						 (funcall (car pc)))
+          ((consp (car pc))
+						 (push (cdr pc) rstack)
+						 (setf pc (car pc)))
+          ((null pc)
+ 						 (setf pc (pop rstack)))
+ 					(t
+						(push (car pc) pstack)
+						(setf pc (cdr pc))))
+		until (and (null pc) (null rstack))))
+</pre></div>
+</div>
+<p>我们的 forth 不是使用连续的内存单元来表示间接/直接线程代码的线程，而是利用 lisp 的动态类型和 cons 单元列表结构。 我们称之为 cons 线程代码。 宏 <code class="docutils literal notranslate"><span class="pre">forth-inner-interpreter</span></code>展开为能够遵循这些 cons 单元链表线程的代码。 在这里开始为我们的 forth 环境编写逻辑可能看起来很奇怪 —— 使用一个旨在展开为一些迄今为止未知的表达式的宏 —— 但这实际上是种理想的 lisp 编程模式。 因为宏让我们可以在任何我们想要的地方开始编程，为什么不从程序中真正有趣的驱动位开始呢？ 这些是对程序最终设计影响最大的部分。</p>
+<p><code class="docutils literal notranslate"><span class="pre">forth-inner-interpreter</span></code>的定义本身就是对我们所说的 cons 线程代码的简明定义。 每个 cons 单元的 car 指向一个函数、另一个 cons 单元或其他一些 lisp 原子（atom）。 函数在遇到时执行。 请注意，函数本身会更新 pc 寄存器。 如果在线程中发现另一个 cons 单元格，则假定它指示子例程调用——单词调用。 我们的内部解释器会将 pc 恢复位置推送到返回堆栈，然后跳转到这个新线程。 如果遇到其他的 lisp atom，它会被简单地推入参数堆栈，并在线程的下一个单元格处继续执行。 一旦内部解释器到达其线程的末尾并且在其返回堆栈上没有其他线程可以返回，它将返回。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>;; Prim-form: (name immediate . forms)
+(defvar forth-prim-forms nil)
+
+(defmacro def-forth-naked-prim (&amp;rest code)
+  `(push &#39;,code forth-prim-forms))
+
+(defmacro def-forth-prim (&amp;rest code)
+  `(def-forth-naked-prim
+		,@code
+		(setf pc (cdr pc))))
+</pre></div>
+</div>
+<p>当然函数不能更新 <code class="docutils literal notranslate"><span class="pre">pc</span></code> 变量，除非它们被定义在它的词法范围内，所以我们使用了另一种宏技术：创建一个类似的接口，而不是使用 <code class="docutils literal notranslate"><span class="pre">defun</span></code>，它做一些完全不同的事情。 <code class="docutils literal notranslate"><span class="pre">def-forth-naked-prim</span></code> 感觉类似于创建 <code class="docutils literal notranslate"><span class="pre">defun</span></code> 定义的函数，只是展开的代码将用户提供的结构推送到存储在 forth 基本结构中的列表中。 最终的宏将使用这些结构在其词法范围内定义 forth 原语。 因为这些结构总是会展开到这个环境中，所以可以自由地编写代码来调用所有的 forth 抽象寄存器，如 <code class="docutils literal notranslate"><span class="pre">pc</span></code>、<code class="docutils literal notranslate"><span class="pre">pstack</span></code> 等。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">def</span><span class="o">-</span><span class="n">forth</span><span class="o">-</span><span class="n">prim</span> <span class="n">nop</span> <span class="n">nil</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">def</span><span class="o">-</span><span class="n">forth</span><span class="o">-</span><span class="n">prim</span> <span class="o">*</span> <span class="n">nil</span>
+  <span class="p">(</span><span class="n">push</span> <span class="p">(</span><span class="o">*</span> <span class="p">(</span><span class="n">pop</span> <span class="n">pstack</span><span class="p">)</span> <span class="p">(</span><span class="n">pop</span> <span class="n">pstack</span><span class="p">))</span>
+        <span class="n">pstack</span> <span class="p">))</span>
+
+<span class="p">(</span><span class="n">def</span><span class="o">-</span><span class="n">forth</span><span class="o">-</span><span class="n">prim</span> <span class="n">drop</span> <span class="n">nil</span>
+  <span class="p">(</span><span class="n">pop</span> <span class="n">pstack</span><span class="p">))</span>
+
+<span class="p">(</span><span class="n">def</span><span class="o">-</span><span class="n">forth</span><span class="o">-</span><span class="n">prim</span> <span class="n">dup</span> <span class="n">nil</span>
+  <span class="p">(</span><span class="n">push</span> <span class="p">(</span><span class="n">car</span> <span class="n">pstack</span><span class="p">)</span> <span class="n">pstack</span><span class="p">))</span>
+
+<span class="p">(</span><span class="n">def</span><span class="o">-</span><span class="n">forth</span><span class="o">-</span><span class="n">prim</span> <span class="n">swap</span> <span class="n">nil</span>
+  <span class="p">(</span><span class="n">rotatef</span> <span class="p">(</span><span class="n">car</span> <span class="n">pstack</span><span class="p">)</span> <span class="p">(</span><span class="n">cadr</span> <span class="n">pstack</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="n">def</span><span class="o">-</span><span class="n">forth</span><span class="o">-</span><span class="n">prim</span> <span class="nb">print</span> <span class="n">nil</span>
+  <span class="p">(</span><span class="nb">print</span> <span class="p">(</span><span class="n">pop</span> <span class="n">pstack</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="n">def</span><span class="o">-</span><span class="n">forth</span><span class="o">-</span><span class="n">prim</span> <span class="o">&gt;</span><span class="n">r</span> <span class="n">nil</span>
+  <span class="p">(</span><span class="n">push</span> <span class="p">(</span><span class="n">pop</span> <span class="n">pstack</span><span class="p">)</span> <span class="n">rstack</span><span class="p">))</span>
+
+<span class="p">(</span><span class="n">def</span><span class="o">-</span><span class="n">forth</span><span class="o">-</span><span class="n">prim</span> <span class="n">r</span><span class="o">&gt;</span> <span class="n">nil</span>
+  <span class="p">(</span><span class="n">push</span> <span class="p">(</span><span class="n">pop</span> <span class="n">rstack</span><span class="p">)</span> <span class="n">pstack</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>使用 <code class="docutils literal notranslate"><span class="pre">def-forth-naked-prim</span></code> 定义的元语不会将 pc 变量更新到线程中的下一个 cons 单元。 对于大多数原语，应该使用 <code class="docutils literal notranslate"><span class="pre">def-forth-prim</span></code> 以便执行通常的更新。 这两个宏都期望第一个参数是用于引用原语的符号，第二个参数是指示原语是否立即的布尔值。 其余参数是在执行原语时要评估的 lisp 形式。</p>
+<p>八个简单的原语——没有一个是赤裸裸的或直接的——目前所呈现。 <code class="docutils literal notranslate"><span class="pre">nop</span></code> 是个什么都不做的伪指令（“无操作”）。 <code class="docutils literal notranslate"><span class="pre">*</span> </code>原语是乘法运算符：它从参数堆栈中弹出顶部的两个值，将它们相乘，然后将结果压入栈。 <code class="docutils literal notranslate"><span class="pre">dup</span></code> 是“duplicate”的缩写，它将参数堆栈上的顶部值再次推送到参数堆栈上，留下两个重复值。 <code class="docutils literal notranslate"><span class="pre">swap</span></code> 将使用一个非常有用的 Common Lisp 宏来交换顶部的两个参数堆栈元素：<code class="docutils literal notranslate"><span class="pre">rotatef</span></code>。 并非巧合，forth 也具有（基于堆栈的）旋转机制。 <code class="docutils literal notranslate"><span class="pre">print</span></code> 弹出参数堆栈并打印它。 <code class="docutils literal notranslate"><span class="pre">&gt;r</span></code> 将一个值从参数堆栈传输到返回堆栈，<code class="docutils literal notranslate"><span class="pre">r&gt;</span></code> 则相反。</p>
+<p>名称 * 是否违反了第 3.5 节中的重要变量捕获规则，禁止我们重新绑定 Common Lisp 定义的函数呢？ 不，因为实际上并没有使用这个符号来绑定任何函数——它只是 forth 基本格式中的一个列表中的第一个元素。 我们没有做错任何事。 符号独立于它们有时用来表示的函数或宏。 可以在任何地方使用任何符号，只要不违反重要的变量捕获规则。 这仅在编写 lisp 时起作用； 我们正在编写 forth。</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="8.1-weird-by-design.html" class="btn btn-neutral float-left" title="8.1 奇怪的设计" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="8.3-duality-of-syntax-defined.html" class="btn btn-neutral float-right" title="8.3 语法二元性" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

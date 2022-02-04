@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8.5 forth 的拓展 &mdash; Let Over Lambda 中文文档  文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="8.6 在 forth 中写 lisp 代码" href="8.6-going-lisp.html" />
+    <link rel="prev" title="8.4 开始构建 forth" href="8.4-going-forth.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter04/index.html">第四章：Read 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第八章：Lisp 的变迁</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="8.1-weird-by-design.html">8.1 奇怪的设计</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8.2-cons-threaded-code.html">8.2 cons 线程代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8.3-duality-of-syntax-defined.html">8.3 语法二元性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8.4-going-forth.html">8.4 开始构建 forth</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8.5 forth 的拓展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="8.6-going-lisp.html">8.6 在 forth 中写 lisp 代码</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">第八章：Lisp 的变迁</a> &raquo;</li>
+      <li>8.5 forth 的拓展</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Chapter08/8.5-going-forther.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="forth">
+<h1>8.5 forth 的拓展<a class="headerlink" href="#forth" title="永久链接至标题"></a></h1>
+<hr class="docutils" />
+<p>Author: Doug Hoyte</p>
+<p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
+<hr class="docutils" />
+<p>Common Lisp 有很多我们希望能够包含在的 forth 线程中的函数。 <code class="docutils literal notranslate"><span class="pre">forth-unary-word-definer</span></code> 展开为与传递给其宏体的元素一样多的 <code class="docutils literal notranslate"><span class="pre">def-forth-prim</span></code>结构。 假定元素是表示函数或宏的符号，但它们也可以是 lambda 结构。 由 lambda 形式命名的原语的唯一限制是，要调用此类原语，需要将相同的 (eq) lambda 结构传递给 forth 环境。 下面传递一个符号——<code class="docutils literal notranslate"><span class="pre">not</span></code>时的展开：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro forth-unary-word-definer (&amp;rest words)
+	`(progn
+			,@(mapcar
+					#`(def-forth-prim ,a1 nil
+							(push (,a1 (pop pstack))
+										pstack ))
+          words )))
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">macroexpand</span>
+    <span class="s1">&#39;(forth-unary-word-definer</span>
+       <span class="ow">not</span><span class="p">))</span>
+<span class="p">(</span><span class="n">PROGN</span>
+  <span class="p">(</span><span class="n">DEF</span><span class="o">-</span><span class="n">FORTH</span><span class="o">-</span><span class="n">PRIM</span> <span class="n">NOT</span> <span class="n">NIL</span>
+    <span class="p">(</span><span class="n">PUSH</span> <span class="p">(</span><span class="n">NOT</span> <span class="p">(</span><span class="n">POP</span> <span class="n">PSTACK</span><span class="p">))</span>
+          <span class="n">PSTACK</span><span class="p">)))</span>
+<span class="n">T</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro! forth-binary-word-definer (&amp;rest words)
+	`(progn
+			,@(mapcar
+					#`(def-forth-prim ,a1 nil
+							(let ((,g!top (pop pstack)))
+              	(push (,a1 (pop pstack)
+													 ,g!top)
+                      pstack )))
+					words)))
+</pre></div>
+</div>
+<p>我们可以使用任何接受一个参数的 Common Lisp 函数，然后 <code class="docutils literal notranslate"><span class="pre">forth-unary-word-definer</span></code>会将其定义为 forth 原语，将该函数应用于 forth 参数堆栈的顶部元素。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">forth</span><span class="o">-</span><span class="n">unary</span><span class="o">-</span><span class="n">word</span><span class="o">-</span><span class="n">definer</span>
+	<span class="ow">not</span> <span class="n">car</span> <span class="n">cdr</span> <span class="n">cadr</span> <span class="n">caddr</span> <span class="n">cadddr</span> <span class="n">oddp</span> <span class="n">evenp</span><span class="p">)</span>
+<span class="p">(</span><span class="n">forth</span><span class="o">-</span><span class="n">binary</span><span class="o">-</span><span class="n">word</span><span class="o">-</span><span class="n">definer</span>
+	<span class="n">eq</span> <span class="n">equal</span> <span class="o">+</span> <span class="o">-</span> <span class="o">/</span> <span class="o">=</span> <span class="o">&lt;</span> <span class="o">&gt;</span> <span class="o">&lt;=</span> <span class="o">&gt;=</span> <span class="nb">max</span> <span class="nb">min</span> <span class="ow">and</span> <span class="ow">or</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>这个插件的想法是 <code class="docutils literal notranslate"><span class="pre">forth-binary-word-definer</span></code>，它做同样的事情，只不过是接受两个值的运算符。 通过创建临时 <code class="docutils literal notranslate"><span class="pre">let</span></code> 绑定来保存参数堆栈的顶部元素，启用了将倒数第二个元素视为二进制函数（如 <code class="docutils literal notranslate"><span class="pre">-</span></code> 和 <code class="docutils literal notranslate"><span class="pre">/</span></code>）的第一个参数的 forth 约定。 以下是单词 <code class="docutils literal notranslate"><span class="pre">-</span></code> 的展开：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">macroexpand</span>
+    <span class="s1">&#39;(forth-binary-word-definer</span>
+			 <span class="o">-</span><span class="p">))</span>
+<span class="p">(</span><span class="n">LET</span> <span class="p">()</span>
+  <span class="p">(</span><span class="n">PROGN</span>
+    <span class="p">(</span><span class="n">DEF</span><span class="o">-</span><span class="n">FORTH</span><span class="o">-</span><span class="n">PRIM</span> <span class="o">-</span> <span class="n">NIL</span>
+      <span class="p">(</span><span class="n">LET</span> <span class="p">((</span><span class="c1">#:TOP1767 (POP PSTACK)))</span>
+  <span class="n">T</span>
+</pre></div>
+</div>
+<p>练习：当使用 <code class="docutils literal notranslate"><span class="pre">four-binary-word-definer</span></code>时，怎么把宏当作 and 和 or 来对待，如果它们都是同级别的值？</p>
+<p>难一点的练习：为什么需要使用 <code class="docutils literal notranslate"><span class="pre">gensym</span></code> (<code class="docutils literal notranslate"><span class="pre">g!top</span></code>) 来避免在 <code class="docutils literal notranslate"><span class="pre">forth-binary-word-definer</span></code>中捕获不需要的变量？ 提示：我们已经在本节中讨论过它。</p>
+<p>所以这些宏让我们可以将各种 lisp 函数添加到 forth 原始环境中，以便在 forth 原始环境中使用它们。 下面是个使用一个参数原语 <code class="docutils literal notranslate"><span class="pre">cadr</span></code> 的示例：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+    <span class="s1">&#39;(a (b) c) cadr print)</span>
+<span class="p">(</span><span class="n">B</span><span class="p">)</span> <span class="n">NIL</span>
+</pre></div>
+</div>
+<p>以及两个参数的 <code class="docutils literal notranslate"><span class="pre">&lt;</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+    <span class="mi">2</span> <span class="mi">3</span> <span class="o">&lt;</span> <span class="nb">print</span><span class="p">)</span>
+<span class="n">T</span>
+<span class="n">NIL</span>
+</pre></div>
+</div>
+<p>到目前为止，我们的 forth 线程都是有向无环图，即它们由不会指向自身的 cons 单元结构组成（不是自引用的），并且最终终止于我们的原语，即树的叶子。 例如，我们可以使用 <code class="docutils literal notranslate"><span class="pre">pandoric</span></code> 宏来获取我们在上一节中定义 <code class="docutils literal notranslate"><span class="pre">quartic</span></code>词时创建的线程：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="k">with</span><span class="o">-</span><span class="n">pandoric</span> <span class="p">(</span><span class="nb">dict</span><span class="p">)</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+    <span class="p">(</span><span class="n">forth</span><span class="o">-</span><span class="n">word</span><span class="o">-</span><span class="n">thread</span>
+      <span class="p">(</span><span class="n">forth</span><span class="o">-</span><span class="n">lookup</span> <span class="s1">&#39;quartic dict)))</span>
+<span class="p">((</span><span class="c1">#&lt;Interpreted Function&gt;   ;; square-&gt;|-&gt;dup</span>
+  <span class="c1">#&lt;Interpreted Function&gt;)  ;;         |-&gt;*</span>
+ <span class="p">(</span><span class="c1">#&lt;Interpreted Function&gt;   ;; square-&gt;|-&gt;dup</span>
+  <span class="c1">#&lt;Interpreted Function&gt;)) ;;         |-&gt;*</span>
+</pre></div>
+</div>
+<p>上面代码中的注释只是从我们用 lisp 打印结构的角度来展示的。 从代码或注释中我们看不到的是，这个线程结构实际上是共享的。 要确认这一点，需要使用 <code class="docutils literal notranslate"><span class="pre">eq</span></code>：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">eq</span> <span class="p">(</span><span class="n">car</span> <span class="o">*</span><span class="p">)</span> <span class="p">(</span><span class="n">cadr</span> <span class="o">*</span><span class="p">))</span>
+<span class="n">T</span>
+</pre></div>
+</div>
+<p>或者在 <code class="docutils literal notranslate"><span class="pre">_print-circle_</span></code> 中看起来是这样的：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="o">*</span><span class="nb">print</span><span class="o">-</span><span class="n">circle</span><span class="o">*</span> <span class="n">t</span><span class="p">))</span>
+    <span class="p">(</span><span class="nb">print</span> <span class="o">**</span><span class="p">)</span>
+<span class="n">t</span><span class="p">)</span>
+<span class="p">(</span><span class="c1">#1=(#&lt;Interpreted Function&gt;  ;; square-&gt;|-&gt;dup</span>
+     <span class="c1">#&lt;Interpreted Function&gt;) ;;         |-&gt;*</span>
+ <span class="c1">#1#)                         ;; --------|</span>
+<span class="n">T</span>
+</pre></div>
+</div>
+<p>线程代码可以带来惊人的内存和大小优势。 整个 forth 系统都是编译后的代码，这些代码像这样串连在一起——从网络驱动程序到最高级别的用户程序。 更重要的是，请注意，可以干净地从 <code class="docutils literal notranslate"><span class="pre">quartic</span></code> 提取线程，而无需使用大量无关的其他线程。 例如，我们的语言中有更多的原语，如 <code class="docutils literal notranslate"><span class="pre">+</span></code> 和 <code class="docutils literal notranslate"><span class="pre">cadddr</span></code>，但它们根本没有出现在上面的线程中。 这几乎就像有一个标记清除垃圾收集算法，它只提取执行给定单词所需的线程。 在 lisp 中，这个过程称为 tree shaking，通常不是很有效。 然而，在 forth 中，效果惊人。</p>
+<p>不幸的是，从 <code class="docutils literal notranslate"><span class="pre">my-forth</span></code> 中随意提取的 <code class="docutils literal notranslate"><span class="pre">quartic</span></code>线程对我们来说并没有那么有用。 它仍然永久驻留在 <code class="docutils literal notranslate"><span class="pre">my-forth</span></code> 闭包中。 也就是说，表示 <code class="docutils literal notranslate"><span class="pre">dup</span></code> 和 <code class="docutils literal notranslate"><span class="pre">*</span></code>原语的 lambda 表达式已经引用了我们的宏 <code class="docutils literal notranslate"><span class="pre">new-forth</span></code> 的展开捕获的 forth 抽象寄存器。 我们能否将这段代码拉回到 lisp 宏表面以便将其嵌入到新程序中？ 我们将很快回到这一点，但首先会更深入地讨论元编程。</p>
+<p>在所有语言的某个级别——通常是对程序员隐藏的级别|代码必须能够引用自身——这种必要性最有说服力的例子是观察到代码需要能够以某种方式引用自己，以便实现循环、递归和条件表达式，如 <code class="docutils literal notranslate"><span class="pre">if</span></code> 语句。 Flub 语言和非 Flub 语言的区别在于 Flub 阻止直接自定义插入自引用的方式和位置。 但是，正如我们现在所做的那样，lisp 的非 Blub 状态意味着我们可以使其成为非 Flub。</p>
+<p>当前状态下的 forth 系统（它不能插入自引用）几乎是一个纯 Flub。 与纯函数式语言如何故意定义一种没有副作用和非静态映射的语言类似，纯 Flub 语言被定义为没有像循环和递归这样的自引用代码结构。 这样做的结果是解释纯 Flub 线程将始终终止。 我们的 forth 环境不完全是纯的，因为我们可以——也将——违反这一点，但在某种意义上说是纯的，如果仅按照目前描述的方式使用将导致纯 Flub 线程。 Pure Flub 不是很有用，所以让我们破坏 forth 环境的 Flub 纯度。 与其朝着 Flub 方向前进——像 Common Lisp 这样的 Flub 语言，代码线程是不透明且不可访问的——朝着 forth 方向前进，并使代码宏的这个属性可定制。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">def</span><span class="o">-</span><span class="n">forth</span><span class="o">-</span><span class="n">naked</span><span class="o">-</span><span class="n">prim</span> <span class="n">branch</span><span class="o">-</span><span class="k">if</span> <span class="n">nil</span>
+	<span class="p">(</span><span class="n">setf</span> <span class="n">pc</span> <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="n">pop</span> <span class="n">pstack</span><span class="p">)</span>
+						 <span class="p">(</span><span class="n">cadr</span> <span class="n">pc</span><span class="p">)</span>
+             <span class="p">(</span><span class="n">cddr</span> <span class="n">pc</span><span class="p">))))</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">branch-if</span></code> 原语是迄今为止提出的第一个裸原语。 回想一下，裸原语是不会自动更新程序计数器抽象寄存器 (pc) 的原语。 相反，他们必须自己更新它。 <code class="docutils literal notranslate"><span class="pre">branch-if</span></code>将弹出参数堆栈的值。 如果该值非空，则将 pc 设置为正在解释的线程中下一个单元格的内容。 如果值为 nil，则 pc 像往常一样恢复，只是它跳过正在解释的线程中的下一个单元格。</p>
+<p>例如，以下创建了一个 forth 环境，因此我们可以利用新的 <code class="docutils literal notranslate"><span class="pre">branch-if</span></code>原语，并定义两个词：<code class="docutils literal notranslate"><span class="pre">double</span></code>和 <code class="docutils literal notranslate"><span class="pre">if-then-double</span></code>。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="p">(</span><span class="n">setq</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span> <span class="p">(</span><span class="n">new</span><span class="o">-</span><span class="n">forth</span><span class="p">))</span>
+		<span class="p">{</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">}</span> <span class="s1">&#39;double name</span>
+		<span class="p">{</span> <span class="n">branch</span><span class="o">-</span><span class="k">if</span> <span class="n">double</span> <span class="s2">&quot;Not doubling&quot;</span> <span class="nb">print</span> <span class="p">}</span>
+    		<span class="s1">&#39;if-then-double name)</span>
+<span class="n">NIL</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">double</span></code>只是将参数堆栈的顶部元素乘以 2，使其翻倍。<code class="docutils literal notranslate"><span class="pre">if-then-double</span></code> 需要参数堆栈上的两项。 顶部元素被调用，并且仅当顶部元素为非空时，顶部元素的第二个元素才会加倍。 注意，因为在 <code class="docutils literal notranslate"><span class="pre">branch-if</span></code> 之后线程中的下一个值是指向另一个线程 (double) 的指针，所以执行控制权转移到另一个线程，而不会将恢复位置推入返回堆栈。 在 lisp 中，这称为尾调用。 因此，如果将 nil 传递给 <code class="docutils literal notranslate"><span class="pre">if-then-double</span></code> ，那么分支执行执行时，不会发生加倍，并且会打印字符串：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+    <span class="mi">4</span> <span class="s1">&#39;nil if-then-double print)</span>
+<span class="s2">&quot;Not doubling&quot;</span>
+<span class="mi">4</span>
+<span class="n">NIL</span>
+</pre></div>
+</div>
+<p>但是如果该值不为空，则不执行后面语句，执行加倍，且不打印字符串：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+    <span class="mi">4</span> <span class="s1">&#39;t if-then-double print)</span>
+<span class="mi">8</span>
+<span class="n">NIL</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">forth</span><span class="o">-</span><span class="n">stdlib</span><span class="o">-</span><span class="n">add</span>
+	<span class="p">{</span> <span class="n">r</span><span class="o">&gt;</span> <span class="n">drop</span> <span class="p">}</span> <span class="s1">&#39;exit name)</span>
+</pre></div>
+</div>
+<p>不过，有一种更简单的方法可以从单词中退出，这是通过一个名为 <code class="docutils literal notranslate"><span class="pre">exit</span></code> 的新单词来实现的。 forth 的一个有趣属性是，被调用的单词可以决定它是否是尾调用。 <code class="docutils literal notranslate"><span class="pre">exit</span></code>是个普通的 forth 字，所以像往常一样被调用：forth 把当前线程位置推到返回堆栈上，然后将程序计数器设置为指向 <code class="docutils literal notranslate"><span class="pre">exit</span></code>字的开头。 当调用 <code class="docutils literal notranslate"><span class="pre">exit</span></code> 时，因为它可以使用原语 <code class="docutils literal notranslate"><span class="pre">r&gt;</span></code> 和 <code class="docutils literal notranslate"><span class="pre">&gt;r</span></code> 直接访问返回堆栈，所以可以通过简单地从返回堆栈中删除恢复位置并将其丢弃来使调用字永远无法获得执行控制权的存在。 下面是个使用 <code class="docutils literal notranslate"><span class="pre">exit</span></code> 的示例：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+    <span class="p">{</span> <span class="s2">&quot;hello&quot;</span> <span class="nb">print</span>
+      <span class="n">exit</span>
+      <span class="p">;;</span> <span class="n">Never</span> <span class="n">gets</span> <span class="n">here</span>
+      <span class="s2">&quot;world&quot;</span> <span class="nb">print</span> <span class="p">}</span> <span class="s1">&#39;exit-test name</span>
+<span class="n">exit</span><span class="o">-</span><span class="n">test</span><span class="p">)</span>
+<span class="s2">&quot;hello&quot;</span>
+<span class="n">NIL</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">def</span><span class="o">-</span><span class="n">forth</span><span class="o">-</span><span class="n">naked</span><span class="o">-</span><span class="n">prim</span> <span class="nb">compile</span> <span class="n">nil</span>
+	<span class="p">(</span><span class="n">setf</span> <span class="p">(</span><span class="n">forth</span><span class="o">-</span><span class="n">word</span><span class="o">-</span><span class="n">thread</span> <span class="nb">dict</span><span class="p">)</span>
+				<span class="p">(</span><span class="n">nconc</span> <span class="p">(</span><span class="n">forth</span><span class="o">-</span><span class="n">word</span><span class="o">-</span><span class="n">thread</span> <span class="nb">dict</span><span class="p">)</span>
+        				<span class="p">(</span><span class="nb">list</span> <span class="p">(</span><span class="n">cadr</span> <span class="n">pc</span><span class="p">))))</span>
+	<span class="p">(</span><span class="n">setf</span> <span class="n">pc</span> <span class="p">(</span><span class="n">cddr</span> <span class="n">pc</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="n">def</span><span class="o">-</span><span class="n">forth</span><span class="o">-</span><span class="n">prim</span> <span class="n">here</span> <span class="n">nil</span>
+	<span class="p">(</span><span class="n">push</span> <span class="p">(</span><span class="n">last</span> <span class="p">(</span><span class="n">forth</span><span class="o">-</span><span class="n">word</span><span class="o">-</span><span class="n">thread</span> <span class="nb">dict</span><span class="p">))</span>
+				<span class="n">pstack</span> <span class="p">))</span>
+</pre></div>
+</div>
+<p>因此，<code class="docutils literal notranslate"><span class="pre">branch-if</span></code> 实现了跳转或  <code class="docutils literal notranslate"><span class="pre">goto</span></code> 指令，可能跳转到存储在当前正在执行的线程的后续单元格中的值。从当前正在执行的线程中获取值是 forth 常见模式，并且需要裸原语。另一个原语 <code class="docutils literal notranslate"><span class="pre">compile</span></code>也使用这种模式。 <code class="docutils literal notranslate"><span class="pre">compile</span></code>是一个裸原语，它将获取当前正在执行的线程中下一个单元格的值，然后将该值编译到添加到字典中的最后一个单词的线程中——通常是当前正在编译的单词。<code class="docutils literal notranslate"><span class="pre">here</span></code>是个简单的原语，它将正在编译的线程的最后一个 cons 单元推入参数堆栈。这里的 <code class="docutils literal notranslate"><span class="pre">here</span></code>与这里的常规 forth 中的 <code class="docutils literal notranslate"><span class="pre">here</span></code>词略有不同。forth 中，<code class="docutils literal notranslate"><span class="pre">here</span></code>通常推送将被编译的下一个位置，而不是最后编译的位置。这是因为，在传统的 forth 中，此时要编译的内存位置是已知的——它将是下一个相邻的内存单元。使用 cons 线程代码我们无法知道这一点，因为我们还没有占用该内存。</p>
+<p>有了 <code class="docutils literal notranslate"><span class="pre">compile</span></code> 和 <code class="docutils literal notranslate"><span class="pre">here</span></code>，现在可以开始编写 forth 宏了。记住，当 forth 单词是立即的时，在编译时它将被执行而不是编译到定义的最后一个单词的线程中。 类似于如何编写宏来适配和扩展 lisp，可以使用直接词来适配和扩展。 在 lisp 中，用于元编程的基本数据结构是列表。 在 forth 中，基本数据结构是堆栈。</p>
+<p>你可能已经注意到我们的 forth 环境甚至没有提供 <code class="docutils literal notranslate"><span class="pre">if</span></code>语句。 我们有个条件分支原语，称为 <code class="docutils literal notranslate"><span class="pre">branch-if</span></code>，但到目前为止，这仅对对其他单词进行尾调用有用。 回想一下，forth 单词是由线程表示的，我们可以将任何线程的值放入由<code class="docutils literal notranslate"><span class="pre">branch-if</span></code> 跳转到的单元格中。 如果我们输入一个导致当前正在编译的线程的一部分的值怎么办？ 从某种意义上说，我们会对当前 forth 单词的另一部分进行尾声。 好吧，<code class="docutils literal notranslate"><span class="pre">if</span></code>语句就是这样的 —— 对 <code class="docutils literal notranslate"><span class="pre">if</span></code>语句末尾的条件尾调用，仅在条件为空时才执行。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">forth</span><span class="o">-</span><span class="n">stdlib</span><span class="o">-</span><span class="n">add</span>
+	<span class="p">{</span> <span class="nb">compile</span> <span class="ow">not</span>
+		<span class="nb">compile</span> <span class="n">branch</span> <span class="o">-</span><span class="k">if</span>
+		<span class="nb">compile</span> <span class="n">nop</span>
+		<span class="n">here</span> <span class="p">}</span> <span class="s1">&#39;if name immediate)</span>
+</pre></div>
+</div>
+<p>因为我们现在完全在 forth 中编程，所以不需要添加新的原语。要添加 <code class="docutils literal notranslate"><span class="pre">if</span></code>语句，只需使用 <code class="docutils literal notranslate"><span class="pre">forth-stdlib-add</span></code>宏将一些 forth 代码附加到标准库中。注意，<code class="docutils literal notranslate"><span class="pre">if</span></code>被定义为直接词，这意味着它只能在编译时使用。但由于它是立即的，它将被执行，而不是编译。当遇到立即字时，不会自动将任何内容编译到目标线程中。所以 <code class="docutils literal notranslate"><span class="pre">if</span></code>本身用三个词编译到目标线程：<code class="docutils literal notranslate"><span class="pre">not</span></code>、<code class="docutils literal notranslate"><span class="pre">branch-if</span></code>和 <code class="docutils literal notranslate"><span class="pre">nop</span></code>。然后它执行此处的单词，将最后编译的单词（<code class="docutils literal notranslate"><span class="pre">nop</span></code>）的地址留在堆栈上。把 <code class="docutils literal notranslate"><span class="pre">nop</span></code>留在堆栈上？一个词在编译时将 <code class="docutils literal notranslate"><span class="pre">nop</span></code>l留在堆栈上是一件很奇怪的事情。它放在什么堆栈上？从技术上讲，编译时使用的堆栈称为控制堆栈。在大多数情况下，控制堆栈是一个并且与参数堆栈相同。由于可以实现的方式多种多样，因此区分是必要的。有时，特别是在交叉编译环境中，控制堆栈与最终的参数堆栈完全分开。但是在这里 —— 与大多数交互式 forth 环境一样 —— 我们使用参数堆栈作为控制堆栈。</p>
+<p>因此，如果压入与编译 <code class="docutils literal notranslate"><span class="pre">nop</span></code>的位置相对应的值。 这有什么用？<code class="docutils literal notranslate"><span class="pre">nop</span></code>本身并不是很重要，重要的是它前面的内容。 在 nop 之前的单元格中，编译了个 <code class="docutils literal notranslate"><span class="pre">branch-if</span></code> 指令。无论将 <code class="docutils literal notranslate"><span class="pre">nop</span></code>的值更改为什么，如果 <code class="docutils literal notranslate"><span class="pre">if</span></code> 条件结果为空，则内部解释器将跳转到分支的位置。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(forth-stdlib-add
+	{ compile nop
+		here swap ! } &#39;then name immediate)
+</pre></div>
+</div>
+<p>但是为什么要放了个 <code class="docutils literal notranslate"><span class="pre">nop</span></code> 而不是内存地址呢？ 这是因为还不知道内存地址。 需要等待程序员执行另一个立即字 —— <code class="docutils literal notranslate"><span class="pre">then</span></code>—— 这将消耗控制堆栈上的值。 然后将编译一个 <code class="docutils literal notranslate"><span class="pre">nop</span></code>本身并将这个 <code class="docutils literal notranslate"><span class="pre">nop</span></code>的位置写在 <code class="docutils literal notranslate"><span class="pre">if</span></code>编译的 <code class="docutils literal notranslate"><span class="pre">nop</span></code>上。 因此，如果条件为空，则将跳过 <code class="docutils literal notranslate"><span class="pre">if</span></code>和 <code class="docutils literal notranslate"><span class="pre">then</span></code>之间的所有单词。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">forth</span><span class="o">-</span><span class="n">stdlib</span><span class="o">-</span><span class="n">add</span>
+	<span class="p">{</span> <span class="mi">0</span> <span class="n">swap</span> <span class="o">-</span> <span class="p">}</span> <span class="s1">&#39;negate name</span>
+	<span class="p">{</span> <span class="n">dup</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="k">if</span> <span class="n">negate</span> <span class="n">then</span> <span class="p">}</span> <span class="s1">&#39;abs name)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">abs</span></code>是个使用 <code class="docutils literal notranslate"><span class="pre">if</span></code> 和 <code class="docutils literal notranslate"><span class="pre">then</span></code>来计算堆栈顶部的绝对值的词。 它只是检查该值是否低于 0，如果是，它调用另一个词 <code class="docutils literal notranslate"><span class="pre">negate</span></code>将负值转换为其绝对值。</p>
+<p>在此编译过程中使用控制堆栈的最重要原因是，通过使用堆栈，可以拥有像 <code class="docutils literal notranslate"><span class="pre">if</span></code>语句嵌套这样的控制结构。 也就是说，可以将 <code class="docutils literal notranslate"><span class="pre">if</span></code> 语句包含在其他 <code class="docutils literal notranslate"><span class="pre">if</span></code>语句中，只要确保所有<code class="docutils literal notranslate"><span class="pre">if</span></code>词与 <code class="docutils literal notranslate"><span class="pre">then</span></code>相匹配。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(forth-stdlib-add
+	{ compile &#39;t
+		compile branch -if compile nop
+		here swap
+		compile nop
+		here swap ! } &#39;else name immediate)
+</pre></div>
+</div>
+<p>因为 forth 语言是种非 Flub 语言，所以如何创建这些线程并将其与<code class="docutils literal notranslate"><span class="pre">if</span></code>语句之类的控制结构一起线程化是透明地指定并开放给我们以适配和扩展的。 大多数语言都有个与<code class="docutils literal notranslate"><span class="pre">if</span></code>语句关联的 <code class="docutils literal notranslate"><span class="pre">else</span></code> 子句； 也许我们也应该添加一个。 另一个直接的词 <code class="docutils literal notranslate"><span class="pre">else</span></code>被添加到标准库中。 <code class="docutils literal notranslate"><span class="pre">else</span></code>编译成一个无条件分支，然后终止，因此如果我们采用真（true）（二级或后续）分支，我们将跳过错误（false）（三级或交替）分支。 然后 <code class="docutils literal notranslate"><span class="pre">else</span></code>使用 <code class="docutils literal notranslate"><span class="pre">if</span></code>留在堆栈上的值将这个<code class="docutils literal notranslate"><span class="pre">nop</span></code>替换为<code class="docutils literal notranslate"><span class="pre">else</span></code>子句开始的位置。 然后将自己的<code class="docutils literal notranslate"><span class="pre">nop</span></code>的位置留在堆栈上以供使用。 因为无论控制堆栈上的位置是由 <code class="docutils literal notranslate"><span class="pre">if</span></code> 还是由 <code class="docutils literal notranslate"><span class="pre">else</span></code>留下的，我们想要 <code class="docutils literal notranslate"><span class="pre">then</span></code>执行的行为都是相同的，所以即使没有 <code class="docutils literal notranslate"><span class="pre">else</span></code>子句，<code class="docutils literal notranslate"><span class="pre">then</span></code>仍然有效。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">forth</span><span class="o">-</span><span class="n">stdlib</span><span class="o">-</span><span class="n">add</span>
+	<span class="p">{</span> <span class="n">evenp</span> <span class="k">if</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span> <span class="n">then</span> <span class="p">}</span> <span class="s1">&#39;mod2 name)</span>
+</pre></div>
+</div>
+<p>单词 <code class="docutils literal notranslate"><span class="pre">mod2</span></code>使用 <code class="docutils literal notranslate"><span class="pre">if</span></code>、<code class="docutils literal notranslate"><span class="pre">else</span></code> 和 <code class="docutils literal notranslate"><span class="pre">then</span></code> 将整数减少到其模 2 的自然余数。如果堆栈顶部是偶数，它会压入 0，如果堆栈顶部是奇数，则压入 1。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(forth-stdlib-add
+	{ compile nop
+		here } &#39;begin name immediate
+  { compile &#39;t
+		compile branch -if
+		compile nop
+		here ! } &#39;again name immediate)
+</pre></div>
+</div>
+<p>因为我们的条件对正在编译的线程的其他部分执行尾调用，所以没有理由不用完全相同的技术来创建像循环这样的迭代结构。 最基本的 forth 循环由 <code class="docutils literal notranslate"><span class="pre">begin</span></code>和 <code class="docutils literal notranslate"><span class="pre">again</span></code>立即字定义。 这两个词提供了一个简单的无限循环，实现起来与<code class="docutils literal notranslate"><span class="pre">if</span></code>和<code class="docutils literal notranslate"><span class="pre">then</span></code>非常相似，只是在看到这两个词之间保存在控制堆栈上的地址对应于应该编译成分支语句的地址——而不是编译的位置 一个地址。 下面是个简单的循环，它从堆栈上提供的数字倒数到 1，然后从单词中退出：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+    <span class="p">{</span> <span class="n">begin</span>
+				<span class="n">dup</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="k">if</span> <span class="n">drop</span> <span class="n">exit</span> <span class="n">then</span>
+        <span class="n">dup</span> <span class="nb">print</span>
+				<span class="mi">1</span><span class="o">-</span>
+      <span class="n">again</span> <span class="p">}</span> <span class="s1">&#39;countdown name</span>
+
+    <span class="mi">5</span> <span class="n">countdown</span><span class="p">)</span>
+<span class="mi">5</span>
+<span class="mi">4</span>
+<span class="mi">3</span>
+<span class="mi">2</span>
+<span class="mi">1</span>
+<span class="n">NIL</span>
+</pre></div>
+</div>
+<p>注意，在上面的示例中，<code class="docutils literal notranslate"><span class="pre">if</span></code>和 <code class="docutils literal notranslate"><span class="pre">then</span></code>构造嵌套在 <code class="docutils literal notranslate"><span class="pre">begin-again</span></code>循环内。 多亏了 forth 的控制堆栈，嵌套任何对应堆栈的控制结构是完全可以接受的。 为了对应堆栈，控制结构应避免弹出未推送的值，并应避免在完成后留下任何额外的值。 但是就像在构建 lisp 宏时经常选择违反引用透明性一样，在 forth 我们经常选择在编译时不对应堆栈。 下面的示例与前面的示例相同，只是不使用单词 <code class="docutils literal notranslate"><span class="pre">exit</span></code>来退出循环。 相反，我们使用 <code class="docutils literal notranslate"><span class="pre">[</span></code> 和 <code class="docutils literal notranslate"><span class="pre">]</span></code> 词切换到编译模式，并交换 <code class="docutils literal notranslate"><span class="pre">if</span></code> 和 <code class="docutils literal notranslate"><span class="pre">begin</span></code>放置在那里的指针，以便匹配对应的 <code class="docutils literal notranslate"><span class="pre">then</span></code>和 <code class="docutils literal notranslate"><span class="pre">again</span></code>无序的词：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">go</span><span class="o">-</span><span class="n">forth</span> <span class="n">my</span><span class="o">-</span><span class="n">forth</span>
+    <span class="p">{</span> <span class="n">begin</span>
+			<span class="n">dup</span> <span class="mi">1</span> <span class="o">&gt;=</span> <span class="k">if</span>
+      				<span class="n">dup</span> <span class="nb">print</span>
+							<span class="mi">1</span><span class="o">-</span>
+							<span class="p">[</span> <span class="n">swap</span> <span class="p">]</span> <span class="n">again</span>
+						<span class="n">then</span>
+      <span class="n">drop</span>
+		<span class="p">}</span> <span class="s1">&#39;countdown-for-teh-hax0rz name</span>
+
+		<span class="mi">5</span> <span class="n">countdown</span><span class="o">-</span><span class="k">for</span><span class="o">-</span><span class="n">teh</span><span class="o">-</span><span class="n">hax0rz</span><span class="p">)</span>
+
+<span class="mi">5</span>
+<span class="mi">4</span>
+<span class="mi">3</span>
+<span class="mi">2</span>
+<span class="mi">1</span>
+<span class="n">NIL</span>
+</pre></div>
+</div>
+<p>上面代码将重新编译，也就是回到开始的代码，只在 <code class="docutils literal notranslate"><span class="pre">if</span></code> 语句中执行。 很少有其他语言有这种方式访问编译器 —— 准确地说，只有非 Flub 语言。 由于这种自由，forth 程序员有时甚至比 lisp 程序员更习惯于宏组合。 尽管本书中的 lisp 代码经常使用宏组合技术，但大多数现有的 lisp 代码并没有充分利用这些技术以及它们可以启用的杠杆作用。 然而，正如本书试图说明的那样，lisp 非常适合宏组合。 这种组合技术是我认为在未来十年左右的语言研究中将在程序员生产力方面取得最大胜利的地方。</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="8.4-going-forth.html" class="btn btn-neutral float-left" title="8.4 开始构建 forth" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="8.6-going-lisp.html" class="btn btn-neutral float-right" title="8.6 在 forth 中写 lisp 代码" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

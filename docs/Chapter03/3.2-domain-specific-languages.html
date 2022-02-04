@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3.2 Domain Specific Languages &mdash; Let Over Lambda 中文文档  文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="3.3 Control Structures" href="3.3-control-structures.html" />
+    <link rel="prev" title="3.1 Iterative Development" href="3.1-iterative-development.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第三章：宏基础</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="3.1-iterative-development.html">3.1 Iterative Development</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3.2 Domain Specific Languages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3.3-control-structures.html">3.3 Control Structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3.4-free-variables.html">3.4 Free Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3.5-unwanted-capture.html">3.5 Unwanted Capture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3.6-once-only.html">3.6 Once Only</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3.7-duality-of-syntax.html">3.7 Duality of Syntax</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter04/index.html">第四章：Read 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">第三章：宏基础</a> &raquo;</li>
+      <li>3.2 Domain Specific Languages</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Chapter03/3.2-domain-specific-languages.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="domain-specific-languages">
+<h1>3.2 Domain Specific Languages<a class="headerlink" href="#domain-specific-languages" title="永久链接至标题"></a></h1>
+<hr class="docutils" />
+<p>Author: Doug Hoyte</p>
+<p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
+<hr class="docutils" />
+<p>COMMON LISP, along with most other programming environments, provides a function <strong>sleep</strong> which will pause execution of the process for <strong>n</strong> seconds, where <strong>n</strong> is a non-negative, non-complex, numeric argument. For instance, we might want to sleep for 3 minutes (180 seconds), in which case we could evaluate this form:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">sleep</span> <span class="mi">180</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or if we would rather think about sleeping in terms of minutes, we could instead use</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">sleep</span> <span class="p">(</span><span class="o">*</span> <span class="mi">3</span> <span class="mi">60</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Because compilers know how to <em>fold constants</em>, these two invocations are just as efficient. To be even more explicit about what we're doing, we might define a function <strong>sleep-minutes</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">sleep</span><span class="o">-</span><span class="n">minutes</span> <span class="p">(</span><span class="n">m</span><span class="p">)</span>
+  <span class="p">(</span><span class="n">sleep</span> <span class="p">(</span><span class="o">*</span> <span class="n">m</span> <span class="mi">60</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>Defining new functions for every unit of time that we might want to use is clunky and inconvenient. What we would really like is some sort of abstraction that lets us specify the unit of time along with the value. What we really want is a <em>domain specific language</em>.
+​</p>
+<p>So far, the lisp solution is the same as that of any other language: create a function that accepts a value and a unit and returns the value multiplied by some constant related to the given unit. But a possible lispy improvement becomes apparent when we consider our options for representing this unit. In languages like C it is customary to use an underlying data type like int and assign arbitrary values corresponding to the different units:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#define UNIT_SECONDS 1</span>
+<span class="cp">#define UNIT_MINUTES 2</span>
+<span class="cp">#define UNIT_HOURS 3</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">sleep_units</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">unit</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="k">switch</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="nl">UNIT_SECONDS</span><span class="p">:</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">value</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="nl">UNIT_MINUTES</span><span class="p">:</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">value</span><span class="o">*</span><span class="mi">60</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="nl">UNIT_HOURS</span><span class="p">:</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">value</span><span class="o">*</span><span class="mi">3600</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>​</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">sleep</span><span class="o">-</span><span class="n">units</span><span class="o">%</span> <span class="p">(</span><span class="n">value</span> <span class="n">unit</span><span class="p">)</span>
+  <span class="p">(</span><span class="n">sleep</span>
+    <span class="p">(</span><span class="o">*</span> <span class="n">value</span>
+       <span class="p">(</span><span class="n">case</span> <span class="n">unit</span>
+         <span class="p">((</span><span class="n">s</span><span class="p">)</span> <span class="mi">1</span><span class="p">)</span>
+         <span class="p">((</span><span class="n">m</span><span class="p">)</span> <span class="mi">60</span><span class="p">)</span>
+         <span class="p">((</span><span class="n">h</span><span class="p">)</span> <span class="mi">3600</span><span class="p">)</span>
+         <span class="p">((</span><span class="n">d</span><span class="p">)</span> <span class="mi">86400</span><span class="p">)</span>
+         <span class="p">((</span><span class="n">ms</span><span class="p">)</span> <span class="mi">1</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span>
+         <span class="p">((</span><span class="n">us</span><span class="p">)</span> <span class="mi">1</span><span class="o">/</span><span class="mi">1000000</span><span class="p">)))))</span>
+</pre></div>
+</div>
+<p>But in lisp the most obvious way to signal the desired unit is to use a symbol. A symbol in lisp exists mostly to be something not <strong>eq</strong> to other symbols. <strong>Eq</strong> is the fastest lisp comparison operator and roughly corresponds to a pointer comparison. Since pointers can be compared very quickly, symbols provide a very fast and convenient way to let two or more different lisp expressions know you're referring to the same thing. In lisp we might define the <strong>sleep-units%</strong> function so we can specify the units in our forms:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">sleep</span><span class="o">-</span><span class="n">units</span><span class="o">%</span> <span class="mi">2</span> <span class="s1">&#39;m)</span>
+<span class="p">(</span><span class="n">sleep</span><span class="o">-</span><span class="n">units</span><span class="o">%</span> <span class="mi">500</span> <span class="s1">&#39;us)</span>
+</pre></div>
+</div>
+<p>Because comparing symbols requires only a pointer comparison, <strong>sleep-units%</strong> will be compiled into a very fast run-time dispatch:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">...</span>
+<span class="mi">524</span><span class="p">:</span>       <span class="n">CMP</span>     <span class="n">ESI</span><span class="p">,</span> <span class="p">[</span><span class="c1">#x586FC4D0]    ; &#39;S</span>
+<span class="mi">52</span><span class="n">A</span><span class="p">:</span>       <span class="n">JEQ</span>     <span class="n">L11</span>
+<span class="mi">530</span><span class="p">:</span>       <span class="n">CMP</span>     <span class="n">ESI</span><span class="p">,</span> <span class="p">[</span><span class="c1">#x586FC4D4]    ; &#39;M</span>
+<span class="mi">536</span><span class="p">:</span>       <span class="n">JEQ</span>     <span class="n">L10</span>
+<span class="mi">538</span><span class="p">:</span>       <span class="n">CMP</span>     <span class="n">ESI</span><span class="p">,</span> <span class="p">[</span><span class="c1">#x586FC4D8]    ; &#39;H</span>
+<span class="mi">53</span><span class="n">E</span><span class="p">:</span>       <span class="n">JEQ</span>     <span class="n">L9</span>
+<span class="mi">540</span><span class="p">:</span>       <span class="n">CMP</span>     <span class="n">ESI</span><span class="p">,</span> <span class="p">[</span><span class="c1">#x586FC4DC]    ; &#39;D</span>
+<span class="mi">546</span><span class="p">:</span>       <span class="n">JEQ</span>     <span class="n">L8</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>Notice how the unit given to <strong>sleep-units%</strong> must be quoted. This is because when lisp evaluates a function it first evaluates all arguments and then binds the results to variables for use inside the function. Numbers and strings and some other primitives evaluate to themselves which is why we don't need to quote the numeric values given to <strong>sleep-units%</strong>. But notice that they are evaluated so you are permitted to quote them if you like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">sleep</span><span class="o">-</span><span class="n">units</span><span class="o">%</span> <span class="s1">&#39;.5 &#39;</span><span class="n">h</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Symbols, however, don't typically evaluate to themselves<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html#">1</a>. When lisp evaluates a symbol it assumes you are referring to a variable and tries to look up the value associated with that variable given your lexical context (unless the variable is declared special, in which case the dynamic environment).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro sleep-units (value unit)
+  `(sleep
+     (* ,value
+        ,(case unit
+           ((s) 1)
+           ((m) 60)
+           ((h) 3600)
+           ((d) 86400)
+           ((ms) 1/1000)
+           ((us) 1/1000000)))))
+</pre></div>
+</div>
+<p>To avoid quoting the unit, we need a macro. Unlike a function, a macro does not evaluate its arguments. Taking advantage of this fact, we replace the <strong>sleep-units%</strong> function with the <strong>sleep-units</strong> macro. Now we don't need to quote the unit:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">sleep</span><span class="o">-</span><span class="n">units</span> <span class="mf">.5</span> <span class="n">h</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Although the main purpose of this macro is to avoid having to quote the <strong>unit</strong> argument, this macro is even more efficient than the function because there is no run-time dispatch at all: the unit and therefore the multiplier are known at compile time. Of course whenever we discover this sort of too-good-to-be-true situation, it probably really is too good to be true. This gain in efficiency isn't free. By foregoing the run-time dispatch we have lost the ability to determine the time unit at run-time. This makes it impossible to execute the following code using our macro:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">sleep</span><span class="o">-</span><span class="n">units</span> <span class="mi">1</span> <span class="p">(</span><span class="k">if</span> <span class="nb">super</span><span class="o">-</span><span class="n">slow</span><span class="o">-</span><span class="n">mode</span> <span class="s1">&#39;d &#39;</span><span class="n">h</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>This will not work because <strong>sleep-units</strong> expects the second argument to be one of the symbols in our case statement but instead it is a list with the first element the symbol <strong>if</strong>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro unit-of-time (value unit)
+  `(* ,value
+      ,(case unit
+         ((s) 1)
+         ((m) 60)
+         ((h) 3600)
+         ((d) 86400)
+         ((ms) 1/1000)
+         ((us) 1/1000000))))
+</pre></div>
+</div>
+<p>Recall that most macros are written to create more convenient and useful programming abstractions, not to improve the efficiency of the underlying code. Is it possible to extract any idioms from this code to make it more useful for the rest of our program (and possibly other future programs)? Even now we can foresee wanting to do other things with time values than just calling <strong>sleep</strong> on them. The macro <strong>unit-of-time</strong> abstracts functionality from the <strong>sleep-units</strong> macro, returning a value instead of calling <strong>sleep</strong> on it. The <strong>value</strong> parameter can be determined at run-time because it is evaluated then, but <strong>unit</strong> cannot because we require the information at compile-time, just like <strong>sleep-units</strong>. Here is an example:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">unit</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">time</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">d</span><span class="p">)</span><span class="w"></span>
+
+<span class="mi">86400</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Simple macros like <strong>unit-of-time</strong> provide a better syntax for solving a specific domain of problems and can give substantial productivity and correctness advantages. We will continue the development of this unit language further in <a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap5.html#sec_2">section 5.2, Top-Down Programming</a>. Unlike most programming languages, lisp gives you the same tools available to the people who created your programming environment. Macros are good enough for implementing the COMMON LISP language and they are good enough for implementing your own domain specific languages.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="3.1-iterative-development.html" class="btn btn-neutral float-left" title="3.1 Iterative Development" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="3.3-control-structures.html" class="btn btn-neutral float-right" title="3.3 Control Structures" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

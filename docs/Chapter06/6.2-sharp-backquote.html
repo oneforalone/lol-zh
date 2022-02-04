@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6.2 Sharp-Backquote：#` &mdash; Let Over Lambda 中文文档  文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="6.3 alet 和有限状态机" href="6.3-alet-and-finite-state-machines.html" />
+    <link rel="prev" title="6.1 More Phors?" href="6.1-more-phors.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter04/index.html">第四章：Read 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第六章：回指(Anaphoric) 宏</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="6.1-more-phors.html">6.1 More Phors?</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.2 Sharp-Backquote：#`</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.3-alet-and-finite-state-machines.html">6.3 <code class="docutils literal notranslate"><span class="pre">alet</span></code> 和有限状态机</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.4-indirection-chains.html">6.4 间接链</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.5-hotpatching-closures.html">6.5 热修复闭包</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.6-sub-lexical-scope.html">6.6 字词法作用域</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.7-pandoric-macros.html">6.7 潘多拉宏</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">第六章：回指(Anaphoric) 宏</a> &raquo;</li>
+      <li>6.2 Sharp-Backquote：#`</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Chapter06/6.2-sharp-backquote.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="sharp-backquote">
+<h1>6.2 Sharp-Backquote：#`<a class="headerlink" href="#sharp-backquote" title="永久链接至标题"></a></h1>
+<hr class="docutils" />
+<p>Author: Doug Hoyte</p>
+<p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
+<hr class="docutils" />
+<p>尽管大多数回指是由常规宏引入的，但 read 宏也有可能引入代码，隐形地创建绑定。当 read
+宏这样做时，它们被称为读回指（read anaphora）。本节介绍了一个这样的 read 宏，虽然
+它本身很短，但它却是本书中最有用的宏之一，连我自己都感到惊讶。我已经尽可能快地引入
+了这个宏，以便它可以用于其余的代码。已经有几个宏使用了它</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defun |#`-reader| (stream sub-char numarg)
+  (declare (ignore sub-char))
+  (unless numarg (setq numarg 1))
+  `(lambda ,(loop for i from 1 to numarg
+                  collect (symb &#39;a i))
+      ,(funcall
+        (get-macro-character #\`) stream nil)))
+
+  (set-dispatch-macro-character
+    #\# #\` #&#39;|#`-reader|)
+</pre></div>
+</div>
+<p>反引号就是个 read 宏，将输入读成 lambda 结构。默认情况下，这个 lambda 结构只接收一个
+参数：<code class="docutils literal notranslate"><span class="pre">a1</span></code>。然后这个 read 宏递归地调用对应流的 <code class="docutils literal notranslate"><span class="pre">read</span></code> 函数。下面是一个停止求值(通过
+引用)的例子，这样就可以直接地观察着个回指读宏了：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* &#39;#`((,a1))
+
+(LAMBDA (A1)
+  `((,A1)))
+</pre></div>
+</div>
+<p>该 read 宏抽象出一个通用宏模式。例如，如果有一个列表变量，并且要用 let 来绑定这个列表，
+将每个变量绑定到一个符号(假设为 <code class="docutils literal notranslate"><span class="pre">empty</span></code> )，就可以像这样使用 <code class="docutils literal notranslate"><span class="pre">mapcar</span></code>：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">mapcar</span> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span>
+            <span class="p">(</span><span class="nb">list</span> <span class="n">a</span> <span class="s1">&#39;&#39;</span><span class="n">empty</span><span class="p">))</span>
+    <span class="s1">&#39;(var-a var-b var-c))</span>
+
+<span class="p">((</span><span class="n">VAR</span><span class="o">-</span><span class="n">A</span> <span class="s1">&#39;EMPTY)</span>
+<span class="p">(</span><span class="n">VAR</span><span class="o">-</span><span class="n">B</span> <span class="s1">&#39;EMPTY)</span>
+<span class="p">(</span><span class="n">VAR</span><span class="o">-</span><span class="n">C</span> <span class="s1">&#39;EMPTY))</span>
+</pre></div>
+</div>
+<p>但特别是对复杂的列表结构，这样写就显得有点乱，所以 lisp 程序员喜欢用反引号将其引用提高
+一层：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* (mapcar (lambda (a)
+            `(,a &#39;empty))
+    &#39;(var-a var-b var-c))
+
+((VAR-A &#39;EMPTY)
+(VAR-B &#39;EMPTY)
+(VAR-C &#39;EMPTY))
+</pre></div>
+</div>
+<p>新的 read 回指宏隐藏了 lambda 结构：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">mapcar</span> <span class="c1">#`(,a1 &#39;empty)</span>
+    <span class="s1">&#39;(var-a var-b var-c))</span>
+
+<span class="p">((</span><span class="n">VAR</span><span class="o">-</span><span class="n">A</span> <span class="s1">&#39;EMPTY)</span>
+<span class="p">(</span><span class="n">VAR</span><span class="o">-</span><span class="n">B</span> <span class="s1">&#39;EMPTY)</span>
+<span class="p">(</span><span class="n">VAR</span><span class="o">-</span><span class="n">C</span> <span class="s1">&#39;EMPTY))</span>
+</pre></div>
+</div>
+<p>上述代码中 <code class="docutils literal notranslate"><span class="pre">a1</span></code> 变量中的 <code class="docutils literal notranslate"><span class="pre">1</span></code> 的原因是，read 宏的使用这可以通过提供的 <code class="docutils literal notranslate"><span class="pre">numarg</span></code> 的数字来
+引入不同的回指数字：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* &#39;#2`(,a1 ,a2)
+
+(LAMBDA (A1 A2)
+  `(,A1 ,A2))
+</pre></div>
+</div>
+<p>所以我们可以同时在多个表达式中 <code class="docutils literal notranslate"><span class="pre">mapcar</span></code> sharp-backquote（#`) 表达式：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="nb">vars</span> <span class="s1">&#39;(var-a var-b var-c)))</span>
+    <span class="p">(</span><span class="n">mapcar</span> <span class="c1">#2`(,a1 &#39;,a2)</span>
+      <span class="nb">vars</span>
+      <span class="p">(</span><span class="n">loop</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">vars</span>
+            <span class="n">collect</span> <span class="p">(</span><span class="n">gensym</span>
+                      <span class="p">(</span><span class="n">symbol</span><span class="o">-</span><span class="n">name</span> <span class="n">v</span><span class="p">)))))</span>
+
+<span class="p">((</span><span class="n">VAR</span><span class="o">-</span><span class="n">A</span> <span class="s1">&#39;#:VAR-A1731)</span>
+<span class="p">(</span><span class="n">VAR</span><span class="o">-</span><span class="n">B</span> <span class="s1">&#39;#:VAR-B1732)</span>
+<span class="p">(</span><span class="n">VAR</span><span class="o">-</span><span class="n">C</span> <span class="s1">&#39;#:VAR-C1733))</span>
+</pre></div>
+</div>
+<p>另一种考虑 sharp-backquote 的方法是，它像 <code class="docutils literal notranslate"><span class="pre">format</span></code> 函数一样将插值（interpolation）作为
+字符串插值列出。就像 <code class="docutils literal notranslate"><span class="pre">format</span></code> 让我们使用带有接口（slot）的模板，接口用单独的参数值填充
+一样，sharp-backquote 让我们将列表插值的结构与想要拼接的值分开。由于前面描述的列表中
+函数位置的 lambda 结构和 <code class="docutils literal notranslate"><span class="pre">lambda</span></code> 宏展开成函数的 lambda 结构之间的语法二元性，还可以
+使用sharp-backquote 作为函数调用中的第一个元素：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="c1">#3`(((,a1)) ,@a2 (,a3))</span>
+      <span class="p">(</span><span class="n">gensym</span><span class="p">)</span>
+      <span class="s1">&#39;(a b c)</span>
+      <span class="s1">&#39;hello)</span>
+
+<span class="p">(((</span><span class="c1">#:G1734)) A B C (HELLO))</span>
+</pre></div>
+</div>
+<p>与 <code class="docutils literal notranslate"><span class="pre">format</span></code> 不同的是，sharp-quote 不用顺序定位，而是用回指绑定的数字。因此，顺序可以
+打乱，甚至可以在绑定中多次拼接：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="c1">#3`(((,@a2)) ,a3 (,a1 ,a1))</span>
+      <span class="p">(</span><span class="n">gensym</span><span class="p">)</span>
+      <span class="s1">&#39;(a b c)</span>
+      <span class="s1">&#39;hello)</span>
+
+<span class="p">(((</span><span class="n">A</span> <span class="n">B</span> <span class="n">C</span><span class="p">))</span> <span class="n">HELLO</span> <span class="p">(</span><span class="c1">#:G1735 #:G1735))</span>
+</pre></div>
+</div>
+<p>思考：<code class="docutils literal notranslate"><span class="pre">gensym</span></code> 生成的 <code class="docutils literal notranslate"><span class="pre">#:G1735</span></code> 的引用看起来是指向同一个符号，但是，当然，通过查看
+它们的打印名称，永远无法真正地分辨出 <code class="docutils literal notranslate"><span class="pre">gensym</span></code>。这些符号相等（ <code class="docutils literal notranslate"><span class="pre">eq</span></code> ）吗？相等或不相
+等的原因是什么？</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="6.1-more-phors.html" class="btn btn-neutral float-left" title="6.1 More Phors?" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="6.3-alet-and-finite-state-machines.html" class="btn btn-neutral float-right" title="6.3 alet 和有限状态机" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

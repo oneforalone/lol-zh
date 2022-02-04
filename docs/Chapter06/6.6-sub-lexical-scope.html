@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6.6 字词法作用域 &mdash; Let Over Lambda 中文文档  文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="6.7 潘多拉宏" href="6.7-pandoric-macros.html" />
+    <link rel="prev" title="6.5 热修复闭包" href="6.5-hotpatching-closures.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter04/index.html">第四章：Read 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第六章：回指(Anaphoric) 宏</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="6.1-more-phors.html">6.1 More Phors?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.2-sharp-backquote.html">6.2 Sharp-Backquote：#`</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.3-alet-and-finite-state-machines.html">6.3 <code class="docutils literal notranslate"><span class="pre">alet</span></code> 和有限状态机</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.4-indirection-chains.html">6.4 间接链</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.5-hotpatching-closures.html">6.5 热修复闭包</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.6 字词法作用域</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.7-pandoric-macros.html">6.7 潘多拉宏</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">第六章：回指(Anaphoric) 宏</a> &raquo;</li>
+      <li>6.6 字词法作用域</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Chapter06/6.6-sub-lexical-scope.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="id1">
+<h1>6.6 字词法作用域<a class="headerlink" href="#id1" title="永久链接至标题"></a></h1>
+<hr class="docutils" />
+<p>Author: Doug Hoyte</p>
+<p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
+<hr class="docutils" />
+<p>在 <a class="reference internal" href="../Chapter03/3.5-unwanted-capture.html"><span class="doc std std-doc">3.5 异常捕获</span></a> 中定义的 <code class="docutils literal notranslate"><span class="pre">defmacro!</span></code> 宏中用了 Graham 的 <code class="docutils literal notranslate"><span class="pre">flatten</span></code> 实用工具来查找代码
+中的自动 gensyms。现在是时候承认本书撒的一个小谎了。在此之前，因为没有解释自由变量
+插入和回指，我们假设 G-bang 符号名在 <code class="docutils literal notranslate"><span class="pre">defmacro!</span></code> 定义适用于宏定义的词法范围。实质上
+这是不对的 —— <code class="docutils literal notranslate"><span class="pre">defmacro!</span></code> 在略微不同类型的作用域（叫做 <em>子词法作用域 sub-lexical scope</em> ）
+下提供了这些绑定。</p>
+<blockquote>
+<div><p>G-bang 指的是以 <code class="docutils literal notranslate"><span class="pre">g!</span></code> 开头的变量，<code class="docutils literal notranslate"><span class="pre">gensym</span></code> 是个宏，会自动生成个随机变量名，防止变量名冲突。</p>
+</div></blockquote>
+<p>记住，作用域是变量的引用是有效的一个范围，而词法作用域是指该名称适用于如 <code class="docutils literal notranslate"><span class="pre">let</span></code> 等绑定
+结构的代码。词法作用域和子词法作用域之间的重要区别是，词法作用域包括了 <code class="docutils literal notranslate"><span class="pre">let</span></code> 主体中
+代码的所有宏展开。因此，将词法作用域描述为创建只能在绑定结构主体中的代码才能访问的
+变量实际上是错误的 —— 宏可以插入变量引用。这些变量是从绑定构造的体外插入的。</p>
+<p>通过限制不同访问词法变量的方法来实现真正的文本作用域，会产生子词法作用域。只有当表示
+子词法作用域变量的符号出现在宏展开之前传给 lisp 的原始列表中时，对该变量的引用才有效。
+​</p>
+<p>因为 <code class="docutils literal notranslate"><span class="pre">defmacro!</span></code> 对给出的代码进行预处理，并在代码展开之前创建所有 G-bang 的列表，所以
+G-bang 是子词法绑定。我们不能写一个在 <code class="docutils literal notranslate"><span class="pre">defmacro!</span></code> 中插入 G-bang 符号的的宏，因为
+G-bang 的词法绑定从未创建过。下面是 G-bang 的经典用法：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* (defmacro! junk ()
+    `(let ((,g!var))
+      ,g!var))
+
+JUNK
+</pre></div>
+</div>
+<p>两个 G-bang 变量在 <code class="docutils literal notranslate"><span class="pre">defmacro!</span></code> 的子词法作用域中，所以 <code class="docutils literal notranslate"><span class="pre">junk</span></code> 的展开不出意料是这样的:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">macroexpand</span> <span class="s1">&#39;(junk))</span>
+
+<span class="p">(</span><span class="n">LET</span> <span class="p">()</span>
+  <span class="p">(</span><span class="n">LET</span> <span class="p">((</span><span class="c1">#:VAR1663))</span>
+    <span class="c1">#:VAR1663))</span>
+<span class="n">T</span>
+</pre></div>
+</div>
+<p>然而，为了探索子词法作用域的概念，我们将定义一个插入 G-bang 的宏：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* (defmacro injector-for-g!var ()
+    &#39;&#39;g!var)
+
+INJECTOR-FOR-G!VAR
+</pre></div>
+</div>
+<p>现在可以编写 <code class="docutils literal notranslate"><span class="pre">junk2</span></code>。<code class="docutils literal notranslate"><span class="pre">junk2</span></code> 和 <code class="docutils literal notranslate"><span class="pre">junk</span></code> 基本一致，除了 <code class="docutils literal notranslate"><span class="pre">junk2</span></code> 中将 G-bang 替换了展开为
+G-bang 的宏：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* (defmacro! junk2 ()
+    `(let ((,(injector-for-g!var)))
+      ,(injector-for-g!var)))
+
+JUNK2
+</pre></div>
+</div>
+<p>但是因为 G-bang 是子词法绑定的 —— 因此不考虑结构的宏展开 —— <code class="docutils literal notranslate"><span class="pre">defmacro!</span></code> 就不会将这些
+符号转换成自动 gensym：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* (macroexpand &#39;(junk2))
+
+(LET ()
+  (LET ((G!VAR))
+G!VAR))
+T
+</pre></div>
+</div>
+<p>虽然上面的代码仍然可以用，但当有些变量引用在此法作用于中存在，有些不存在时，子词法作用域
+内的变量引用可能会破坏表达式：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* (defmacro! junk3 ()
+  `(let ((,g!var))
+      ,(injector-for-g!var)))
+
+JUNK3
+* (macroexpand &#39;(junk3))
+
+(LET ()
+  (LET ((#:VAR1672))
+G!VAR))
+T
+</pre></div>
+</div>
+<p>子词法作用域在复杂宏中出现的频率惊人。还有 <code class="docutils literal notranslate"><span class="pre">defmacro!</span></code> ，在 <a class="reference internal" href="../Chapter05/5.6-recursive-solutions.html"><span class="doc std std-doc">5.6 递归方案</span></a> 中的 <code class="docutils literal notranslate"><span class="pre">with-all-cxrs</span></code>
+宏的子词法绑定列表访问器函数中就用到了这个宏。子词法绑定的结果是，不能从宏展开中引用这种绑定。
+有时这种访问限制很有用，有时不是。在 <code class="docutils literal notranslate"><span class="pre">with-all-cxrs</span></code> 中，子词法可能被认为是不可取的。当访问器
+在 <code class="docutils literal notranslate"><span class="pre">with-all-cxrs</span></code> 的子词法作用域中时，没有问题：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="k">with</span><span class="o">-</span><span class="nb">all</span><span class="o">-</span><span class="n">cxrs</span>
+    <span class="p">(</span><span class="n">cadadadr</span> <span class="n">nil</span><span class="p">))</span>
+
+<span class="n">NIL</span>
+</pre></div>
+</div>
+<p>我们甚至可以编写扩展到这些访问器中的宏，只要宏定义在 <code class="docutils literal notranslate"><span class="pre">with-all-cxrs</span></code> 的子词法范围内:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* (with-all-cxrs
+    (macrolet ((accessor (l)
+                `(cadadadr ,l)))
+      (accessor nil)))
+
+NIL
+</pre></div>
+</div>
+<p>但要注意，<code class="docutils literal notranslate"><span class="pre">with-all-cxrs</span></code> 是子词法绑定访问器函数的，所以不能定义宏来插入访问器：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* (macrolet ((accessor (l)
+              `(cadadadr ,l)))
+    (with-all-cxrs
+      (accessor nil)))
+
+This function is undefined: CADADADR
+</pre></div>
+</div>
+<p>既然已经熟悉了回指，并且也见过这么多复杂宏的例子 —— 包括一些使用子词汇范围的宏 ——
+我们可以讨论个有趣的理论宏：<code class="docutils literal notranslate"><span class="pre">sublet</span></code>。这个宏设计用来为代码创建子词法绑定，使用的
+语法类似于通常的 let 结构语法。与许多 lisp 宏一样，对 <code class="docutils literal notranslate"><span class="pre">sublet</span></code> 的讨论先从一个实用程序
+开始。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">let</span><span class="o">-</span><span class="n">binding</span><span class="o">-</span><span class="n">transform</span> <span class="p">(</span><span class="n">bs</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">if</span> <span class="n">bs</span>
+    <span class="p">(</span><span class="n">cons</span>
+      <span class="p">(</span><span class="n">cond</span> <span class="p">((</span><span class="n">symbolp</span> <span class="p">(</span><span class="n">car</span> <span class="n">bs</span><span class="p">))</span>
+              <span class="p">(</span><span class="nb">list</span> <span class="p">(</span><span class="n">car</span> <span class="n">bs</span><span class="p">)))</span>
+            <span class="p">((</span><span class="n">consp</span> <span class="p">(</span><span class="n">car</span> <span class="n">bs</span><span class="p">))</span>
+              <span class="p">(</span><span class="n">car</span> <span class="n">bs</span><span class="p">))</span>
+            <span class="p">(</span><span class="n">t</span>
+              <span class="p">(</span><span class="n">error</span> <span class="s2">&quot;Bad let bindings&quot;</span><span class="p">)))</span>
+      <span class="p">(</span><span class="n">let</span><span class="o">-</span><span class="n">binding</span><span class="o">-</span><span class="n">transform</span> <span class="p">(</span><span class="n">cdr</span> <span class="n">bs</span><span class="p">)))))</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">let-binding-transform</span></code> 是个简单的实用工具，用于处理 let 结构绑定单个符号的情况。
+在下面代码中，<code class="docutils literal notranslate"><span class="pre">a</span></code> 被归一化为 <code class="docutils literal notranslate"><span class="pre">(a)</span></code>：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">let</span><span class="o">-</span><span class="n">binding</span><span class="o">-</span><span class="n">transform</span>
+    <span class="s1">&#39;(a (b) (c nil)))</span>
+
+<span class="p">((</span><span class="n">A</span><span class="p">)</span> <span class="p">(</span><span class="n">B</span><span class="p">)</span> <span class="p">(</span><span class="n">C</span> <span class="n">NIL</span><span class="p">))</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">sublet</span></code> 还需要用到 <a class="reference internal" href="../Chapter05/5.3-implicit-contexts.html"><span class="doc std std-doc">5.3 隐式上下文</span></a> 中的 <code class="docutils literal notranslate"><span class="pre">tree-leaves</span></code>。回想一下，<code class="docutils literal notranslate"><span class="pre">tree-leaves</span></code> 宏有
+三个参数：一个任意的列表结构，一个用 <code class="docutils literal notranslate"><span class="pre">x</span></code> 变量来确定是否应该更改叶子的表达式，以及另一个
+用不同的 <code class="docutils literal notranslate"><span class="pre">x</span></code> 来确定应该更改哪些有效叶子的表达式。</p>
+<p>选择隐式化具有相同名称 <code class="docutils literal notranslate"><span class="pre">x</span></code> 的绑定是种有用的 <em>二元语法</em> （ <em>duality of syntax</em> ）。当不用通用的
+方式在表达式中分解公共代码时，有时可以用其他方式使用语法对偶来获得这种简洁的优势。
+<code class="docutils literal notranslate"><span class="pre">sublet</span></code> 的定义用到了 <a class="reference internal" href="../Chapter04/4.5-cyclic-expressions.html"><span class="doc std std-doc">4.5 Cyclic Expressions</span></a> 中的自引用读宏。特别是对于像访问器这样在编写
+过程中可以多次更改的东西，读宏允许有且只有一种结构来表示访问器。幸亏使用了隐式的
+<code class="docutils literal notranslate"><span class="pre">tree-leaves</span></code> 宏，很容易找到和理解代码重复，因为代码紧密地结合在一起。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro sublet (bindings% &amp;rest body)
+  (let ((bindings (let-binding-transform
+                    bindings %)))
+    (setq bindings
+      (mapcar
+        (lambda (x)
+          (cons (gensym (symbol -name (car x))) x))
+        bindings ))
+    `(let (,@(mapcar #&#39;list
+                    (mapcar #&#39;car bindings)
+                    (mapcar #&#39;caddr bindings)))
+      ,@(tree-leaves
+          body
+          #1=(member x bindings :key #&#39;cadr)
+          (caar #1#)))))
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">sublet</span></code> 接受表示let绑定的结构，并应用 <code class="docutils literal notranslate"><span class="pre">let-binding-transform</span></code>，在这个过程中生成新的
+列表结构。然后，将gensym 附加到每个绑定，并使用与绑定名称相对应的打印名。<code class="docutils literal notranslate"><span class="pre">sublet</span></code> 展开
+为 let 结构，通过 let 结构将这些 gensym 符号绑定到传递给绑定结构的值，然后用 <code class="docutils literal notranslate"><span class="pre">tree-leaves</span></code>
+将代码中所有出现的绑定名称符号替换为对应的 gensym。<code class="docutils literal notranslate"><span class="pre">sublet</span></code> 不会展开任何宏或解析主体中
+的任何特殊结构来查找这些绑定名称符号的出现，因为 <code class="docutils literal notranslate"><span class="pre">sublet</span></code> 会创建子词法绑定。例如，如果
+所有 <code class="docutils literal notranslate"><span class="pre">a</span></code> 的引用都是子词法的，将用 gensym 替换它们:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">macroexpand</span>
+    <span class="s1">&#39;(sublet ((a 0))</span>
+          <span class="p">(</span><span class="nb">list</span> <span class="n">a</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="n">LET</span> <span class="p">((</span><span class="c1">#:A1657 0))</span>
+  <span class="p">(</span><span class="n">LIST</span> <span class="c1">#:A1657))</span>
+<span class="n">T</span>
+</pre></div>
+</div>
+<p>但是，由于子词法作用域不涉及展开宏，因此不一定会解析 <code class="docutils literal notranslate"><span class="pre">quote</span></code> 这样的特殊结构，不是变量的
+符号 <code class="docutils literal notranslate"><span class="pre">a</span></code> 也会被改掉：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">macroexpand</span>
+  <span class="s1">&#39;(sublet ((a 0))</span>
+      <span class="p">(</span><span class="nb">list</span> <span class="s1">&#39;a)))</span>
+
+<span class="p">(</span><span class="n">LET</span> <span class="p">((</span><span class="c1">#:A1658 0))</span>
+  <span class="p">(</span><span class="n">LIST</span> <span class="s1">&#39;#:A1658))</span>
+<span class="n">T</span>
+</pre></div>
+</div>
+<p>子词法作用域在列表结构被系统代码遍历程序解释为 lisp 代码之前生效。这是个重要的观测结果，
+但其结果仍未被完全探索。<code class="docutils literal notranslate"><span class="pre">sublet</span></code> 对代码的解释不同于 COMMON LISP 的代码遍历程序。</p>
+<p>这里，我们处于宏理解的众多边缘之一。在未扩展的子词法作用域和完全扩展的词法作用域之间有哪些
+有趣的作用域类型？因为没有更好的名称，我们将这个无限大的范围称为 <em>超子词法作用域</em> （ <em>super</em>
+<em>sub-lexical scope</em> ）。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro sublet*
+  (bindings &amp;rest body)
+  `(sublet ,bindings
+    ,@(mapcar #&#39;macroexpand -1 body)))
+</pre></div>
+</div>
+<p>超子词法作用域显然用到了 <code class="docutils literal notranslate"><span class="pre">sublet*</span></code>。<code class="docutils literal notranslate"><span class="pre">sublet*</span></code> 宏中用了 <code class="docutils literal notranslate"><span class="pre">sublet</span></code>，但是用 <code class="docutils literal notranslate"><span class="pre">macroexpand-1</span></code>
+函数的宏展开来修改主体中对应的结构。现在，对符号的引用必须出现在宏展开的第一步之后，而不是
+出现在原始列表结构中。这种类型的超子词法作用域允许每个 let 结构主体中的宏从作用域中插入或
+删除引用。如果宏没有做这两件事 —— 或者如果结构根本不是宏 —— 这种超子词法作用域的行为就像
+子词法作用域：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">macroexpand</span>
+  <span class="s1">&#39;(sublet* ((a 0))</span>
+      <span class="p">(</span><span class="nb">list</span> <span class="n">a</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="n">LET</span> <span class="p">((</span><span class="c1">#:A1659 0))</span>
+  <span class="p">(</span><span class="n">LIST</span> <span class="c1">#:A1659))</span>
+<span class="n">T</span>
+</pre></div>
+</div>
+<p>但我们可以定义另一个插入宏来测试这个超子词法作用域：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">defmacro</span> <span class="n">injector</span><span class="o">-</span><span class="k">for</span><span class="o">-</span><span class="n">a</span> <span class="p">()</span>
+    <span class="s1">&#39;a)</span>
+
+<span class="n">INJECTOR</span><span class="o">-</span><span class="n">FOR</span><span class="o">-</span><span class="n">A</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">sublet*</span></code> 将展开这个插入宏:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">macroexpand</span><span class="o">-</span><span class="mi">1</span>
+  <span class="s1">&#39;(sublet* ((a 0))</span>
+      <span class="p">(</span><span class="n">injector</span><span class="o">-</span><span class="k">for</span><span class="o">-</span><span class="n">a</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="n">SUBLET</span> <span class="p">((</span><span class="n">A</span> <span class="mi">0</span><span class="p">))</span>
+  <span class="n">A</span><span class="p">)</span>
+<span class="n">T</span>
+</pre></div>
+</div>
+<p>然后，<code class="docutils literal notranslate"><span class="pre">sublet</span></code> 将对其进行子词法解释，这意味着插入的变量 <code class="docutils literal notranslate"><span class="pre">a</span></code> 存在于 <code class="docutils literal notranslate"><span class="pre">sublet*</span></code> 提供的超子词法
+作用域类型中：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">macroexpand</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">LET</span> <span class="p">((</span><span class="c1">#:A1663 0))</span>
+  <span class="c1">#:A1663)</span>
+</pre></div>
+</div>
+<p>但是表达式中的嵌套宏不会被 <code class="docutils literal notranslate"><span class="pre">macroexpand-1</span></code> 展开，所以 <code class="docutils literal notranslate"><span class="pre">sublet*</span></code> 不会把嵌套宏放到 <code class="docutils literal notranslate"><span class="pre">sublet</span></code>
+的子词法作用域中：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">macroexpand</span><span class="o">-</span><span class="mi">1</span>
+  <span class="s1">&#39;(sublet* ((a 0))</span>
+      <span class="p">(</span><span class="nb">list</span> <span class="p">(</span><span class="n">injector</span><span class="o">-</span><span class="k">for</span><span class="o">-</span><span class="n">a</span><span class="p">))))</span>
+
+<span class="p">(</span><span class="n">SUBLET</span> <span class="p">((</span><span class="n">A</span> <span class="mi">0</span><span class="p">))</span>
+  <span class="p">(</span><span class="n">LIST</span> <span class="p">(</span><span class="n">INJECTOR</span><span class="o">-</span><span class="n">FOR</span><span class="o">-</span><span class="n">A</span><span class="p">)))</span>
+<span class="n">T</span>
+</pre></div>
+</div>
+<p>所以 <code class="docutils literal notranslate"><span class="pre">a</span></code> 不会被子词法捕获：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">walker</span><span class="p">:</span><span class="n">macroexpand</span><span class="o">-</span><span class="nb">all</span> <span class="o">*</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">LET</span> <span class="p">((</span><span class="c1">#:A1666 0))</span>
+  <span class="p">(</span><span class="n">LIST</span> <span class="n">A</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>通过 <code class="docutils literal notranslate"><span class="pre">sublet</span></code> 和 <code class="docutils literal notranslate"><span class="pre">sublet*</span></code>，可以用词法作用域或超词法作用域来控制在什么级别的宏展开中变量 <code class="docutils literal notranslate"><span class="pre">a</span></code>
+是有效的。如上所述，超子词法作用域实际上是一个无限类的范围，一个几乎完全未被智力探索的范围。
+超子词法作用域的方法和遍历代码的方法（很多）一样多。这类作用域引出了另一类基本未被探索的宏：
+这类宏改变 lisp 宏如何执行，何时展开，引用在哪里有效，特殊形式如何解释等。最终，就有了个
+可编程宏（macro-programmable）的宏扩展器。</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="6.5-hotpatching-closures.html" class="btn btn-neutral float-left" title="6.5 热修复闭包" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="6.7-pandoric-macros.html" class="btn btn-neutral float-right" title="6.7 潘多拉宏" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

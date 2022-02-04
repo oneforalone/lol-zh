@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6.4 间接链 &mdash; Let Over Lambda 中文文档  文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="6.5 热修复闭包" href="6.5-hotpatching-closures.html" />
+    <link rel="prev" title="6.3 alet 和有限状态机" href="6.3-alet-and-finite-state-machines.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter04/index.html">第四章：Read 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第六章：回指(Anaphoric) 宏</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="6.1-more-phors.html">6.1 More Phors?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.2-sharp-backquote.html">6.2 Sharp-Backquote：#`</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.3-alet-and-finite-state-machines.html">6.3 <code class="docutils literal notranslate"><span class="pre">alet</span></code> 和有限状态机</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.4 间接链</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.5-hotpatching-closures.html">6.5 热修复闭包</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.6-sub-lexical-scope.html">6.6 字词法作用域</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.7-pandoric-macros.html">6.7 潘多拉宏</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">第六章：回指(Anaphoric) 宏</a> &raquo;</li>
+      <li>6.4 间接链</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Chapter06/6.4-indirection-chains.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="id1">
+<h1>6.4 间接链<a class="headerlink" href="#id1" title="永久链接至标题"></a></h1>
+<hr class="docutils" />
+<p>Author: Doug Hoyte</p>
+<p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
+<hr class="docutils" />
+<p>有很多方法来使用 <code class="docutils literal notranslate"><span class="pre">alet</span></code> 的 <code class="docutils literal notranslate"><span class="pre">this</span></code> 回指。由于环境是通过虚拟闭包来访问的，该闭包将所有
+调用转发给 <code class="docutils literal notranslate"><span class="pre">this</span></code> 所指向的真实闭包，所以可以随意的引用这个虚拟闭包，根据需要复制它。
+这样的间接方法很有用，因为可以更改调用这个虚拟闭包时发生的事情，而不必更改对虚拟
+闭包的引用。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro! ichain -before (&amp;rest body)
+  `(let ((,g!indir-env this))
+    (setq this
+      (lambda (&amp;rest ,g!temp-args)
+        ,@body
+        (apply ,g!indir -env
+              ,g!temp-args)))))
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ichain-before</span></code> 会展开成 <code class="docutils literal notranslate"><span class="pre">alet</span></code> 结构。添加了一个新的代码体，以便在调用主闭包之前执行。
+回到计数器例子，<code class="docutils literal notranslate"><span class="pre">ichain-before</span></code> 添加了个新的闭包，会在闭包 <code class="docutils literal notranslate"><span class="pre">acc</span></code> 变量增加前打印出它
+的值：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">alet</span> <span class="p">((</span><span class="n">acc</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="p">(</span><span class="n">ichain</span><span class="o">-</span><span class="n">before</span>
+      <span class="p">(</span><span class="nb">format</span> <span class="n">t</span> <span class="s2">&quot;Changing from ~a~%&quot;</span> <span class="n">acc</span><span class="p">))</span>
+    <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span>
+      <span class="p">(</span><span class="n">incf</span> <span class="n">acc</span> <span class="n">n</span><span class="p">)))</span>
+
+<span class="c1">#&lt;Interpreted Function&gt;</span>
+</pre></div>
+</div>
+<p>和设想的一样：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">funcall</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">Changing</span> <span class="kn">from</span> <span class="mi">0</span>
+<span class="mi">2</span>
+<span class="o">*</span> <span class="p">(</span><span class="n">funcall</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">Changing</span> <span class="kn">from</span> <span class="mi">2</span>
+<span class="mi">4</span>
+</pre></div>
+</div>
+<p>不过，把 chain 放在 <code class="docutils literal notranslate"><span class="pre">ichain-before</span></code> 这个名字中是有原因的。让尽可能多的闭包来执行：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">alet</span> <span class="p">((</span><span class="n">acc</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="p">(</span><span class="n">ichain</span><span class="o">-</span><span class="n">before</span>
+      <span class="p">(</span><span class="nb">format</span> <span class="n">t</span> <span class="s2">&quot;A~%&quot;</span><span class="p">))</span>
+    <span class="p">(</span><span class="n">ichain</span><span class="o">-</span><span class="n">before</span>
+      <span class="p">(</span><span class="nb">format</span> <span class="n">t</span> <span class="s2">&quot;B~%&quot;</span><span class="p">))</span>
+    <span class="p">(</span><span class="n">ichain</span><span class="o">-</span><span class="n">before</span>
+      <span class="p">(</span><span class="nb">format</span> <span class="n">t</span> <span class="s2">&quot;C~%&quot;</span><span class="p">))</span>
+    <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span>
+      <span class="p">(</span><span class="n">incf</span> <span class="n">acc</span> <span class="n">n</span><span class="p">)))</span>
+
+<span class="c1">#&lt;Interpreted Function&gt;</span>
+</pre></div>
+</div>
+<p>在链中每添加一个新链接都会将该链接添加到链的头部，导致访问链接的顺序与添加链接的顺序
+相反：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">funcall</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">C</span>
+<span class="n">B</span>
+<span class="n">A</span>
+<span class="mi">2</span>
+</pre></div>
+</div>
+<p>在更改宏以避免通过添加新的周围代码来重新构造宏时，静态添加间接链有时很用的。但在动态
+添加间接链时，最有趣的可能性就会出现。因为可以在运行时创建新的闭包，还可以通过回指访
+问闭包的内部，所以可以重写函数在运行时的工作方式。下面是一个简单的例子，每个闭包调用
+都会添加另一段代码，在运行时输出 “Hello world”：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">alet</span> <span class="p">((</span><span class="n">acc</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span>
+      <span class="p">(</span><span class="n">ichain</span><span class="o">-</span><span class="n">before</span>
+        <span class="p">(</span><span class="nb">format</span> <span class="n">t</span> <span class="s2">&quot;Hello world~%&quot;</span><span class="p">))</span>
+      <span class="p">(</span><span class="n">incf</span> <span class="n">acc</span> <span class="n">n</span><span class="p">)))</span>
+
+<span class="c1">#&lt;Interpreted Function&gt;</span>
+</pre></div>
+</div>
+<p>每次调用都会向间接链添加一个新的闭包：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">loop</span> <span class="k">for</span> <span class="n">i</span> <span class="kn">from</span> <span class="mi">1</span> <span class="n">to</span> <span class="mi">4</span>
+    <span class="n">do</span>
+      <span class="p">(</span><span class="nb">format</span> <span class="n">t</span> <span class="s2">&quot;~:r invocation:~%&quot;</span> <span class="n">i</span><span class="p">)</span>
+      <span class="p">(</span><span class="n">funcall</span> <span class="o">*</span> <span class="n">i</span><span class="p">))</span>
+<span class="n">first</span> <span class="n">invocation</span><span class="p">:</span>
+<span class="n">second</span> <span class="n">invocation</span><span class="p">:</span>
+<span class="n">Hello</span> <span class="n">world</span>
+<span class="n">third</span> <span class="n">invocation</span><span class="p">:</span>
+<span class="n">Hello</span> <span class="n">world</span>
+<span class="n">Hello</span> <span class="n">world</span>
+<span class="n">fourth</span> <span class="n">invocation</span><span class="p">:</span>
+<span class="n">Hello</span> <span class="n">world</span>
+<span class="n">Hello</span> <span class="n">world</span>
+<span class="n">Hello</span> <span class="n">world</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ichain-after</span></code> 宏与 <code class="docutils literal notranslate"><span class="pre">ichain-before``宏相似，不同之处是</span> <span class="pre">``ichain-after</span></code> 将闭包
+添加到执行链的另一端：在主闭包被调用之后。<code class="docutils literal notranslate"><span class="pre">ichain-after</span></code> 用了 <code class="docutils literal notranslate"><span class="pre">prog1</span></code>， <code class="docutils literal notranslate"><span class="pre">prog1</span></code>
+连续执行里面的代码结构，然后返回第一个结构的求值结果。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro! ichain -after (&amp;rest body)
+  `(let ((,g!indir-env this))
+      (setq this
+        (lambda (&amp;rest ,g!temp-args)
+          (prog1
+            (apply ,g!indir -env
+                  ,g!temp-args)
+            ,@body)))))
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ichain-before</span></code> 和 <code class="docutils literal notranslate"><span class="pre">ichain-after</span></code> 可以组合在一起，让 before 结构在主闭包计算之前执行，
+after 结构在主闭包计算之后执行:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">alet</span> <span class="p">((</span><span class="n">acc</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="p">(</span><span class="n">ichain</span><span class="o">-</span><span class="n">before</span>
+      <span class="p">(</span><span class="nb">format</span> <span class="n">t</span> <span class="s2">&quot;Changing from ~a~%&quot;</span> <span class="n">acc</span><span class="p">))</span>
+    <span class="p">(</span><span class="n">ichain</span><span class="o">-</span><span class="n">after</span>
+      <span class="p">(</span><span class="nb">format</span> <span class="n">t</span> <span class="s2">&quot;Changed to ~a~%&quot;</span> <span class="n">acc</span><span class="p">))</span>
+    <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span>
+      <span class="p">(</span><span class="n">incf</span> <span class="n">acc</span> <span class="n">n</span><span class="p">)))</span>
+
+<span class="c1">#&lt;Interpreted Function&gt;</span>
+<span class="o">*</span> <span class="p">(</span><span class="n">funcall</span> <span class="o">*</span> <span class="mi">7</span><span class="p">)</span>
+<span class="n">Changing</span> <span class="kn">from</span> <span class="mi">0</span>
+<span class="n">Changed</span> <span class="n">to</span> <span class="mi">7</span>
+<span class="mi">7</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ichain-before</span></code> 和 <code class="docutils literal notranslate"><span class="pre">ichain-after</span></code> 是将自由变量插入其展开的宏。这两个宏插入了 <code class="docutils literal notranslate"><span class="pre">this</span></code>
+变量，所依赖的这个变量会被 <code class="docutils literal notranslate"><span class="pre">alet</span></code> 宏的展开捕获。这种类型的变量插入可能看起来格式不好或
+容易出错，但实际上是一种常见的宏技术。事实上，几乎所有的宏都向展开中插入了变量。例如，
+除了 <code class="docutils literal notranslate"><span class="pre">this</span></code>，宏 <code class="docutils literal notranslate"><span class="pre">ichain-before</span></code> 还会插入像 <code class="docutils literal notranslate"><span class="pre">let</span></code>、<code class="docutils literal notranslate"><span class="pre">setq</span></code> 和<code class="docutils literal notranslate"><span class="pre">lambda</span></code> 这样的符号，来拼接
+到宏展开的任何地方。这样的符号和预定义的符号（如 <code class="docutils literal notranslate"><span class="pre">setq</span></code> ）之间的区别在于，<code class="docutils literal notranslate"><span class="pre">lambda</span></code> 总是
+指向一个易于理解的 ANSI 宏，而这样的符号可以指向不同的东西，这取决于它们的展开环境。</p>
+<p>在初始闭包表达式执行之前或之后对代码进行标记时，<code class="docutils literal notranslate"><span class="pre">ichain-before</span></code> 和 <code class="docutils literal notranslate"><span class="pre">ichain-after</span></code> 很
+有用的，但这绝不是 <code class="docutils literal notranslate"><span class="pre">this</span></code> 回指唯一能做的。另一个常见的任务是在调用闭包之后检查闭包数据的
+有效性。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro! ichain -intercept% (&amp;rest body)
+  `(let ((,g!indir-env this))
+    (setq this
+        (lambda (&amp;rest ,g!temp-args)
+          (block intercept
+            (prog1
+              (apply ,g!indir -env
+                    ,g!temp-args)
+              ,@body))))))
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ichain-intercept%</span></code> 是另一个用在 <code class="docutils literal notranslate"><span class="pre">alet</span></code> 中的宏。设想是，希望能够拦截闭包的调用，并验证
+执行的操作没有导致闭包中的某种不一致状态。所以我们可以像这样在常规的计数器闭包中添加一个
+拦截：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">alet</span> <span class="p">((</span><span class="n">acc</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="p">(</span><span class="n">ichain</span><span class="o">-</span><span class="n">intercept</span><span class="o">%</span>
+      <span class="p">(</span><span class="n">when</span> <span class="p">(</span><span class="o">&lt;</span> <span class="n">acc</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">(</span><span class="nb">format</span> <span class="n">t</span> <span class="s2">&quot;Acc went negative~%&quot;</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">setq</span> <span class="n">acc</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">(</span><span class="k">return</span><span class="o">-</span><span class="kn">from</span> <span class="nn">intercept</span> <span class="n">acc</span><span class="p">)))</span>
+    <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span>
+      <span class="p">(</span><span class="n">incf</span> <span class="n">acc</span> <span class="n">n</span><span class="p">)))</span>
+
+<span class="c1">#&lt;Interpreted Function&gt;</span>
+</pre></div>
+</div>
+<p>当计数器低于 0 时，<code class="docutils literal notranslate"><span class="pre">ichain-intercept%</span></code> 插入的代码将告警：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">funcall</span> <span class="o">*</span> <span class="o">-</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">Acc</span> <span class="n">went</span> <span class="n">negative</span>
+<span class="mi">0</span>
+</pre></div>
+</div>
+<p>计数器被重置为 0 ：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">funcall</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="mi">3</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ichain-intercept%</span></code> 最有趣的地方是，引入了 <code class="docutils literal notranslate"><span class="pre">intercept</span></code> 的块回指（block anaphor）。可以
+用 <code class="docutils literal notranslate"><span class="pre">return-from</span></code> 来调用这个回指。代码块将从闭包调用中返回这个值，拦截原始值。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro! ichain -intercept (&amp;rest body)
+  `(let ((,g!indir-env this))
+    (setq this
+        (lambda (&amp;rest ,g!temp-args)
+          (block ,g!intercept
+            (macrolet ((intercept (v)
+                      `(return -from
+                      ,&#39;,g!intercept
+                      ,v)))
+              (prog1
+                (apply ,g!indir-env
+                      ,g!temp-args)
+                ,@body )))))))
+</pre></div>
+</div>
+<p>相反，<code class="docutils literal notranslate"><span class="pre">ichain-intercept</span></code> 创建了个本地宏，该宏允许 <code class="docutils literal notranslate"><span class="pre">ichain-intercept</span></code> 中的代码使用
+<code class="docutils literal notranslate"><span class="pre">intercept</span></code> 展开成一个由 gensym 指定的 <code class="docutils literal notranslate"><span class="pre">return-from</span></code>。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">alet</span> <span class="p">((</span><span class="n">acc</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="p">(</span><span class="n">ichain</span><span class="o">-</span><span class="n">intercept</span>
+      <span class="p">(</span><span class="n">when</span> <span class="p">(</span><span class="o">&lt;</span> <span class="n">acc</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">(</span><span class="nb">format</span> <span class="n">t</span> <span class="s2">&quot;Acc went negative~%&quot;</span><span class="p">)</span>
+      <span class="p">(</span><span class="n">setq</span> <span class="n">acc</span> <span class="mi">0</span><span class="p">)</span>
+      <span class="p">(</span><span class="n">intercept</span> <span class="n">acc</span><span class="p">)))</span>
+    <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span>
+      <span class="p">(</span><span class="n">incf</span> <span class="n">acc</span> <span class="n">n</span><span class="p">)))</span>
+
+<span class="c1">#&lt;Interpreted Function&gt;</span>
+</pre></div>
+</div>
+<p>这和 <code class="docutils literal notranslate"><span class="pre">ichain-intercept%</span></code> 工作原理一样：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">funcall</span> <span class="o">*</span> <span class="o">-</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">Acc</span> <span class="n">went</span> <span class="n">negative</span>
+<span class="mi">0</span>
+<span class="o">*</span> <span class="p">(</span><span class="n">funcall</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
+<span class="mi">3</span>
+</pre></div>
+</div>
+<p>当然，将所有这些闭包透明地引入操作会影响运行时性能。幸运的是，现代 lisp 编译器擅长优化闭包。
+如果应用程序可以忍受几个指针解引（通常是可以的），那么间接链可能是构建它的最佳方式。关于
+间接链的另一种有趣的思考方式，请参阅第 <a class="reference internal" href="../Chapter07/7.4-pointer-scope.html"><span class="doc std std-doc">7.4 指针作用域</span></a> 。还可以查看 CLOS 的 before、after 和
+around 功能。</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="6.3-alet-and-finite-state-machines.html" class="btn btn-neutral float-left" title="6.3 alet 和有限状态机" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="6.5-hotpatching-closures.html" class="btn btn-neutral float-right" title="6.5 热修复闭包" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

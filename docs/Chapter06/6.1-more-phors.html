@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6.1 More Phors? &mdash; Let Over Lambda 中文文档  文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="6.2 Sharp-Backquote：#`" href="6.2-sharp-backquote.html" />
+    <link rel="prev" title="第六章：回指(Anaphoric) 宏" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter04/index.html">第四章：Read 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第六章：回指(Anaphoric) 宏</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.1 More Phors?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.2-sharp-backquote.html">6.2 Sharp-Backquote：#`</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.3-alet-and-finite-state-machines.html">6.3 <code class="docutils literal notranslate"><span class="pre">alet</span></code> 和有限状态机</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.4-indirection-chains.html">6.4 间接链</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.5-hotpatching-closures.html">6.5 热修复闭包</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.6-sub-lexical-scope.html">6.6 字词法作用域</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.7-pandoric-macros.html">6.7 潘多拉宏</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">第六章：回指(Anaphoric) 宏</a> &raquo;</li>
+      <li>6.1 More Phors?</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Chapter06/6.1-more-phors.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="more-phors">
+<h1>6.1 More Phors?<a class="headerlink" href="#more-phors" title="永久链接至标题"></a></h1>
+<hr class="docutils" />
+<p>Author: Doug Hoyte</p>
+<p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
+<hr class="docutils" />
+<p>Paul Graham 的《On Lisp》中一些有趣的宏是回指宏（anaphoric macros）。回指宏是特意从
+宏结构中捕捉变量的宏。多亏了它们的显示声明，这些特意捕获的变量为我们提供了控制宏展开
+的窗口。通过这些窗口，可以用组合操作来控制宏展开。</p>
+<p>《On Lisp》中标准的回指宏的命名是根据 anaphor 和它的复数形式 anaphora 的字面意思。回指
+是种捕获 U 语言的一个空闲单词，然后将这个单词用在之后的 U 语言中的方法。在编程术语中，
+实现典型的回指意味着在代码中——或者即将编写的代码中——找到可以利用之前表达式结果的位置。
+Graham 的回指和相关代码值得深究。特别是宏 <code class="docutils literal notranslate"><span class="pre">defanaph</span></code>，它支持一些有趣的自动回指（automatic
+anaphor）编程类型。</p>
+<p>经过一段时间的使用，发现《On Lisp》中最好用的回指宏就是 <code class="docutils literal notranslate"><span class="pre">alambda</span></code>。它也是个最简单和
+最优雅的回指宏及特意捕捉变量的展示。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>;; Graham &#39;s alambda
+(defmacro alambda (parms &amp;body body)
+  `(labels ((self ,parms ,@body))
+      #&#39;self))
+</pre></div>
+</div>
+<p>通过 <code class="docutils literal notranslate"><span class="pre">alambda</span></code>，我们捕捉到 <code class="docutils literal notranslate"><span class="pre">self</span></code> 这个变量名，所以就可以在之后构建的匿名函数中引用这个
+变量。换句话说，递归就像调用 <code class="docutils literal notranslate"><span class="pre">self</span></code> 一样简单。例如，下面的函数返回从 <code class="docutils literal notranslate"><span class="pre">n</span></code> 到 1 的一个列表：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">alambda</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="o">&gt;</span> <span class="n">n</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">cons</span>
+      <span class="n">n</span>
+      <span class="p">(</span><span class="bp">self</span> <span class="p">(</span><span class="o">-</span> <span class="n">n</span> <span class="mi">1</span><span class="p">)))))</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">alambda</span></code> 让代码更直观、更易读，并会改变我们的思维，即匿名函数是否应该像添加一个字母
+那样容易调用自己。因为 <code class="docutils literal notranslate"><span class="pre">alambda</span></code> 对 <code class="docutils literal notranslate"><span class="pre">self</span></code> 绑定的显示定义，而且使用 <code class="docutils literal notranslate"><span class="pre">alambda</span></code> 的唯一
+原因就是利用这个绑定，所以不会出现异常变量捕获的问题。</p>
+<p>《On Lisp》中的另一个方便的回指宏是 <code class="docutils literal notranslate"><span class="pre">aif</span></code>，这个宏将测试子句的结果绑定到 <code class="docutils literal notranslate"><span class="pre">it</span></code> ，然后在
+true 子句(辅助子句或结果子句)使用中使用。<code class="docutils literal notranslate"><span class="pre">aif</span></code> 用了一个 COMMON LISP 很重要的特性：
+广义布尔值。在 COMMON LISP 中，任何非空值都是一个真布尔值，所以 COMMON LISP 程序员
+通常会在真值中嵌入有趣的信息。保留了真值和假值的语言(尤其是Scheme)使用显式布尔值，
+有时会强制抛出额外的信息来满足冗余的类型约束。Scheme 实际上添加了个组装程序（kludge），
+让 <code class="docutils literal notranslate"><span class="pre">if</span></code>、<code class="docutils literal notranslate"><span class="pre">cond</span></code>、<code class="docutils literal notranslate"><span class="pre">and</span></code>、<code class="docutils literal notranslate"><span class="pre">or</span></code> 和 <code class="docutils literal notranslate"><span class="pre">do</span></code> 接受非布尔值。当然，COMMON LISP 的设计才是对的 ——
+一切都是布尔值。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>;; Graham &#39;s aif
+(defmacro aif (test then &amp;optional else)
+  `(let ((it ,test))
+     (if it ,then ,else)))
+
+</pre></div>
+</div>
+<p>还必须指出，<code class="docutils literal notranslate"><span class="pre">aif</span></code> 和 <code class="docutils literal notranslate"><span class="pre">alambda</span></code>，就像所有的回指宏一样，违反了词法透明。用现在流行的话来说，
+它们是不正常（unhygienic）的宏。也就是说，像本书中的许多宏一样，回指宏无形地引入了词法绑定，
+因此不能在严格执行安全的宏系统中创建。即使是绝大多数 Scheme 系统，这个在安全方面试验最多的
+平台，也有不安全的的 defmacro 风格的宏 —— 大概是因为就连Scheme的实现这也不太重视安全吧。
+就像自行车上的辅助轮一样，在大多数情况下安全系统都是要丢掉的玩具，即使只掌握了一点技能。</p>
+<p>是的，还有很多关于特定变量捕获的有趣的事可以做。还有很多 phors。本书和 Graham 的《On Lisp》
+只描述了这种技术内在潜力的一小部分。更多不可思议的创造将会出现在回指宏的智能应用中。</p>
+<p>在穿插的阅读宏，简短地介绍了下回指宏后，本章的剩余部分将介绍现代的、具体的回指宏应用，
+一个与本书的中心主旨相关的：词汇闭包 —— let over lambda。本章的大部分内容将介绍一些用于
+定制、调整和扩展闭包的有趣的回指宏。虽然这些主题在实际代码中的应用非常实用，但它们的
+主要目的是一个讨论回指宏的属性和变化的平台。用宏来扩展闭包这个概念是当前的一个热点
+研究课题。</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="第六章：回指(Anaphoric) 宏" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="6.2-sharp-backquote.html" class="btn btn-neutral float-right" title="6.2 Sharp-Backquote：#`" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

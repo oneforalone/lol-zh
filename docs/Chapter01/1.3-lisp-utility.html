@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1.3 Lisp 实用程序 &mdash; Let Over Lambda 中文文档  文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="1.4 许可证" href="1.4-license.html" />
+    <link rel="prev" title="1.2 U 语言" href="1.2-u-language.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第一章：概述</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="1.1-macros.html">1.1 宏</a></li>
+<li class="toctree-l2"><a class="reference internal" href="1.2-u-language.html">1.2 U 语言</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1.3 Lisp 实用程序</a></li>
+<li class="toctree-l2"><a class="reference internal" href="1.4-license.html">1.4 许可证</a></li>
+<li class="toctree-l2"><a class="reference internal" href="1.5-thanks.html">1.5 致谢</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter04/index.html">第四章：Read 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">第一章：概述</a> &raquo;</li>
+      <li>1.3 Lisp 实用程序</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Chapter01/1.3-lisp-utility.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="lisp">
+<h1>1.3 Lisp 实用程序<a class="headerlink" href="#lisp" title="永久链接至标题"></a></h1>
+<hr class="docutils" />
+<p>Author: Doug Hoyte</p>
+<p>Translator: Xuting Yang</p>
+<p>Proof-Reading: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
+<hr class="docutils" />
+<p>《On Lisp》是本你要么理解，要么不理解的书。你要么崇拜它，要么害怕它。从它的书名
+开始，《On Lisp》是关于创建编程抽象的，这些抽象是 Lisp 之上的层次。在创建了这些
+抽象之后，就可以自由地创建更多的编程抽象，这些抽象是早期抽象的连续层次。</p>
+<p>在几乎所有值得使用的语言中，语言的大部分功能都是用语言本身实现的；Blub 语言通常
+有大量用 Blub 编写的标准库。当连程序员都不想用目标语言编程时，你可能也不会想这
+样做。</p>
+<p>但即使考虑了其他语言的标准库，lisp 也是不同的。从其他语言是由原语（ primitive )组成
+的意义上讲，lisp 是由元原语（meta-primitive）组成的。一旦宏如 COMMON LISP 那样被
+标准化，语言的其他部分就可以从根本上被引导发展起来了。大多数语言只是试图提供一套
+足够灵活的这些原语，而 lisp 提供了一个允许任何和所有种类的原语的元编程系统。另一种
+思考方式是，lisp完全摒弃了原语的概念。在 lisp 中，元编程系统并没有停止在任何所谓的
+原语上。这些用于构建语言的宏编程技术有可能，事实上也是人们所希望的，它可以一直
+延续到用户应用程序中。即使是由最高级别的用户编写的应用程序，也是 lisp 洋葱上的宏层，
+通过迭代而不断增长。</p>
+<p>从这个角度来看，语言中存在原语是一个问题。只要有原语，系统的设计就会有障碍和非正
+交性。当然，有时这是有道理的。大多数程序员都能把单个机器码指令当作原语，让他们的
+C 或 lisp 编译器来处理。但是lisp用户要求对其他几乎所有的东西进行控制。就给予程序员
+的控制权而言，没有其他语言能像lisp那样完整。</p>
+<p>听从《On Lisp》的建议，本书是作为洋葱上的另一层设计的。就像程序在其他程序上分层
+一样，本书也是《On Lisp》的更深一层。这本书的中心主题是当设计良好的实用程序结合
+在一起时，可以发挥出大于各部分之和的生产力优势。本节介绍了一系列来自《On Lisp》
+和其他资料的实用工具。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">mkstr</span> <span class="p">(</span><span class="o">&amp;</span><span class="n">rest</span> <span class="n">args</span><span class="p">)</span>
+<span class="p">(</span><span class="k">with</span><span class="o">-</span><span class="n">output</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">string</span> <span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="p">(</span><span class="n">dolist</span> <span class="p">(</span><span class="n">a</span> <span class="n">args</span><span class="p">)</span> <span class="p">(</span><span class="n">prince</span> <span class="n">a</span> <span class="n">s</span><span class="p">))))</span>
+<span class="p">(</span><span class="n">defun</span> <span class="n">symb</span> <span class="p">(</span><span class="n">krest</span> <span class="n">args</span><span class="p">)</span>
+<span class="p">(</span><span class="n">values</span> <span class="p">(</span><span class="n">intern</span> <span class="p">(</span><span class="n">apply</span> <span class="c1">#&#39;mkstr args))))</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">symb</span></code> 是创建符号的通用方法，分层在 <code class="docutils literal notranslate"><span class="pre">mkstr</span></code> 之上。由于符号可以被任何任意的字符串引用，
+而且以编程方式创建符号是非常有用的，因此 <code class="docutils literal notranslate"><span class="pre">symb</span></code> 是宏编程的一个基本工具，在本书中被
+大量使用。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">group</span> <span class="p">(</span><span class="n">source</span> <span class="n">n</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="n">zerop</span> <span class="n">n</span><span class="p">)</span> <span class="p">(</span><span class="n">error</span> <span class="s2">&quot;zero length&quot;</span><span class="p">))</span>
+  <span class="p">(</span><span class="n">labels</span> <span class="p">((</span><span class="n">rec</span> <span class="p">(</span><span class="n">source</span> <span class="n">acc</span><span class="p">)</span>
+            <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">rest</span> <span class="p">(</span><span class="n">nthcdr</span> <span class="n">n</span> <span class="n">source</span><span class="p">)))</span>
+              <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="n">consp</span> <span class="n">rest</span><span class="p">)</span>
+                  <span class="p">(</span><span class="n">rec</span> <span class="n">rest</span> <span class="p">(</span><span class="n">cons</span>
+                              <span class="p">(</span><span class="n">subseq</span> <span class="n">source</span> <span class="mi">0</span> <span class="n">n</span><span class="p">)</span>
+                                <span class="n">acc</span><span class="p">))</span>
+                  <span class="p">(</span><span class="n">nreverse</span>
+                    <span class="p">(</span><span class="n">cons</span> <span class="n">source</span> <span class="n">acc</span><span class="p">))))))</span>
+    <span class="p">(</span><span class="k">if</span> <span class="n">source</span> <span class="p">(</span><span class="n">rec</span> <span class="n">source</span> <span class="n">nil</span><span class="p">)</span> <span class="n">nil</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">group</span></code> 是另一个在编写宏时经常出现的工具。原因一是需要镜像运算符，如 COMMON LISP
+的 <code class="docutils literal notranslate"><span class="pre">setf</span></code> 和 <code class="docutils literal notranslate"><span class="pre">psetf</span></code>，它们已经对参数进行了分组。原因二是分组通常是结构化相关数据的
+最佳方式。由于我们经常使用这种功能，所以尽可能地使之抽象化是有意义的。Graham 的
+分组将按由参数 <code class="docutils literal notranslate"><span class="pre">n</span></code> 指定的分组量进行分组。在 <code class="docutils literal notranslate"><span class="pre">setf</span></code> 这样的情况下，参数被分组成对，
+<code class="docutils literal notranslate"><span class="pre">n</span></code> 是 2。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">flatten</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
+  <span class="p">(</span><span class="n">labels</span> <span class="p">((</span><span class="n">rec</span> <span class="p">(</span><span class="n">x</span> <span class="n">acc</span><span class="p">)</span>
+          <span class="p">(</span><span class="n">cond</span> <span class="p">((</span><span class="n">null</span> <span class="n">x</span><span class="p">)</span> <span class="n">acc</span><span class="p">)</span>
+                <span class="p">((</span><span class="n">atom</span> <span class="n">x</span><span class="p">)</span> <span class="p">(</span><span class="n">cons</span> <span class="n">x</span> <span class="n">acc</span><span class="p">))</span>
+                <span class="p">(</span><span class="n">t</span> <span class="p">(</span><span class="n">rec</span>
+                      <span class="p">(</span><span class="n">car</span> <span class="n">x</span><span class="p">)</span>
+                      <span class="p">(</span><span class="n">rec</span> <span class="p">(</span><span class="n">cdr</span> <span class="n">x</span><span class="p">)</span> <span class="n">acc</span><span class="p">))))))</span>
+  <span class="p">(</span><span class="n">rec</span> <span class="n">x</span> <span class="n">nil</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">flatten</span></code> 是《On Lisp》中最重要的实用工具之一。给定一个任意嵌套的列表结构，<code class="docutils literal notranslate"><span class="pre">flatten</span></code>
+将返回一个新的包含所有可以通过该列表结构到达的原子的列表。如果我们把列表结构看成是
+一棵树，那么 <code class="docutils literal notranslate"><span class="pre">flatten</span></code> 将返回该树中所有叶子的列表。如果这棵树代表 lisp 代码，通过检查
+表达式中某些对象的存在，<code class="docutils literal notranslate"><span class="pre">flatten</span></code> 完成了一种代码遍历（code-walking），这是本书中
+反复出现的主题。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">fact</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="o">=</span> <span class="n">x</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="mi">1</span>
+    <span class="p">(</span><span class="o">*</span> <span class="n">x</span> <span class="p">(</span><span class="n">fact</span> <span class="p">(</span><span class="o">-</span> <span class="n">x</span> <span class="mi">1</span><span class="p">)))))</span>
+
+<span class="p">(</span><span class="n">defun</span> <span class="n">choose</span> <span class="p">(</span><span class="n">n</span> <span class="n">r</span><span class="p">)</span>
+  <span class="p">(</span><span class="o">/</span> <span class="p">(</span><span class="n">fact</span> <span class="n">n</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">fact</span> <span class="p">(</span><span class="o">-</span> <span class="n">n</span> <span class="n">r</span><span class="p">))</span>
+    <span class="p">(</span><span class="n">fact</span> <span class="n">r</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">fact</span></code> 和 <code class="docutils literal notranslate"><span class="pre">choose</span></code> 是阶乘和二项式系数函数的显示实现。</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="1.2-u-language.html" class="btn btn-neutral float-left" title="1.2 U 语言" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="1.4-license.html" class="btn btn-neutral float-right" title="1.4 许可证" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

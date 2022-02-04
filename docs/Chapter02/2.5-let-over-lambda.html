@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2.5 Let Over Lambda &mdash; Let Over Lambda 中文文档  文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="2.6 Lambda Over Let Over Lambda" href="2.6-lambda-over-letoverlambda.html" />
+    <link rel="prev" title="2.4 Let It Be Lambda" href="2.4-let-it-be-lambda.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第二章：闭包</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="2.1-closure-oriented-programming.html">2.1 面向闭包编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.2-environments-and-extent.html">2.2 Environment and Extent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.3-lexical-and-dynamic-scope.html">2.3 词法作用域与动态作用域</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.4-let-it-be-lambda.html">2.4 Let It Be Lambda</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.5 Let Over Lambda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.6-lambda-over-letoverlambda.html">2.6 Lambda Over Let Over Lambda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.7-letoverlambda-over-letoverlambda.html">2.7 Let Over Lambda Over Let Over Lambda</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter04/index.html">第四章：Read 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">第二章：闭包</a> &raquo;</li>
+      <li>2.5 Let Over Lambda</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Chapter02/2.5-let-over-lambda.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="let-over-lambda">
+<h1>2.5 Let Over Lambda<a class="headerlink" href="#let-over-lambda" title="永久链接至标题"></a></h1>
+<hr class="docutils" />
+<p>Author: Doug Hoyte</p>
+<p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
+<hr class="docutils" />
+<p><em>Let over lambda</em> is a nickname given to a lexical closure. Let over lambda more closely mirrors the lisp code used to create closures than does most terminology. In a let over lambda scenario, the last form returned by a <strong>let</strong> statement is a <strong>lambda</strong> expression. It literally looks like <strong>let</strong> is sitting on top of <strong>lambda</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">x</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="p">(</span><span class="k">lambda</span> <span class="p">()</span> <span class="n">x</span><span class="p">))</span>
+
+<span class="c1">#&lt;Interpreted Function&gt;</span>
+</pre></div>
+</div>
+<p>Recall that the <strong>let</strong> form returns the result of evaluating the last form inside its body, which is why evaluating this let over lambda form produced a function. However, there is something special about the last form in the <strong>let</strong>. It is a <strong>lambda</strong> form with <strong>x</strong> as a <em>free variable</em>. Lisp was smart enough to determine what <strong>x</strong> should refer to for this function: the <strong>x</strong> from the surrounding lexical environment created by the <strong>let</strong> form. And, because in lisp everything is of indefinite extent by default, the environment will be available for this function to use as long as it needs it.</p>
+<p>So lexical scope is a tool for specifying exactly where references to a variable are valid, and exactly what the references refer to. A simple example of a closure is a <em>counter</em>, a closure that stores an integer in an environment and increments and returns this value upon every invocation. Here is how it is typically implemented, with a let over lambda:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">counter</span> <span class="mi">0</span><span class="p">))</span>
+  <span class="p">(</span><span class="k">lambda</span> <span class="p">()</span> <span class="p">(</span><span class="n">incf</span> <span class="n">counter</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>This closure will return 1 the first time it is called, 2 the subsequent time, and so on. One way of thinking about closures is that they are functions with <em>state</em>. These functions are not mathematical functions, but rather procedures, each with a little memory of its own. Sometimes data structures that bundle together code and data are called <em>objects</em>. An object is a collection of procedures and some associated state. Since objects are so closely related to closures, they can often be thought of as one and the same. A closure is like an object that has exactly one method: <strong>funcall</strong>. An object is like a closure that you can <strong>funcall</strong> in multiple ways.</p>
+<p>Although closures are always a single function and its enclosing environment, the multiple methods, inner classes, and static variables of object systems all have their closure counterparts. One possible way to simulate multiple methods is to simply return multiple <strong>lambda</strong>s from inside the same lexical scope:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">counter</span> <span class="mi">0</span><span class="p">))</span>
+  <span class="p">(</span><span class="n">values</span>
+    <span class="p">(</span><span class="k">lambda</span> <span class="p">()</span> <span class="p">(</span><span class="n">incf</span> <span class="n">counter</span><span class="p">))</span>
+    <span class="p">(</span><span class="k">lambda</span> <span class="p">()</span> <span class="p">(</span><span class="n">decf</span> <span class="n">counter</span><span class="p">))))</span>
+</pre></div>
+</div>
+<p>This <em>let over two lambdas</em> pattern will return two functions, both of which access the same enclosing counter variable. The first increments it and the second decrements it. There are many other ways to accomplish this. One of which, <strong>dlambda</strong>, is discussed in <a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap5.html#sec_7">section 5.7, Dlambda</a>. For reasons that will be explained as we go along, the code in this book will structure all data using closures instead of objects. Hint: It has to do with macros.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="2.4-let-it-be-lambda.html" class="btn btn-neutral float-left" title="2.4 Let It Be Lambda" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="2.6-lambda-over-letoverlambda.html" class="btn btn-neutral float-right" title="2.6 Lambda Over Let Over Lambda" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1.2 U 语言 &mdash; Let Over Lambda 中文文档  文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="1.3 Lisp 实用程序" href="1.3-lisp-utility.html" />
+    <link rel="prev" title="1.1 宏" href="1.1-macros.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第一章：概述</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="1.1-macros.html">1.1 宏</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1.2 U 语言</a></li>
+<li class="toctree-l2"><a class="reference internal" href="1.3-lisp-utility.html">1.3 Lisp 实用程序</a></li>
+<li class="toctree-l2"><a class="reference internal" href="1.4-license.html">1.4 许可证</a></li>
+<li class="toctree-l2"><a class="reference internal" href="1.5-thanks.html">1.5 致谢</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter04/index.html">第四章：Read 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">第一章：概述</a> &raquo;</li>
+      <li>1.2 U 语言</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Chapter01/1.2-u-language.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="u">
+<h1>1.2 U 语言<a class="headerlink" href="#u" title="永久链接至标题"></a></h1>
+<hr class="docutils" />
+<p>Author: Doug Hoyte</p>
+<p>Translator: Xuting Yang</p>
+<p>Proof-Reading: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
+<hr class="docutils" />
+<p>由于讨论宏涉及到讨论本身，所以需要明确本书的书写习惯。。正如你正在阅读和理解
+的东西所传达给你的那样，我现在所写的本身就是个值得规范化和分析的表达系统。</p>
+<p>没有人比 Haskell Curry（Foundations Of Mathematical Logic 的作者 ）更了解这一点。
+这是因为 Curry 不仅想将思想规范化，而且还想表示思想本身。他认为把作者与读者交
+流的语言中的概念抽象是有必要的，并把这种语言称为 U 语言。</p>
+<blockquote>
+<div><p>每一项调查都必须通过语言的方式在人与人之间交流。在我们研究之初，希望大家关注这个
+明显的事实，可以给正在使用的语言起个名字，并明确说明它的几个特点。我们将把正在
+使用的语言称为 “U语言”。如果不是因为语言与我们的工作比其他大多数人的工作更密切
+相关，那么呼吁关注它就没有意义。</p>
+</div></blockquote>
+<p>在本书中，将使用 <em>斜体</em> 来表示一些关键的概念和要点。用 <strong>粗体</strong> 来表示程序中的特殊结构、
+函数、宏和其他的标识符，不论它们有没有出现过。注意有些词有多种含义，例如 <strong>lambda</strong>
+是COMMON LISP的宏，而 lambda 是概念；<strong>let</strong> 是特殊结构，而 list 则是个 let 结构。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>（defun example-program-listing()
+  ‘(this is
+    (a (program
+      (listing)))))
+</pre></div>
+</div>
+<p>在本书中，新出现的程序代码都会单独的显示代码框中。正如 <code class="docutils literal notranslate"><span class="pre">example-program-listing</span></code>
+函数的定义一样，代码是为重复使用而设计，或者为恰当地实现例子而设计的。但有时我们仅希
+望展示一点代码的使用，或者只是想讨论一些表达式的属性，并不想与书面文本脱离太多。在这
+些情况下，代码或代码的使用示例将像这样出现：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">this</span> <span class="ow">is</span>
+  <span class="p">(</span><span class="n">demonstration</span> <span class="n">code</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>许多教学编程的文章都使用大量孤立的、设计好的例子来说明问题，但却忘了将其与现实相结合。
+本书试图用尽量少而直接的例子来说明宏观的编程思想。有些文章试图在例子中使用可爱、古怪
+的标识符名称或肤浅的类比来掩盖其无聊。但我们的例子只是为了说明观点。开个玩笑，这本书
+首先试图不把自己（或任何东西）看得太严肃。但与阅读其他书籍不同的是，你需要去寻找它。
+由于 lisp 的交互性质，计算一个简单表达式的结果往往比等量的 U 语言表达地要多。在这种情
+况下，我们将这样显示 COMMON LISP Read Evaluate Print Loop（称为REPL）的输出：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">this</span> <span class="ow">is</span>
+    <span class="p">(</span><span class="n">the</span> <span class="n">expression</span>
+      <span class="p">(</span><span class="n">to</span> <span class="n">evaluate</span><span class="p">)))</span>
+
+<span class="n">THIS</span><span class="o">-</span><span class="n">IS</span><span class="o">-</span><span class="n">THE</span><span class="o">-</span><span class="n">RESULT</span>
+</pre></div>
+</div>
+<p>注意输入的文本是小写的，但 lisp 返回的文本是大写的。能简便地区分 REPL 的输入输出是
+COMMON LISP 的一个特点。更确切地说，这个特点能使我们立即知道 LISP 文件是否已被
+lisp 阅读器处理。星号（<em>）代表一个提示。星号（</em>）是一个理想的符号，因为它不会与输
+入字符相混淆，并且它的高像素数使它在REPL输出时更加突出。</p>
+<p>编写复杂的 lisp 宏是一个迭代的过程。没有人会用其在他语言程序中常见的轻率风格，写出一
+个长达几页的宏。一部分原因是 lisp 代码每页包含的信息比大多数其他语言多得多。另部分原
+因是 lisp 鼓励程序员发展他们的程序：根据应用的需要，通过一系列的改进来完善它们。</p>
+<p>本书区分了 lisp 的类型，如 COMMON LISP，Scheme 和 building material(一种更抽象的 lisp 概念)。
+还介绍了 lisp 编程语言和非 lisp 编程语言之间的区别。当需要谈论非 lisp 语言时，会避免直接指
+明语言名字以减少树敌。为了做到这一点，我们采用了下面这个不寻常的定义。</p>
+<blockquote>
+<div><p>没有 lisp 宏的语言就是 Blub。</p>
+</div></blockquote>
+<p>U 语言中的 Blub 一词来自 Paul Graham 的一篇文章《Beating the Averages》，Blub 是一种隐喻，
+用来强调 lisp 与其他语言不同的事实。Blub的特征有中缀语法、恼人的类型系统和残缺的对象系统，
+但不同 blub 的唯一统一的特征是没有 lisp 宏。Blub 术语很有用，因为有时理解一个高级宏的最简
+单方法就是考虑为什么这个技术在Blub 中不可能实现。Blub 术语的目的不是为了取笑非 lisp 语言。</p>
+<p>为了说明写宏的迭代过程，本书采用了这样的惯例：在定义不完整或尚未以其他方式改进的函数
+和宏的名称后面加上百分数（%）字符。在确定最终版本之前，多次修订可能会导致一个名称的末
+尾出现多个 % 字符。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defun example-function% () ;first try
+  t)
+(defun example-function%% () ; second try
+  t)
+(defun example-function () : got it!
+  t)
+</pre></div>
+</div>
+<p>Curry 将宏描述为元编程（metaprogramming）。元程序的唯一目的是使程序员能够更好地编写软件。
+尽管所有的编程语言都在不同程度上采用了元编程，但没有一种语言像 lisp 那样彻底地采用了它。
+没有其他任何一种语言要求程序员以方便元编程技术的目的写代码。这就是为什么 lisp 程序在非
+lisp 程序员看来很奇怪：lisp 代码的表达方式是其元编程需求的直接结果。正如本书试图描述的
+那样，lisp 的在 lisp 本身中编写元程序的设计使得 lisp 具有惊人的生产力优势。然而，由于我们
+在 lisp 中创建元程序，我们必须牢记元编程与 U 语言规范不同。我们可以从不同的角度讨论不同
+的元语言，但只有一种 U 语言。库里为他的 U 语言明确了这一点：</p>
+<blockquote>
+<div><p>我们可以形成具有任何数量级别的语言层次结构。然而，无论有多少个层次，U语言都将是
+最高的层次：如果有两个层次，它将是元语言；如果有三个层次，它将是元-元语言；以此
+类推。因此，U语言和元语言这两个术语必须保持区别。</p>
+</div></blockquote>
+<p>当然，这是本关于 lisp 的书，而 lisp 的逻辑系统与库里所描述的非常不同，所以我们将采用很少他作品中的其他惯例。但库里对逻辑和元编程的贡献至今仍激励着我们。这不仅是因为他对符号引文有深刻的见解，而且还因为他的U语言措辞优美，执行高效。</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="1.1-macros.html" class="btn btn-neutral float-left" title="1.1 宏" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="1.3-lisp-utility.html" class="btn btn-neutral float-right" title="1.3 Lisp 实用程序" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

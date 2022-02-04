@@ -1,0 +1,120 @@
+# 2.4 Let It Be Lambda
+
+---
+
+Author: Doug Hoyte
+
+Translator: Yuqi Liu <[yuqi.lyle@outlook.com](mailto:yuqi.lyle@outlook.com)>
+
+---
+
+**Let** is a lisp special form for creating an environment with names (bindings) initialised to the results of evaluating corresponding forms. These names are available to the code inside the **let** body while its forms are evaluated consecutively, returning the result of the final form. Although what **let** does is unambiguous, how it does it is deliberately left unspecified. What **let** does is separated from how it does it. Somehow, **let** needs to provide a data structure for storing pointers to values.
+
+
+Cons cells are undeniably useful for holding pointers, as we saw above, but there are numerous structures that can be used. One of the best ways to store pointers in lisp is to let lisp take care of it for you with the **let** form. With **let** you only have to name (bind) these pointers and lisp will figure out how best to store them for you. Sometimes we can help the compiler make this more efficient by giving it extra bits of information in the form of declarations:
+```
+(defun register-allocated-fixnum ()
+  (declare (optimize (speed 3) (safety 0)))
+  (let ((acc 0))
+    (loop for i from 1 to 100 do
+      (incf (the fixnum acc)
+            (the fixnum i)))
+    acc))
+```
+For example, in **register-allocated-fixnum** we provide some hints to the compiler that allow it to sum the integers from 1 to 100 very efficiently. When compiled, this function will allocate the data in registers, eliminating the need for pointers altogether. Even though it seems we've asked lisp to create an indefinite extent environment to hold **acc** and **i**, a lisp compiler will be able to optimise this function by storing the values solely in CPU registers. The result might be this machine code:
+```
+; 090CEB52:       31C9             XOR ECX, ECX
+;       54:       B804000000       MOV EAX, 4
+;       59:       EB05             JMP L1
+;       5B: L0:   01C1             ADD ECX, EAX
+;       5D:       83C004           ADD EAX, 4
+;       60: L1:   3D90010000       CMP EAX, 400
+;       65:       7EF4             JLE L0
+```
+Notice that 4 represents 1 and 400 represents 100 because fixnums are shifted by two bits in compiled code. This has to do with _tagging_, a way to pretend that something is a pointer but actually store data inside it. Our lisp compiler's tagging scheme has the nice benefit that no shifting needs to occur to index word aligned memory[DESIGN-OF-CMUCL]. We'll get to know our lisp compiler better in [chapter 7, Macro Efficiency Topics](../Chapter07/index.rst).
+
+
+But if lisp determines that you might want to refer to this environment later on it will have to use something less transient than a register. A common structure for storing pointers in environments is an array. If each environment has an array and all the variable references enclosed in that environment are just references into this array, we have an efficient environment with potentially indefinite extent.
+
+
+As mentioned above, **let** will return the evaluation of the last form in its body. This is common for many lisp special forms and macros, so common that this pattern is often referred to as an _implicit progn_ due to the **progn** special form designed to do nothing but this[5](https://letoverlambda.com/index.cl/guest/chap2.html#). Sometimes the most valuable thing to have a let form return is an anonymous function which takes advantage of the lexical environment supplied by the let form. To create these functions in lisp we use _lambda_.
+
+
+_Lambda_ is a simple concept that can be intimidating because of its flexibility and importance. The lambda from lisp and scheme owes its roots to Alonzo Church's logic system but has evolved and adapted into its altogether own lisp specification. Lambda is a concise way to repeatably assign temporary names (bindings) to values for a specific lexical context and underlies lisp's concept of a function. A lisp function is very different from the mathematical function description that Church had in mind. This is because lambda has evolved as a powerful, practical tool at the hands of generations of lispers, stretching and extending it much further than early logicians could have foreseen.
+
+
+Despite the reverence lisp programmers have for lambda, there is nothing inherently special about the notation. As we will see, lambda is just one of many possible ways to express this sort of variable naming. In particular, we will see that macros allow us to customise the renaming of variables in ways that are effectively impossible in other programming languages. But after exploring this, we will return to lambda and discover that it is very close to the optimal notation for expressing such naming. This is no accident. Church, as dated and irrelevant as he might seem to our modern programming environment, really was on to something. His mathematical notation, along with its numerous enhancements in the hands of generations of lisp professionals, has evolved into a flexible, general tool[6](https://letoverlambda.com/index.cl/guest/chap2.html#).
+
+
+Lambda is so useful that, like many of lisp's features, most modern languages are beginning to import the idea from lisp into their own systems. Some language designers feel that lambda is too lengthy, instead using **fn** or some other abbreviation. On the other hand, some regard lambda as a concept so fundamental that obscuring it with a lesser name is next to heresy. In this book, although we will describe and explore many variations on lambda, we happily call it lambda, just as generations of lisp programmers before us.
+
+
+But what is lisp's lambda? First off, as with all names in lisp, lambda is a _symbol_. We can quote it, compare it, and store it in lists. Lambda only has a special meaning when it appears as the first element of a list. When it appears there, the list is referred to as a _lambda form_ or as a _function designator_. But this form is not a function. This form is a list data structure that can be converted into a function using the **function** special form:
+```
+* (function '(lambda (x) (+ 1 x)))
+
+#<Interpreted Function>
+```
+COMMON LISP provides us a convenience shortcut for this with the #' (sharp-quote) read macro. Instead of writing **function** as above, for the same effect we can take advantage of this shortcut:
+```
+* #'(lambda (x) (+ 1 x))
+
+#<Interpreted Function>
+```
+As a further convenience feature, lambda is also defined as a macro that expands into a call to the function special form above. The COMMON LISP ANSI standard requires[ANSI-CL-ISO-COMPATIBILITY] a **lambda** macro defined like so:
+```
+(defmacro lambda (&whole form &rest body)
+  (declare (ignore body))
+  `#',form)
+```
+Ignore the ignore declaration for now[7](https://letoverlambda.com/index.cl/guest/chap2.html#). This macro is just a simple way to automatically apply the **function** special form to your function designators. This macro allows us to evaluate function designators to create functions because they are expanded into sharp-quoted forms:
+```
+* (lambda (x) (+ 1 x))
+
+#<Interpreted Function>
+```
+There are few good reasons to prefix your lambda forms with #' thanks to the **lambda** macro. Because this book makes no effort to support pre-ANSI COMMON LISP environments, backwards compatibility reasons are easily rejected. But what about stylistic objections? Paul Graham, in _ANSI COMMON LISP_[GRAHAM-ANSI-CL], considers this macro, along with its brevity benefits, a "specious sort of elegance at best". Graham's objection seems to be that since you still need to sharp-quote functions referenced by symbols, the system seems asymmetric. However, I believe that not sharp-quoting lambda forms is actually a stylistic improvement because it highlights the asymmetry that exists in the second namespace specification. Using sharp-quote for symbols is for referring to the second namespace, whereas functions created by lambda forms are, of course, nameless.
+
+
+Without even invoking the **lambda** macro, we can use lambda forms as the first argument in a function call. Just like when a symbol is found in this position and lisp assumes we are referencing the **symbol-function** cell of the symbol, if a lambda form is found, it is assumed to represent an anonymous function:
+```
+* ((lambda (x) (+ 1 x)) 2)
+
+3
+```
+But note that just as you can't call a function to dynamically return the symbol to be used in a regular function call, you can't call a function to return a lambda form in the function position. For both of these tasks, use either **funcall** or **apply**.
+
+
+A benefit of lambda expressions that is largely foreign to functions in C and other languages is that lisp compilers can often optimise them out of existence completely. For example, although **compiler-test** looks like it applies an increment function to the number 2 and returns the result, a decent compiler will be smart enough to know that this function always returns the value 3 and will simply return that number directly, invoking no functions in the process. This is called _lambda folding_:
+```c
+(defun compiler-test ()
+  (funcall
+    (lambda (x) (+ 1 x))
+    2))
+```
+An important efficiency observation is that a compiled lambda form is a constant form. This means that after your program is compiled, all references to that function are simply pointers to a chunk of machine code. This pointer can be returned from functions and embedded in new environments, all with no function creation overhead. The overhead was absorbed when the program was compiled. In other words, a function that returns another function will simply be a constant time pointer return function:
+```
+(defun lambda-returner ()
+  (lambda (x) (+ 1 x)))
+```
+This is in direct contrast to the **let** form, which is designed to create a new environment at run-time and as such is usually not a constant operation because of the garbage collection overhead implied by lexical closures, which are of indefinite extent.
+```
+(defun let-over-lambda-returner ()
+  (let ((y 1))
+    (lambda (x)
+      (incf y x))))
+```
+Every time **let-over-lambda-returner** is invoked, it must create a new environment, embed the constant pointer to the code represented by the lambda form into this new environment, then return the resulting _closure_. We can use **time** to see just how small this environment is:
+```
+* (progn
+    (compile 'let-over-lambda-returner)
+    (time (let-over-lambda-returner)))
+
+; Evaluation took:
+;   ...
+;   24 bytes consed.
+;
+#<Closure Over Function>
+```
+If you try to call compile on a closure, you will get an error saying you can't compile functions defined in non-null lexical environments[CLTL2-P677]. You can't compile closures, only the functions that create closures. When you compile a function that creates closures, the closures it creates will also be compiled[ON-LISP-P25].
+The use of a let enclosing a lambda above is so important that we will spend the remainder of this chapter discussing the pattern and variations on it.

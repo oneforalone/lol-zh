@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2.4 Let It Be Lambda &mdash; Let Over Lambda 中文文档  文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="2.5 Let Over Lambda" href="2.5-let-over-lambda.html" />
+    <link rel="prev" title="2.3 词法作用域与动态作用域" href="2.3-lexical-and-dynamic-scope.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第二章：闭包</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="2.1-closure-oriented-programming.html">2.1 面向闭包编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.2-environments-and-extent.html">2.2 Environment and Extent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.3-lexical-and-dynamic-scope.html">2.3 词法作用域与动态作用域</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.4 Let It Be Lambda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.5-let-over-lambda.html">2.5 Let Over Lambda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.6-lambda-over-letoverlambda.html">2.6 Lambda Over Let Over Lambda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.7-letoverlambda-over-letoverlambda.html">2.7 Let Over Lambda Over Let Over Lambda</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter04/index.html">第四章：Read 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">第二章：闭包</a> &raquo;</li>
+      <li>2.4 Let It Be Lambda</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Chapter02/2.4-let-it-be-lambda.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="let-it-be-lambda">
+<h1>2.4 Let It Be Lambda<a class="headerlink" href="#let-it-be-lambda" title="永久链接至标题"></a></h1>
+<hr class="docutils" />
+<p>Author: Doug Hoyte</p>
+<p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
+<hr class="docutils" />
+<p><strong>Let</strong> is a lisp special form for creating an environment with names (bindings) initialised to the results of evaluating corresponding forms. These names are available to the code inside the <strong>let</strong> body while its forms are evaluated consecutively, returning the result of the final form. Although what <strong>let</strong> does is unambiguous, how it does it is deliberately left unspecified. What <strong>let</strong> does is separated from how it does it. Somehow, <strong>let</strong> needs to provide a data structure for storing pointers to values.</p>
+<p>Cons cells are undeniably useful for holding pointers, as we saw above, but there are numerous structures that can be used. One of the best ways to store pointers in lisp is to let lisp take care of it for you with the <strong>let</strong> form. With <strong>let</strong> you only have to name (bind) these pointers and lisp will figure out how best to store them for you. Sometimes we can help the compiler make this more efficient by giving it extra bits of information in the form of declarations:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">register</span><span class="o">-</span><span class="n">allocated</span><span class="o">-</span><span class="n">fixnum</span> <span class="p">()</span>
+  <span class="p">(</span><span class="n">declare</span> <span class="p">(</span><span class="n">optimize</span> <span class="p">(</span><span class="n">speed</span> <span class="mi">3</span><span class="p">)</span> <span class="p">(</span><span class="n">safety</span> <span class="mi">0</span><span class="p">)))</span>
+  <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">acc</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="p">(</span><span class="n">loop</span> <span class="k">for</span> <span class="n">i</span> <span class="kn">from</span> <span class="mi">1</span> <span class="n">to</span> <span class="mi">100</span> <span class="n">do</span>
+      <span class="p">(</span><span class="n">incf</span> <span class="p">(</span><span class="n">the</span> <span class="n">fixnum</span> <span class="n">acc</span><span class="p">)</span>
+            <span class="p">(</span><span class="n">the</span> <span class="n">fixnum</span> <span class="n">i</span><span class="p">)))</span>
+    <span class="n">acc</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>For example, in <strong>register-allocated-fixnum</strong> we provide some hints to the compiler that allow it to sum the integers from 1 to 100 very efficiently. When compiled, this function will allocate the data in registers, eliminating the need for pointers altogether. Even though it seems we've asked lisp to create an indefinite extent environment to hold <strong>acc</strong> and <strong>i</strong>, a lisp compiler will be able to optimise this function by storing the values solely in CPU registers. The result might be this machine code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">;</span> <span class="mi">090</span><span class="n">CEB52</span><span class="p">:</span>       <span class="mi">31</span><span class="n">C9</span>             <span class="n">XOR</span> <span class="n">ECX</span><span class="p">,</span> <span class="n">ECX</span>
+<span class="p">;</span>       <span class="mi">54</span><span class="p">:</span>       <span class="n">B804000000</span>       <span class="n">MOV</span> <span class="n">EAX</span><span class="p">,</span> <span class="mi">4</span>
+<span class="p">;</span>       <span class="mi">59</span><span class="p">:</span>       <span class="n">EB05</span>             <span class="n">JMP</span> <span class="n">L1</span>
+<span class="p">;</span>       <span class="mi">5</span><span class="n">B</span><span class="p">:</span> <span class="n">L0</span><span class="p">:</span>   <span class="mi">01</span><span class="n">C1</span>             <span class="n">ADD</span> <span class="n">ECX</span><span class="p">,</span> <span class="n">EAX</span>
+<span class="p">;</span>       <span class="mi">5</span><span class="n">D</span><span class="p">:</span>       <span class="mi">83</span><span class="n">C004</span>           <span class="n">ADD</span> <span class="n">EAX</span><span class="p">,</span> <span class="mi">4</span>
+<span class="p">;</span>       <span class="mi">60</span><span class="p">:</span> <span class="n">L1</span><span class="p">:</span>   <span class="mi">3</span><span class="n">D90010000</span>       <span class="n">CMP</span> <span class="n">EAX</span><span class="p">,</span> <span class="mi">400</span>
+<span class="p">;</span>       <span class="mi">65</span><span class="p">:</span>       <span class="mi">7</span><span class="n">EF4</span>             <span class="n">JLE</span> <span class="n">L0</span>
+</pre></div>
+</div>
+<p>Notice that 4 represents 1 and 400 represents 100 because fixnums are shifted by two bits in compiled code. This has to do with <em>tagging</em>, a way to pretend that something is a pointer but actually store data inside it. Our lisp compiler's tagging scheme has the nice benefit that no shifting needs to occur to index word aligned memory[DESIGN-OF-CMUCL]. We'll get to know our lisp compiler better in <a class="reference internal" href="../Chapter07/index.html"><span class="doc std std-doc">chapter 7, Macro Efficiency Topics</span></a>.</p>
+<p>But if lisp determines that you might want to refer to this environment later on it will have to use something less transient than a register. A common structure for storing pointers in environments is an array. If each environment has an array and all the variable references enclosed in that environment are just references into this array, we have an efficient environment with potentially indefinite extent.</p>
+<p>As mentioned above, <strong>let</strong> will return the evaluation of the last form in its body. This is common for many lisp special forms and macros, so common that this pattern is often referred to as an <em>implicit progn</em> due to the <strong>progn</strong> special form designed to do nothing but this<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">5</a>. Sometimes the most valuable thing to have a let form return is an anonymous function which takes advantage of the lexical environment supplied by the let form. To create these functions in lisp we use <em>lambda</em>.</p>
+<p><em>Lambda</em> is a simple concept that can be intimidating because of its flexibility and importance. The lambda from lisp and scheme owes its roots to Alonzo Church's logic system but has evolved and adapted into its altogether own lisp specification. Lambda is a concise way to repeatably assign temporary names (bindings) to values for a specific lexical context and underlies lisp's concept of a function. A lisp function is very different from the mathematical function description that Church had in mind. This is because lambda has evolved as a powerful, practical tool at the hands of generations of lispers, stretching and extending it much further than early logicians could have foreseen.</p>
+<p>Despite the reverence lisp programmers have for lambda, there is nothing inherently special about the notation. As we will see, lambda is just one of many possible ways to express this sort of variable naming. In particular, we will see that macros allow us to customise the renaming of variables in ways that are effectively impossible in other programming languages. But after exploring this, we will return to lambda and discover that it is very close to the optimal notation for expressing such naming. This is no accident. Church, as dated and irrelevant as he might seem to our modern programming environment, really was on to something. His mathematical notation, along with its numerous enhancements in the hands of generations of lisp professionals, has evolved into a flexible, general tool<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">6</a>.</p>
+<p>Lambda is so useful that, like many of lisp's features, most modern languages are beginning to import the idea from lisp into their own systems. Some language designers feel that lambda is too lengthy, instead using <strong>fn</strong> or some other abbreviation. On the other hand, some regard lambda as a concept so fundamental that obscuring it with a lesser name is next to heresy. In this book, although we will describe and explore many variations on lambda, we happily call it lambda, just as generations of lisp programmers before us.</p>
+<p>But what is lisp's lambda? First off, as with all names in lisp, lambda is a <em>symbol</em>. We can quote it, compare it, and store it in lists. Lambda only has a special meaning when it appears as the first element of a list. When it appears there, the list is referred to as a <em>lambda form</em> or as a <em>function designator</em>. But this form is not a function. This form is a list data structure that can be converted into a function using the <strong>function</strong> special form:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">function</span> <span class="s1">&#39;(lambda (x) (+ 1 x)))</span>
+
+<span class="c1">#&lt;Interpreted Function&gt;</span>
+</pre></div>
+</div>
+<p>COMMON LISP provides us a convenience shortcut for this with the #' (sharp-quote) read macro. Instead of writing <strong>function</strong> as above, for the same effect we can take advantage of this shortcut:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="c1">#&#39;(lambda (x) (+ 1 x))</span>
+
+<span class="c1">#&lt;Interpreted Function&gt;</span>
+</pre></div>
+</div>
+<p>As a further convenience feature, lambda is also defined as a macro that expands into a call to the function special form above. The COMMON LISP ANSI standard requires[ANSI-CL-ISO-COMPATIBILITY] a <strong>lambda</strong> macro defined like so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro lambda (&amp;whole form &amp;rest body)
+  (declare (ignore body))
+  `#&#39;,form)
+</pre></div>
+</div>
+<p>Ignore the ignore declaration for now<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">7</a>. This macro is just a simple way to automatically apply the <strong>function</strong> special form to your function designators. This macro allows us to evaluate function designators to create functions because they are expanded into sharp-quoted forms:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">(</span><span class="o">+</span> <span class="mi">1</span> <span class="n">x</span><span class="p">))</span>
+
+<span class="c1">#&lt;Interpreted Function&gt;</span>
+</pre></div>
+</div>
+<p>There are few good reasons to prefix your lambda forms with #' thanks to the <strong>lambda</strong> macro. Because this book makes no effort to support pre-ANSI COMMON LISP environments, backwards compatibility reasons are easily rejected. But what about stylistic objections? Paul Graham, in <em>ANSI COMMON LISP</em>[GRAHAM-ANSI-CL], considers this macro, along with its brevity benefits, a &quot;specious sort of elegance at best&quot;. Graham's objection seems to be that since you still need to sharp-quote functions referenced by symbols, the system seems asymmetric. However, I believe that not sharp-quoting lambda forms is actually a stylistic improvement because it highlights the asymmetry that exists in the second namespace specification. Using sharp-quote for symbols is for referring to the second namespace, whereas functions created by lambda forms are, of course, nameless.</p>
+<p>Without even invoking the <strong>lambda</strong> macro, we can use lambda forms as the first argument in a function call. Just like when a symbol is found in this position and lisp assumes we are referencing the <strong>symbol-function</strong> cell of the symbol, if a lambda form is found, it is assumed to represent an anonymous function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">((</span><span class="k">lambda</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">(</span><span class="o">+</span> <span class="mi">1</span> <span class="n">x</span><span class="p">))</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="mi">3</span>
+</pre></div>
+</div>
+<p>But note that just as you can't call a function to dynamically return the symbol to be used in a regular function call, you can't call a function to return a lambda form in the function position. For both of these tasks, use either <strong>funcall</strong> or <strong>apply</strong>.</p>
+<p>A benefit of lambda expressions that is largely foreign to functions in C and other languages is that lisp compilers can often optimise them out of existence completely. For example, although <strong>compiler-test</strong> looks like it applies an increment function to the number 2 and returns the result, a decent compiler will be smart enough to know that this function always returns the value 3 and will simply return that number directly, invoking no functions in the process. This is called <em>lambda folding</em>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span><span class="w"> </span><span class="n">compiler</span><span class="o">-</span><span class="n">test</span><span class="w"> </span><span class="p">()</span><span class="w"></span>
+<span class="w">  </span><span class="p">(</span><span class="n">funcall</span><span class="w"></span>
+<span class="w">    </span><span class="p">(</span><span class="n">lambda</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">x</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="mi">2</span><span class="p">))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>An important efficiency observation is that a compiled lambda form is a constant form. This means that after your program is compiled, all references to that function are simply pointers to a chunk of machine code. This pointer can be returned from functions and embedded in new environments, all with no function creation overhead. The overhead was absorbed when the program was compiled. In other words, a function that returns another function will simply be a constant time pointer return function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="k">lambda</span><span class="o">-</span><span class="n">returner</span> <span class="p">()</span>
+  <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">(</span><span class="o">+</span> <span class="mi">1</span> <span class="n">x</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>This is in direct contrast to the <strong>let</strong> form, which is designed to create a new environment at run-time and as such is usually not a constant operation because of the garbage collection overhead implied by lexical closures, which are of indefinite extent.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">let</span><span class="o">-</span><span class="n">over</span><span class="o">-</span><span class="k">lambda</span><span class="o">-</span><span class="n">returner</span> <span class="p">()</span>
+  <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">y</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
+      <span class="p">(</span><span class="n">incf</span> <span class="n">y</span> <span class="n">x</span><span class="p">))))</span>
+</pre></div>
+</div>
+<p>Every time <strong>let-over-lambda-returner</strong> is invoked, it must create a new environment, embed the constant pointer to the code represented by the lambda form into this new environment, then return the resulting <em>closure</em>. We can use <strong>time</strong> to see just how small this environment is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">progn</span>
+    <span class="p">(</span><span class="nb">compile</span> <span class="s1">&#39;let-over-lambda-returner)</span>
+    <span class="p">(</span><span class="n">time</span> <span class="p">(</span><span class="n">let</span><span class="o">-</span><span class="n">over</span><span class="o">-</span><span class="k">lambda</span><span class="o">-</span><span class="n">returner</span><span class="p">)))</span>
+
+<span class="p">;</span> <span class="n">Evaluation</span> <span class="n">took</span><span class="p">:</span>
+<span class="p">;</span>   <span class="o">...</span>
+<span class="p">;</span>   <span class="mi">24</span> <span class="nb">bytes</span> <span class="n">consed</span><span class="o">.</span>
+<span class="p">;</span>
+<span class="c1">#&lt;Closure Over Function&gt;</span>
+</pre></div>
+</div>
+<p>If you try to call compile on a closure, you will get an error saying you can't compile functions defined in non-null lexical environments[CLTL2-P677]. You can't compile closures, only the functions that create closures. When you compile a function that creates closures, the closures it creates will also be compiled[ON-LISP-P25].
+The use of a let enclosing a lambda above is so important that we will spend the remainder of this chapter discussing the pattern and variations on it.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="2.3-lexical-and-dynamic-scope.html" class="btn btn-neutral float-left" title="2.3 词法作用域与动态作用域" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="2.5-let-over-lambda.html" class="btn btn-neutral float-right" title="2.5 Let Over Lambda" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>7.7 编写基准测试 &mdash; Let Over Lambda 中文文档  文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="第八章：Lisp 的变迁" href="../Chapter08/index.html" />
+    <link rel="prev" title="7.6 排序" href="7.6-sorting-networks.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter04/index.html">第四章：Read 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第七章：宏的效率</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="7.1-lisp-is-fast.html">7.1 Lisp Is Fast</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7.2-macros-make-lisp-fast.html">7.2 Macros Make Lisp Fast</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7.3-getting-to-know-your-disassembler.html">7.3 了解反汇编</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7.4-pointer-scope.html">7.4 指针作用域</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7.5-tlists-and-cons-pools.html">7.5 Tlist 和 cons 池</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7.6-sorting-networks.html">7.6 排序</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">7.7 编写基准测试</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">第七章：宏的效率</a> &raquo;</li>
+      <li>7.7 编写基准测试</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Chapter07/7.7-writing-and-benchmarking-compilers.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="id1">
+<h1>7.7 编写基准测试<a class="headerlink" href="#id1" title="永久链接至标题"></a></h1>
+<hr class="docutils" />
+<p>Author: Doug Hoyte</p>
+<p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
+<hr class="docutils" />
+<p>编译器对大多数程序员来说是一个可怕的概念，因为大多数语言都不适合编写编译器。下面是个类比：解析一个复杂的日志文件对于只知道 C 或汇编的程序员来说可能是一个令人生畏的、容易出错的愿景，但由于 Perl 和正则表达式，这对我们多语言程序员来说不是问题。同样，如果我们不了解 lisp，那么设计一种功能强大、富有表现力的编程语言，然后创建一个编译器将这种语言的程序转换为高效的机器代码将是项令人生畏的任务。在编写编译器方面，Lisp 的优势不仅使它比其他语言好一点——实际上让表达式上了一个新台阶。一般来说，这个优势是能与不能的区别。 Lisp 程序员在任何地方都使用编译器，且有时以非 lisp 程序员难以致信的方式和任务使用。有多少 C 程序员考虑过 <a class="reference internal" href="7.2-macros-make-lisp-fast.html"><span class="doc std std-doc">7.2 Macros Make Lisp Fast</span></a>中描述（并克服）的 printf 函数的解释开销？有多少人会尝试为 printf 编写编译器？而这在 lisp 的课程中却是标准。一切都应该编译成 lisp。</p>
+<p>什么是编译器？如果你来自 Blub，答案可能隐藏在一大堆解释解析、语法定向翻译、上下文无关语法等的书籍中。但别担心，这是 lisp，编译器很容易。它是如此简单，以至于如果你曾认真的做过 lisp 编程相关的编程，那么你已经编写了它们，甚至可能没有意识到。编译器的另一个名称是“宏”。宏将程序从一种语言编译成另一种语言。 Lisp 实际上就是编写这些编译器——其他一切都是次要的。在 lisp 中，编译器设计唯一重要的方面是如何保持目标程序的正确性，同时为它找到有效的扩展。换句话说，这才是编译问题的本质。到目前为止，我们已经看到了如何使用宏来创建完全适合手头任务的自定义语言，以及如何通过使用声明来消除对偶性和安全检查来提高 lisp 代码的效率。有效的编译器编写只是将这两种技能结合起来。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defun sn-to-lambda-form% (sn)
+  `(lambda (arr)
+    #f
+    (declare (type (simple -array fixnum) arr))
+    ,@(mapcar
+        #`(if (&gt; #1=(aref arr ,(car a1))
+                 #2=(aref arr ,(cadr a1)))
+             (rotatef #1# #2#))
+        sn)
+		arr))
+</pre></div>
+</div>
+<p>当在<a class="reference internal" href="7.2-macros-make-lisp-fast.html"><span class="doc std std-doc">7.2 Macros Make Lisp Fast</span></a>中创建编译器宏来处理格式时，格式化程序编译器扩展成什么？ 这是一个 lambda 结构。 编译为 lambda 结构有时是有意义的，因为我们可以使用 compile 函数直接将它们转换为机器代码。 回到上一章的排序网络，<code class="docutils literal notranslate"><span class="pre">sn-to-lambda-form%</span></code> 是一个返回 lambda 结构的函数。 这种 lambda 结构将对基于列表的排序网络中的每个比较交换操作都有一个指令。 每条指令都会（不安全地）索引到一个 <code class="docutils literal notranslate"><span class="pre">fixnum</span></code> 数组，比较并可能使用 <code class="docutils literal notranslate"><span class="pre">rotatef</span></code> 来交换元素。 <code class="docutils literal notranslate"><span class="pre">fixnum</span></code> 数组将作为参数 (<code class="docutils literal notranslate"><span class="pre">arr</span></code>) 传递给由此 lambda 结构创建的函数。 这就是一个体面的机器代码编译器的全部内容。 与所有 lambda结构一样，由于 lambda 宏，我们能够计算它们以获取函数：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="nb">eval</span>
+    <span class="p">(</span><span class="n">sn</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="k">lambda</span><span class="o">-</span><span class="n">form</span><span class="o">%</span>
+      <span class="p">(</span><span class="n">build</span><span class="o">-</span><span class="n">batcher</span><span class="o">-</span><span class="n">sn</span> <span class="mi">3</span><span class="p">)))</span>
+<span class="c1">#&lt;Interpreted Function&gt;</span>
+</pre></div>
+</div>
+<p>只需在它们上调用 <code class="docutils literal notranslate"><span class="pre">compile</span></code> 即可成为编译函数：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="nb">compile</span> <span class="n">nil</span> <span class="o">*</span><span class="p">)</span>
+<span class="c1">#&lt;Function&gt;</span>
+</pre></div>
+</div>
+<p>让我们看一下反汇编输出（编译后的展开）：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">disassemble</span> <span class="o">*</span><span class="p">)</span>
+<span class="o">...</span>
+<span class="p">;;;</span> <span class="p">(</span><span class="o">&gt;</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">0</span><span class="p">)</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">2</span><span class="p">))</span>
+<span class="mi">9</span><span class="n">E</span><span class="p">:</span>       <span class="n">MOV</span>
+<span class="n">A1</span><span class="p">:</span>       <span class="n">MOV</span>
+<span class="n">A4</span><span class="p">:</span>       <span class="n">CMP</span>
+<span class="n">A6</span><span class="p">:</span>       <span class="n">JLE</span>
+<span class="n">EAX</span><span class="p">,</span> <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">ECX</span><span class="p">,</span> <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">9</span><span class="p">]</span>
+<span class="n">EAX</span><span class="p">,</span> <span class="n">ECX</span>
+<span class="n">L0</span>
+<span class="p">;;;</span> <span class="p">(</span><span class="n">ROTATEF</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">0</span><span class="p">)</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">A8</span><span class="p">:</span>       <span class="n">MOV</span>
+<span class="n">AB</span><span class="p">:</span>       <span class="n">MOV</span>
+<span class="n">AE</span><span class="p">:</span>       <span class="n">MOV</span>
+<span class="n">B1</span><span class="p">:</span>       <span class="n">MOV</span>
+<span class="n">EAX</span><span class="p">,</span> <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">9</span><span class="p">]</span>
+<span class="n">ECX</span><span class="p">,</span> <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">EAX</span>
+<span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">9</span><span class="p">],</span> <span class="n">ECX</span>
+<span class="p">;;;</span> <span class="p">(</span><span class="o">&gt;</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">0</span><span class="p">)</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">B4</span><span class="p">:</span> <span class="n">L0</span><span class="p">:</span>   <span class="n">MOV</span>
+<span class="n">B7</span><span class="p">:</span>       <span class="n">MOV</span>
+<span class="n">BA</span><span class="p">:</span>       <span class="n">CMP</span>
+<span class="n">BC</span><span class="p">:</span>       <span class="n">JLE</span>
+<span class="n">EAX</span><span class="p">,</span> <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">ECX</span><span class="p">,</span> <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">5</span><span class="p">]</span>
+<span class="n">EAX</span><span class="p">,</span> <span class="n">ECX</span>
+<span class="n">L1</span>
+<span class="p">;;;</span> <span class="p">(</span><span class="n">ROTATEF</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">0</span><span class="p">)</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">1</span><span class="p">))</span>
+      <span class="n">BE</span><span class="p">:</span>       <span class="n">MOV</span>     <span class="n">EAX</span><span class="p">,</span> <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">5</span><span class="p">]</span>
+<span class="n">C1</span><span class="p">:</span>       <span class="n">MOV</span>
+<span class="n">C4</span><span class="p">:</span>       <span class="n">MOV</span>
+<span class="n">C7</span><span class="p">:</span>       <span class="n">MOV</span>
+<span class="n">ECX</span><span class="p">,</span> <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">EAX</span>
+<span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">5</span><span class="p">],</span> <span class="n">ECX</span>
+<span class="p">;;;</span> <span class="p">(</span><span class="o">&gt;</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">CA</span><span class="p">:</span> <span class="n">L1</span><span class="p">:</span>   <span class="n">MOV</span>
+<span class="n">CD</span><span class="p">:</span>       <span class="n">MOV</span>
+<span class="n">D0</span><span class="p">:</span>       <span class="n">CMP</span>
+<span class="n">D2</span><span class="p">:</span>       <span class="n">JLE</span>
+<span class="n">EAX</span><span class="p">,</span> <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">5</span><span class="p">]</span>
+<span class="n">ECX</span><span class="p">,</span> <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">9</span><span class="p">]</span>
+<span class="n">EAX</span><span class="p">,</span> <span class="n">ECX</span>
+<span class="n">L2</span>
+<span class="p">;;;</span> <span class="p">(</span><span class="n">ROTATEF</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">D4</span><span class="p">:</span>       <span class="n">MOV</span>           <span class="n">EAX</span><span class="p">,</span> <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">9</span><span class="p">]</span>
+<span class="n">D7</span><span class="p">:</span>       <span class="n">MOV</span>           <span class="n">ECX</span><span class="p">,</span> <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">5</span><span class="p">]</span>
+<span class="n">DA</span><span class="p">:</span>       <span class="n">MOV</span>           <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">5</span><span class="p">],</span> <span class="n">EAX</span>
+<span class="n">DD</span><span class="p">:</span>       <span class="n">MOV</span>           <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">9</span><span class="p">],</span> <span class="n">ECX</span>
+<span class="n">E0</span><span class="p">:</span> <span class="n">L2</span><span class="p">:</span>   <span class="o">...</span>
+
+</pre></div>
+</div>
+<p>上面的机器代码很快，但还可以更快。 Lisp 编译器很聪明——一些最聪明的编译器 —— 但它们总是可以更聪明。 在关心性能的极少数情况下，检查编译的展开是至关重要的，因为很难知道你的 lisp 编译器有多聪明。 在上面的汇编中，如果仔细看，就会发现它每次执行交换时实际上都在执行不必要的读取操作。 问题是 <code class="docutils literal notranslate"><span class="pre">rotatef</span></code> 展开为冗余访问。 一个足够聪明的编译器可能会发现在寄存器中已经有这个值，并且可以避免数组访问。 但是我的没有，所以我重新构建了代码，从而实现了更有效的扩展。</p>
+<p><code class="docutils literal notranslate"><span class="pre">sn-to-lambda-form</span></code> 是 <code class="docutils literal notranslate"><span class="pre">sn-to-lambda-form%</span></code> 的改进版本。 它为读入的变量创建临时绑定，因此不会为交换操作重新执行数组读取指令。 下面是高级编译展开：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">disassemble</span>
+    <span class="p">(</span><span class="nb">compile</span> <span class="n">nil</span>
+      <span class="p">(</span><span class="n">sn</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="k">lambda</span><span class="o">-</span><span class="n">form</span><span class="o">%</span>
+        <span class="p">(</span><span class="n">build</span><span class="o">-</span><span class="n">batcher</span><span class="o">-</span><span class="n">sn</span> <span class="mi">3</span><span class="p">))))</span>
+<span class="o">...</span>
+<span class="p">;;;</span> <span class="p">(</span><span class="n">LET</span> <span class="p">((</span><span class="n">A</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">0</span><span class="p">))</span> <span class="p">(</span><span class="n">B</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">2</span><span class="p">)))</span> <span class="o">...</span><span class="p">)</span>
+
+ <span class="mi">2</span><span class="n">E</span><span class="p">:</span>       <span class="n">MOV</span>
+ <span class="mi">31</span><span class="p">:</span>       <span class="n">MOV</span>
+ <span class="mi">34</span><span class="p">:</span>       <span class="n">CMP</span>
+ <span class="mi">36</span><span class="p">:</span>       <span class="n">JLE</span>
+
+<span class="n">EAX</span><span class="p">,</span> <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">ECX</span><span class="p">,</span> <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">9</span><span class="p">]</span>
+<span class="n">EAX</span><span class="p">,</span> <span class="n">ECX</span>
+<span class="n">L0</span>
+
+ <span class="p">;;;</span> <span class="p">(</span><span class="n">SETF</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">0</span><span class="p">)</span> <span class="n">B</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">2</span><span class="p">)</span> <span class="n">A</span><span class="p">)</span>
+      <span class="mi">38</span><span class="p">:</span>       <span class="n">MOV</span>     <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">ECX</span>
+      <span class="mi">3</span><span class="n">B</span><span class="p">:</span>       <span class="n">MOV</span>     <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">9</span><span class="p">],</span> <span class="n">EAX</span>
+<span class="p">;;;</span> <span class="p">(</span><span class="n">LET</span> <span class="p">((</span><span class="n">A</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">0</span><span class="p">))</span> <span class="p">(</span><span class="n">B</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">1</span><span class="p">)))</span> <span class="o">...</span><span class="p">)</span>
+<span class="mi">3</span><span class="n">E</span><span class="p">:</span> <span class="n">L0</span><span class="p">:</span>   <span class="n">MOV</span>
+<span class="mi">41</span><span class="p">:</span>       <span class="n">MOV</span>
+<span class="mi">44</span><span class="p">:</span>       <span class="n">CMP</span>
+<span class="mi">46</span><span class="p">:</span>       <span class="n">JLE</span>
+
+<span class="n">EAX</span><span class="p">,</span> <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">ECX</span><span class="p">,</span> <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">5</span><span class="p">]</span>
+<span class="n">EAX</span><span class="p">,</span> <span class="n">ECX</span>
+<span class="n">L1</span>
+
+<span class="p">;;;</span> <span class="p">(</span><span class="n">SETF</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">0</span><span class="p">)</span> <span class="n">B</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">1</span><span class="p">)</span> <span class="n">A</span><span class="p">)</span>
+      <span class="mi">48</span><span class="p">:</span>       <span class="n">MOV</span>     <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">ECX</span>
+      <span class="mi">4</span><span class="n">B</span><span class="p">:</span>       <span class="n">MOV</span>     <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">5</span><span class="p">],</span> <span class="n">EAX</span>
+<span class="p">;;;</span> <span class="p">(</span><span class="n">LET</span> <span class="p">((</span><span class="n">A</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">1</span><span class="p">))</span> <span class="p">(</span><span class="n">B</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">2</span><span class="p">)))</span> <span class="o">...</span><span class="p">)</span>
+<span class="mi">4</span><span class="n">E</span><span class="p">:</span> <span class="n">L1</span><span class="p">:</span>   <span class="n">MOV</span>
+<span class="mi">51</span><span class="p">:</span>       <span class="n">MOV</span>
+<span class="mi">54</span><span class="p">:</span>       <span class="n">CMP</span>
+<span class="mi">56</span><span class="p">:</span>       <span class="n">JLE</span>
+
+<span class="n">EAX</span><span class="p">,</span> <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">5</span><span class="p">]</span>
+<span class="n">ECX</span><span class="p">,</span> <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">9</span><span class="p">]</span>
+<span class="n">EAX</span><span class="p">,</span> <span class="n">ECX</span>
+<span class="n">L2</span>
+
+<span class="p">;;;</span> <span class="p">(</span><span class="n">SETF</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">1</span><span class="p">)</span> <span class="n">B</span> <span class="p">(</span><span class="n">AREF</span> <span class="n">ARR</span> <span class="mi">2</span><span class="p">)</span> <span class="n">A</span><span class="p">)</span>
+      <span class="mi">58</span><span class="p">:</span>       <span class="n">MOV</span>     <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">5</span><span class="p">],</span> <span class="n">ECX</span>
+      <span class="mi">5</span><span class="n">B</span><span class="p">:</span>       <span class="n">MOV</span>     <span class="p">[</span><span class="n">EDX</span><span class="o">+</span><span class="mi">9</span><span class="p">],</span> <span class="n">EAX</span>
+      <span class="mi">5</span><span class="n">E</span><span class="p">:</span> <span class="n">L2</span><span class="p">:</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>熟悉 lisp 编译器以便了解宏展开的效率对编写高效的 lisp 非常重要。 反汇编 lisp 系统的源代码，使用像 <code class="docutils literal notranslate"><span class="pre">time</span></code> 宏这样的基准测试工具，以及大量的耐心，不幸的是，这是真正获得如何编写快速 lisp 代码的直觉的唯一方法。</p>
+<p>如果你来自 Blub 语言，那么像 <code class="docutils literal notranslate"><span class="pre">sn-to-lambda-form</span></code> 宏那样展开为 lambda 结构可能是实现编译器的最明显方式。 源代码以 lambda 结构编译到反汇编循环感觉很像Blub的编辑、编译、反汇编循环。 把源代码放进去，然后把机器代码拿出来。 但是，这种方法可能更笨拙。 在 lisp 中，通常将编译器创建为不可见的 - 直接合并到其他 lisp 程序中。 理想情况下，除非我们想让东西快速运行，否则永远不会调用 <code class="docutils literal notranslate"><span class="pre">compile</span></code> 函数。 宏不应该一直编译到机器代码，而只是足以创建一个良好的展开，以便编译器在运行时，将有足够的信息来使整个程序高效。</p>
+<p>我们特别不想在运行时调用 <code class="docutils literal notranslate"><span class="pre">compile</span></code>。 编译是一项昂贵的操作，因为需要展开许多级别的宏来编译某些东西。 不要在运行时调用 <code class="docutils literal notranslate"><span class="pre">compile</span></code>，记住 lisp 已经在编译函数中编译了所有的 lambda 结构。 由于这种在运行时构造已编译代码的闭包的能力，很容易确保在编译时完成尽可能多的计算，同时仍然在运行时创建任意函数（闭包）。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro! sortf (comparator &amp;rest places)
+  (if places
+		`(tagbody
+    	,@(mapcar
+				#`(let ((,g!a #1=,(nth (car a1) places))
+        				(,g!b #2=,(nth (cadr a1) places)))
+							(if (,comparator ,g!b ,g!a)
+              	(setf #1# ,g!b
+											#2# ,g!a)))
+        (build-batcher-sn (length places))))))
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">sortf</span></code> 是本书中我最喜欢的宏。 它不仅简洁、优雅，并且很好地展示了迄今为止描述的许多宏技术，而且它还是一段有用的生产代码，能够执行极快的排序操作。 最棒的是，这个宏与 lisp 程序完美融合，使用起来毫不费力。 我们不必费尽心思就能从这种先进的 lisp 优化中受益。 任何时候需要对小的、固定大小的数据集进行排序，这个宏很容易合并，有时甚至比排序函数更容易。 <code class="docutils literal notranslate"><span class="pre">sortf</span></code> 不是展开为 lambda 结构，而是扩展为 tagbody 结构，因为 tagbody 是返回 nil 的标准 <code class="docutils literal notranslate"><span class="pre">progn</span></code>。 以下是 <code class="docutils literal notranslate"><span class="pre">sortf</span></code> 的展开：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">macroexpand</span>
+    <span class="s1">&#39;(sortf &lt; a b c))</span>
+
+<span class="p">(</span><span class="n">LET</span> <span class="p">()</span>
+  <span class="p">(</span><span class="n">TAGBODY</span>
+    <span class="p">(</span><span class="n">LET</span> <span class="p">((</span><span class="c1">#:A1824 A) (#:B1823 C))</span>
+      <span class="p">(</span><span class="n">IF</span> <span class="p">(</span><span class="o">&lt;</span> <span class="c1">#:B1823 #:A1824)</span>
+        <span class="p">(</span><span class="n">SETF</span> <span class="n">A</span> <span class="c1">#:B1823 C #:A1824)))</span>
+    <span class="p">(</span><span class="n">LET</span> <span class="p">((</span><span class="c1">#:A1824 A) (#:B1823 B))</span>
+      <span class="p">(</span><span class="n">IF</span> <span class="p">(</span><span class="o">&lt;</span> <span class="c1">#:B1823 #:A1824)</span>
+        <span class="p">(</span><span class="n">SETF</span> <span class="n">A</span> <span class="c1">#:B1823 B #:A1824)))</span>
+    <span class="p">(</span><span class="n">LET</span> <span class="p">((</span><span class="c1">#:A1824 B) (#:B1823 C))</span>
+      <span class="p">(</span><span class="n">IF</span> <span class="p">(</span><span class="o">&lt;</span> <span class="c1">#:B1823 #:A1824)</span>
+      <span class="p">(</span><span class="n">SETF</span> <span class="n">B</span> <span class="c1">#:B1823 C #:A1824)))))</span>
+  <span class="n">T</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">sortf</span></code> 的接口设计来自于 On Lisp，但它是如此自然，以至于几乎每个 lisp 程序员都会这样实现。 第一个参数通常是表示比较运算符的符号 —— 通常类似于 <code class="docutils literal notranslate"><span class="pre">&lt;</span></code>。 这通常表示一个函数，但正如 Graham 指出的那样，它也可以表示一个宏或特殊结构，因为它直接拼接到列表的函数位置。 我们甚至可以传递一个 lambda 结构，因为它们也允许在列表的函数位置：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">a</span> <span class="o">-</span><span class="mi">3</span><span class="p">)</span> <span class="p">(</span><span class="n">b</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="p">(</span><span class="n">sortf</span> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="n">a</span> <span class="n">b</span><span class="p">)</span> <span class="p">(</span><span class="o">&lt;</span> <span class="p">(</span><span class="nb">abs</span> <span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="nb">abs</span> <span class="n">b</span><span class="p">)))</span>
+      <span class="n">a</span> <span class="n">b</span><span class="p">)</span>
+    <span class="p">(</span><span class="nb">list</span> <span class="n">a</span> <span class="n">b</span><span class="p">))</span>
+<span class="p">(</span><span class="mi">2</span> <span class="o">-</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>和 Graham 的宏一样，要排序的参数是广义变量。 这意味着可以用 <code class="docutils literal notranslate"><span class="pre">sortf</span></code> 对任何类型的变量进行排序，不仅是那些由符号表示的变量，还包括任何可以 <code class="docutils literal notranslate"><span class="pre">setf</span></code> 的变量。 以下是个示例：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">a</span> <span class="mi">2</span><span class="p">)</span> <span class="p">(</span><span class="n">b</span> <span class="s1">&#39;(4)) (c #(3 1)))</span>
+    <span class="p">(</span><span class="n">sortf</span> <span class="o">&lt;</span> <span class="n">a</span> <span class="p">(</span><span class="n">car</span> <span class="n">b</span><span class="p">)</span> <span class="p">(</span><span class="n">aref</span> <span class="n">c</span> <span class="mi">0</span><span class="p">)</span> <span class="p">(</span><span class="n">aref</span> <span class="n">c</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="p">(</span><span class="nb">format</span> <span class="n">t</span> <span class="s2">&quot;a=~a b=~a c=~a~%&quot;</span> <span class="n">a</span> <span class="n">b</span> <span class="n">c</span><span class="p">))</span>
+
+<span class="n">a</span><span class="o">=</span><span class="mi">1</span> <span class="n">b</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="n">c</span><span class="o">=</span><span class="c1">#(3 4)</span>
+<span class="n">NIL</span>
+</pre></div>
+</div>
+<p>虽然 Graham 的 <code class="docutils literal notranslate"><span class="pre">sortf</span></code> 和我们的 <code class="docutils literal notranslate"><span class="pre">sortf</span></code>编译相同的源语言，但它们的展开却大有不同。 Graham 的宏可以说比我们的更正确，因为它只会执行一次访问这些位置的代码。使用 Graham 的 	<code class="docutils literal notranslate"><span class="pre">sortf</span></code>，我们可以传入具有副作用的变量，并且只对它们进行一次计算，正如预期的那样。例如，Graham 的 <code class="docutils literal notranslate"><span class="pre">sortf</span></code> 在给定位置时只会增加 <code class="docutils literal notranslate"><span class="pre">i</span></code> 一次 <code class="docutils literal notranslate"><span class="pre">(aref</span> <span class="pre">arr</span> <span class="pre">(incf</span> <span class="pre">i))</span></code>。 Graham 的 <code class="docutils literal notranslate"><span class="pre">sortf</span></code> 的工作原理是将每个要排序的变量复制到临时绑定中，使用冒泡排序对这些临时绑定进行排序，然后使用 <code class="docutils literal notranslate"><span class="pre">setf</span></code>表达式将临时变量写回原来的位置，现在按排序顺序。相反，我们的 <code class="docutils literal notranslate"><span class="pre">sortf</span></code> 将在整个排序过程中多词计算每个位置格式，因此建议不要使用有副作用的位置。这种设计的另一个结果是，如果追求效率，请确保访问器是高效的。特别是不要使用像 <code class="docutils literal notranslate"><span class="pre">caddr</span></code> 这样的长列表访问器，因为它们最终会多次遍历列表。通过我们的实现，我们就地对参数进行排序，即没有任何临时绑定。代替具有 (O (expt N 2)) 的 Big-O 复杂度的冒泡排序，我们使用 Batcher 更好的合并交换排序及其 (O (* N (expt (log N) 2)))。有一些方法可以构建 (O (* N (log N))) 的排序网络，与快速排序相同 - 但大多数对小型网络使用的操作比 Batcher 的要多。</p>
+<p>你可能希望在调用 <code class="docutils literal notranslate"><span class="pre">sortf</span></code>的地方添加个 <code class="docutils literal notranslate"><span class="pre">sharp-f</span></code> 快速声明，因为它自身不会添加它。 如果想要真正快速的排序，请确保编译器知道要排序的所有广义变量的类型。 如果确实指定了类型，请始终确保将所有通用变量声明为相同类型。 这很重要，因为任何元素最终可能出现在任何地方。</p>
+<p>但是我们怎么知道这个宏是否真的给我们任何优于排序函数的性能优势呢？ 我们需要对其进行基准测试。 基准测试已经讨论过很多了，因为，特别是对程序员来说，胡说八道的永恒爱好是如此令人愉快。 不幸的是，几乎所有的基准测试结果都是无用的。 甚至建议对本书中的基准测试结果持保留态度。 也就是说，在同一台机器上运行在同一个 lisp 映像上运行的代码版本略有不同的精心设计、受控的实验对于理解和修复性能瓶颈有时是无价的。 这种计量很有用，因为我们不仅可以判断哪些技术更有效，而且我们还可以判断它们的效率有多高。 因为他们为我们编写代码，所以宏是设置这些实验的最佳工具。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro sort-benchmark-time ()
+  `(progn
+     (setq sorter (compile nil sorter))
+     (let ((arr (make-array
+                n :element-type &#39;fixnum)))
+        (time
+					(loop for i from 1 to iters do
+            (loop for j from 0 to (1- n) do
+              (setf (aref arr j) (random n)))
+            (funcall sorter arr))))))
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">sort-benchmark-time</span></code> 宏是我们实验中的一个组件。 它展开为假定 lambda 结构或函数绑定到 <code class="docutils literal notranslate"><span class="pre">sorter</span></code> 的代码，并且该函数将对大小为 <code class="docutils literal notranslate"><span class="pre">n</span></code> 的 <code class="docutils literal notranslate"><span class="pre">fixnum</span></code> 数组进行排序。 然后将它编译成一个函数并使用它对随机生成的数组进行排序迭代。 <code class="docutils literal notranslate"><span class="pre">time</span></code>宏用于收集有关排序过程所需时间。</p>
+<p><code class="docutils literal notranslate"><span class="pre">do-sort-benchmark</span></code> 是执行基准测试的实际接口。 给定数据集大小 <code class="docutils literal notranslate"><span class="pre">n</span></code> 和迭代数 <code class="docutils literal notranslate"><span class="pre">iters</span></code>，它将同时测试 Common Lisp 排序函数和我们的 <code class="docutils literal notranslate"><span class="pre">sortf</span></code> 宏。 其保留随机数生成器的状态，并在执行排序测量之后但在运行 <code class="docutils literal notranslate"><span class="pre">sortf</span></code> 之前将其重置，以便要排序的随机数组相同。 运行时编译 <code class="docutils literal notranslate"><span class="pre">do-sort-benchmark</span></code> 非常重要，这样我们的测试中可能会出现最少的噪声（noise）。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defun do-sort-benchmark (n iters)
+  (let ((rs (make-random-state *random-state*)))
+		(format t &quot;CL sort:~%&quot;)
+    (let ((sorter
+						&#39;(lambda (arr)
+      					#f
+								(declare (type (simple-array fixnum)
+          							 				arr))
+								(sort arr #&#39;&lt;))))
+      (sort-benchmark-time))
+
+    (setf *random -state* rs)
+    (format t &quot;sortf:~%&quot;)
+    (let ((sorter
+            `(lambda (arr)
+            #f
+            (declare (type (simple-array fixnum)
+                            arr))
+            (sortf &lt;
+                   ,@(loop for i from 0 to (1- n)
+                           collect `(aref arr ,i)))
+             arr)))
+				(sort-benchmark-time))))
+
+(compile &#39;do-sort-benchmark)
+</pre></div>
+</div>
+<p>运行时，<code class="docutils literal notranslate"><span class="pre">do-sort-benchmark</span></code> 不仅告诉我们 <code class="docutils literal notranslate"><span class="pre">sortf</span></code> 是高效的，而且就小型固定大小数据集的性能而言，通用排序算法甚至与排序网络不在同一个级别。 我们还注意到 <code class="docutils literal notranslate"><span class="pre">sortf</span></code> 没有 cons，这反过来会减少垃圾收集运行时间，从而提高性能。 以下是大小为 2、3、6、9、25、49 的数据集的结果：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">do</span><span class="o">-</span><span class="n">sort</span><span class="o">-</span><span class="n">benchmark</span> <span class="mi">2</span> <span class="mi">1000000</span><span class="p">)</span>
+<span class="n">CL</span> <span class="n">sort</span><span class="p">:</span>
+<span class="p">;</span> <span class="n">Evaluation</span> <span class="n">took</span><span class="p">:</span>
+<span class="p">;</span>   <span class="mf">1.65</span> <span class="n">seconds</span> <span class="n">of</span> <span class="n">real</span> <span class="n">time</span>
+<span class="p">;</span>   <span class="mi">8</span><span class="p">,</span><span class="mi">000</span><span class="p">,</span><span class="mi">064</span> <span class="nb">bytes</span> <span class="n">consed</span><span class="o">.</span>
+<span class="n">sortf</span><span class="p">:</span>
+<span class="p">;</span> <span class="n">Evaluation</span> <span class="n">took</span><span class="p">:</span>
+<span class="p">;</span>   <span class="mf">0.36</span> <span class="n">seconds</span> <span class="n">of</span> <span class="n">real</span> <span class="n">time</span>
+<span class="p">;</span>   <span class="mi">0</span> <span class="nb">bytes</span> <span class="n">consed</span><span class="o">.</span>
+<span class="o">*</span> <span class="p">(</span><span class="n">do</span><span class="o">-</span><span class="n">sort</span><span class="o">-</span><span class="n">benchmark</span> <span class="mi">3</span> <span class="mi">1000000</span><span class="p">)</span>
+<span class="n">CL</span> <span class="n">sort</span><span class="p">:</span>
+<span class="p">;</span> <span class="n">Evaluation</span> <span class="n">took</span><span class="p">:</span>
+<span class="p">;</span>   <span class="mf">3.65</span> <span class="n">seconds</span> <span class="n">of</span> <span class="n">real</span> <span class="n">time</span>
+<span class="p">;</span>   <span class="mi">24</span><span class="p">,</span><span class="mi">000</span><span class="p">,</span><span class="mi">128</span> <span class="nb">bytes</span> <span class="n">consed</span><span class="o">.</span>
+<span class="n">sortf</span><span class="p">:</span>
+<span class="p">;</span> <span class="n">Evaluation</span> <span class="n">took</span><span class="p">:</span>
+<span class="p">;</span>   <span class="mf">0.46</span> <span class="n">seconds</span> <span class="n">of</span> <span class="n">real</span> <span class="n">time</span>
+<span class="p">;</span>   <span class="mi">0</span> <span class="nb">bytes</span> <span class="n">consed</span><span class="o">.</span>
+<span class="o">*</span> <span class="p">(</span><span class="n">do</span><span class="o">-</span><span class="n">sort</span><span class="o">-</span><span class="n">benchmark</span> <span class="mi">6</span> <span class="mi">1000000</span><span class="p">)</span>
+<span class="n">CL</span> <span class="n">sort</span><span class="p">:</span>
+<span class="p">;</span> <span class="n">Evaluation</span> <span class="n">took</span><span class="p">:</span>
+<span class="p">;</span>   <span class="mf">10.37</span> <span class="n">seconds</span> <span class="n">of</span> <span class="n">real</span> <span class="n">time</span>
+<span class="p">;</span>   <span class="mi">124</span><span class="p">,</span><span class="mi">186</span><span class="p">,</span><span class="mi">832</span> <span class="nb">bytes</span> <span class="n">consed</span><span class="o">.</span>
+<span class="n">sortf</span><span class="p">:</span>
+<span class="p">;</span> <span class="n">Evaluation</span> <span class="n">took</span><span class="p">:</span>
+<span class="p">;</span>   <span class="mf">0.8</span> <span class="n">seconds</span> <span class="n">of</span> <span class="n">real</span> <span class="n">time</span>
+<span class="p">;</span>   <span class="mi">0</span> <span class="nb">bytes</span> <span class="n">consed</span><span class="o">.</span>
+<span class="o">*</span> <span class="p">(</span><span class="n">do</span><span class="o">-</span><span class="n">sort</span><span class="o">-</span><span class="n">benchmark</span> <span class="mi">9</span> <span class="mi">1000000</span><span class="p">)</span>
+<span class="n">CL</span> <span class="n">sort</span><span class="p">:</span>
+<span class="p">;</span> <span class="n">Evaluation</span> <span class="n">took</span><span class="p">:</span>
+<span class="p">;</span>   <span class="mf">19.45</span> <span class="n">seconds</span> <span class="n">of</span> <span class="n">real</span> <span class="n">time</span>
+<span class="p">;</span>   <span class="mi">265</span><span class="p">,</span><span class="mi">748</span><span class="p">,</span><span class="mi">544</span> <span class="nb">bytes</span> <span class="n">consed</span><span class="o">.</span>
+<span class="n">sortf</span><span class="p">:</span>
+<span class="p">;</span> <span class="n">Evaluation</span> <span class="n">took</span><span class="p">:</span>
+<span class="p">;</span>   <span class="mf">1.17</span> <span class="n">seconds</span> <span class="n">of</span> <span class="n">real</span> <span class="n">time</span>
+<span class="p">;</span>   <span class="mi">0</span> <span class="nb">bytes</span> <span class="n">consed</span><span class="o">.</span>
+<span class="o">*</span> <span class="p">(</span><span class="n">do</span><span class="o">-</span><span class="n">sort</span><span class="o">-</span><span class="n">benchmark</span> <span class="mi">25</span> <span class="mi">1000000</span><span class="p">)</span>
+<span class="n">CL</span> <span class="n">sort</span><span class="p">:</span>
+<span class="p">;</span> <span class="n">Evaluation</span> <span class="n">took</span><span class="p">:</span>
+<span class="p">;</span>   <span class="mf">79.53</span> <span class="n">seconds</span> <span class="n">of</span> <span class="n">real</span> <span class="n">time</span>
+<span class="p">;</span>   <span class="mi">1</span><span class="p">,</span><span class="mi">279</span><span class="p">,</span><span class="mi">755</span><span class="p">,</span><span class="mi">832</span> <span class="nb">bytes</span> <span class="n">consed</span><span class="o">.</span>
+<span class="n">sortf</span><span class="p">:</span>
+<span class="p">;</span> <span class="n">Evaluation</span> <span class="n">took</span><span class="p">:</span>
+<span class="p">;</span>   <span class="mf">3.41</span> <span class="n">seconds</span> <span class="n">of</span> <span class="n">real</span> <span class="n">time</span>
+<span class="p">;</span>   <span class="mi">0</span> <span class="nb">bytes</span> <span class="n">consed</span><span class="o">.</span>
+<span class="o">*</span> <span class="p">(</span><span class="n">do</span><span class="o">-</span><span class="n">sort</span><span class="o">-</span><span class="n">benchmark</span> <span class="mi">49</span> <span class="mi">1000000</span><span class="p">)</span>
+<span class="n">CL</span> <span class="n">sort</span><span class="p">:</span>
+<span class="p">;</span> <span class="n">Evaluation</span> <span class="n">took</span><span class="p">:</span>
+<span class="p">;</span>   <span class="mf">183.16</span> <span class="n">seconds</span> <span class="n">of</span> <span class="n">real</span> <span class="n">time</span>
+<span class="p">;</span>   <span class="mi">3</span><span class="p">,</span><span class="mi">245</span><span class="p">,</span><span class="mi">024</span><span class="p">,</span><span class="mi">984</span> <span class="nb">bytes</span> <span class="n">consed</span><span class="o">.</span>
+<span class="n">sortf</span><span class="p">:</span>
+<span class="p">;</span> <span class="n">Evaluation</span> <span class="n">took</span><span class="p">:</span>
+<span class="p">;</span>   <span class="mf">8.11</span> <span class="n">seconds</span> <span class="n">of</span> <span class="n">real</span> <span class="n">time</span>
+<span class="p">;</span>   <span class="mi">0</span> <span class="nb">bytes</span> <span class="n">consed</span><span class="o">.</span>
+
+</pre></div>
+</div>
+<p>因此，对于某些任务，排序网络可以对我们的系统排序例程进行数量级或更好的改进。 这些测量并不是为了让我们的排序实现看起来很糟糕（它实际上是一个出色的排序例程），而是为了展示一个现实的例子，说明使用宏进行智能编程可以带来显著的效率提升。 Lisp 宏让我们可以轻松、便携地进行智能编程。 Blub 语言在智能编程方面付出了巨大的努力，以至于 Blub 程序员几乎总是满足于愚蠢地编程。 在 lisp 中，所有内容都编译为 lisp，因此可以优化的内容永远不会有任何障碍。 如果有什么东西慢得让人无法接受，那就改变它并让它变得更快。 我们几乎从不需要东西快速运行，但是当我们这样做时，lisp 就是解决方案。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defun medianf-get-best-sn (n)
+  (case n
+		((0) (error &quot;Need more places for medianf&quot;))
+    ((9)  paeth -9-median -sn)
+		((25) paeth -25-median -sn)
+		(t    (prune-sn-for-median n
+				    (build -batcher -sn n)))))
+
+(defmacro! medianf (&amp;rest places)
+	`(progn
+			,@(mapcar
+					#`(let ((,g!a #1=,(nth (car a1) places))
+									(,g!b #2=,(nth (cadr a1) places)))
+              (if (&lt; ,g!b ,g!a)
+								(setf #1# ,g!b #2# ,g!a)))
+					(medianf-get-best-sn (length places)))
+      ,(nth (floor (1- (length places)) 2) ; lower
+						places )))
+</pre></div>
+</div>
+<p>另一个与 <code class="docutils literal notranslate"><span class="pre">sortf</span></code> 相似的宏是 <code class="docutils literal notranslate"><span class="pre">medianf</span></code>，它使用修剪的中值选择网络或 Paeth 手工制作的中值网络对位置进行排序，以确保中值元素处于正确位置。 在网络大小均匀的情况下，下中位数和上中位数都将在正确的位置。 与总是返回 <code class="docutils literal notranslate"><span class="pre">nil</span></code> 的 <code class="docutils literal notranslate"><span class="pre">sortf</span></code> 不同，<code class="docutils literal notranslate"><span class="pre">medianf</span></code> 将返回下中位数的值（与奇数网络大小的上中位数相同）。</p>
+<p>正如之前所说，<code class="docutils literal notranslate"><span class="pre">sortf</span></code> 和 <code class="docutils literal notranslate"><span class="pre">medianf</span></code> 对可以设置的任何类型的位置进行排序。 对于存储在寄存器中的变量，这使 lisp 有机会生成甚至不访问内存的排序代码。 例如，这里是在三个固定位置上为 <code class="docutils literal notranslate"><span class="pre">medianf</span></code> 编译的展开：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">dis</span> <span class="p">((</span><span class="n">fixnum</span> <span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">fixnum</span> <span class="n">b</span><span class="p">)</span> <span class="p">(</span><span class="n">fixnum</span> <span class="n">c</span><span class="p">))</span>
+    <span class="c1">#f</span>
+    <span class="p">(</span><span class="n">medianf</span> <span class="n">a</span> <span class="n">b</span> <span class="n">c</span><span class="p">))</span>
+<span class="o">...</span>
+<span class="p">;;;</span> <span class="p">(</span><span class="n">MEDIANF</span> <span class="n">A</span> <span class="n">B</span> <span class="n">C</span><span class="p">)</span>
+      <span class="mi">34</span><span class="p">:</span>       <span class="n">MOV</span>		<span class="n">EBX</span><span class="p">,</span> <span class="n">EAX</span>
+      <span class="mi">36</span><span class="p">:</span>       <span class="n">CMP</span>		<span class="n">EDX</span><span class="p">,</span> <span class="n">EAX</span>
+      <span class="mi">38</span><span class="p">:</span>       <span class="n">JL</span> 		<span class="n">L4</span>
+      <span class="mi">3</span><span class="n">A</span><span class="p">:</span> <span class="n">L0</span><span class="p">:</span>   <span class="n">MOV</span>		<span class="n">EBX</span><span class="p">,</span> <span class="n">EAX</span>
+      <span class="mi">3</span><span class="n">C</span><span class="p">:</span>       <span class="n">CMP</span>		<span class="n">ECX</span><span class="p">,</span> <span class="n">EAX</span>
+      <span class="mi">3</span><span class="n">E</span><span class="p">:</span>       <span class="n">JL</span> 		<span class="n">L3</span>
+      <span class="mi">40</span><span class="p">:</span> <span class="n">L1</span><span class="p">:</span>   <span class="n">MOV</span>		<span class="n">EAX</span><span class="p">,</span> <span class="n">ECX</span>
+      <span class="mi">42</span><span class="p">:</span>       <span class="n">CMP</span>		<span class="n">EDX</span><span class="p">,</span> <span class="n">ECX</span>
+      <span class="mi">44</span><span class="p">:</span>       <span class="n">JNL</span>		<span class="n">L2</span>
+      <span class="mi">46</span><span class="p">:</span>       <span class="n">MOV</span>		<span class="n">ECX</span><span class="p">,</span> <span class="n">EDX</span>
+      <span class="mi">48</span><span class="p">:</span>       <span class="n">MOV</span>		<span class="n">EDX</span><span class="p">,</span> <span class="n">EAX</span>
+      <span class="mi">4</span><span class="n">A</span><span class="p">:</span> <span class="n">L2</span><span class="p">:</span>
+<span class="o">...</span>
+      <span class="mi">5</span><span class="n">B</span><span class="p">:</span> <span class="n">L3</span><span class="p">:</span>   <span class="n">MOV</span>		<span class="n">EAX</span><span class="p">,</span> <span class="n">ECX</span>
+      <span class="mi">5</span><span class="n">D</span><span class="p">:</span>       <span class="n">MOV</span>		<span class="n">ECX</span><span class="p">,</span> <span class="n">EBX</span>
+      <span class="mi">5</span><span class="n">F</span><span class="p">:</span>       <span class="n">JMP</span>		<span class="n">L1</span>
+      <span class="mi">61</span><span class="p">:</span> <span class="n">L4</span><span class="p">:</span>   <span class="n">MOV</span>		<span class="n">EAX</span><span class="p">,</span> <span class="n">EDX</span>
+      <span class="mi">63</span><span class="p">:</span>       <span class="n">MOV</span>		<span class="n">EDX</span><span class="p">,</span> <span class="n">EBX</span>
+      <span class="mi">65</span><span class="p">:</span>       <span class="n">JMP</span>		<span class="n">L0</span>
+</pre></div>
+</div>
+<p>Lisp 比任何其他语言都更有潜力编写高效的代码，这一切都归功于宏。 因为它们非常擅长创建受控计量实验，所以宏也是确定哪些技术产生更有效结果的解决方案。 编译器是编写程序的程序，而宏是最好的方法。</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="7.6-sorting-networks.html" class="btn btn-neutral float-left" title="7.6 排序" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="../Chapter08/index.html" class="btn btn-neutral float-right" title="第八章：Lisp 的变迁" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

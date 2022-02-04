@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2.3 词法作用域与动态作用域 &mdash; Let Over Lambda 中文文档  文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="2.4 Let It Be Lambda" href="2.4-let-it-be-lambda.html" />
+    <link rel="prev" title="2.2 Environment and Extent" href="2.2-environments-and-extent.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第二章：闭包</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="2.1-closure-oriented-programming.html">2.1 面向闭包编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.2-environments-and-extent.html">2.2 Environment and Extent</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.3 词法作用域与动态作用域</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.4-let-it-be-lambda.html">2.4 Let It Be Lambda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.5-let-over-lambda.html">2.5 Let Over Lambda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.6-lambda-over-letoverlambda.html">2.6 Lambda Over Let Over Lambda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.7-letoverlambda-over-letoverlambda.html">2.7 Let Over Lambda Over Let Over Lambda</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter04/index.html">第四章：Read 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">第二章：闭包</a> &raquo;</li>
+      <li>2.3 词法作用域与动态作用域</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Chapter02/2.3-lexical-and-dynamic-scope.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="id1">
+<h1>2.3 词法作用域与动态作用域<a class="headerlink" href="#id1" title="永久链接至标题"></a></h1>
+<hr class="docutils" />
+<p>Author: Doug Hoyte</p>
+<p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
+<hr class="docutils" />
+<p>The technical term for where to consider a variable reference valid is <em>scope</em>. The most common type of scope in modern languages is called <em>lexical</em> scope. When a fragment of code is surrounded by the lexical binding of a variable, that variable is said to be in the lexical scope of the binding. The <strong>let</strong> form, which is one of the most common ways to create bindings, can introduce these lexically scoped variables:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">x</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">x</span><span class="p">)</span>
+
+<span class="mi">2</span>
+</pre></div>
+</div>
+<p>The <strong>x</strong> inside the body of the <strong>let</strong> form was accessed through lexical scope. Similarly, arguments to functions defined by <strong>lambda</strong> or <strong>defun</strong> are also lexically bound variables inside the text of the function definition. Lexical variables are variables that can only be accessed by code appearing inside the context of, for instance, the above <strong>let</strong> form. Because lexical scoping is such an intuitive way to limit the scope of access to a variable, it can appear to be the only way. Are there any other possibilities for scoping?</p>
+<p>As useful as the combination of indefinite extent and lexical scoping turns out to be, it has until recently not been used to its fullest extent in mainstream programming languages. The first implementation was by Steve Russell for Lisp 1.5[HISTORY-OF-LISP] and was subsequently designed directly into languages like Algol-60, Scheme, and COMMON LISP. Despite this long and fruitful history, the numerous advantages of lexical scoping are only slowly being taken up by many Blubs.</p>
+<p>Although the scoping methods provided by C-like languages are limited, C programmers need to program across different environments too. To do so, they often use an imprecisely defined scoping known as <em>pointer scope</em>. Pointer scope is famous for its difficulty to debug, numerous security risks, and, somewhat artificially, its efficiency. The idea behind pointer scoping is to define a domain specific language for controlling the registers and memory of a Von Neumman machine similar to most modern CPUs[PAIP-PIX], then to use this language to access and manipulate data-structures with fairly direct commands to the CPU running the program. Pointer scoping was necessary for performance reasons before decent lisp compilers were invented but is now regarded as a problem with, rather than a feature of, modern programming languages.</p>
+<p>Even though lisp programmers seldom think in terms of pointers, the understanding of pointer scoping is very valuable in the construction of efficient lisp code. In <a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap7.html#sec_4">section 7.4, Pointer Scope</a> we will investigate implementing pointer scoping for the rare cases where we need to instruct the compiler on specific code creation. But for now we only need discuss its mechanics. In C, we sometimes would like to access a variable defined outside the function we are writing:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">pointer_scope_test</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>In the above function we use the C <strong>&amp;</strong> operator to give the actual address in memory of our local variable <strong>a</strong> to the <strong>scanf</strong> function so it knows where to write the data it scans. Lexical scoping in lisp forbids us from implementing this directly. In lisp, we would likely pass an anonymous function to a hypothetical lisp <strong>scanf</strong> function, allowing it to set our lexical variable <strong>a</strong> even though <strong>scanf</strong> is defined outside our lexical scope:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">let</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span>
+  <span class="p">(</span><span class="n">scanf</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="p">(</span><span class="n">setf</span> <span class="n">a</span> <span class="n">v</span><span class="p">))))</span>
+</pre></div>
+</div>
+<p>Lexical scope is the enabling feature for closures. In fact, closures are so related to this concept of lexical scope that they are often referred to more specifically as <em>lexical closures</em> to distinguish them from other types of closures. Unless otherwise noted, all closures in this book are lexical.
+In addition to lexical scope, COMMON LISP provides <em>dynamic scope</em>. This is lisp <em>slang</em> for the combination of temporary extent and global scope. Dynamic scoping is a type of scoping that is unique to lisp in that it offers a very different behaviour but shares an identical syntax with lexical scope. In COMMON LISP we deliberately choose to call attention to variables accessed with dynamic scope by calling them <em>special variables</em>. These special variables can be defined with <strong>defvar</strong>. Some programmers follow a convention of prefixing and postfixing special variable names with asterisks, like <em><strong>temp-special</strong></em>. This is called the <em>earmuff</em> convention. For reasons explained in <a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html#sec_7">section 3.7, Duality of Syntax</a>, this book does not use earmuffs so our special variable declarations look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defvar</span> <span class="n">temp</span><span class="o">-</span><span class="n">special</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When defined like this, <strong>temp-special</strong> will be designated special<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">2</a> but will not be initialised with a value. In this state, a special variable is said to be <em>unbound</em>. Only special variables can be unbound—lexical variables are always bound and thus always have values. Another way of thinking of this is that by default all symbols represent lexically unbound variables. Just as with lexical variables, we can assign a value to special variables with <strong>setq</strong> or <strong>setf</strong>. Some lisps, like Scheme, do not have dynamic scope. Others, like EuLisp[SMALL-PIECES-P46], use different syntax for accessing lexical versus special variables. But in COMMON LISP the syntax is shared. Many lispers consider this a feature. Here we assign a value to our special variable <strong>temp-special</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">setq</span> <span class="n">temp</span><span class="o">-</span><span class="n">special</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>So far, this special variable doesn't seem that special. It seems to be just another variable, bound in some sort of global namespace. This is because we have only bound it once—its default special global binding. Special variables are most interesting when they are re-bound, or <em>shadowed</em>, by new environments. If we define a function that simply evaluates and returns <strong>temp-special</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">temp</span><span class="o">-</span><span class="n">special</span><span class="o">-</span><span class="n">returner</span> <span class="p">()</span>
+  <span class="n">temp</span><span class="o">-</span><span class="n">special</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This function can be used to examine the value that lisp evaluates <strong>temp-special</strong> to be at the moment in time when it was called:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">temp</span><span class="o">-</span><span class="n">special</span><span class="o">-</span><span class="n">returner</span><span class="p">)</span>
+<span class="mi">1</span>
+</pre></div>
+</div>
+<p>This is sometimes referred to as evaluating the form in a <em>null lexical environment</em>. The null lexical environment obviously doesn't contain any lexical bindings. Here the value of <strong>temp-special</strong> returned is that of its global special value, 1. But if we evaluate it in a non-null lexical environment—one that contains a binding for our special variable—the specialness of <strong>temp-special</strong> reveals itself<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">3</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">temp</span><span class="o">-</span><span class="n">special</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="p">(</span><span class="n">temp</span><span class="o">-</span><span class="n">special</span><span class="o">-</span><span class="n">returner</span><span class="p">))</span>
+
+<span class="mi">2</span>
+</pre></div>
+</div>
+<p>Notice that the value 2 was returned, meaning that the <strong>temp-special</strong> value was taken from our <strong>let</strong> environment, not its global special value. If this still does not seem interesting, see how this cannot be done in most other conventional programming languages as exemplified by this piece of Blub pseudo-code:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">global_var</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+
+<span class="n">function</span><span class="w"> </span><span class="nf">whatever</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">global_var</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">do_stuff_that_uses_global_var</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="n">function</span><span class="w"> </span><span class="nf">do_stuff_that_uses_global_var</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// global_var is 0</span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>While the memory locations or register assignments for lexical bindings are known at compile-time<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">4</a>, special variable bindings are determined at run-time—in a sense. Thanks to a clever trick, special variables aren't as inefficient as they seem. A special variable actually always does refer to the same location in memory. When you use <strong>let</strong> to bind a special variable, you are actually compiling in code that will store a copy of the variable, over-write the memory location with a new value, evaluate the forms in the let body, and, finally, restore the original value from the copy.</p>
+<p>Special variables are perpetually associated with the symbol used to name them. The location in memory referred to by a special variable is called the <strong>symbol-value</strong> cell of a symbol. This is in direct contrast to lexical variables. Lexical variables are only indicated with symbols at compile-time. Because lexical variables can only be accessed from inside the lexical scope of their bindings, the compiler has no reason to even remember the symbols that were used to reference lexical variables so it will remove them from compiled code. We will stretch the truth of this statement in <a class="reference internal" href="../Chapter06/6.7-pandoric-macros.html"><span class="doc std std-doc">section 6.7, Pandoric Macros</span></a>.</p>
+<p>Although COMMON LISP does offer the invaluable feature of dynamic scope, lexical variables are the most common. Dynamic scoping used to be a defining feature of lisp but has, since COMMON LISP, been almost completely replaced by lexical scope. Since lexical scoping enables things like lexical closures (which we examine shortly), as well as more effective compiler optimisations, the superseding of dynamic scope is mostly seen as a good thing. However, the designers of COMMON LISP have left us a very transparent window into the world of dynamic scoping, now acknowledged for what it really is: special.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="2.2-environments-and-extent.html" class="btn btn-neutral float-left" title="2.2 Environment and Extent" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="2.4-let-it-be-lambda.html" class="btn btn-neutral float-right" title="2.4 Let It Be Lambda" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2.2 Environment and Extent &mdash; Let Over Lambda 中文文档  文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="2.3 词法作用域与动态作用域" href="2.3-lexical-and-dynamic-scope.html" />
+    <link rel="prev" title="2.1 面向闭包编程" href="2.1-closure-oriented-programming.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第二章：闭包</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="2.1-closure-oriented-programming.html">2.1 面向闭包编程</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.2 Environment and Extent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.3-lexical-and-dynamic-scope.html">2.3 词法作用域与动态作用域</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.4-let-it-be-lambda.html">2.4 Let It Be Lambda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.5-let-over-lambda.html">2.5 Let Over Lambda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.6-lambda-over-letoverlambda.html">2.6 Lambda Over Let Over Lambda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.7-letoverlambda-over-letoverlambda.html">2.7 Let Over Lambda Over Let Over Lambda</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter04/index.html">第四章：Read 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">第二章：闭包</a> &raquo;</li>
+      <li>2.2 Environment and Extent</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Chapter02/2.2-environments-and-extent.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="environment-and-extent">
+<h1>2.2 Environment and Extent<a class="headerlink" href="#environment-and-extent" title="永久链接至标题"></a></h1>
+<hr class="docutils" />
+<p>Author: Doug Hoyte</p>
+<p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
+<hr class="docutils" />
+<p>What Steele means by assignable value cells is an environment for storing pointers to data where the environment is subject to something called <em>indefinite extent</em>. This is a fancy way of saying that we can continue to refer to such an environment at any time in the future. Once we allocate this environment, it and its references are there to stay as long as we need them. Consider this C function:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdlib.h&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="nf">environment_with_indefinite_extent</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">input</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">));</span><span class="w"></span>
+<span class="w">  </span><span class="o">*</span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">input</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>After we call this function and receive the pointer it returns, we can continue to refer to the allocated memory indefinitely. In C, new environments are created when invoking a function, but C programmers know to <strong>malloc()</strong> the required memory when returning it for use outside the function.</p>
+<p>By contrast, the example below is flawed. C programmers consider <strong>a</strong> to be automatically collected when the function returns because the environment is allocated on the <em>stack</em>. In other words, according to lisp programmers, <strong>a</strong> is allocated with <em>temporary extent</em>.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="nf">environment_with_temporary_extent</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">input</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">input</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The difference between C environments and lisp environments is that unless you explicitly tell lisp otherwise it always assumes you mean to use indefinite extent. In other words, lisp always assumes you mean to call <strong>malloc()</strong> as above. It can be argued that this is inherently less efficient than using temporary extent, but the benefits almost always exceed the marginal performance costs. What's more, lisp can often determine when data can safely be allocated on the stack and will do so automatically. You can even use <em>declarations</em> to tell lisp to do this explicitly. We will discuss declarations in more detail in <a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap7.html">chapter 7, Macro Efficiency Topics</a>.</p>
+<p>But because of lisp's dynamic nature, it doesn't have explicit pointer values or types like C. This can be confusing if you, as a C programmer, are used to casting pointers and values to indicate types. Lisp thinks about all this slightly differently. In lisp, a handy mantra is the following:</p>
+<blockquote>
+<div><p><em>Variables don't have types. Only values have types.</em></p>
+</div></blockquote>
+<p>Still, we have to return something to hold pointers. In lisp there are many data structures that can store pointers. One of the most favoured by lisp programmers is a simple structure: the <em>cons cell</em>. Each cons cell holds exactly two pointers, affectionately called car and cdr. When <strong>environment-with-indefinite-extent</strong> is invoked, a cons cell will be returned with the car pointing to whatever was passed as <strong>input</strong> and the cdr pointing to <strong>nil</strong>. And, most importantly, this cons cell (and with it the pointer to <strong>input</strong>) has indefinite extent so we can continue to refer to it as long as we need to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">environment</span><span class="o">-</span><span class="k">with</span><span class="o">-</span><span class="n">indefinite</span><span class="o">-</span><span class="n">extent</span> <span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+  <span class="p">(</span><span class="n">cons</span> <span class="nb">input</span> <span class="n">nil</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The efficiency disadvantages of indefinite extent are approaching irrelevance as the state of the art in lisp compilation technology improves. Environments and extent are closely related to closures and more will be said about them throughout this chapter.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="2.1-closure-oriented-programming.html" class="btn btn-neutral float-left" title="2.1 面向闭包编程" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="2.3-lexical-and-dynamic-scope.html" class="btn btn-neutral float-right" title="2.3 词法作用域与动态作用域" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

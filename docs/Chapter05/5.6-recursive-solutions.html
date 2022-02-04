@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5.6 递归方案 &mdash; Let Over Lambda 中文文档  文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="5.7 Dlambda" href="5.7-dlambda.html" />
+    <link rel="prev" title="5.5 递归展开" href="5.5-recursive-expansions.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter04/index.html">第四章：Read 宏</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第五章：Programs that program</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="5.1-lisp-is-not-functional.html">5.1 非函数式编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5.2-top-down-programming.html">5.2 自上而下的编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5.3-implicit-contexts.html">5.3 隐式上下文</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5.4-code-walking-with-macrolet.html">5.4 使用 <code class="docutils literal notranslate"><span class="pre">macrolet</span></code> 遍历代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5.5-recursive-expansions.html">5.5 递归展开</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5.6 递归方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5.7-dlambda.html">5.7 Dlambda</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter06/index.html">第六章：回指(Anaphoric) 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter07/index.html">第七章：宏的效率</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Chapter08/index.html">第八章：Lisp 的变迁</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">第五章：Programs that program</a> &raquo;</li>
+      <li>5.6 递归方案</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Chapter05/5.6-recursive-solutions.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="id1">
+<h1>5.6 递归方案<a class="headerlink" href="#id1" title="永久链接至标题"></a></h1>
+<hr class="docutils" />
+<p>Author: Doug Hoyte</p>
+<p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
+<hr class="docutils" />
+<p>上节我们定义的 <code class="docutils literal notranslate"><span class="pre">cxr</span></code> 宏似乎包含了函数 <code class="docutils literal notranslate"><span class="pre">car</span></code> 和 <code class="docutils literal notranslate"><span class="pre">cdr</span></code> 的组合，以及普通的一元列表
+<code class="docutils literal notranslate"><span class="pre">(flat</span> <span class="pre">list)</span></code> 访问器函数 <code class="docutils literal notranslate"><span class="pre">nth</span></code> 和 <code class="docutils literal notranslate"><span class="pre">nthcdr</span></code>。但是像 <code class="docutils literal notranslate"><span class="pre">first</span></code>, <code class="docutils literal notranslate"><span class="pre">second</span></code> 和 <code class="docutils literal notranslate"><span class="pre">tenth</span></code>
+这样的英语访问器呢？</p>
+<p>这些函数没有用吗？绝对不是。当表示访问列表中第四个元素的操作时，不论是在写代码
+或是读代码的效率上，用 <code class="docutils literal notranslate"><span class="pre">fourth</span></code> 肯定要比数 <code class="docutils literal notranslate"><span class="pre">cadddr</span></code> 中三个 D 要更好。</p>
+<p>事实上，英文单词访问器最大的问题是：COMMON LISP 中只有 10 个访问器 —— 从
+<code class="docutils literal notranslate"><span class="pre">first</span></code> 到 <code class="docutils literal notranslate"><span class="pre">tenth</span></code>。但是本节或者说本书的主题之一是，lisp onion 的每一层都可以使用
+其他层。lisp 中没有原语。如果我们想定义更多的单词访问器，如 <code class="docutils literal notranslate"><span class="pre">eleventh</span></code>，很容易
+就能做到，就像之前展示的那样。用 <code class="docutils literal notranslate"><span class="pre">defun</span></code> 定义的 <code class="docutils literal notranslate"><span class="pre">eleventh</span></code> 函数与 ANSI 中定义的
+<code class="docutils literal notranslate"><span class="pre">first</span></code> 和 <code class="docutils literal notranslate"><span class="pre">tenth</span></code> 访问器没有差别。因为没有原语，我们可以在宏定义中使用所有的
+lisp，所以我们可以在宏定义中使用像 <code class="docutils literal notranslate"><span class="pre">loop</span></code> 和 <code class="docutils literal notranslate"><span class="pre">format</span></code> 这样的高级特性。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro def-english-list-accessors (start end)
+  (if (not (&lt;= 1 start end))
+    (error &quot;Bad start/end range&quot;))
+  `(progn
+    ,@(loop for i from start to end collect
+        `(defun
+          ,(symb
+            (map &#39;string
+                (lambda (c)
+                    (if (alpha -char -p c)
+                      (char-upcase c)
+                      #\ -))
+                (format nil &quot;~:r&quot; i)))
+          (arg)
+          (cxr (1 a ,(- i 1) d) arg)))))
+</pre></div>
+</div>
+<p>宏 <code class="docutils literal notranslate"><span class="pre">def-english-list-accessors</span></code> 使用格式字符串 <code class="docutils literal notranslate"><span class="pre">&quot;~:r&quot;</span></code> 将数字 <code class="docutils literal notranslate"><span class="pre">i</span></code> 转换为
+对应英文单词的字符串。按照 lisp 的习惯，我们将所有非字母字符改为连字符。然后
+将这个字符串转换为一个符号，然后在 <code class="docutils literal notranslate"><span class="pre">defun</span></code> 结构中使用它，这个字符串运用 <code class="docutils literal notranslate"><span class="pre">cxr</span></code>
+宏实现了适当的访问器功能。</p>
+<p>例如，假设我们突然想到要访问列表的第十一个元素。当然，我们可以用 <code class="docutils literal notranslate"><span class="pre">nth</span></code> 或是
+<code class="docutils literal notranslate"><span class="pre">cdr</span></code> 的组合以及英文单词访问器，但这会导致代码风格的不一致。我们可以重写
+代码来避免使用英语访问器，但是选择用这种抽象可能是有原因的。</p>
+<p>终于，我们可以自定义缺少的必要的访问器了。在其他语言中，这通常意味着大量的
+复制粘贴，或者可能是一些特殊情况下的代码生成脚本，而这两者都不是特别优雅。
+但在 lisp 中，我们有宏：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">macroexpand</span>
+  <span class="s1">&#39;(def-english-list-accessors 11 20))</span>
+<span class="p">(</span><span class="n">PROGN</span>
+  <span class="p">(</span><span class="n">DEFUN</span> <span class="n">ELEVENTH</span> <span class="p">(</span><span class="n">ARG</span><span class="p">)</span> <span class="p">(</span><span class="n">CXR</span> <span class="p">(</span><span class="mi">1</span> <span class="n">A</span> <span class="mi">10</span> <span class="n">D</span><span class="p">)</span> <span class="n">ARG</span><span class="p">))</span>
+  <span class="p">(</span><span class="n">DEFUN</span> <span class="n">TWELFTH</span> <span class="p">(</span><span class="n">ARG</span><span class="p">)</span> <span class="p">(</span><span class="n">CXR</span> <span class="p">(</span><span class="mi">1</span> <span class="n">A</span> <span class="mi">11</span> <span class="n">D</span><span class="p">)</span> <span class="n">ARG</span><span class="p">))</span>
+  <span class="p">(</span><span class="n">DEFUN</span> <span class="n">THIRTEENTH</span> <span class="p">(</span><span class="n">ARG</span><span class="p">)</span> <span class="p">(</span><span class="n">CXR</span> <span class="p">(</span><span class="mi">1</span> <span class="n">A</span> <span class="mi">12</span> <span class="n">D</span><span class="p">)</span> <span class="n">ARG</span><span class="p">))</span>
+  <span class="p">(</span><span class="n">DEFUN</span> <span class="n">FOURTEENTH</span> <span class="p">(</span><span class="n">ARG</span><span class="p">)</span> <span class="p">(</span><span class="n">CXR</span> <span class="p">(</span><span class="mi">1</span> <span class="n">A</span> <span class="mi">13</span> <span class="n">D</span><span class="p">)</span> <span class="n">ARG</span><span class="p">))</span>
+  <span class="p">(</span><span class="n">DEFUN</span> <span class="n">FIFTEENTH</span> <span class="p">(</span><span class="n">ARG</span><span class="p">)</span> <span class="p">(</span><span class="n">CXR</span> <span class="p">(</span><span class="mi">1</span> <span class="n">A</span> <span class="mi">14</span> <span class="n">D</span><span class="p">)</span> <span class="n">ARG</span><span class="p">))</span>
+  <span class="p">(</span><span class="n">DEFUN</span> <span class="n">SIXTEENTH</span> <span class="p">(</span><span class="n">ARG</span><span class="p">)</span> <span class="p">(</span><span class="n">CXR</span> <span class="p">(</span><span class="mi">1</span> <span class="n">A</span> <span class="mi">15</span> <span class="n">D</span><span class="p">)</span> <span class="n">ARG</span><span class="p">))</span>
+  <span class="p">(</span><span class="n">DEFUN</span> <span class="n">SEVENTEENTH</span> <span class="p">(</span><span class="n">ARG</span><span class="p">)</span> <span class="p">(</span><span class="n">CXR</span> <span class="p">(</span><span class="mi">1</span> <span class="n">A</span> <span class="mi">16</span> <span class="n">D</span><span class="p">)</span> <span class="n">ARG</span><span class="p">))</span>
+  <span class="p">(</span><span class="n">DEFUN</span> <span class="n">EIGHTEENTH</span> <span class="p">(</span><span class="n">ARG</span><span class="p">)</span> <span class="p">(</span><span class="n">CXR</span> <span class="p">(</span><span class="mi">1</span> <span class="n">A</span> <span class="mi">17</span> <span class="n">D</span><span class="p">)</span> <span class="n">ARG</span><span class="p">))</span>
+  <span class="p">(</span><span class="n">DEFUN</span> <span class="n">NINETEENTH</span> <span class="p">(</span><span class="n">ARG</span><span class="p">)</span> <span class="p">(</span><span class="n">CXR</span> <span class="p">(</span><span class="mi">1</span> <span class="n">A</span> <span class="mi">18</span> <span class="n">D</span><span class="p">)</span> <span class="n">ARG</span><span class="p">))</span>
+  <span class="p">(</span><span class="n">DEFUN</span> <span class="n">TWENTIETH</span> <span class="p">(</span><span class="n">ARG</span><span class="p">)</span> <span class="p">(</span><span class="n">CXR</span> <span class="p">(</span><span class="mi">1</span> <span class="n">A</span> <span class="mi">19</span> <span class="n">D</span><span class="p">)</span> <span class="n">ARG</span><span class="p">)))</span>
+<span class="n">T</span>
+</pre></div>
+</div>
+<p>能够创建这些英语访问器降低了 ANSI COMMON LISP 中只有十个访问器限制的影响。
+如果想要更多的英语访问器，只需使用 <code class="docutils literal notranslate"><span class="pre">def-</span> <span class="pre">english-list-accessors</span></code> 宏来
+创建它们。</p>
+<p>那 ANSI 里面关于 <code class="docutils literal notranslate"><span class="pre">car</span></code> 和 <code class="docutils literal notranslate"><span class="pre">cdr</span></code> 的组合最多只能是 5 个的限制怎么处理呢？有时，
+在编写处理复杂列表的程序时，我们就不想访问器有这个限制。例如，当使用函数
+<code class="docutils literal notranslate"><span class="pre">cadadr</span></code>、<code class="docutils literal notranslate"><span class="pre">second-of-second</span></code> 来访问列表，然后改变数据形式，改变后的数据
+的引用是 <code class="docutils literal notranslate"><span class="pre">second-of-third</span></code> 或 <code class="docutils literal notranslate"><span class="pre">cadaddr</span></code>，这时就遇到了 COMMON LISP 的
+限制。</p>
+<p>和英文单词访问器的操作一样，我们可以写个程序来定义额外的 <code class="docutils literal notranslate"><span class="pre">car</span></code> 和 <code class="docutils literal notranslate"><span class="pre">cdr</span></code> 组合。
+问题在于，与英文访问器不同，像 <code class="docutils literal notranslate"><span class="pre">caddr</span></code> 这样的组合函数，其深度的增加会导致
+需要定义的函数数量呈指数级增加。具体来说，可以使用函数 <code class="docutils literal notranslate"><span class="pre">cxr-calculator</span></code>
+找到需要定义的深度为 n 访问器数量。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">cxr</span><span class="o">-</span><span class="n">calculator</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span>
+  <span class="p">(</span><span class="n">loop</span> <span class="k">for</span> <span class="n">i</span> <span class="kn">from</span> <span class="mi">1</span> <span class="n">to</span> <span class="n">n</span>
+        <span class="nb">sum</span> <span class="p">(</span><span class="n">expt</span> <span class="mi">2</span> <span class="n">i</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>这里我们可以看到深度为 4 的组合需要有 30 种：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">cxr</span><span class="o">-</span><span class="n">calculator</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="mi">30</span>
+</pre></div>
+</div>
+<p>为了让你了解所需函数的数量增长有多快，参考下面这段代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">loop</span> <span class="k">for</span> <span class="n">i</span> <span class="kn">from</span> <span class="mi">1</span> <span class="n">to</span> <span class="mi">16</span>
+        <span class="n">collect</span> <span class="p">(</span><span class="n">cxr</span><span class="o">-</span><span class="n">calculator</span> <span class="n">i</span><span class="p">))</span>
+
+<span class="p">(</span><span class="mi">2</span> <span class="mi">6</span> <span class="mi">14</span> <span class="mi">30</span> <span class="mi">62</span> <span class="mi">126</span> <span class="mi">254</span> <span class="mi">510</span> <span class="mi">1022</span> <span class="mi">2046</span>
+<span class="mi">4094</span> <span class="mi">8190</span> <span class="mi">16382</span> <span class="mi">32766</span> <span class="mi">65534</span> <span class="mi">131070</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>显然，要想 <code class="docutils literal notranslate"><span class="pre">cxr</span></code> 函数在深度上包含 <code class="docutils literal notranslate"><span class="pre">car</span></code> 和 <code class="docutils literal notranslate"><span class="pre">cdr</span></code> 的所有组合，我们需要一种
+不同于处理英文访问器问题的方法。定义 <code class="docutils literal notranslate"><span class="pre">car</span></code> 和 <code class="docutils literal notranslate"><span class="pre">cdr</span></code> 的所有组合到某个可行
+的深度是不行的。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">cxr</span><span class="o">-</span><span class="n">symbol</span><span class="o">-</span><span class="n">p</span> <span class="p">(</span><span class="n">s</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="n">symbolp</span> <span class="n">s</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">chars</span> <span class="p">(</span><span class="n">coerce</span>
+                    <span class="p">(</span><span class="n">symbol</span> <span class="o">-</span><span class="n">name</span> <span class="n">s</span><span class="p">)</span>
+                    <span class="s1">&#39;list)))</span>
+      <span class="p">(</span><span class="ow">and</span>
+        <span class="p">(</span><span class="o">&lt;</span> <span class="mi">6</span> <span class="p">(</span><span class="n">length</span> <span class="n">chars</span><span class="p">))</span>
+        <span class="p">(</span><span class="n">char</span><span class="o">=</span> <span class="c1">#\C (car chars))</span>
+        <span class="p">(</span><span class="n">char</span><span class="o">=</span> <span class="c1">#\R (car (last chars)))</span>
+        <span class="p">(</span><span class="n">null</span> <span class="p">(</span><span class="n">remove</span> <span class="o">-</span><span class="k">if</span>
+                <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="n">c</span><span class="p">)</span>
+                  <span class="p">(</span><span class="ow">or</span> <span class="p">(</span><span class="n">char</span><span class="o">=</span> <span class="n">c</span> <span class="c1">#\A)</span>
+                      <span class="p">(</span><span class="n">char</span><span class="o">=</span> <span class="n">c</span> <span class="c1">#\D)))</span>
+                <span class="p">(</span><span class="n">cdr</span> <span class="p">(</span><span class="n">butlast</span> <span class="n">chars</span><span class="p">))))))))</span>
+</pre></div>
+</div>
+<p>首先，我们应该对 <code class="docutils literal notranslate"><span class="pre">cxr</span></code> 符号定义有个明确的说明。<code class="docutils literal notranslate"><span class="pre">cxr-symbol-p</span></code> 是个简洁
+的定义：<code class="docutils literal notranslate"><span class="pre">cxr</span></code> 是所有以 C 开头，R 结尾，中间包含五个及以上个 A 或 D 的符号。
+我们不考虑少于五个 A 或 D 的 <code class="docutils literal notranslate"><span class="pre">cxr</span></code> 符号，因为这些函数已经确定在 COMMON
+LISP 中定义了。</p>
+<p>接下来，因为我们打算用 <code class="docutils literal notranslate"><span class="pre">cxr</span></code> 来实现任意 <code class="docutils literal notranslate"><span class="pre">car</span></code> 和 <code class="docutils literal notranslate"><span class="pre">cdr</span></code> 组合的功能，所以创建了
+函数 <code class="docutils literal notranslate"><span class="pre">cxr-symbol-to-cxr-list</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">cxr</span><span class="o">-</span><span class="n">symbol</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">cxr</span><span class="o">-</span><span class="nb">list</span> <span class="p">(</span><span class="n">s</span><span class="p">)</span>
+  <span class="p">(</span><span class="n">labels</span> <span class="p">((</span><span class="n">collect</span> <span class="p">(</span><span class="n">l</span><span class="p">)</span>
+            <span class="p">(</span><span class="k">if</span> <span class="n">l</span> <span class="p">(</span><span class="nb">list</span><span class="o">*</span>
+                    <span class="mi">1</span>
+                    <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="n">char</span><span class="o">=</span> <span class="p">(</span><span class="n">car</span> <span class="n">l</span><span class="p">)</span> <span class="c1">#\A)</span>
+                      <span class="s1">&#39;A</span>
+                      <span class="s1">&#39;D)</span>
+                    <span class="p">(</span><span class="n">collect</span> <span class="p">(</span><span class="n">cdr</span> <span class="n">l</span><span class="p">))))))</span>
+  <span class="p">(</span><span class="n">collect</span>
+    <span class="p">(</span><span class="n">cdr</span>       <span class="p">;</span> <span class="n">chop</span> <span class="n">off</span> <span class="n">C</span>
+      <span class="p">(</span><span class="n">butlast</span> <span class="p">;</span> <span class="n">chop</span> <span class="n">off</span> <span class="n">R</span>
+        <span class="p">(</span><span class="n">coerce</span>
+            <span class="p">(</span><span class="n">symbol</span> <span class="o">-</span><span class="n">name</span> <span class="n">s</span><span class="p">)</span>
+            <span class="s1">&#39;list))))))</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">cxr-symbol-to-cxr-list</span></code> 函数用来将 <code class="docutils literal notranslate"><span class="pre">cxr</span></code> 符号（由 <code class="docutils literal notranslate"><span class="pre">cxr-symbol-p</span></code> 定义）
+转换为一个可以用作 <code class="docutils literal notranslate"><span class="pre">cxr</span></code> 第一个参数的列表。下面是它的用法：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">cxr</span><span class="o">-</span><span class="n">symbol</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">cxr</span><span class="o">-</span><span class="nb">list</span>
+    <span class="s1">&#39;caddadr)</span>
+<span class="p">(</span><span class="mi">1</span> <span class="n">A</span> <span class="mi">1</span> <span class="n">D</span> <span class="mi">1</span> <span class="n">D</span> <span class="mi">1</span> <span class="n">A</span> <span class="mi">1</span> <span class="n">D</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>注意 <code class="docutils literal notranslate"><span class="pre">cxr-symbol-to-cxr-list</span></code> 中 <code class="docutils literal notranslate"><span class="pre">list*</span></code> 函数的用法。<code class="docutils literal notranslate"><span class="pre">list*</span></code> 基本和 <code class="docutils literal notranslate"><span class="pre">list</span></code>
+一致，除了它的最后一个参数会插入到已创建列表中最后一个 <code class="docutils literal notranslate"><span class="pre">cons</span></code> 单元格的 <code class="docutils literal notranslate"><span class="pre">cdr</span></code>
+位置。当编写递归函数构建一个列表（其中每个堆栈结构可能想向列表中添加多个元素）
+时， <code class="docutils literal notranslate"><span class="pre">list*</span></code> 就非常方便，。在我们的例子中，每个结构都想向列表中添加两个元素：
+数字 1 和符号 A 或 D。</p>
+<p>最后，我们认为有效地提供任意深度的 <code class="docutils literal notranslate"><span class="pre">cxr</span></code> 函数的唯一方法是，对提供的表达式进行
+代码遍历并只定义必要的函数。<code class="docutils literal notranslate"><span class="pre">with-all-cxrs</span></code> 宏使用 Graham 的 <code class="docutils literal notranslate"><span class="pre">flatten</span></code> 实用
+程序对所提供的表达式进行代码遍历，方法与 <a class="reference internal" href="../Chapter03/3.5-unwanted-capture.html"><span class="doc std std-doc">3.5 异常捕获</span></a> 中的 <code class="docutils literal notranslate"><span class="pre">defmacro/g!</span></code> 宏一样。
+<code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">-all-cxrs</span></code> 找到所有满足 <code class="docutils literal notranslate"><span class="pre">cxr-symbol-p</span></code> 的符号，用 <code class="docutils literal notranslate"><span class="pre">cxr</span></code> 宏创建它们引用
+的函数，然后用标签形式将这些函数绑定到提供的代码周围。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro with-all-cxrs (&amp;rest forms)
+  `(labels
+    (,@(mapcar
+        (lambda (s)
+          `(,s (l)
+            (cxr ,(cxr-symbol-to-cxr-list s)
+                  l)))
+        (remove -duplicates
+          (remove-if-not
+            #&#39;cxr-symbol-p
+      ,@forms))
+</pre></div>
+</div>
+<p>现在可以在传给 <code class="docutils literal notranslate"><span class="pre">with-all-cxrs</span></code> 的结构中封装表达式，并假定这些表达式可以访问任何
+可能的 <code class="docutils literal notranslate"><span class="pre">cxr</span></code> 函数。如果我们想的话，我们可以很简单的返回这些函数然后用在别处：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="k">with</span><span class="o">-</span><span class="nb">all</span><span class="o">-</span><span class="n">cxrs</span> <span class="c1">#&#39;cadadadadadr)</span>
+
+<span class="c1">#&lt;Interpreted Function&gt;</span>
+</pre></div>
+</div>
+<p>或者，如下面的宏展开所示，我们可以用这个无限类嵌入任意复杂的 lisp 代码:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">macroexpand</span>
+  <span class="s1">&#39;(with-all-cxrs</span>
+      <span class="p">(</span><span class="n">cons</span>
+        <span class="p">(</span><span class="n">cadadadr</span> <span class="nb">list</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">caaaaaaaar</span> <span class="nb">list</span><span class="p">))))</span>
+<span class="p">(</span><span class="n">LABELS</span>
+  <span class="p">((</span><span class="n">CADADADR</span> <span class="p">(</span><span class="n">L</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">CXR</span> <span class="p">(</span><span class="mi">1</span> <span class="n">A</span> <span class="mi">1</span> <span class="n">D</span> <span class="mi">1</span> <span class="n">A</span> <span class="mi">1</span> <span class="n">D</span> <span class="mi">1</span> <span class="n">A</span> <span class="mi">1</span> <span class="n">D</span><span class="p">)</span> <span class="n">L</span><span class="p">))</span>
+  <span class="p">(</span><span class="n">CAAAAAAAAR</span> <span class="p">(</span><span class="n">L</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">CXR</span> <span class="p">(</span><span class="mi">1</span> <span class="n">A</span> <span class="mi">1</span> <span class="n">A</span> <span class="mi">1</span> <span class="n">A</span> <span class="mi">1</span> <span class="n">A</span> <span class="mi">1</span> <span class="n">A</span> <span class="mi">1</span> <span class="n">A</span> <span class="mi">1</span> <span class="n">A</span> <span class="mi">1</span> <span class="n">A</span><span class="p">)</span> <span class="n">L</span><span class="p">)))</span>
+  <span class="p">(</span><span class="n">CONS</span>
+    <span class="p">(</span><span class="n">CADADADR</span> <span class="n">LIST</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">CAAAAAAAAR</span> <span class="n">LIST</span><span class="p">)))</span>
+<span class="n">T</span>
+</pre></div>
+</div>
+<p>通常，一个听起来很难的任务，如定义无限个英文列表访问器和 <code class="docutils literal notranslate"><span class="pre">car-cdr</span></code> 组合，
+其实就是将简单的问题聚合到一起。与之相反，对单个难题，可以通过递归处理问题
+来解决一系列较简单的问题。通过思考如何将一个问题转化为一系列更简单的问题，
+我们采用了经过验证的解决方法：分而治之。</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="5.5-recursive-expansions.html" class="btn btn-neutral float-left" title="5.5 递归展开" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="5.7-dlambda.html" class="btn btn-neutral float-right" title="5.7 Dlambda" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

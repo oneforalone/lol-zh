@@ -1,0 +1,116 @@
+# 3.2 Domain Specific Languages
+
+---
+
+Author: Doug Hoyte
+
+Translator: Yuqi Liu <[yuqi.lyle@outlook.com](mailto:yuqi.lyle@outlook.com)>
+
+---
+
+COMMON LISP, along with most other programming environments, provides a function **sleep** which will pause execution of the process for **n** seconds, where **n** is a non-negative, non-complex, numeric argument. For instance, we might want to sleep for 3 minutes (180 seconds), in which case we could evaluate this form:
+```
+(sleep 180)
+```
+Or if we would rather think about sleeping in terms of minutes, we could instead use
+```
+(sleep (* 3 60))
+```
+Because compilers know how to _fold constants_, these two invocations are just as efficient. To be even more explicit about what we're doing, we might define a function **sleep-minutes**:
+```
+(defun sleep-minutes (m)
+  (sleep (* m 60)))
+```
+Defining new functions for every unit of time that we might want to use is clunky and inconvenient. What we would really like is some sort of abstraction that lets us specify the unit of time along with the value. What we really want is a _domain specific language_.
+​
+
+So far, the lisp solution is the same as that of any other language: create a function that accepts a value and a unit and returns the value multiplied by some constant related to the given unit. But a possible lispy improvement becomes apparent when we consider our options for representing this unit. In languages like C it is customary to use an underlying data type like int and assign arbitrary values corresponding to the different units:
+```c
+#define UNIT_SECONDS 1
+#define UNIT_MINUTES 2
+#define UNIT_HOURS 3
+
+int sleep_units(int value, int unit) {
+  switch(value) {
+    case UNIT_SECONDS: return value;
+    case UNIT_MINUTES: return value*60;
+    case UNIT_HOURS: return value*3600;
+  }
+}
+```
+​
+
+```
+(defun sleep-units% (value unit)
+  (sleep
+    (* value
+       (case unit
+         ((s) 1)
+         ((m) 60)
+         ((h) 3600)
+         ((d) 86400)
+         ((ms) 1/1000)
+         ((us) 1/1000000)))))
+```
+But in lisp the most obvious way to signal the desired unit is to use a symbol. A symbol in lisp exists mostly to be something not **eq** to other symbols. **Eq** is the fastest lisp comparison operator and roughly corresponds to a pointer comparison. Since pointers can be compared very quickly, symbols provide a very fast and convenient way to let two or more different lisp expressions know you're referring to the same thing. In lisp we might define the **sleep-units%** function so we can specify the units in our forms:
+```
+(sleep-units% 2 'm)
+(sleep-units% 500 'us)
+```
+Because comparing symbols requires only a pointer comparison, **sleep-units%** will be compiled into a very fast run-time dispatch:
+```
+...
+524:       CMP     ESI, [#x586FC4D0]    ; 'S
+52A:       JEQ     L11
+530:       CMP     ESI, [#x586FC4D4]    ; 'M
+536:       JEQ     L10
+538:       CMP     ESI, [#x586FC4D8]    ; 'H
+53E:       JEQ     L9
+540:       CMP     ESI, [#x586FC4DC]    ; 'D
+546:       JEQ     L8
+...
+```
+Notice how the unit given to **sleep-units%** must be quoted. This is because when lisp evaluates a function it first evaluates all arguments and then binds the results to variables for use inside the function. Numbers and strings and some other primitives evaluate to themselves which is why we don't need to quote the numeric values given to **sleep-units%**. But notice that they are evaluated so you are permitted to quote them if you like:
+```
+(sleep-units% '.5 'h)
+```
+Symbols, however, don't typically evaluate to themselves[1](https://letoverlambda.com/index.cl/guest/chap3.html#). When lisp evaluates a symbol it assumes you are referring to a variable and tries to look up the value associated with that variable given your lexical context (unless the variable is declared special, in which case the dynamic environment).
+```
+(defmacro sleep-units (value unit)
+  `(sleep
+     (* ,value
+        ,(case unit
+           ((s) 1)
+           ((m) 60)
+           ((h) 3600)
+           ((d) 86400)
+           ((ms) 1/1000)
+           ((us) 1/1000000)))))
+```
+To avoid quoting the unit, we need a macro. Unlike a function, a macro does not evaluate its arguments. Taking advantage of this fact, we replace the **sleep-units%** function with the **sleep-units** macro. Now we don't need to quote the unit:
+```
+(sleep-units .5 h)
+```
+Although the main purpose of this macro is to avoid having to quote the **unit** argument, this macro is even more efficient than the function because there is no run-time dispatch at all: the unit and therefore the multiplier are known at compile time. Of course whenever we discover this sort of too-good-to-be-true situation, it probably really is too good to be true. This gain in efficiency isn't free. By foregoing the run-time dispatch we have lost the ability to determine the time unit at run-time. This makes it impossible to execute the following code using our macro:
+```
+(sleep-units 1 (if super-slow-mode 'd 'h))
+```
+This will not work because **sleep-units** expects the second argument to be one of the symbols in our case statement but instead it is a list with the first element the symbol **if**.
+```
+(defmacro unit-of-time (value unit)
+  `(* ,value
+      ,(case unit
+         ((s) 1)
+         ((m) 60)
+         ((h) 3600)
+         ((d) 86400)
+         ((ms) 1/1000)
+         ((us) 1/1000000))))
+```
+Recall that most macros are written to create more convenient and useful programming abstractions, not to improve the efficiency of the underlying code. Is it possible to extract any idioms from this code to make it more useful for the rest of our program (and possibly other future programs)? Even now we can foresee wanting to do other things with time values than just calling **sleep** on them. The macro **unit-of-time** abstracts functionality from the **sleep-units** macro, returning a value instead of calling **sleep** on it. The **value** parameter can be determined at run-time because it is evaluated then, but **unit** cannot because we require the information at compile-time, just like **sleep-units**. Here is an example:
+```c
+* (unit-of-time 1 d)
+
+86400
+```
+Simple macros like **unit-of-time** provide a better syntax for solving a specific domain of problems and can give substantial productivity and correctness advantages. We will continue the development of this unit language further in [section 5.2, Top-Down Programming](https://letoverlambda.com/index.cl/guest/chap5.html#sec_2). Unlike most programming languages, lisp gives you the same tools available to the people who created your programming environment. Macros are good enough for implementing the COMMON LISP language and they are good enough for implementing your own domain specific languages.
