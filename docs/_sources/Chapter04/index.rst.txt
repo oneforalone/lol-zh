@@ -4,9 +4,6 @@
 第四章：Read 宏
 ==================================
 
-:Author: Doug Hoyte
-:Translator: Yuqi Liu <yuqi.lyle@outlook.com>
-
 .. toctree::
    :maxdepth: 2
 

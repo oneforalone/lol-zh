@@ -2,8 +2,88 @@
 
 ---
 
-Author: Doug Hoyte
+Author: Doug Hoyte <[doug@hoytech.com](mailto:doug@hoytech.com)>
 
 Translator: Yuqi Liu <[yuqi.lyle@outlook.com](mailto:yuqi.lyle@outlook.com)>
 
 ---
+
+In lisp, strings are delimited by the double-quote (") character. Although strings can contain any character in the character set of your lisp implementation, you can't directly insert certain characters into the string. If you want to insert the " character or the \ character, you will need to prefix them with \ characters. This is called _escaping_ the characters. For example, here is how to enter a string containing " and \ characters:
+```
+* "Contains \" and \\."
+
+"Contains \" and \\."
+```
+This obviously works, but sometimes typing these \ characters becomes tedious and error prone. This is lisp, of course, and if we don't like something we are free, even encouraged, to change it. In this spirit, this book presents a read macro called #", or sharp-double-quote. This read macro is for creating strings containing " and \ characters without invoking escapes.
+```
+(defun |#"-reader| (stream sub-char numarg)
+  (declare (ignore sub-char numarg))
+  (let (chars)
+    (do ((prev (read-char stream) curr)
+         (curr (read-char stream) (read-char stream)))
+        ((and (char= prev #\") (char= curr #\#)))
+      (push prev chars))
+    (coerce (nreverse chars) 'string)))
+
+(set-dispatch-macro-character
+  #\# #\" #'|#"-reader|)
+```
+Sharp-double-quote[5](https://letoverlambda.com/index.cl/guest/chap4.html#) will start reading the string immediately after its invocation characters: # and ". It will continue to read, character by character, until it encounters the two characters " and #, in sequence. When it finds this terminating sequence, it returns the string represented by all the characters between the #" and "#. The sharp-double-quote read macro used to be used for bit-strings, but COMMON LISP freed up this useful macro character for us by moving bit-strings to the #* read macro[EARLY-CL-VOTES].
+
+
+Here is an example evaluation of our new sharp-double-quote:
+```
+* #"Contains " and \."#
+
+"Contains \" and \\."
+```
+Notice that when the REPL prints the string, it still uses the " character as a delimiter, so the " and \ characters are still escaped in the printed representation of the string. These strings are simply read in as if you escaped the characters manually.
+
+
+But sometimes #" isn't good enough. For instance, in this U-language paragraph you are reading right now, I have included the following sequence of characters: "#. Because of this, this paragraph couldn't have been delimited with #" and "#. And because I hate escaping things, take my word that it wasn't delimited with regular double quotes.
+```
+(defun |#>-reader| (stream sub-char numarg)
+  (declare (ignore sub-char numarg))
+  (let (chars)
+    (do ((curr (read-char stream)
+               (read-char stream)))
+        ((char= #\newline curr))
+      (push curr chars))
+    (let* ((pattern (nreverse chars))
+           (pointer pattern)
+           (output))
+      (do ((curr (read-char stream)
+                 (read-char stream)))
+          ((null pointer))
+        (push curr output)
+        (setf pointer
+              (if (char= (car pointer) curr)
+                (cdr pointer)
+                pattern))
+        (if (null pointer)
+          (return)))
+      (coerce
+        (nreverse
+          (nthcdr (length pattern) output))
+        'string))))
+
+(set-dispatch-macro-character
+  #\# #\> #'|#>-reader|)
+```
+We need a read macro that allows us to customise the delimiter for each specific context where we use it. As is often the case, we need to look no further than Larry Wall's Perl language for inspiration on the design of programming shortcuts. Perl is a beautiful, wonderfully designed language and possesses many great ideas that are ripe for _pilfering_ by lisp. Lisp is, in some sense, a big blob, a snowball perhaps, that rolls around assimilating ideas from other programming languages, making them its own[6](https://letoverlambda.com/index.cl/guest/chap4.html#).
+​
+
+The **#>** read macro is directly inspired by Perl's **<<** operator. This operator allows Perl programmers to specify a string of text to act as the end delimiter for a quoted string. **#>** reads characters until it finds a newline character, then reads characters, one-by-one, until it encounters a sequence of characters identical to the characters it found immediately after **#>** and before the newline.
+​
+
+For example:
+```
+* #>END
+I can put anything here: ", \, "#, and ># are
+no problem. The only thing that will terminate
+the reading of this string is...END
+
+"I can put anything here: \", \\, \"#, and ># are
+no problem. The only thing that will terminate
+the reading of this string is..."
+```

@@ -1,35 +1,74 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="zh-CN" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
   <title>8.1 奇怪的设计 &mdash; Let Over Lambda 中文文档  文档</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/translations.js"></script>
-    <script src="../_static/js/theme.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="8.2 cons 线程代码" href="8.2-cons-threaded-code.html" />
     <link rel="prev" title="第八章：Lisp 与 Forth" href="index.html" /> 
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
+
+   
   <div class="wy-grid-for-nav">
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+          
+
+          
             <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          
+
+          
           </a>
+
+          
+            
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="在文档中搜索" />
@@ -37,7 +76,18 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
@@ -58,39 +108,81 @@
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
+            
+          
         </div>
+        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Let Over Lambda 中文文档</a>
+        
       </nav>
 
+
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
+    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="index.html">第八章：Lisp 与 Forth</a> &raquo;</li>
+        
       <li>8.1 奇怪的设计</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
+        
+          
             <a href="../_sources/Chapter08/8.1-weird-by-design.md.txt" rel="nofollow"> 查看页面源码</a>
+          
+        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
-  <section class="tex2jax_ignore mathjax_ignore" id="id1">
-<h1>8.1 奇怪的设计<a class="headerlink" href="#id1" title="永久链接至标题"></a></h1>
+            
+  <div class="tex2jax_ignore mathjax_ignore section" id="id1">
+<h1>8.1 奇怪的设计<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
 <hr class="docutils" />
-<p>Author: Doug Hoyte</p>
+<p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
 <hr class="docutils" />
 <p>本章是迄今为止我们在本书中看到的许多宏技术的高潮。 使用已开发的宏抽象，我们创建了我最喜欢的编程语言之一的实现：forth。 虽然这个实现体现了 forth 的大部分重要思想，但它非常不同并且很混乱。 尽管本章中的代码有一些有趣的用途，但主要目的是向 lisp 读者教授 forth 元编程的概念和基础知识，并成为讨论本书中心主题的平台——用宏创建和使用二元性语法。</p>
-<p>Forth，比除了 lisp 外所有语言都拥有丰富而迷人的历史，我很感激发现它。 出于这个原因，以及其他一切，这一章是献给我的父亲 Brian Hoyte
+<p>Forth，比除了 lisp 外所有语言都拥有丰富而迷人的历史，我很感激发现它。 出于这个原因，以及其他一切，这一章是献给我的父亲 Brian Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;
 的，他向我介绍了 forth 和计算机编程。 本章的部分灵感来自 [THREADING-LISP] 和 Henry Baker [LINEAR-LISP][LINEAR-LISP-AND-FORTH] 的研究。</p>
 <p>Forth 是第一个在没有强力的政府、学术或企业赞助的情况下创建和开发的编程语言——或者至少是第一个成功的此类语言。 1968 年左右，Chuck Moore 独立发明了forth，而不是出于大型组织的需求，以解决他自己在天文学、硬件设计等方面的计算需求。 从那时起，forth 已被热情的草根用户社区分发、实现和改进[EVOLUTION-FORTH-HOPL2]。 与麻省理工学院（以及后来的 DARPA）对早期 lisp 和 Common Lisp、IBM 的 FORTRAN 和 AT&amp;T 的 unix 语言 C 的赞助形成对比。</p>
 <p>由于这些原因，并且因计算机软件和硬件角色的普遍不同的哲学，所以 forth 是不同的。 甚至比 lisp 还要多，forth 看起来很奇怪。 但是和 lisp 一样，forth 看起来很奇怪是有原因的：它的设计考虑了更多而不是格式。 Forth 在设计上很奇怪，而且这种设计与宏有关。</p>
@@ -120,37 +212,54 @@
 </pre></div>
 </div>
 <p>forth 词的 immediate 槽是个标志，指示该单词是否是立即的。即时性是 forth 元编程概念，我们将很快深入探讨。现在这里是一个与其 lisp 对应物的粗略类比：立即字就像 lisp 宏，因为它们是在编译时而不是运行时执行的 forth 函数。什么？只有 lisp 应该有宏。虽然 Common Lisp 宏系统确实比任何其他宏系统（包括最佳的 forth）强大得多，但 forth 的扩展能力几乎超过了所有其他语言。与 lisp 一样，这种能力是一种设计理念的结果：如果它对语言实现者来说足够好，那么对于应用程序程序员来说也足够好。像 lisp 一样，forth 并没有真正认识到原始的概念。相反，它提供了一组元基元，可以将它们组合起来以构建你（程序员）想要的语言。与 lisp 一样，与大多数 Blub 语言不同，通过使用宏以新颖的方式扩展语言不仅是可能的，而且是鼓励的。像 lisp 一样，forth 与格式无关，而与强大有关。</p>
-</section>
+</div>
 
 
            </div>
+           
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="第八章：Lisp 与 Forth" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="8.2-cons-threaded-code.html" class="btn btn-neutral float-right" title="8.2 cons 线程代码" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="第八章：Lisp 与 Forth" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
-  </div>
+    <p>
+        &#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.
 
-  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    </p>
+  </div>
+    
+    
+    
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
-    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
-   
+    
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
         </div>
       </div>
+
     </section>
+
   </div>
-  <script>
+  
+
+  <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

@@ -1,37 +1,76 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="zh-CN" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
   <title>4.4 CL-PPCRE &mdash; Let Over Lambda 中文文档  文档</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/translations.js"></script>
-        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
         <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script src="../_static/js/theme.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="4.5 Cyclic Expressions" href="4.5-cyclic-expressions.html" />
     <link rel="prev" title="4.3 Reading Strings" href="4.3-reading-strings.html" /> 
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
+
+   
   <div class="wy-grid-for-nav">
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+          
+
+          
             <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          
+
+          
           </a>
+
+          
+            
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="在文档中搜索" />
@@ -39,7 +78,18 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
@@ -60,45 +110,87 @@
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
+            
+          
         </div>
+        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Let Over Lambda 中文文档</a>
+        
       </nav>
 
+
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
+    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="index.html">第四章：Read 宏</a> &raquo;</li>
+        
       <li>4.4 CL-PPCRE</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
+        
+          
             <a href="../_sources/Chapter04/4.4-cl-ppcre.md.txt" rel="nofollow"> 查看页面源码</a>
+          
+        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
-  <section class="tex2jax_ignore mathjax_ignore" id="cl-ppcre">
-<h1>4.4 CL-PPCRE<a class="headerlink" href="#cl-ppcre" title="永久链接至标题"></a></h1>
+            
+  <div class="tex2jax_ignore mathjax_ignore section" id="cl-ppcre">
+<h1>4.4 CL-PPCRE<a class="headerlink" href="#cl-ppcre" title="永久链接至标题">¶</a></h1>
 <hr class="docutils" />
-<p>Author: Doug Hoyte</p>
+<p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
 <hr class="docutils" />
 <p>CL-PPCRE[CL-PPCRE] is a high-performance regular expression library written on COMMON LISP. It was created by the widely respected lisp hacker Edi Weitz. On behalf of the lisp professionals everywhere who have benefited so much from CL-PPCRE and his other software, this section is dedicated to Edi Weitz. When other people are talking, Edi is coding; code speaks louder than argument.</p>
 <p>PPCRE, for those who aren’t already familiar, stands for Portable Perl Compatible Regular Expressions. CL-PPCRE, like the code in this book, is <em>portable</em> because it can run in any ANSI-compliant COMMON LISP environment. CL-PPCRE, also like the code in this book, is open-source and freely available. Although CL-PPCRE is almost perfectly compatible with Perl, it is different from Perl in a few important ways. CL-PPCRE provides several notable lispy enhancements to regular expressions. There are three substantial ways that CL-PPCRE is different from the implementation of regular expressions in Perl.</p>
 <p>First, CL-PPCRE is fast. Really fast. When compiled with a good native code compiler, benchmarks suggest that for most regular expressions CL-PPCRE is roughly twice as fast as Perl, often much faster. And Perl has one of the fastest non-lisp regular expression engines around: a highly optimised engine written in C. How is this possible? Surely Perl’s low-level implementation should have a performance edge over anything written in a high-level language like lisp.</p>
 <p>This misconception is known as the <em>performance myth</em>, the general version of which is the following: low level languages result in faster code because you can program closer to the hardware. As this book hopes to explain, for complicated systems this myth is false. Examples like CL-PPCRE demonstrate this. The more low-level a language is, the more it prevents you and your compiler from making the efficiency optimisations that actually matter.</p>
-<p>With CL-PPCRE, the technical reason for the performance boost is simple: COMMON LISP, the language used to implement CL-PPCRE, is a more powerful language than C, the language used to implement Perl. When Perl reads in a regular expression, it can perform analysis and optimisation but eventually the regular expression will be stored into some sort of C data structure for the static regular expression engine to use when it attempts the matching. But in COMMON LISP—the most powerful language—it is essentially no more difficult to take this regular expression, convert it into a lisp program, and pass that lisp program to the optimising, native-code lisp compiler used to build the rest of your lisp system<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">7</a>. Because programs compiled with a C compiler don’t have access to the C compiler, Perl is unable to compile regular expressions all the way down to machine code. Lisp’s compilation model is in a different class from C altogether. In COMMON LISP, compiling things at run-time (as at anytime) is portable, seamless, done in the same process as your lisp image, garbage collected when no longer needed, and, due to its incremental nature, highly efficient.</p>
+<p>With CL-PPCRE, the technical reason for the performance boost is simple: COMMON LISP, the language used to implement CL-PPCRE, is a more powerful language than C, the language used to implement Perl. When Perl reads in a regular expression, it can perform analysis and optimisation but eventually the regular expression will be stored into some sort of C data structure for the static regular expression engine to use when it attempts the matching. But in COMMON LISP—the most powerful language—it is essentially no more difficult to take this regular expression, convert it into a lisp program, and pass that lisp program to the optimising, native-code lisp compiler used to build the rest of your lisp system<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">7</a>. Because programs compiled with a C compiler don’t have access to the C compiler, Perl is unable to compile regular expressions all the way down to machine code. Lisp’s compilation model is in a different class from C altogether. In COMMON LISP, compiling things at run-time (as at anytime) is portable, seamless, done in the same process as your lisp image, garbage collected when no longer needed, and, due to its incremental nature, highly efficient.</p>
 <p>The second major difference between CL-PPCRE and Perl is that CL-PPCRE isn’t tied to a string-based notation for regular expressions. CL-PPCRE has been freed from a character representation and permits us to encode regular expressions as lisp forms (sometimes called <em>S-expressions</em>). Since such forms are the very notation we use for writing lisp programs and macros, we are allowed many more opportunities for <em>cohesion</em> in our abstractions. See the documentation and code of CL-PPCRE[CL-PPCRE] for details on using this regular expression notation, and also for an example of a well-designed, lispy domain specific language.</p>
 <p>Sure, CL-PPCRE is great, but why are we discussing it in a chapter about read macros? The answer lies in the third and last way that CL-PPCRE is substantially different from Perl. In Perl, regular expressions are closely tied into the language. While lisp’s syntax is the way it is to accommodate meta-programming, Perl’s syntax is the way it is to accommodate regular expressions and other sorts of syntactic shortcuts. Part of the reason we use regular expressions so often in Perl code is due to the experience of writing them being so brief and painless.</p>
-<p>To add a convenient programmer interface in a Perlish style, read macros come in very handy. Because programming read macros is programming lisp, we start off with a utility function: <strong>segment-reader</strong>. Given a stream, a delimiter character, and a count, <strong>segment-reader</strong> will read characters from the stream until the delimiter character is encountered. If the count is greater than 1, <strong>segment-reader</strong> will return a cons. The car of this cons is a string and the cdr is the result of a recursive invocation of <strong>segment-reader</strong> given a decremented count parameter to get the next segment<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">8</a>.</p>
+<p>To add a convenient programmer interface in a Perlish style, read macros come in very handy. Because programming read macros is programming lisp, we start off with a utility function: <strong>segment-reader</strong>. Given a stream, a delimiter character, and a count, <strong>segment-reader</strong> will read characters from the stream until the delimiter character is encountered. If the count is greater than 1, <strong>segment-reader</strong> will return a cons. The car of this cons is a string and the cdr is the result of a recursive invocation of <strong>segment-reader</strong> given a decremented count parameter to get the next segment<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">8</a>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">segment</span><span class="o">-</span><span class="n">reader</span> <span class="p">(</span><span class="n">stream</span> <span class="n">ch</span> <span class="n">n</span><span class="p">)</span>
   <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="o">&gt;</span> <span class="n">n</span> <span class="mi">0</span><span class="p">)</span>
     <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">chars</span><span class="p">))</span>
@@ -110,7 +202,7 @@
             <span class="p">(</span><span class="n">segment</span><span class="o">-</span><span class="n">reader</span> <span class="n">stream</span> <span class="n">ch</span> <span class="p">(</span><span class="o">-</span> <span class="n">n</span> <span class="mi">1</span><span class="p">))))))</span>
 </pre></div>
 </div>
-<p>For example, reading 3 segments from the stream t<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">9</a> with a delimiter character of / is done like so:</p>
+<p>For example, reading 3 segments from the stream t<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">9</a> with a delimiter character of / is done like so:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">segment</span><span class="o">-</span><span class="n">reader</span> <span class="n">t</span> <span class="c1">#\/ 3)</span>
 <span class="n">abc</span><span class="o">/</span><span class="n">def</span><span class="o">/</span><span class="n">ghi</span><span class="o">/</span>
 
@@ -125,7 +217,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$var =~ s/dog/cat/;
 </pre></div>
 </div>
-<p>The great thing about the Perl syntax is that the delimiter character can be any character that is convenient for the programmer. If we wanted to use a regular expression or a substitution containing the / character, we could use a different character to avoid any conflicts<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">10</a>:</p>
+<p>The great thing about the Perl syntax is that the delimiter character can be any character that is convenient for the programmer. If we wanted to use a regular expression or a substitution containing the / character, we could use a different character to avoid any conflicts<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">10</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$var =~ s|/usr/bin/rsh|/usr/bin/ssh|;
 </pre></div>
 </div>
@@ -146,7 +238,7 @@
 </pre></div>
 </div>
 <p>Defining a read macro to copy these two Perl syntaxes gives us a chance to demonstrate an interesting macro technique, the double backquote. The idea is that sometimes, as in the <strong>match-mode-ppcre-lambda-form</strong> and <strong>subst-mode-ppcre-lambda-form</strong> macros, we want to write code that generates lists. Notice that when you normally define a macro and use a single backquote, you are generating a list representing code and returning it from the macro for it to be spliced into expressions for evaluation. With a double backquote you are still generating a list representing code, but this code will, when evaluated, itself use code built by a backquote in order to return a list. In our case, these two macros expand into code that you can evaluate to create lambda forms that are useful for applying CL-PPCRE regular expressions.</p>
-<p>We prefix these macros, and some other expressions below, with a #+ read macro. This read macro tests whether we have CL-PPCRE available<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">11</a> before evaluating the following form. If CL-PPCRE isn’t available when loading the source code from this book, the functionality of this section will not be available.</p>
+<p>We prefix these macros, and some other expressions below, with a #+ read macro. This read macro tests whether we have CL-PPCRE available<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">11</a> before evaluating the following form. If CL-PPCRE isn’t available when loading the source code from this book, the functionality of this section will not be available.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#+cl-ppcre</span>
 <span class="p">(</span><span class="n">defun</span> <span class="o">|</span><span class="c1">#~-reader| (stream sub-char numarg)</span>
   <span class="p">(</span><span class="n">declare</span> <span class="p">(</span><span class="n">ignore</span> <span class="n">sub</span><span class="o">-</span><span class="n">char</span> <span class="n">numarg</span><span class="p">))</span>
@@ -175,7 +267,7 @@
 <span class="c1">#&lt;Interpreted Function&gt;</span>
 </pre></div>
 </div>
-<p>We can now apply this function to a string just as a normal function call<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">12</a>:</p>
+<p>We can now apply this function to a string just as a normal function call<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">12</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">funcall</span> <span class="o">*</span> <span class="s2">&quot;123abc&quot;</span><span class="p">)</span>
 
 <span class="mi">3</span>
@@ -225,37 +317,54 @@
 </div>
 <p>This is a string of length 2. Where did the backslash go? Double-quote thought we meant to escape the w character instead of writing a literal \ character. For our #~ read macro that just reads characters and looks for the appropriate delimiter, this is not an issue and we can write regular expressions just as we do in Perl—without escapes. See the quoting of the URL regular expression above.</p>
 <p>Although the #~ read macro defined in this section is already very convenient, there is still room for improvement and enhancement. Exercise: Improve it. The most obvious first step is to support regular expression modifiers, such as case insensitivity in matches. If done with the same syntax as Perl, this will involve using the function <strong>unread-char</strong>, which is common in read macros to avoid accidentally <em>eating</em> a character that some other read macro might be expecting.</p>
-</section>
+</div>
 
 
            </div>
+           
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="4.3-reading-strings.html" class="btn btn-neutral float-left" title="4.3 Reading Strings" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="4.5-cyclic-expressions.html" class="btn btn-neutral float-right" title="4.5 Cyclic Expressions" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="4.3-reading-strings.html" class="btn btn-neutral float-left" title="4.3 Reading Strings" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
-  </div>
+    <p>
+        &#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.
 
-  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    </p>
+  </div>
+    
+    
+    
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
-    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
-   
+    
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
         </div>
       </div>
+
     </section>
+
   </div>
-  <script>
+  
+
+  <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

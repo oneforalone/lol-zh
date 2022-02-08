@@ -1,7 +1,7 @@
 # 附录 B：不推荐的语言
 ---
 
-Author: Doug Hoyte
+Author: Doug Hoyte <[doug@hoytech.com](mailto:doug@hoytech.com)>
 
 Translator: Yuqi Liu <[yuqi.lyle@outlook.com](mailto:yuqi.lyle@outlook.com)>
 

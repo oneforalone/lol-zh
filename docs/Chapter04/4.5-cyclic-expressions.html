@@ -1,35 +1,74 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="zh-CN" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
   <title>4.5 Cyclic Expressions &mdash; Let Over Lambda 中文文档  文档</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/translations.js"></script>
-    <script src="../_static/js/theme.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="4.6 Reader Security" href="4.6-reader-security.html" />
     <link rel="prev" title="4.4 CL-PPCRE" href="4.4-cl-ppcre.html" /> 
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
+
+   
   <div class="wy-grid-for-nav">
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+          
+
+          
             <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          
+
+          
           </a>
+
+          
+            
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="在文档中搜索" />
@@ -37,7 +76,18 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
@@ -58,68 +108,209 @@
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
+            
+          
         </div>
+        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Let Over Lambda 中文文档</a>
+        
       </nav>
 
+
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
+    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="index.html">第四章：Read 宏</a> &raquo;</li>
+        
       <li>4.5 Cyclic Expressions</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
+        
+          
             <a href="../_sources/Chapter04/4.5-cyclic-expressions.md.txt" rel="nofollow"> 查看页面源码</a>
+          
+        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
-  <section class="tex2jax_ignore mathjax_ignore" id="cyclic-expressions">
-<h1>4.5 Cyclic Expressions<a class="headerlink" href="#cyclic-expressions" title="永久链接至标题"></a></h1>
+            
+  <div class="tex2jax_ignore mathjax_ignore section" id="cyclic-expressions">
+<h1>4.5 Cyclic Expressions<a class="headerlink" href="#cyclic-expressions" title="永久链接至标题">¶</a></h1>
 <hr class="docutils" />
-<p>Author: Doug Hoyte</p>
+<p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
 <hr class="docutils" />
-</section>
+<p>All our talk about lisp programs being <em>trees</em> of cons cells has actually been a small lie. Sorry about that. Lisp programs are actually not trees but are instead <em>directed acyclic graphs</em>—trees with possibly shared branches. Since the evaluator doesn’t care about where the branches it is evaluating come from, there is nothing wrong with evaluating code with shared structure.</p>
+<p>A useful provided read macro is #=. We already saw how lisp can be made to output forms with the #= macro when serialising macro expansions in <a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html#sec_5">section 3.5, Unwanted Capture</a>. #= and its partner ## let you create self-referential S-expressions. This allows you to do things like represent shared branches in directed acyclic graphs and other interesting data structures with little or no effort.</p>
+<p>But most importantly it allows you to serialise data without having to disassemble and reassemble an efficient in-memory data structure where large portions of the data are shared. Here is an example where the two lisp lists read in are distinct objects (not eq):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">defvar</span> <span class="ow">not</span><span class="o">-</span><span class="n">shared</span> <span class="s1">&#39;((1) (1)))</span>
+
+<span class="p">((</span><span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="o">*</span> <span class="p">(</span><span class="n">eq</span> <span class="p">(</span><span class="n">car</span> <span class="ow">not</span><span class="o">-</span><span class="n">shared</span><span class="p">)</span> <span class="p">(</span><span class="n">cadr</span> <span class="ow">not</span><span class="o">-</span><span class="n">shared</span><span class="p">))</span>
+
+<span class="n">NIL</span>
+</pre></div>
+</div>
+<p>But in the following example, with serialised data using the #= read macro, the 2 lists really are the same list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">defvar</span> <span class="n">shared</span> <span class="s1">&#39;(#1=(1) #1#))</span>
+
+<span class="p">((</span><span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="o">*</span> <span class="p">(</span><span class="n">eq</span> <span class="p">(</span><span class="n">car</span> <span class="n">shared</span><span class="p">)</span> <span class="p">(</span><span class="n">cadr</span> <span class="n">shared</span><span class="p">))</span>
+
+<span class="n">T</span>
+</pre></div>
+</div>
+<p>As mentioned, we can give shared, acyclic list structure to the evaluator with no trouble:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="nb">list</span>
+    <span class="c1">#1=(list 0)</span>
+    <span class="c1">#1#</span>
+    <span class="c1">#1#)</span>
+
+<span class="p">((</span><span class="mi">0</span><span class="p">)</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>If we print the last form we just evaluated, we see it the same way the lisp evaluator does: a regular list with three separate branches:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="o">+</span>
+
+<span class="p">(</span><span class="n">LIST</span> <span class="p">(</span><span class="n">LIST</span> <span class="mi">0</span><span class="p">)</span> <span class="p">(</span><span class="n">LIST</span> <span class="mi">0</span><span class="p">)</span> <span class="p">(</span><span class="n">LIST</span> <span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>But if we bind the <em><strong>print-circle</strong></em> special variable to a non-nil value when we print it, we see that the expression is not really a tree at all, but instead a directed acyclic graph:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="o">*</span><span class="nb">print</span><span class="o">-</span><span class="n">circle</span><span class="o">*</span> <span class="n">t</span><span class="p">))</span>
+    <span class="p">(</span><span class="nb">print</span> <span class="o">++</span><span class="p">)</span>
+    <span class="n">t</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">LIST</span> <span class="c1">#1=(LIST 0) #1# #1#)</span>
+<span class="n">T</span>
+</pre></div>
+</div>
+<p>As another fun example, here’s how to print an infinite list by pointing the cdr of a cons to itself, forming a so-called <em>cycle</em> or <em>circle</em>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="nb">print</span> <span class="s1">&#39;#1=(hello . #1#))</span>
+
+<span class="p">(</span><span class="n">HELLO</span> <span class="n">HELLO</span> <span class="n">HELLO</span> <span class="n">HELLO</span> <span class="n">HELLO</span> <span class="n">HELLO</span> <span class="n">HELLO</span>
+ <span class="n">HELLO</span> <span class="n">HELLO</span> <span class="n">HELLO</span> <span class="n">HELLO</span> <span class="n">HELLO</span> <span class="n">HELLO</span> <span class="n">HELLO</span>
+ <span class="n">HELLO</span> <span class="n">HELLO</span> <span class="n">HELLO</span> <span class="n">HELLO</span> <span class="n">HELLO</span> <span class="n">HELLO</span> <span class="n">HELLO</span>
+ <span class="o">...</span>
+</pre></div>
+</div>
+<p>So unless you want that to happen, be sure you set <em><strong>print-circle</strong></em> when <em>serialising</em> cyclic data structures:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="o">*</span><span class="nb">print</span><span class="o">-</span><span class="n">circle</span><span class="o">*</span> <span class="n">t</span><span class="p">))</span>
+    <span class="p">(</span><span class="nb">print</span> <span class="s1">&#39;#1=(hello . #1#))</span>
+    <span class="n">nil</span><span class="p">)</span>
+
+<span class="c1">#1=(HELLO . #1#)</span>
+<span class="n">NIL</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">cyclic</span><span class="o">-</span><span class="n">p</span> <span class="p">(</span><span class="n">l</span><span class="p">)</span>
+  <span class="p">(</span><span class="n">cyclic</span><span class="o">-</span><span class="n">p</span><span class="o">-</span><span class="n">aux</span> <span class="n">l</span> <span class="p">(</span><span class="n">make</span><span class="o">-</span><span class="nb">hash</span><span class="o">-</span><span class="n">table</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="n">defun</span> <span class="n">cyclic</span><span class="o">-</span><span class="n">p</span><span class="o">-</span><span class="n">aux</span> <span class="p">(</span><span class="n">l</span> <span class="n">seen</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="n">consp</span> <span class="n">l</span><span class="p">)</span>
+    <span class="p">(</span><span class="ow">or</span> <span class="p">(</span><span class="n">gethash</span> <span class="n">l</span> <span class="n">seen</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">progn</span>
+          <span class="p">(</span><span class="n">setf</span> <span class="p">(</span><span class="n">gethash</span> <span class="n">l</span> <span class="n">seen</span><span class="p">)</span> <span class="n">t</span><span class="p">)</span>
+          <span class="p">(</span><span class="ow">or</span> <span class="p">(</span><span class="n">cyclic</span><span class="o">-</span><span class="n">p</span><span class="o">-</span><span class="n">aux</span> <span class="p">(</span><span class="n">car</span> <span class="n">l</span><span class="p">)</span> <span class="n">seen</span><span class="p">)</span>
+              <span class="p">(</span><span class="n">cyclic</span><span class="o">-</span><span class="n">p</span><span class="o">-</span><span class="n">aux</span> <span class="p">(</span><span class="n">cdr</span> <span class="n">l</span><span class="p">)</span> <span class="n">seen</span><span class="p">))))))</span>
+</pre></div>
+</div>
+<p>Is there an easy way to tell if a portion of list structure is cyclic or contains shared structure? Yes, the provided <strong>cyclic-p</strong> predicate uses the most obvious algorithm for discovering this: recurse across the structure keeping a <em>hash-table</em> up to date with all the cons cells you’ve encountered so far. If you ever come across a cons cell that already exists in your hash-table, you have already been there and therefore have detected a cycle or a shared branch. Notice that because it only recurses across cons cells, <strong>cyclic-p</strong> is incapable of discovering such references in data structures like vectors.</p>
+<p>Finally, because most (see [SYNTACTICALLY-RECURSIVE]) lisp compilers forbid you from passing circular forms to the compiler, executing the following is undefined but likely to break your compiler by putting it into an infinite compiling loop:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">progn</span>
+  <span class="p">(</span><span class="n">defun</span> <span class="n">ouch</span> <span class="p">()</span>
+    <span class="c1">#1=(progn #1#))</span>
+  <span class="p">(</span><span class="nb">compile</span> <span class="s1">&#39;ouch))</span>
+</pre></div>
+</div>
+</div>
 
 
            </div>
+           
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="4.4-cl-ppcre.html" class="btn btn-neutral float-left" title="4.4 CL-PPCRE" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="4.6-reader-security.html" class="btn btn-neutral float-right" title="4.6 Reader Security" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="4.4-cl-ppcre.html" class="btn btn-neutral float-left" title="4.4 CL-PPCRE" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
-  </div>
+    <p>
+        &#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.
 
-  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    </p>
+  </div>
+    
+    
+    
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
-    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
-   
+    
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
         </div>
       </div>
+
     </section>
+
   </div>
-  <script>
+  
+
+  <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

@@ -2,7 +2,7 @@
 
 ---
 
-Author: Doug Hoyte
+Author: Doug Hoyte <[doug@hoytech.com](mailto:doug@hoytech.com)>
 
 Translator: Yuqi Liu <[yuqi.lyle@outlook.com](mailto:yuqi.lyle@outlook.com)>
 
@@ -11,7 +11,7 @@ Translator: Yuqi Liu <[yuqi.lyle@outlook.com](mailto:yuqi.lyle@outlook.com)>
 本章是迄今为止我们在本书中看到的许多宏技术的高潮。 使用已开发的宏抽象，我们创建了我最喜欢的编程语言之一的实现：forth。 虽然这个实现体现了 forth 的大部分重要思想，但它非常不同并且很混乱。 尽管本章中的代码有一些有趣的用途，但主要目的是向 lisp 读者教授 forth 元编程的概念和基础知识，并成为讨论本书中心主题的平台——用宏创建和使用二元性语法。
 
 
-Forth，比除了 lisp 外所有语言都拥有丰富而迷人的历史，我很感激发现它。 出于这个原因，以及其他一切，这一章是献给我的父亲 Brian Hoyte
+Forth，比除了 lisp 外所有语言都拥有丰富而迷人的历史，我很感激发现它。 出于这个原因，以及其他一切，这一章是献给我的父亲 Brian Hoyte <[doug@hoytech.com](mailto:doug@hoytech.com)>
  的，他向我介绍了 forth 和计算机编程。 本章的部分灵感来自 [THREADING-LISP] 和 Henry Baker [LINEAR-LISP][LINEAR-LISP-AND-FORTH] 的研究。
 
 

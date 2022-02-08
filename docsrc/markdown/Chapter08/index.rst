@@ -4,9 +4,6 @@
 第八章：Lisp 与 Forth
 ==================================
 
-:Author: Doug Hoyte
-:Translator: Yuqi Liu
-
 .. toctree::
    :maxdepth: 2
 

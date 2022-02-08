@@ -2,16 +2,16 @@
 
 ---
 
-Author: Doug Hoyte
+Author: Doug Hoyte <[doug@hoytech.com](mailto:doug@hoytech.com)>
 
 Translator: Yuqi Liu <[yuqi.lyle@outlook.com](mailto:yuqi.lyle@outlook.com)>
 
 ---
 
-感谢 Brian Hoyte, Nancy Holmes, Rosalie Holmes, Ian, Alex, all the rest of my family; syke, madness, fyodor, cyb0rg/asm, theclone, blackheart, d00tz, rt, magma, nummish, zhivago, defrost; Mike Conroy, Sylvia Russell, Alan Paeth, Rob McArthur, Sylvie Desjardins, John McCarthy, Paul Graham, Donald Knuth, Leo Brodie, Bruce Schneier, Richard Stallman, Edi Weitz, Peter Norvig, Peter Seibel, Christian Queinnec, Keith Bostic, John Gamble; the designers and creators of COMMON LISP, especially Guy Steele, Richard Gabriel, and Kent Pitman, the developers and maintainers of CMUCL/SBCL, CLISP, OpenBSD, GNU/Linux.
+感谢 Brian Hoyte <[doug@hoytech.com](mailto:doug@hoytech.com)>, Nancy Holmes, Rosalie Holmes, Ian, Alex, all the rest of my family; syke, madness, fyodor, cyb0rg/asm, theclone, blackheart, d00tz, rt, magma, nummish, zhivago, defrost; Mike Conroy, Sylvia Russell, Alan Paeth, Rob McArthur, Sylvie Desjardins, John McCarthy, Paul Graham, Donald Knuth, Leo Brodie, Bruce Schneier, Richard Stallman, Edi Weitz, Peter Norvig, Peter Seibel, Christian Queinnec, Keith Bostic, John Gamble; the designers and creators of COMMON LISP, especially Guy Steele, Richard Gabriel, and Kent Pitman, the developers and maintainers of CMUCL/SBCL, CLISP, OpenBSD, GNU/Linux.
 
 
-特别感谢 Ian Hoyte 为本书设计封面及 Leo Brodie 设计背面.
+特别感谢 Ian Hoyte <[doug@hoytech.com](mailto:doug@hoytech.com)> 为本书设计封面及 Leo Brodie 设计背面.
 
 
 本书献给所有爱编程的人。

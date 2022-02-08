@@ -1,35 +1,74 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="zh-CN" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
   <title>2.3 词法作用域与动态作用域 &mdash; Let Over Lambda 中文文档  文档</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/translations.js"></script>
-    <script src="../_static/js/theme.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="2.4 Let It Be Lambda" href="2.4-let-it-be-lambda.html" />
     <link rel="prev" title="2.2 Environment and Extent" href="2.2-environments-and-extent.html" /> 
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
+
+   
   <div class="wy-grid-for-nav">
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+          
+
+          
             <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          
+
+          
           </a>
+
+          
+            
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="在文档中搜索" />
@@ -37,7 +76,18 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">第二章：闭包</a><ul class="current">
@@ -59,35 +109,77 @@
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
+            
+          
         </div>
+        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Let Over Lambda 中文文档</a>
+        
       </nav>
 
+
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
+    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="index.html">第二章：闭包</a> &raquo;</li>
+        
       <li>2.3 词法作用域与动态作用域</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
+        
+          
             <a href="../_sources/Chapter02/2.3-lexical-and-dynamic-scope.md.txt" rel="nofollow"> 查看页面源码</a>
+          
+        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
-  <section class="tex2jax_ignore mathjax_ignore" id="id1">
-<h1>2.3 词法作用域与动态作用域<a class="headerlink" href="#id1" title="永久链接至标题"></a></h1>
+            
+  <div class="tex2jax_ignore mathjax_ignore section" id="id1">
+<h1>2.3 词法作用域与动态作用域<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
 <hr class="docutils" />
-<p>Author: Doug Hoyte</p>
+<p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
 <hr class="docutils" />
 <p>The technical term for where to consider a variable reference valid is <em>scope</em>. The most common type of scope in modern languages is called <em>lexical</em> scope. When a fragment of code is surrounded by the lexical binding of a variable, that variable is said to be in the lexical scope of the binding. The <strong>let</strong> form, which is one of the most common ways to create bindings, can introduce these lexically scoped variables:</p>
@@ -119,7 +211,7 @@ In addition to lexical scope, COMMON LISP provides <em>dynamic scope</em>. This 
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defvar</span> <span class="n">temp</span><span class="o">-</span><span class="n">special</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>When defined like this, <strong>temp-special</strong> will be designated special<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">2</a> but will not be initialised with a value. In this state, a special variable is said to be <em>unbound</em>. Only special variables can be unbound—lexical variables are always bound and thus always have values. Another way of thinking of this is that by default all symbols represent lexically unbound variables. Just as with lexical variables, we can assign a value to special variables with <strong>setq</strong> or <strong>setf</strong>. Some lisps, like Scheme, do not have dynamic scope. Others, like EuLisp[SMALL-PIECES-P46], use different syntax for accessing lexical versus special variables. But in COMMON LISP the syntax is shared. Many lispers consider this a feature. Here we assign a value to our special variable <strong>temp-special</strong>:</p>
+<p>When defined like this, <strong>temp-special</strong> will be designated special<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html">2</a> but will not be initialised with a value. In this state, a special variable is said to be <em>unbound</em>. Only special variables can be unbound—lexical variables are always bound and thus always have values. Another way of thinking of this is that by default all symbols represent lexically unbound variables. Just as with lexical variables, we can assign a value to special variables with <strong>setq</strong> or <strong>setf</strong>. Some lisps, like Scheme, do not have dynamic scope. Others, like EuLisp[SMALL-PIECES-P46], use different syntax for accessing lexical versus special variables. But in COMMON LISP the syntax is shared. Many lispers consider this a feature. Here we assign a value to our special variable <strong>temp-special</strong>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">setq</span> <span class="n">temp</span><span class="o">-</span><span class="n">special</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -133,7 +225,7 @@ In addition to lexical scope, COMMON LISP provides <em>dynamic scope</em>. This 
 <span class="mi">1</span>
 </pre></div>
 </div>
-<p>This is sometimes referred to as evaluating the form in a <em>null lexical environment</em>. The null lexical environment obviously doesn’t contain any lexical bindings. Here the value of <strong>temp-special</strong> returned is that of its global special value, 1. But if we evaluate it in a non-null lexical environment—one that contains a binding for our special variable—the specialness of <strong>temp-special</strong> reveals itself<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">3</a>:</p>
+<p>This is sometimes referred to as evaluating the form in a <em>null lexical environment</em>. The null lexical environment obviously doesn’t contain any lexical bindings. Here the value of <strong>temp-special</strong> returned is that of its global special value, 1. But if we evaluate it in a non-null lexical environment—one that contains a binding for our special variable—the specialness of <strong>temp-special</strong> reveals itself<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html">3</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">temp</span><span class="o">-</span><span class="n">special</span> <span class="mi">2</span><span class="p">))</span>
     <span class="p">(</span><span class="n">temp</span><span class="o">-</span><span class="n">special</span><span class="o">-</span><span class="n">returner</span><span class="p">))</span>
 
@@ -153,40 +245,57 @@ In addition to lexical scope, COMMON LISP provides <em>dynamic scope</em>. This 
 <span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
-<p>While the memory locations or register assignments for lexical bindings are known at compile-time<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">4</a>, special variable bindings are determined at run-time—in a sense. Thanks to a clever trick, special variables aren’t as inefficient as they seem. A special variable actually always does refer to the same location in memory. When you use <strong>let</strong> to bind a special variable, you are actually compiling in code that will store a copy of the variable, over-write the memory location with a new value, evaluate the forms in the let body, and, finally, restore the original value from the copy.</p>
+<p>While the memory locations or register assignments for lexical bindings are known at compile-time<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html">4</a>, special variable bindings are determined at run-time—in a sense. Thanks to a clever trick, special variables aren’t as inefficient as they seem. A special variable actually always does refer to the same location in memory. When you use <strong>let</strong> to bind a special variable, you are actually compiling in code that will store a copy of the variable, over-write the memory location with a new value, evaluate the forms in the let body, and, finally, restore the original value from the copy.</p>
 <p>Special variables are perpetually associated with the symbol used to name them. The location in memory referred to by a special variable is called the <strong>symbol-value</strong> cell of a symbol. This is in direct contrast to lexical variables. Lexical variables are only indicated with symbols at compile-time. Because lexical variables can only be accessed from inside the lexical scope of their bindings, the compiler has no reason to even remember the symbols that were used to reference lexical variables so it will remove them from compiled code. We will stretch the truth of this statement in <a class="reference internal" href="../Chapter06/6.7-pandoric-macros.html"><span class="doc std std-doc">section 6.7, Pandoric Macros</span></a>.</p>
 <p>Although COMMON LISP does offer the invaluable feature of dynamic scope, lexical variables are the most common. Dynamic scoping used to be a defining feature of lisp but has, since COMMON LISP, been almost completely replaced by lexical scope. Since lexical scoping enables things like lexical closures (which we examine shortly), as well as more effective compiler optimisations, the superseding of dynamic scope is mostly seen as a good thing. However, the designers of COMMON LISP have left us a very transparent window into the world of dynamic scoping, now acknowledged for what it really is: special.</p>
-</section>
+</div>
 
 
            </div>
+           
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="2.2-environments-and-extent.html" class="btn btn-neutral float-left" title="2.2 Environment and Extent" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="2.4-let-it-be-lambda.html" class="btn btn-neutral float-right" title="2.4 Let It Be Lambda" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="2.2-environments-and-extent.html" class="btn btn-neutral float-left" title="2.2 Environment and Extent" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
-  </div>
+    <p>
+        &#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.
 
-  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    </p>
+  </div>
+    
+    
+    
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
-    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
-   
+    
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
         </div>
       </div>
+
     </section>
+
   </div>
-  <script>
+  
+
+  <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

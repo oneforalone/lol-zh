@@ -4,9 +4,6 @@
 第七章：宏的效率
 ==================================
 
-:Author: Doug Hoyte
-:Translator: Yuqi Liu<yuqi.lyle@outlook.com>
-
 .. toctree::
    :maxdepth: 2
 

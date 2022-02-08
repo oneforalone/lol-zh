@@ -1,35 +1,74 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="zh-CN" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
   <title>8.2 cons 线程代码 &mdash; Let Over Lambda 中文文档  文档</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/translations.js"></script>
-    <script src="../_static/js/theme.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="8.3 语法二元性" href="8.3-duality-of-syntax-defined.html" />
     <link rel="prev" title="8.1 奇怪的设计" href="8.1-weird-by-design.html" /> 
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
+
+   
   <div class="wy-grid-for-nav">
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+          
+
+          
             <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          
+
+          
           </a>
+
+          
+            
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="在文档中搜索" />
@@ -37,7 +76,18 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
@@ -58,35 +108,77 @@
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
+            
+          
         </div>
+        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Let Over Lambda 中文文档</a>
+        
       </nav>
 
+
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
+    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="index.html">第八章：Lisp 与 Forth</a> &raquo;</li>
+        
       <li>8.2 cons 线程代码</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
+        
+          
             <a href="../_sources/Chapter08/8.2-cons-threaded-code.md.txt" rel="nofollow"> 查看页面源码</a>
+          
+        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
-  <section class="tex2jax_ignore mathjax_ignore" id="cons">
-<h1>8.2 cons 线程代码<a class="headerlink" href="#cons" title="永久链接至标题"></a></h1>
+            
+  <div class="tex2jax_ignore mathjax_ignore section" id="cons">
+<h1>8.2 cons 线程代码<a class="headerlink" href="#cons" title="永久链接至标题">¶</a></h1>
 <hr class="docutils" />
-<p>Author: Doug Hoyte</p>
+<p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
 <hr class="docutils" />
 <p>在上一节中，我们专注于抽象寄存器。 这些寄存器是个重点，这就是为什么 forth 哲学认为它们如此基础，但这些寄存器实际上只是个更普遍的概念的组成部分：抽象机器。 不同的 forth 系统最显着的特性可能是它们对线程代码的实现。 线程代码的含义与抢占式调度共享内存进程的传统含义非常不同。 Forth 线程与并发无关。 这是讨论代码编译和元编程的框架。</p>
@@ -159,37 +251,54 @@
 <p>使用 <code class="docutils literal notranslate"><span class="pre">def-forth-naked-prim</span></code> 定义的元语不会将 pc 变量更新到线程中的下一个 cons 单元。 对于大多数原语，应该使用 <code class="docutils literal notranslate"><span class="pre">def-forth-prim</span></code> 以便执行通常的更新。 这两个宏都期望第一个参数是用于引用原语的符号，第二个参数是指示原语是否立即的布尔值。 其余参数是在执行原语时要评估的 lisp 形式。</p>
 <p>八个简单的原语——没有一个是赤裸裸的或直接的——目前所呈现。 <code class="docutils literal notranslate"><span class="pre">nop</span></code> 是个什么都不做的伪指令（“无操作”）。 <code class="docutils literal notranslate"><span class="pre">*</span> </code>原语是乘法运算符：它从参数堆栈中弹出顶部的两个值，将它们相乘，然后将结果压入栈。 <code class="docutils literal notranslate"><span class="pre">dup</span></code> 是“duplicate”的缩写，它将参数堆栈上的顶部值再次推送到参数堆栈上，留下两个重复值。 <code class="docutils literal notranslate"><span class="pre">swap</span></code> 将使用一个非常有用的 Common Lisp 宏来交换顶部的两个参数堆栈元素：<code class="docutils literal notranslate"><span class="pre">rotatef</span></code>。 并非巧合，forth 也具有（基于堆栈的）旋转机制。 <code class="docutils literal notranslate"><span class="pre">print</span></code> 弹出参数堆栈并打印它。 <code class="docutils literal notranslate"><span class="pre">&gt;r</span></code> 将一个值从参数堆栈传输到返回堆栈，<code class="docutils literal notranslate"><span class="pre">r&gt;</span></code> 则相反。</p>
 <p>名称 * 是否违反了第 3.5 节中的重要变量捕获规则，禁止我们重新绑定 Common Lisp 定义的函数呢？ 不，因为实际上并没有使用这个符号来绑定任何函数——它只是 forth 基本格式中的一个列表中的第一个元素。 我们没有做错任何事。 符号独立于它们有时用来表示的函数或宏。 可以在任何地方使用任何符号，只要不违反重要的变量捕获规则。 这仅在编写 lisp 时起作用； 我们正在编写 forth。</p>
-</section>
+</div>
 
 
            </div>
+           
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="8.1-weird-by-design.html" class="btn btn-neutral float-left" title="8.1 奇怪的设计" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="8.3-duality-of-syntax-defined.html" class="btn btn-neutral float-right" title="8.3 语法二元性" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="8.1-weird-by-design.html" class="btn btn-neutral float-left" title="8.1 奇怪的设计" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
-  </div>
+    <p>
+        &#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.
 
-  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    </p>
+  </div>
+    
+    
+    
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
-    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
-   
+    
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
         </div>
       </div>
+
     </section>
+
   </div>
-  <script>
+  
+
+  <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

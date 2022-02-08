@@ -1,35 +1,74 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="zh-CN" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
   <title>2.7 Let Over Lambda Over Let Over Lambda &mdash; Let Over Lambda 中文文档  文档</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/translations.js"></script>
-    <script src="../_static/js/theme.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="第三章：宏基础" href="../Chapter03/index.html" />
     <link rel="prev" title="2.6 Lambda Over Let Over Lambda" href="2.6-lambda-over-letoverlambda.html" /> 
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
+
+   
   <div class="wy-grid-for-nav">
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+          
+
+          
             <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          
+
+          
           </a>
+
+          
+            
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="在文档中搜索" />
@@ -37,7 +76,18 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">第二章：闭包</a><ul class="current">
@@ -59,72 +109,131 @@
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
+            
+          
         </div>
+        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Let Over Lambda 中文文档</a>
+        
       </nav>
 
+
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
+    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="index.html">第二章：闭包</a> &raquo;</li>
+        
       <li>2.7 Let Over Lambda Over Let Over Lambda</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
+        
+          
             <a href="../_sources/Chapter02/2.7-letoverlambda-over-letoverlambda.md.txt" rel="nofollow"> 查看页面源码</a>
+          
+        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
-  <section class="tex2jax_ignore mathjax_ignore" id="let-over-lambda-over-let-over-lambda">
-<h1>2.7 Let Over Lambda Over Let Over Lambda<a class="headerlink" href="#let-over-lambda-over-let-over-lambda" title="永久链接至标题"></a></h1>
+            
+  <div class="tex2jax_ignore mathjax_ignore section" id="let-over-lambda-over-let-over-lambda">
+<h1>2.7 Let Over Lambda Over Let Over Lambda<a class="headerlink" href="#let-over-lambda-over-let-over-lambda" title="永久链接至标题">¶</a></h1>
 <hr class="docutils" />
-<p>Author: Doug Hoyte</p>
+<p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
 <hr class="docutils" />
-<p>Users of object systems store values they want shared between all objects of a certain class into so-called <em>class variables</em> or <em>static variables</em><a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">8</a>. In lisp, this concept of sharing state between closures is handled by environments in the same way that closures themselves store state. Since an environment is accessible indefinitely, as long as it is still possible to reference it, we are guaranteed that it will be available as long as is needed.</p>
+<p>Users of object systems store values they want shared between all objects of a certain class into so-called <em>class variables</em> or <em>static variables</em><a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html">8</a>. In lisp, this concept of sharing state between closures is handled by environments in the same way that closures themselves store state. Since an environment is accessible indefinitely, as long as it is still possible to reference it, we are guaranteed that it will be available as long as is needed.</p>
 <p>If we want to maintain a global direction for all counters, <strong>up</strong> to increment each closure’s counter and <strong>down</strong> to decrement, then we might want to use a let over lambda over let over lambda pattern:
 In the above example, we have extended <strong>counter-class</strong> from the previous section. Now calling closures created with <strong>counter-class</strong> will either increment its counter binding or decrement it, depending on the value of the direction binding which is shared between all counters. Notice that we also take advantage of another <strong>lambda</strong> inside the direction environment by creating a function called <strong>toggle-counter-direction</strong> which changes the current direction for all counters.</p>
-<p>While this combination of <strong>let</strong> and <strong>lambda</strong> is so useful that other languages have adopted it in the form of class or static variables, there exist other combinations of <strong>let</strong> and <strong>lambda</strong> that allow you to structure code and state in ways that don’t have direct analogs in object systems<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">9</a>. Object systems are a formalisation of a subset of let and lambda combinations, sometimes with gimmicks like <em>inheritance</em> bolted on<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#">10</a>. Because of this, lisp programmers often don’t think in terms of classes and objects. Let and lambda are fundamental; objects and classes are derivatives. As Steele says, the “object” need not be a primitive notion in programming languages. Once assignable value cells and good old lambda expressions are available, object systems are, at best, occasionally useful abstractions and, at worst, special-case and redundant.</p>
-</section>
+<p>While this combination of <strong>let</strong> and <strong>lambda</strong> is so useful that other languages have adopted it in the form of class or static variables, there exist other combinations of <strong>let</strong> and <strong>lambda</strong> that allow you to structure code and state in ways that don’t have direct analogs in object systems<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html">9</a>. Object systems are a formalisation of a subset of let and lambda combinations, sometimes with gimmicks like <em>inheritance</em> bolted on<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html">10</a>. Because of this, lisp programmers often don’t think in terms of classes and objects. Let and lambda are fundamental; objects and classes are derivatives. As Steele says, the “object” need not be a primitive notion in programming languages. Once assignable value cells and good old lambda expressions are available, object systems are, at best, occasionally useful abstractions and, at worst, special-case and redundant.</p>
+</div>
 
 
            </div>
+           
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="2.6-lambda-over-letoverlambda.html" class="btn btn-neutral float-left" title="2.6 Lambda Over Let Over Lambda" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="../Chapter03/index.html" class="btn btn-neutral float-right" title="第三章：宏基础" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="2.6-lambda-over-letoverlambda.html" class="btn btn-neutral float-left" title="2.6 Lambda Over Let Over Lambda" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
-  </div>
+    <p>
+        &#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.
 
-  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    </p>
+  </div>
+    
+    
+    
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
-    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
-   
+    
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
         </div>
       </div>
+
     </section>
+
   </div>
-  <script>
+  
+
+  <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
