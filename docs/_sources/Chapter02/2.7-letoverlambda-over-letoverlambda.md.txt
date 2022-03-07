@@ -1,18 +1,31 @@
-# 2.7 Let Over Lambda Over Let Over Lambda
-
 ---
 
 Author: Doug Hoyte <[doug@hoytech.com](mailto:doug@hoytech.com)>
 
-Translator: Yuqi Liu <[yuqi.lyle@outlook.com](mailto:yuqi.lyle@outlook.com)>
+Translator: Yuqi Liu <[yuqi.lyle@outlook.com](mailto:yuqi.lyle%40outlook.com)>
 
 ---
 
-Users of object systems store values they want shared between all objects of a certain class into so-called _class variables_ or _static variables_[8](https://letoverlambda.com/index.cl/guest/chap2.html#). In lisp, this concept of sharing state between closures is handled by environments in the same way that closures themselves store state. Since an environment is accessible indefinitely, as long as it is still possible to reference it, we are guaranteed that it will be available as long as is needed.
+对象系统的用户将他们希望在某个类的所有对象之间共享的值存储到所谓的类变量或静态变量中。 在 lisp 中，闭包之间共享状态的概念由环境处理，就像闭包本身存储状态一样。 由于环境可以无限访问，只要它仍然可以引用它，就能保证它在需要时可用。
 
 
-If we want to maintain a global direction for all counters, **up** to increment each closure's counter and **down** to decrement, then we might want to use a let over lambda over let over lambda pattern:
-In the above example, we have extended **counter-class** from the previous section. Now calling closures created with **counter-class** will either increment its counter binding or decrement it, depending on the value of the direction binding which is shared between all counters. Notice that we also take advantage of another **lambda** inside the direction environment by creating a function called **toggle-counter-direction** which changes the current direction for all counters.
+如果想为所有计数器维护一个全局方向，`up`向上递增，`down`向下递减，那么可能想要使用 let over lambda over let over lambda 模式：
+```
+(let ((direction 'up))
+  (defun toggle-counter-direction ()
+    (setq direction
+          (if (eq direction 'up)
+            'down
+            'up)))
+
+  (defun counter-class ()
+    (let ((counter 0))
+      (lambda ()
+        (if (eq direction 'up)
+          (incf counter)
+          (decf counter))))))
+```
+在上面的例子中，我们扩展了上节的 `counter-class`。 现在调用使用 `counter-class` 创建的闭包将增加其计数器绑定或减少它，这取决于所有计数器之间共享的方向绑定的值。 注意，这里还创建一个名为 `toggle-counter-direction` 的函数来利用方向环境中的另一个 lambda，该函数更改所有计数器的当前方向。
 
 
-While this combination of **let** and **lambda** is so useful that other languages have adopted it in the form of class or static variables, there exist other combinations of **let** and **lambda** that allow you to structure code and state in ways that don't have direct analogs in object systems[9](https://letoverlambda.com/index.cl/guest/chap2.html#). Object systems are a formalisation of a subset of let and lambda combinations, sometimes with gimmicks like _inheritance_ bolted on[10](https://letoverlambda.com/index.cl/guest/chap2.html#). Because of this, lisp programmers often don't think in terms of classes and objects. Let and lambda are fundamental; objects and classes are derivatives. As Steele says, the "object" need not be a primitive notion in programming languages. Once assignable value cells and good old lambda expressions are available, object systems are, at best, occasionally useful abstractions and, at worst, special-case and redundant.
+虽然 `let` 和 `lambda` 的这种组合非常有用，以至于其他语言以类或静态变量的形式实现它，但还有其他的 `let` 和 `lambda` 组合允许以没有直接类似物的方式在对象系统中 构造代码和状态 。 对象系统是 let 和 lambda 组合子集的形式化，有时带有类似继承的噱头。 正因为如此，lisp 程序员通常不会考虑类和对象。 Let 和 lambda 是基本的； 对象和类是衍生物。 正如斯蒂尔所说，“对象”不必是编程语言中的原始概念。 一旦可分配的值单元和好的旧 lambda 表达式可用，对象系统充其量只是偶尔有用的抽象，最坏的情况是特殊情况和冗余。

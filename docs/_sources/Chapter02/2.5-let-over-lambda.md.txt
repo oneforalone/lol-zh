@@ -1,36 +1,34 @@
-# 2.5 Let Over Lambda
-
 ---
 
 Author: Doug Hoyte <[doug@hoytech.com](mailto:doug@hoytech.com)>
 
-Translator: Yuqi Liu <[yuqi.lyle@outlook.com](mailto:yuqi.lyle@outlook.com)>
+Translator: Yuqi Liu <[yuqi.lyle@outlook.com](mailto:yuqi.lyle%40outlook.com)>
 
 ---
 
-_Let over lambda_ is a nickname given to a lexical closure. Let over lambda more closely mirrors the lisp code used to create closures than does most terminology. In a let over lambda scenario, the last form returned by a **let** statement is a **lambda** expression. It literally looks like **let** is sitting on top of **lambda**:
+_Let over lambda_ 是词法闭包的昵称。 Let over lambda 比大多数术语更清晰地反映用于创建闭包的 lisp 代码。 在 let over lambda 场景中，**let** 语句返回的最后一个结构是 **lambda** 表达式。 它看起来就像 **let** 坐在 **lambda** 之上：
 ```
 * (let ((x 0))
     (lambda () x))
 
 #<Interpreted Function>
 ```
-Recall that the **let** form returns the result of evaluating the last form inside its body, which is why evaluating this let over lambda form produced a function. However, there is something special about the last form in the **let**. It is a **lambda** form with **x** as a _free variable_. Lisp was smart enough to determine what **x** should refer to for this function: the **x** from the surrounding lexical environment created by the **let** form. And, because in lisp everything is of indefinite extent by default, the environment will be available for this function to use as long as it needs it.
+回顾一下，**let** 结构返回计算其主体内最后一个结构的结果，这就是为什么计算这个 let over lambda 结构会产生一个函数。 但是，**let** 中的最后一个结构有特别之处。 它是个以 **x** 作为自由变量的 **lambda** 结构。 Lisp 很聪明，可以确定 **x** 应该为这个函数引用什么：来自由 **let** 结构创建的周围词法环境的 **x**。 而且，因为在 lisp 中，默认情况下一切都是无限的，只要需要，该功能就可以使用该环境。
 
 
-So lexical scope is a tool for specifying exactly where references to a variable are valid, and exactly what the references refer to. A simple example of a closure is a _counter_, a closure that stores an integer in an environment and increments and returns this value upon every invocation. Here is how it is typically implemented, with a let over lambda:
+因此，词法作用域是一种工具，用于准确指定对变量的引用在何处有效，以及引用所指的确切内容。 一个简单的闭包示例是一个计数器，一个在环境中存储整数并在每次调用时递增并返回该值的闭包。 下面是带有 let over lambda 经典实现：
 ```
 (let ((counter 0))
   (lambda () (incf counter)))
 ```
-This closure will return 1 the first time it is called, 2 the subsequent time, and so on. One way of thinking about closures is that they are functions with _state_. These functions are not mathematical functions, but rather procedures, each with a little memory of its own. Sometimes data structures that bundle together code and data are called _objects_. An object is a collection of procedures and some associated state. Since objects are so closely related to closures, they can often be thought of as one and the same. A closure is like an object that has exactly one method: **funcall**. An object is like a closure that you can **funcall** in multiple ways.
+这个闭包在第一次被调用时返回 1，随后返回 2，以此类推。 考虑闭包的一种方式是它们是具有状态的函数。 这些函数不是数学函数，而是程序，每个都有自己的一点记忆。 有时将代码和数据捆绑在一起的数据结构称为对象。 对象是过程和一些相关状态的集合。 由于对象与闭包密切相关，因此它们通常可以被认为是一回事。 闭包就像个只有一个方法（**funcall**）的对象。 一个对象就像一个闭包，你可以通过多种方式调用它。
 
 
-Although closures are always a single function and its enclosing environment, the multiple methods, inner classes, and static variables of object systems all have their closure counterparts. One possible way to simulate multiple methods is to simply return multiple **lambda**s from inside the same lexical scope:
+尽管闭包总是单个函数及其封闭环境，但对象系统的多个方法、内部类和静态变量都有其对应的闭包。 模拟多个方法的一种可能方法是简单地从同一词法范围内返回多个 **lambda**：
 ```
 (let ((counter 0))
   (values
     (lambda () (incf counter))
     (lambda () (decf counter))))
 ```
-This _let over two lambdas_ pattern will return two functions, both of which access the same enclosing counter variable. The first increments it and the second decrements it. There are many other ways to accomplish this. One of which, **dlambda**, is discussed in [section 5.7, Dlambda](https://letoverlambda.com/index.cl/guest/chap5.html#sec_7). For reasons that will be explained as we go along, the code in this book will structure all data using closures instead of objects. Hint: It has to do with macros.
+这个 _let over two lambdas_ 结构将返回两个函数，这两个函数都访问相同的封闭计数器变量。 第一个增加它，第二个减少它。 还有许多其他方法可以实现这一点。 其中一个便是[第 5.7 节：Dlambda](../Chapter05/5.7-dlambda.md) 中进行了讨论的 **dlambda**。 基于之后介绍的原因，本书中的代码将使用闭包而不是对象来构造所有数据。 提示：它与宏有关。

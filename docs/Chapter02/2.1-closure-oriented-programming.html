@@ -1,74 +1,35 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="zh-CN" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>2.1 面向闭包编程 &mdash; Let Over Lambda 中文文档  文档</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+  <title>&lt;no title&gt; &mdash; Let Over Lambda 中文文档  文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/translations.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
-    <link rel="next" title="2.2 Environment and Extent" href="2.2-environments-and-extent.html" />
+    <link rel="next" title="&lt;no title&gt;" href="2.2-environments-and-extent.html" />
     <link rel="prev" title="第二章：闭包" href="index.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
-          
-
-          
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="在文档中搜索" />
@@ -76,30 +37,10 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <ul class="current">
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">第二章：闭包</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">2.1 面向闭包编程</a></li>
-<li class="toctree-l2"><a class="reference internal" href="2.2-environments-and-extent.html">2.2 Environment and Extent</a></li>
-<li class="toctree-l2"><a class="reference internal" href="2.3-lexical-and-dynamic-scope.html">2.3 词法作用域与动态作用域</a></li>
-<li class="toctree-l2"><a class="reference internal" href="2.4-let-it-be-lambda.html">2.4 Let It Be Lambda</a></li>
-<li class="toctree-l2"><a class="reference internal" href="2.5-let-over-lambda.html">2.5 Let Over Lambda</a></li>
-<li class="toctree-l2"><a class="reference internal" href="2.6-lambda-over-letoverlambda.html">2.6 Lambda Over Let Over Lambda</a></li>
-<li class="toctree-l2"><a class="reference internal" href="2.7-letoverlambda-over-letoverlambda.html">2.7 Let Over Lambda Over Let Over Lambda</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">第二章：闭包</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter04/index.html">第四章：Read 宏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
@@ -109,134 +50,68 @@
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Let Over Lambda 中文文档</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="index.html">第二章：闭包</a> &raquo;</li>
-        
-      <li>2.1 面向闭包编程</li>
-    
-    
+      <li>&lt;no title&gt;</li>
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/Chapter02/2.1-closure-oriented-programming.md.txt" rel="nofollow"> 查看页面源码</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="tex2jax_ignore mathjax_ignore section" id="id1">
-<h1>2.1 面向闭包编程<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
-<hr class="docutils" />
-<p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
-<p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
-<hr class="docutils" />
-<blockquote>
-<div><p><em>One of the conclusions that we reached was that the “object” need not be a primitive notion in a programming language; one can build objects and their behaviour from little more than assignable value cells and good old lambda expressions. —Guy Steele on the design of Scheme</em></p>
+             
+  <blockquote>
+<div><p>我们得到的一个结论是：在编程语言中，“对象（object）”没必要作为原语（primitive notion）：只需用可赋值单元和好的老式的 lambda 表达式就可以构建对象及其行为。 —— Guy Steele 设计 Scheme 时说的话</p>
 </div></blockquote>
-<p>Sometimes it’s called a <em>closure</em>, other times a saved lexical environment. Or, as some of us like to say, <em>let over lambda</em>. Whatever terminology you use, mastering this concept of a closure is the first step to becoming a professional lisp programmer. In fact, this skill is vital for the proper use of many modern programming languages, even ones that don’t explicitly contain let or lambda, such as Perl or Javascript.</p>
-<p>Closures are one of those few curious concepts that are paradoxically difficult because they are so simple. Once a programmer becomes used to a complex solution to a problem, simple solutions to the same problem feel incomplete and uncomfortable. But, as we will soon see, closures can be a simpler, more direct solution to the problem of how to organise data and code than objects. Even more important than their simplicity, closures represent a better abstraction to use when constructing macros—the topic of this book.</p>
-<p>The fact that we can build objects and classes with our closure primitives doesn’t mean that object systems are useless to lisp programmers. Far from it. In fact, COMMON LISP includes one of the most powerful object systems ever devised: <em>CLOS</em>, the COMMON LISP Object System. Although I am very impressed with the flexibility and features of CLOS, I seldom find a need to use its more advanced features<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html">1</a>, thanks to assignable value cells and good old lambda expressions.</p>
-<p>While much of this book assumes a reasonable level of lisp skill, this chapter attempts to teach the theory and use of closures from the very basics as well as to provide a common terminology for closures that will be used throughout the rest of this book. This chapter also examines the efficiency implications of closures and considers how well modern compilers optimise them.</p>
-</div>
+<p>这种 lambda 表达式有时叫做闭包，有时叫做已保存的词法环境。 或者，像我们中的一些人喜欢说的，let over lambda。 无论怎么称呼，掌握闭包的概念是成为专业 lisp 程序员的第一步。 事实上，这项技能对于正确使用许多现代编程语言至关重要，即使是那些没有明确包含 let 或 lambda 的语言，例如 Perl 或 Javascript。</p>
+<p>闭包是少有的奇怪概念之一，因为它们太简单了，而与之自相矛盾的是，掌握起来很难。一旦程序员习惯了用复杂的方来解决问题时，用简单的方法解决同样的问题时就会感到不完整和不舒服。但是，我们很快就会看到，对于如何组织数据和代码，闭包比对象更简单、更直接。比简单更重要的是，闭包是在构造宏时的更好的抽象——这也是本书的主题。</p>
+<p>我们可以使用闭包原语构建对象和类这一事实并不意味着对象系统对 lisp 程序员毫无用处。 恰恰相反。 事实上，COMMON LISP 包括有史以来最强大的对象系统：CLOS，即 COMMON LISP 对象系统。 虽然我对 CLOS 的灵活性和特性印象深刻，但我很少发现需要使用其更高级的特性，这要归功于可分配的值单元和好的旧 lambda 表达式。</p>
+<p>虽然本书的大部分内容都假定你具有合理的 lisp 技能水平，但本章试图从最基础的角度教授闭包的理论和使用，并提供将在本书其余部分中使用的闭包通用术语。 本章还检查了闭包的效率影响，并考虑了现代编译器对它们的优化程度。</p>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="2.2-environments-and-extent.html" class="btn btn-neutral float-right" title="2.2 Environment and Extent" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="第二章：闭包" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="2.2-environments-and-extent.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.
-
-    </p>
+    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
   </div>
-    
-    
-    
-    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
-    
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
-    
-    由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

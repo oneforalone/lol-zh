@@ -1,74 +1,35 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="zh-CN" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>3.3 Control Structures &mdash; Let Over Lambda 中文文档  文档</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/translations.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="3.4 Free Variables" href="3.4-free-variables.html" />
     <link rel="prev" title="3.2 Domain Specific Languages" href="3.2-domain-specific-languages.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
-          
-
-          
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="在文档中搜索" />
@@ -76,18 +37,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
@@ -109,81 +59,39 @@
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Let Over Lambda 中文文档</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="index.html">第三章：宏基础</a> &raquo;</li>
-        
       <li>3.3 Control Structures</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/Chapter03/3.3-control-structures.md.txt" rel="nofollow"> 查看页面源码</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="tex2jax_ignore mathjax_ignore section" id="control-structures">
-<h1>3.3 Control Structures<a class="headerlink" href="#control-structures" title="永久链接至标题">¶</a></h1>
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="control-structures">
+<h1>3.3 Control Structures<a class="headerlink" href="#control-structures" title="永久链接至标题"></a></h1>
 <hr class="docutils" />
 <p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
 <hr class="docutils" />
-<p>Although this book is focused on COMMON LISP, it is written for and about the Scheme programming language as well. Scheme is a wonderful language that, although lacking many features lisp programmers take for granted, still offers a flexible enough core for the professional lisp programmer to extend as necessary<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html">2</a>. Similarly, there are a few features Scheme programmers rely on heavily that COMMON LISP doesn’t specifically address. But comparisons between the features offered by each language are, with a few exceptions, meaningless. The gaps between the two languages can be, and frequently are, bridged. The bridges we use to cross between the two languages are, of course, macros.</p>
-<p>Scheme’s <strong>let</strong> form is in one respect more powerful than its COMMON LISP counterpart. Scheme’s <strong>let</strong> form supports something called a <em>named let</em>. In Scheme, you can optionally insert a symbol before the bind list of a <strong>let</strong> form and Scheme will bind a function named by the provided symbol around the let body<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html">3</a>. This function accepts new arguments for the values provided in the <strong>let</strong> bindings, providing a very convenient way to express loops.</p>
+<p>Although this book is focused on COMMON LISP, it is written for and about the Scheme programming language as well. Scheme is a wonderful language that, although lacking many features lisp programmers take for granted, still offers a flexible enough core for the professional lisp programmer to extend as necessary<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html#">2</a>. Similarly, there are a few features Scheme programmers rely on heavily that COMMON LISP doesn’t specifically address. But comparisons between the features offered by each language are, with a few exceptions, meaningless. The gaps between the two languages can be, and frequently are, bridged. The bridges we use to cross between the two languages are, of course, macros.</p>
+<p>Scheme’s <strong>let</strong> form is in one respect more powerful than its COMMON LISP counterpart. Scheme’s <strong>let</strong> form supports something called a <em>named let</em>. In Scheme, you can optionally insert a symbol before the bind list of a <strong>let</strong> form and Scheme will bind a function named by the provided symbol around the let body<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html#">3</a>. This function accepts new arguments for the values provided in the <strong>let</strong> bindings, providing a very convenient way to express loops.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro nlet (n letargs &amp;rest body)
   `(labels ((,n ,(mapcar #&#39;car letargs)
               ,@body))
@@ -198,7 +106,7 @@
       <span class="p">(</span><span class="o">*</span> <span class="n">n</span> <span class="p">(</span><span class="n">fact</span> <span class="p">(</span><span class="o">-</span> <span class="n">n</span> <span class="mi">1</span><span class="p">))))))</span>
 </pre></div>
 </div>
-<p>Because <strong>nlet</strong> is one of our first macros, let’s slow down and analyse it in depth. Sometimes to understand a macro it helps to <em>macroexpand</em> an example use of this macro<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html">4</a>. To do that, provide a list representing this macro invocation to the <strong>macroexpand</strong> function. Notice that <strong>macroexpand</strong> will only expand macros that have their symbols in the first element of the list and will not expand nested macro invocations for you<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html">5</a>. In the following, we’ve copied an invocation of <strong>nlet</strong> directly from <strong>nlet-fact</strong>, quoted it, and passed it to <strong>macroexpand</strong>:</p>
+<p>Because <strong>nlet</strong> is one of our first macros, let’s slow down and analyse it in depth. Sometimes to understand a macro it helps to <em>macroexpand</em> an example use of this macro<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html#">4</a>. To do that, provide a list representing this macro invocation to the <strong>macroexpand</strong> function. Notice that <strong>macroexpand</strong> will only expand macros that have their symbols in the first element of the list and will not expand nested macro invocations for you<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html#">5</a>. In the following, we’ve copied an invocation of <strong>nlet</strong> directly from <strong>nlet-fact</strong>, quoted it, and passed it to <strong>macroexpand</strong>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">macroexpand</span>
     <span class="s1">&#39;(nlet fact ((n n))</span>
        <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="n">zerop</span> <span class="n">n</span><span class="p">)</span>
@@ -217,56 +125,39 @@
 <p>Although simple macros might just be filling out backquote templates, most complicated macros at minimum make use of lisp’s extensive list processing functions. <strong>Mapcar</strong>, applying a function to every element in a list and returning a list of the resulting values, turns up especially often in macros. Tellingly, <strong>mapcar</strong> turns up often in regular lisp code as well. Lisp has been tuned to be as useful as possible for processing lists. In all kinds of lisp programming, including macro construction, we splice, merge, reduce, map, and filter lists. The only difference is that when programming macros, the output subsequently gets passed to a compiler or interpreter. Programming macros in lisp is actually the same process as programming regular lisp.</p>
 <p>But what does it mean to say that <strong>nlet</strong> is a new control structure? A control structure is just a fancy way of describing some construct that doesn’t follow the behaviour of a function. A function will evaluate each argument from left to right, bind the results in an environment, and execute machine code specified by some <strong>lambda</strong> form. Since <strong>nlet</strong> doesn’t evaluate its arguments directly, instead splicing them into some chunk of lisp code, we have changed the flow of evaluation for <strong>nlet</strong> forms and thus have created a new control structure.</p>
 <p>By this broad definition, virtually all macros—at least all interesting macros—define new control structures. When people say “only use macros when functions won’t do”, they mean that for any definition where you don’t want to evaluate certain arguments, or you want to evaluate them out of order, or more than once, you will need to use a macro. Functions, no matter how cleverly written, simply will not work.</p>
-<p>The <strong>nlet</strong> macro demonstrates one way that COMMON LISP was designed for macro writers. In binding forms such as <strong>let</strong>, it is a common convention for a variable to be bound to nil if no value is specified along with the variable name. In other words, <strong>(let ((a)) a)</strong> will be nil<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html">6</a>. In Scheme, a language slightly less macro-writer friendly, this case must be checked for as a special case when iterating through such bindings because <strong>(car nil)</strong> and <strong>(cdr nil)</strong> raise type errors. In COMMON LISP, <strong>(car nil)</strong>, <strong>(cdr nil)</strong>, and therefore <strong>(car (cdr nil))</strong> and <strong>(cadr nil)</strong> are defined to return <strong>nil</strong>, allowing the second <strong>mapcar</strong> in <strong>nlet</strong> to work even if the empty let variable convention is used. This COMMON LISP feature is from Interlisp[INTERLISP].</p>
-<p>Our <strong>nlet</strong> macro is different from Scheme’s named lets in one subtle way. In this case, the interface to the macro is acceptable but the expansion may not be. As is common when programming across multiple levels, our mental model of the code can easily be slightly different from reality. In Scheme, a tail call of a named let is guaranteed to take up no additional stack space since Scheme is required, by the standard, to make this specific optimisation. This is not the case in COMMON LISP, however, so it is possible for stack overflows to occur in our COMMON LISP version of <strong>nlet</strong> that would not happen with named lets in Scheme. In <a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap5.html#sec_4">section 5.4, Code-Walking with Macrolet</a> we will see how to write a version of <strong>nlet</strong> with an identical interface but a potentially more efficient expansion<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html">7</a>.</p>
-</div>
+<p>The <strong>nlet</strong> macro demonstrates one way that COMMON LISP was designed for macro writers. In binding forms such as <strong>let</strong>, it is a common convention for a variable to be bound to nil if no value is specified along with the variable name. In other words, <strong>(let ((a)) a)</strong> will be nil<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html#">6</a>. In Scheme, a language slightly less macro-writer friendly, this case must be checked for as a special case when iterating through such bindings because <strong>(car nil)</strong> and <strong>(cdr nil)</strong> raise type errors. In COMMON LISP, <strong>(car nil)</strong>, <strong>(cdr nil)</strong>, and therefore <strong>(car (cdr nil))</strong> and <strong>(cadr nil)</strong> are defined to return <strong>nil</strong>, allowing the second <strong>mapcar</strong> in <strong>nlet</strong> to work even if the empty let variable convention is used. This COMMON LISP feature is from Interlisp[INTERLISP].</p>
+<p>Our <strong>nlet</strong> macro is different from Scheme’s named lets in one subtle way. In this case, the interface to the macro is acceptable but the expansion may not be. As is common when programming across multiple levels, our mental model of the code can easily be slightly different from reality. In Scheme, a tail call of a named let is guaranteed to take up no additional stack space since Scheme is required, by the standard, to make this specific optimisation. This is not the case in COMMON LISP, however, so it is possible for stack overflows to occur in our COMMON LISP version of <strong>nlet</strong> that would not happen with named lets in Scheme. In <a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap5.html#sec_4">section 5.4, Code-Walking with Macrolet</a> we will see how to write a version of <strong>nlet</strong> with an identical interface but a potentially more efficient expansion<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html#">7</a>.</p>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="3.4-free-variables.html" class="btn btn-neutral float-right" title="3.4 Free Variables" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="3.2-domain-specific-languages.html" class="btn btn-neutral float-left" title="3.2 Domain Specific Languages" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="3.4-free-variables.html" class="btn btn-neutral float-right" title="3.4 Free Variables" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.
-
-    </p>
+    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
   </div>
-    
-    
-    
-    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
-    
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
-    
-    由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
