@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>&lt;no title&gt; &mdash; Let Over Lambda 中文文档  文档</title>
+  <title>2.4 Let It Be Lambda &mdash; Let Over Lambda 中文文档  文档</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -62,7 +62,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>&lt;no title&gt;</li>
+      <li>2.4 Let It Be Lambda</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/Chapter02/2.4-let-It-be-lambda.md.txt" rel="nofollow"> 查看页面源码</a>
       </li>
@@ -72,7 +72,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <p><strong>Let</strong> 是 Lisp 中特殊的表单，用于创建并初始化相应表单名称(绑定)的环境。这些名称对于 <strong>let</strong> 主体中有效是，且该求值是连续的，并返回最终表单的结果。虽然 <strong>let</strong> 做了什么很明确，但具体是怎么做的却没指明。 <strong>let</strong> 结果与过程是分离的。在某种程度上，<strong>let</strong>​ 需要提供一个数据结构来存储指向值的指针。</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="let-it-be-lambda">
+<h1>2.4 Let It Be Lambda<a class="headerlink" href="#let-it-be-lambda" title="永久链接至标题"></a></h1>
+<hr class="docutils" />
+<p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
+<p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
+<hr class="docutils" />
+<p><strong>Let</strong> 是 Lisp 中特殊的表单，用于创建并初始化相应表单名称(绑定)的环境。这些名称对于 <strong>let</strong> 主体中有效是，且该求值是连续的，并返回最终表单的结果。虽然 <strong>let</strong> 做了什么很明确，但具体是怎么做的却没指明。 <strong>let</strong> 结果与过程是分离的。在某种程度上，<strong>let</strong>​ 需要提供一个数据结构来存储指向值的指针。</p>
 <p>正如前面所介绍的那样，cons 的结构适用于存储指针，这点毋庸置疑。同时，还有很多其他的结构可以用来存储指针。在 lisp 中存储指针的最佳方法之一就是使用** let **表格结构。在 <strong>let</strong>结构中，你只需要给指针命名就好，之后 lisp 会计算出怎样最好地存储指针。有时，我们可以通过声明的形式提供额外的信息，用来提高编译器的效率，如下面的代码所示：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">register</span><span class="o">-</span><span class="n">allocated</span><span class="o">-</span><span class="n">fixnum</span> <span class="p">()</span>
   <span class="p">(</span><span class="n">declare</span> <span class="p">(</span><span class="n">optimize</span> <span class="p">(</span><span class="n">speed</span> <span class="mi">3</span><span class="p">)</span> <span class="p">(</span><span class="n">safety</span> <span class="mi">0</span><span class="p">)))</span>
@@ -164,6 +170,7 @@
 </div>
 <p>如果你尝试在闭包上调用 <strong>compile</strong>，将得到一个错误消息，指出无法编译在非空词法环境中定义的函数 [CLTL2-P677]。 你不能编译闭包，只能编译创建闭包的函数。 当编译一个创建闭包的函数时，它创建的闭包也将被编译[ON-LISP-P25]。</p>
 <p>使用包含上述 lambda 的 let 非常重要，我们将在本章的剩余部分中讨论它的模式和变体。</p>
+</section>
 
 
            </div>

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>&lt;no title&gt; &mdash; Let Over Lambda 中文文档  文档</title>
+  <title>2.6 Lambda Over Let Over Lambda &mdash; Let Over Lambda 中文文档  文档</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -19,8 +19,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
-    <link rel="next" title="&lt;no title&gt;" href="2.7-letoverlambda-over-letoverlambda.html" />
-    <link rel="prev" title="&lt;no title&gt;" href="2.5-let-over-lambda.html" /> 
+    <link rel="next" title="2.7 Let Over Lambda Over Let Over Lambda" href="2.7-letoverlambda-over-letoverlambda.html" />
+    <link rel="prev" title="2.5 Let Over Lambda" href="2.5-let-over-lambda.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -38,9 +38,17 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
-<li class="toctree-l1"><a class="reference internal" href="index.html">第二章：闭包</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第二章：闭包</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="2.1-closure-oriented-programming.html">2.1 面向闭包编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.2-environments-and-extent.html">2.2 环境及拓展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.3-lexical-and-dynamic-scope.html">2.3 词法作用域与动态作用域</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.5-let-over-lambda.html">2.5 Let Over Lambda</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.6 Lambda Over Let Over Lambda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.7-letoverlambda-over-letoverlambda.html">2.7 Let Over Lambda Over Let Over Lambda</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter04/index.html">第四章：Read 宏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
@@ -65,7 +73,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="index.html">第二章：闭包</a> &raquo;</li>
-      <li>&lt;no title&gt;</li>
+      <li>2.6 Lambda Over Let Over Lambda</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/Chapter02/2.6-lambda-over-letoverlambda.md.txt" rel="nofollow"> 查看页面源码</a>
       </li>
@@ -75,7 +83,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <p>在一些对象系统中，对象、具有关联状态的过程集合和类（用于创建对象的数据结构）之间存在明显区别。 闭包不存在这种区别。 我们看到了可以执行以创建闭包的结构示例，其中大多数遵循 lambda 模式，但是程序如何根据需要创建这些对象？</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="lambda-over-let-over-lambda">
+<h1>2.6 Lambda Over Let Over Lambda<a class="headerlink" href="#lambda-over-let-over-lambda" title="永久链接至标题"></a></h1>
+<hr class="docutils" />
+<p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
+<p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
+<hr class="docutils" />
+<p>在一些对象系统中，对象、具有关联状态的过程集合和类（用于创建对象的数据结构）之间存在明显区别。 闭包不存在这种区别。 我们看到了可以执行以创建闭包的结构示例，其中大多数遵循 lambda 模式，但是程序如何根据需要创建这些对象？</p>
 <p>答案非常简单。 如果我们可以在 REPL 中执行它们，也就可以在函数中执行它们。 如果创建一个函数，其唯一目的是执行一个 let over lambda 并返回结果呢？ 因为我们使用 <strong>lambda</strong> 来表示函数，所以它看起来像这样：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="k">lambda</span> <span class="p">()</span>
   <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">counter</span> <span class="mi">0</span><span class="p">))</span>
@@ -124,13 +138,14 @@
 <span class="n">T</span>
 </pre></div>
 </div>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="2.5-let-over-lambda.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-        <a href="2.7-letoverlambda-over-letoverlambda.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="2.5-let-over-lambda.html" class="btn btn-neutral float-left" title="2.5 Let Over Lambda" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="2.7-letoverlambda-over-letoverlambda.html" class="btn btn-neutral float-right" title="2.7 Let Over Lambda Over Let Over Lambda" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

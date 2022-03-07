@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>&lt;no title&gt; &mdash; Let Over Lambda 中文文档  文档</title>
+  <title>2.7 Let Over Lambda Over Let Over Lambda &mdash; Let Over Lambda 中文文档  文档</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -20,7 +20,7 @@
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="第三章：宏基础" href="../Chapter03/index.html" />
-    <link rel="prev" title="&lt;no title&gt;" href="2.6-lambda-over-letoverlambda.html" /> 
+    <link rel="prev" title="2.6 Lambda Over Let Over Lambda" href="2.6-lambda-over-letoverlambda.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -38,9 +38,17 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
-<li class="toctree-l1"><a class="reference internal" href="index.html">第二章：闭包</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第二章：闭包</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="2.1-closure-oriented-programming.html">2.1 面向闭包编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.2-environments-and-extent.html">2.2 环境及拓展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.3-lexical-and-dynamic-scope.html">2.3 词法作用域与动态作用域</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.5-let-over-lambda.html">2.5 Let Over Lambda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.6-lambda-over-letoverlambda.html">2.6 Lambda Over Let Over Lambda</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.7 Let Over Lambda Over Let Over Lambda</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter04/index.html">第四章：Read 宏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
@@ -65,7 +73,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="index.html">第二章：闭包</a> &raquo;</li>
-      <li>&lt;no title&gt;</li>
+      <li>2.7 Let Over Lambda Over Let Over Lambda</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/Chapter02/2.7-letoverlambda-over-letoverlambda.md.txt" rel="nofollow"> 查看页面源码</a>
       </li>
@@ -75,7 +83,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <p>对象系统的用户将他们希望在某个类的所有对象之间共享的值存储到所谓的类变量或静态变量中。 在 lisp 中，闭包之间共享状态的概念由环境处理，就像闭包本身存储状态一样。 由于环境可以无限访问，只要它仍然可以引用它，就能保证它在需要时可用。</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="let-over-lambda-over-let-over-lambda">
+<h1>2.7 Let Over Lambda Over Let Over Lambda<a class="headerlink" href="#let-over-lambda-over-let-over-lambda" title="永久链接至标题"></a></h1>
+<hr class="docutils" />
+<p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
+<p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
+<hr class="docutils" />
+<p>对象系统的用户将他们希望在某个类的所有对象之间共享的值存储到所谓的类变量或静态变量中。 在 lisp 中，闭包之间共享状态的概念由环境处理，就像闭包本身存储状态一样。 由于环境可以无限访问，只要它仍然可以引用它，就能保证它在需要时可用。</p>
 <p>如果想为所有计数器维护一个全局方向，<code class="docutils literal notranslate"><span class="pre">up</span></code>向上递增，<code class="docutils literal notranslate"><span class="pre">down</span></code>向下递减，那么可能想要使用 let over lambda over let over lambda 模式：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(let ((direction &#39;up))
   (defun toggle-counter-direction ()
@@ -94,12 +108,13 @@
 </div>
 <p>在上面的例子中，我们扩展了上节的 <code class="docutils literal notranslate"><span class="pre">counter-class</span></code>。 现在调用使用 <code class="docutils literal notranslate"><span class="pre">counter-class</span></code> 创建的闭包将增加其计数器绑定或减少它，这取决于所有计数器之间共享的方向绑定的值。 注意，这里还创建一个名为 <code class="docutils literal notranslate"><span class="pre">toggle-counter-direction</span></code> 的函数来利用方向环境中的另一个 lambda，该函数更改所有计数器的当前方向。</p>
 <p>虽然 <code class="docutils literal notranslate"><span class="pre">let</span></code> 和 <code class="docutils literal notranslate"><span class="pre">lambda</span></code> 的这种组合非常有用，以至于其他语言以类或静态变量的形式实现它，但还有其他的 <code class="docutils literal notranslate"><span class="pre">let</span></code> 和 <code class="docutils literal notranslate"><span class="pre">lambda</span></code> 组合允许以没有直接类似物的方式在对象系统中 构造代码和状态 。 对象系统是 let 和 lambda 组合子集的形式化，有时带有类似继承的噱头。 正因为如此，lisp 程序员通常不会考虑类和对象。 Let 和 lambda 是基本的； 对象和类是衍生物。 正如斯蒂尔所说，“对象”不必是编程语言中的原始概念。 一旦可分配的值单元和好的旧 lambda 表达式可用，对象系统充其量只是偶尔有用的抽象，最坏的情况是特殊情况和冗余。</p>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="2.6-lambda-over-letoverlambda.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="2.6-lambda-over-letoverlambda.html" class="btn btn-neutral float-left" title="2.6 Lambda Over Let Over Lambda" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
         <a href="../Chapter03/index.html" class="btn btn-neutral float-right" title="第三章：宏基础" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
