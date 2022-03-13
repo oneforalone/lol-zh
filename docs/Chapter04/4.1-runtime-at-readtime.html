@@ -88,6 +88,61 @@
 <p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
 <hr class="docutils" />
+<blockquote>
+<div><p>Syntactic sugar causes cancer of the semicolon. –Alan Perlis</p>
+</div></blockquote>
+<p>Not only does lisp provide direct access to code that has been parsed into a cons cell structure, but it also provides access to the characters that make up your programs before they even reach that stage. Although regular macros work on programs in the form of trees, a special type of macro, called a <em>read macro</em>, operates on the raw characters that make up your program.</p>
+<p>In lisp, when we want to define a non-lisp syntax, it doesn’t make sense to use the lisp reader—that is only for reading lisp. The read macro is the device we use to process non-lisp syntax before the lisp reader gets its paws on it. The reason why the lisp reader is more powerful than that of other languages is that lisp gives you <em>hooks</em> for controlling every aspect of its behaviour. In particular, lisp lets you <em>extend</em> the reader, so that non-lisp objects are actually read in as lisp objects. Just as you build your applications on top of lisp, extending it with macros and functions, lisp applications can, and frequently do, ooze out into this dimension of extensibility as well. When this happens, any character based syntax can be read with the lisp reader, meaning that you have turned the syntax into lisp.</p>
+<p>While the transformations of code done by regular macros are only used for turning lisp code into new lisp code, read macros can be created so as to turn non-lisp code into lisp code. Like regular macros, read macros are implemented with functions underneath so we have available the full power of the lisp environment. Like macros that increase productivity because they create more concise domain specific languages for the programmer to use, read macros boost productivity by allowing expressions to be abbreviated to the point where they aren’t even lisp expressions anymore. Or are they?</p>
+<p>If all we have to do to parse these non-lisp domain specific languages is write a short read macro, maybe these non-lisp languages really are lisp, just in a clever disguise. If XML can be directly read in by the lisp reader[XML-AS-READ-MACRO], maybe XML, in a twisted sort of sense, is actually lisp. Similarly, read macros can be used to read regular expressions and SQL queries directly into lisp, so maybe these languages really are lisp too. This fuzzy distinction between code and data, lisp and non-lisp, is the source of many interesting philosophical issues that have perplexed lisp programmers since the very beginning.</p>
+<p>A basic read macro that comes built in with COMMON LISP is the #. read-time eval macro. This read macro lets you embed objects into the forms you read that can’t be serialised, but can be created with a bit of lisp code. One fun example is making forms that become different values each time they are read:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="s1">&#39;(football-game</span>
+     <span class="p">(</span><span class="n">game</span><span class="o">-</span><span class="n">started</span><span class="o">-</span><span class="n">at</span>
+       <span class="c1">#.(get-internal-real-time))</span>
+     <span class="p">(</span><span class="n">coin</span><span class="o">-</span><span class="n">flip</span>
+       <span class="c1">#.(if (zerop (random 2)) &#39;heads &#39;tails)))</span>
+
+<span class="p">(</span><span class="n">FOOTBALL</span><span class="o">-</span><span class="n">GAME</span>
+  <span class="p">(</span><span class="n">GAME</span><span class="o">-</span><span class="n">STARTED</span><span class="o">-</span><span class="n">AT</span> <span class="mi">187</span><span class="p">)</span>
+  <span class="p">(</span><span class="n">COIN</span><span class="o">-</span><span class="n">FLIP</span> <span class="n">HEADS</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Even though it is the same expression, this form reads in differently each time:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="s1">&#39;(football-game</span>
+     <span class="p">(</span><span class="n">game</span><span class="o">-</span><span class="n">started</span><span class="o">-</span><span class="n">at</span>
+       <span class="c1">#.(get-internal-real-time))</span>
+     <span class="p">(</span><span class="n">coin</span><span class="o">-</span><span class="n">flip</span>
+       <span class="c1">#.(if (zerop (random 2)) &#39;heads &#39;tails)))</span>
+
+<span class="p">(</span><span class="n">FOOTBALL</span><span class="o">-</span><span class="n">GAME</span>
+  <span class="p">(</span><span class="n">GAME</span><span class="o">-</span><span class="n">STARTED</span><span class="o">-</span><span class="n">AT</span> <span class="mi">309</span><span class="p">)</span>
+  <span class="p">(</span><span class="n">COIN</span><span class="o">-</span><span class="n">FLIP</span> <span class="n">TAILS</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Note that the two forms surrounded by #. are evaluated at read time, not when the form is evaluated. The complete list has been formed after they are evaluated, and the before-after equivalence (as defined by <strong>equal</strong>) can be seen by re-evaluating the last form read in and comparing it with the previous results, using the * and + convenience variables of the REPL<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">1</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">equal</span> <span class="o">*</span> <span class="p">(</span><span class="nb">eval</span> <span class="o">+</span><span class="p">))</span>
+
+<span class="n">T</span>
+</pre></div>
+</div>
+<p>Notice that because these forms are actually evaluated at read-time, this is different from using backquote, which we will look at more closely in the following section. We can evaluate a similar form that uses backquotes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* `(football-game
+     (game-started-at
+       ,(get-internal-real-time))
+     (coin-flip
+       ,(if (zerop (random 2)) &#39;heads &#39;tails)))
+
+(FOOTBALL-GAME
+  (GAME-STARTED-AT 791)
+  (COIN-FLIP HEADS))
+</pre></div>
+</div>
+<p>but it will evaluate to a different result when we re-evaluate it, since backquote reads in as code for evaluation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">equal</span> <span class="o">*</span> <span class="p">(</span><span class="nb">eval</span> <span class="o">+</span><span class="p">))</span>
+
+<span class="n">NIL</span> <span class="p">;</span> <span class="n">unless</span> <span class="n">you</span><span class="s1">&#39;re really fast and lucky</span>
+</pre></div>
+</div>
 </section>
 
 

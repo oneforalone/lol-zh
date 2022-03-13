@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>3.4 Free Variables &mdash; Let Over Lambda 中文文档  documentation</title>
+  <title>3.4 自由变量 &mdash; Let Over Lambda 中文文档  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -18,7 +18,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="3.5 Unwanted Capture" href="3.5-unwanted-capture.html" />
+    <link rel="next" title="3.5 异常捕获" href="3.5-unwanted-capture.html" />
     <link rel="prev" title="3.3 控制结构" href="3.3-control-structures.html" /> 
 </head>
 
@@ -44,8 +44,8 @@
 <li class="toctree-l2"><a class="reference internal" href="3.1-iterative-development.html">3.1 迭代开发</a></li>
 <li class="toctree-l2"><a class="reference internal" href="3.2-domain-specific-languages.html">3.2 领域特定语言</a></li>
 <li class="toctree-l2"><a class="reference internal" href="3.3-control-structures.html">3.3 控制结构</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">3.4 Free Variables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="3.5-unwanted-capture.html">3.5 Unwanted Capture</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3.4 自由变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3.5-unwanted-capture.html">3.5 异常捕获</a></li>
 <li class="toctree-l2"><a class="reference internal" href="3.6-once-only.html">3.6 Once Only</a></li>
 <li class="toctree-l2"><a class="reference internal" href="3.7-duality-of-syntax.html">3.7 Duality of Syntax</a></li>
 </ul>
@@ -73,7 +73,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="index.html">第三章：宏基础</a> &raquo;</li>
-      <li>3.4 Free Variables</li>
+      <li>3.4 自由变量</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/Chapter03/3.4-free-variables.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -83,41 +83,41 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="free-variables">
-<h1>3.4 Free Variables<a class="headerlink" href="#free-variables" title="Permalink to this headline"></a></h1>
+  <section id="id1">
+<h1>3.4 自由变量<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h1>
 <hr class="docutils" />
 <p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
 <hr class="docutils" />
-<p>A <em>free variable</em> is any variable or function referenced in an expression that doesn’t have a global special binding or an enclosing lexical binding. In the following expression, <strong>x</strong> is free:</p>
+<p><em>自由变量</em> 是在无全局绑定或词法闭包绑定的表达式中引用的变量或函数。 在下面的表达式中，<strong>x</strong> 是自由的：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="o">+</span> <span class="mi">1</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>But in the following, we create a binding around the form which <em>captures</em> the variable <strong>x</strong>, depriving it of its freedom:</p>
+<p>但下面的代码中，我们在捕获变量 <strong>x</strong> 的结构外面创建了一个绑定，从而剥夺了它的自由度：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">x</span> <span class="mi">1</span><span class="p">))</span>
   <span class="p">(</span><span class="o">+</span> <span class="mi">1</span> <span class="n">x</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>The terminology of freedom and capture may seem strange at first. After all, freedom implies consciousness and an ability to make decisions—something a simple expression is obviously lacking. But freedom doesn’t refer to what the expression can do, rather what we, as programmers, can do with the expression. For example, we can take the expression <strong>(+ 1 x)</strong> and embed it anywhere we want, allowing our expression to access a binding named <strong>x</strong> in the surrounding code. We then say that the code has <em>captured</em> our free variable. After the free variables in an expression are captured, as in the above <strong>let</strong> form, other surrounding code has no option of capturing our variable <strong>x</strong>. Our formerly free variable has already been captured. It is now completely unambiguous which <strong>x</strong> it refers to. Because of this, there isn’t really any need for lisp to keep the reference to the symbol <strong>x</strong> in the code at all. As was described in detail in <a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap2.html#sec_3">section 2.3, Lexical and Dynamic Scope</a>, lisp compilers will forget the symbols that were used to represent lexical variables.</p>
-<p>Although any language with expressions can have expressions with free variables, lisp’s macro capabilities mean that free variables are much more useful in lisp than in other languages. In most languages we are forced to obey <em>referential transparency</em>. If there is no global or object variable <strong>x</strong> defined in a Blub program, the following code is unconditionally incorrect:</p>
+<p>自由和捕获的术语起初可能看起来很奇怪。毕竟，自由意味着意识和做出决定的能力——这显然是简单的表达方式所缺乏的。但是自由并不是指表达式可以做什么，而是作为程序员可以用表达式做什么。例如，我们可以将表达式 <strong>(+ 1 x)</strong> 嵌入到任意位置，从而允许表达式访问周围代码中名为 <strong>x</strong> 的绑定。然后我们说代码已经捕获了自由变量。在表达式中的自由变量被捕获后，如上面的 <strong>let</strong> 结构，其他周围的代码没有选择捕获变量 <strong>x</strong>。之前的自由变量已经被捕获。现在完全清楚它指的是哪个 <strong>x</strong>。因此，lisp 根本不需要在代码中保留对符号 <strong>x</strong> 的引用。正如<a class="reference internal" href="../Chapter02/2.3-lexical-and-dynamic-scope.html"><span class="doc std std-doc">2.3 节：词法作用域和动态作用域</span></a>中描述的那样，lisp 编译器会忘记用于表示词法变量的符号。</p>
+<p>尽管带有表达式的语言都可以有带有自由变量的表达式，但 lisp 的宏功能意味着自由变量在 lisp 中比在其他语言中更有用。 在大多数语言中，我们被迫遵守 <em>引用透明性</em>。 如果 Blub 程序中没有定义全局或对象变量 <strong>x</strong>，则下面代码毫无疑问是错误的：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">some_function_or_method</span><span class="p">()</span> <span class="p">{</span>
   <span class="n">anythind</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">);</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>There is no way that <strong>some_function_or_method</strong> can create an <em>implicit binding</em> for <strong>x</strong>. In Blub, any use of a variable must have a textually apparent definition<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html#">8</a>. Languages with primitive macro systems (like C) can accomplish some of this in a very limited sense. But just as general purpose macros are impractical or impossible to write in C, so are the special cases involving free variables.</p>
-<p>In lisp we can push around expressions with free variables as we please and either splice them into new expressions for them to be captured by surrounding code, or define global special variables to capture them. We can also write macros to modify which variables are free in an expression, either by re-writing the expression so it has fewer free variables (say by wrapping it in a let form, as above) or by modifying the expression in a way that adds new free variables. Such addition of free variables is the opposite of capturing variables and is called <em>free variable injection</em>.</p>
-<p>The simplest possible free variable injection is a macro that expands into a symbol reference:</p>
+<p><strong>some_function_or_method</strong> 无法为 <strong>x</strong> 创建隐式绑定。 在 Blub 语言中，对变量的使用都必须有显式的定义<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html#">8</a>。 具有原始宏系统的语言（如 C）可以在很有限的情况下完成其中的这种绑定。 但正如通用宏在 C 中不切实际或不可能编写一样，涉及自由变量的特殊情况也是如此。</p>
+<p>在 lisp 中，可以随意将自由变量放到表达式周围，或者将自由变量拼接成新的表达式以供周围的代码捕获，又或者定义全局特殊变量来捕获它们。 还可以编写宏来修改表达式中的哪些变量是自由的，或者通过重写表达式来减少自由变量（例如向上面一样将自由变量包在 let 结构中），或者通过修改表达式的方式来添加新的自由变量。 这种自由变量的添加与捕获变量相反，称为 <em>自由变量注入</em>。</p>
+<p>最简单的自由变量注入就是宏展开成一个符号的引用：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defmacro</span> <span class="n">x</span><span class="o">-</span><span class="n">injector</span> <span class="p">()</span>
   <span class="s1">&#39;x)</span>
 </pre></div>
 </div>
-<p>Because a macro is just a function, it executes its body as a regular lisp form. The above injector macro evaluates the quoted symbol and, of course, returns a symbol—a free variable—to be spliced into any expression that uses the <strong>x-injector</strong> macro. Discussing such free variable injection in <em>On Lisp</em>, Paul Graham writes</p>
+<p>因为宏只是一个函数，它以常规的 lisp 结构执行其主体。 上面的注入宏计算引用的符号，当然，返回一个符号——一个自由变量——然后拼接到任何使用 <strong>x-injector</strong> 宏的表达式中。 Paul Graham 在 On Lisp 中讨论过这种自由变量注入</p>
 <blockquote>
 <div><p><em>This kind of lexical intercourse is usually viewed more as a source of contagion than a source of pleasure. Usually it would be bad style to write such a macro. Of all the macros in this book, only [two isolated cases] use the calling environment in this way.</em></p>
 </div></blockquote>
-<p>By contrast, this book gets much pleasure from this sort of lexical intercourse. Free variable injection—writing a macro with full knowledge of the lexical environment it will be expanded in—is just another approach to lisp macro programming, one that is especially useful when there are a few slightly different lexical contexts that you would like to write mostly identical code inside. Although often the main advantage of a function call is that you throw out your lexical environment, sometimes, to lisp programmers, this is just a guide-line that can be ignored through the use of macros. In fact, once accustomed to it, some lisp programmers try to always write macros, extending the lexical context as far as possible, using a function only when they need to evaluate arguments or just chicken out and want a new lexical context. In <a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html#sec_6">section 3.6, Once Only</a> we will see a way to avoid throwing out your lexical environment when you need arguments evaluated. Keeping the lexical environment around as much as possible allows for very interesting macro <em>combinations</em>, where a macro adds lexical context around a use of one or more other macros. Expanding into code that uses the very macro being defined is a special case of macro combination and is treated in <a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap5.html#sec_5">section 5.5, Recursive Expansions</a>.</p>
-<p>The shortest distance between two points is a straight line. Free variables and, more generally, extended lexical contexts are often the easiest way to programmatically construct a program. Using macros in this way might seem like a hack, and might feel objectionable on stylistic grounds, but it works conveniently and reliably. Especially after we consider <strong>macrolet</strong> in <a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap5.html#sec_4">section 5.4, Code-Walking with Macrolet</a>, this style of programming—combining macros—will begin to feel more comfortable. Just remember that macro programming is not about style; it is about power. Macros allow us to do many things that are impossible in other languages. Free variable injection is one of them.</p>
+<p>相比之下，本书从这种词汇交流中获得了很多乐趣。自由变量注入——在完全了解将要在其中扩展的词法环境的情况下编写宏——只是 lisp 宏编程的另一种方法，当有一些略微不同的词法上下文，而想在其中编写基本相同的代码时，这种方法很有用。虽然函数调用的主要优点通常是抛弃了词法环境，但有时对 lisp 程序员来说，这只是个可以用宏而忽略的指南。事实上，一旦习惯了它，一些 lisp 程序员总是尝试编写宏，尽可能地扩展词法上下文，仅在需要计算参数或只是停止并想要新的词法上下文时才使用函数。在 <a class="reference internal" href="3.6-once-only.html"><span class="doc std std-doc">3.6 节：Once Only</span></a> 中，我们将看到一种在需要计算参数时避免丢弃词法环境的方法。尽量保持词法环境允许的有趣的宏组合，其中宏在使用一个或多个其他宏时添加词法上下文。展开成所定义的宏的代码是宏组合的一种特殊情况，在<a class="reference internal" href="../Chapter05/5.5-recursive-expansions.html"><span class="doc std std-doc">5.5 节：递归展开</span></a>中进行了讨论。</p>
+<p>两点之间最短的距离是直线。 自由变量，通俗点说，扩展词法上下文通常是以编程方式构造程序的最简单方法。 以这种方式使用宏可能看起来像是一种 hack，且在风格上可能会令人反感，但它可以方便且可靠地工作。 尤其是我们在<a class="reference internal" href="../Chapter05/5.4-code-walking-with-macrolet.html"><span class="doc std std-doc">5.4 节：使用 <code class="docutils literal notranslate"><span class="pre">Macrolet</span></code> 遍历代码</span></a>中思考了 <strong>macrolet</strong> 之后，这种编程风格——结合宏——会开始看起来更舒服。 记住，宏编程与风格无关； 而是关乎能力。 宏允许我们实现很多语言不可能做的事情。 自由变量注入就是其中之一。</p>
 </section>
 
 
@@ -125,7 +125,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="3.3-control-structures.html" class="btn btn-neutral float-left" title="3.3 控制结构" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="3.5-unwanted-capture.html" class="btn btn-neutral float-right" title="3.5 Unwanted Capture" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="3.5-unwanted-capture.html" class="btn btn-neutral float-right" title="3.5 异常捕获" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

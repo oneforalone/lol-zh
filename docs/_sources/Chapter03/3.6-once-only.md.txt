@@ -10,25 +10,17 @@ Translator: Yuqi Liu <[yuqi.lyle@outlook.com](mailto:yuqi.lyle@outlook.com)>
 
 Peter Norvig is a brilliant programmer and author. His books on AI, especially Artificial Intelligence: A Modern Approach[AIMA], are required reading before tackling many of the most difficult problems we currently face as computer scientists. Norvig is perhaps better known to lisp programmers for his book Paradigms Of Artificial Intelligence Programming: Case Studies in COMMON LISP[PAIP]. This book is dated but still required reading for serious lisp students and contains many important lisp insights20. This section is dedicated to Peter Norvig and is even named after a macro described in PAIP. In its last few pages, tucked away in a description of sequence function implementation, is
 
-
 Once-only: A Lesson in Macrology
-
 
 Which is shortly followed by an even more intriguing sentence:
 
-
 > If you can understand how to write and when to use once-only, then you truly understand macros.
-
-
 
 As we now know, nobody truly understands macros. Understanding a particular macro, even one as important as once-only, gets you no further to understanding macros than understanding an important theorem gets you to truly understanding mathematics. Because their possibilities so far seem infinite, truly understanding math or macros is truly impossible.
 
-
 We will not give the definition of Norvig's once-only here, but it is a reasonably complex macro with some interesting properties that we will implement slightly differently. Once-only was originally written for the deceased lisp machine programming environment and was left out of COMMON LISP for inconsequential reasons.
 
-
 The idea behind once-only is to surround a macro expansion with code that will create a new binding. When the macro expansion is evaluated, this binding will be initialised with the result of evaluating one of the forms passed to the macro as an argument. The code in the body of once-only can then use the binding which, of course, does not re-evaluate the form that was passed to the macro. The form passed as an argument to the macro is only and always evaluated once. Once-only.
-
 
 As an example of once-only, Norvig shows a square macro. Its expansion takes one argument and returns the product of that argument with itself:
 ```
@@ -42,7 +34,6 @@ This will work when we pass a lot of things to it: most variables, numbers, and 
 ```
 Because of how lambda works, we can use any form as the argument to this function definition of square. Since this argument will be evaluated exactly once, our notions and conceptual models of side-effects are satisfied. In most instances we expect an expression that we've written only once to be evaluated only once. Conversely, one of the main powers of a macro is to violate this assumption by manipulating the frequency and order of evaluation. In things like loops, for instance, we might want expressions to be evaluated more than once. We might even want them to never be evaluated, say because we want from them something other than their evaluation.
 
-
 Once-only allows us to specify particular parameters in our macro expansion that we would like to only be evaluated once and have their order of evaluation be left-to-right, just like lambda. Here is how we would accomplish this with the traditional once-only macro:
 ```
 (defmacro square (x)
@@ -50,7 +41,6 @@ Once-only allows us to specify particular parameters in our macro expansion that
     `(* ,x ,x)))
 ```
 But of course if all you ever wanted to do was once-only all the arguments of your macro, you would be using a function (lambda) instead. We will return to this point in a moment, but because this book doesn't supply a direct implementation of once-only, we introduce an alternate implementation of this functionality for our macro notation. Although there are many interesting implementations of once-only[PAIP-P853][PRACTICAL-CL-P95], this section introduces a new technique involving a combination with defmacro/g!.
-
 
 The first step in our once-only implementation is to create some new predicates and utility functions. Again compromising brevity with uniqueness, we reserve another set of symbols for our own use. All symbols starting with the characters O! and followed by one or more characters are called O-bang symbols.
 ```
@@ -77,12 +67,9 @@ A predicate to distinguish O-bang symbols from other objects is defined: o!-symb
 ```
 Defmacro! represents the final step in our macro defining language—it adds a once-only feature. Defmacro! combines with defmacro/g! from the previous section. Since defmacro! expands directly into a defmacro/g! form, it inherits the automatic gensym behaviour. Understanding all the pieces being combined is essential for sophisticated combinations. Recall that defmacro/g! looks for symbols starting with G-bang and automatically creates gensyms. By expanding into a form with G-bang symbols, defmacro! can avoid duplicating gensym behaviour when it implements once-only.
 
-
 Defmacro! gives a shortcut known as automatic once-only. With automatic once-only we can prefix one or more of the symbols in the macro's arguments with an O-bang, making them O-bang symbols as defined by o!-symbol-p. When we do this, defmacro! will know we mean to create a binding in the produced code that will, when evaluated, contain the results of evaluating the code provided as an argument to the macro. This binding will be accessible to the macro expansion through a gensym. But when creating the expansion how can we refer to this gensym? By using the equivalent G-bang symbol as defined above by o!-symbol-to-g!-symbol.
 
-
 The implementation relies on the capabilities of defmacro/g!. With the o!-symbol-to-g!-symbol utility, we create new G-bang symbols to add into a defmacro/g! form. Once we have automatic gensyms, once-only is easy to implement, as evidenced by the brevity of the defmacro! definition.
-
 
 Come back to the land of contrived textbook examples for a moment and we will re-implement the square macro, this time with defmacro!:
 ```
@@ -99,7 +86,6 @@ Which we can macroexpand to:
 T
 ```
 In the previous section I mentioned that we pass a string value to gensym for all G-bang symbols. This makes examining the expansions of such forms much easier. Although there is nothing significant about the name of gensyms like #:X1633, if we were writing or debugging the defmacro! definition of square above, we could directly see the connection between this symbol and the symbol used in the macro definition: X. Being able to match symbols from definition to expansion and vice-versa is much easier if this information is preserved in the print-name of the gensyms used, as done in defmacro/g! expansions21.
-
 
 Aside from the less verbose usage and more helpful expansion output compared to the traditional once-only, defmacro! also provides one extra key feature. In the traditional once-only, the binding for the gensym used to access the created lexical variable is given the same name as the argument to the macro expansion, which shadows the macro argument so it cannot be accessed by the macro definition. Because defmacro! splits this into two separate types of symbols, G-bang symbols and O-bang symbols, we can write macro expansions that use both of these values. To demonstrate this, here is yet another definition of the square macro:
 ```
@@ -120,9 +106,7 @@ X
 ```
 Notice that we quote the unquoted O-bang symbol in the above square definition. We do this because we don't want to evaluate this form again. The expansion generated by defmacro! already evaluated it. We simply want to take the form passed to square and use it for another purpose, in this case some kind of crude debugging statement. However, even though we evaluated it once already, and in this case it being incorrect, there is nothing stopping us from evaluating the provided form again, should our desired abstraction demand it.
 
-
 The defmacro! language allows us granular, convenient control over the evaluation of the arguments passed to our macros. If we prefix all the symbols representing arguments in the macro definition with O-bang, and only use the corresponding G-bang symbols in the macro definition, our expansions will be the same as lambda expressions—each form evaluated once, in left to right order. Without any of these symbols in args and without using any G-bang symbols in the expansion, defmacro! acts just like the regular COMMON LISP defmacro.
-
 
 Defmacro! is most useful during iterative development of a macro. Because it is a simple matter of adding two characters to a macro argument to get lambda style evaluation, and using gensyms is as easy as, well, writing them, we can change our mind about these decisions instantly. Defmacro! feels like an even tighter fitting glove over lambda than does COMMON LISP's defmacro. It is for this reason, iterative development, that we will use defmacro! as the main macro definition interface for the remainder of this book.
 ```
@@ -132,6 +116,5 @@ Defmacro! is most useful during iterative development of a macro. Because it is 
           (t ,neg)))
 ```
 Let's return to Graham's nif macro. When updating this macro for defmacro!, we notice that the expr argument, the one for which we created a gensym, is evaluated exactly once. Here we use defmacro! to indicate that this argument should be evaluated only once by calling it o!expr. This implementation of nif represents the final step in our evolution of this macro.
-
 
 Defmacro! blurs the gap between macro and function. It is this feature, the ability to provide some O-bang symbols in the macro argument and some regular symbols, that makes defmacro! especially useful. Just as backquote allows you to flip the default quoting behaviour, defmacro! allows you to flip the evaluation semantics of macro arguments from regular un-evaluated macro forms to singly evaluated, left-to-right lambda arguments.

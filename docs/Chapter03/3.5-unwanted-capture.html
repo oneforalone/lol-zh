@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>3.5 Unwanted Capture &mdash; Let Over Lambda 中文文档  documentation</title>
+  <title>3.5 异常捕获 &mdash; Let Over Lambda 中文文档  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -19,7 +19,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="3.6 Once Only" href="3.6-once-only.html" />
-    <link rel="prev" title="3.4 Free Variables" href="3.4-free-variables.html" /> 
+    <link rel="prev" title="3.4 自由变量" href="3.4-free-variables.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,8 +44,8 @@
 <li class="toctree-l2"><a class="reference internal" href="3.1-iterative-development.html">3.1 迭代开发</a></li>
 <li class="toctree-l2"><a class="reference internal" href="3.2-domain-specific-languages.html">3.2 领域特定语言</a></li>
 <li class="toctree-l2"><a class="reference internal" href="3.3-control-structures.html">3.3 控制结构</a></li>
-<li class="toctree-l2"><a class="reference internal" href="3.4-free-variables.html">3.4 Free Variables</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">3.5 Unwanted Capture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3.4-free-variables.html">3.4 自由变量</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3.5 异常捕获</a></li>
 <li class="toctree-l2"><a class="reference internal" href="3.6-once-only.html">3.6 Once Only</a></li>
 <li class="toctree-l2"><a class="reference internal" href="3.7-duality-of-syntax.html">3.7 Duality of Syntax</a></li>
 </ul>
@@ -73,7 +73,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="index.html">第三章：宏基础</a> &raquo;</li>
-      <li>3.5 Unwanted Capture</li>
+      <li>3.5 异常捕获</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/Chapter03/3.5-unwanted-capture.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -83,17 +83,17 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="unwanted-capture">
-<h1>3.5 Unwanted Capture<a class="headerlink" href="#unwanted-capture" title="Permalink to this headline"></a></h1>
+  <section id="id1">
+<h1>3.5 异常捕获<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h1>
 <hr class="docutils" />
 <p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
 <hr class="docutils" />
-<p>There are two perspectives on variable capture. Variable capture is the source of some very unpredictable bugs but when used properly can also be a highly desirable macro feature. Let’s start our consideration of variable capture with a simple macro defined by Graham in On Lisp: nif. Nif is a numeric if which has four required clauses, compared to the regular boolean if that has two required clauses and an optional third clause. Nif, or rather the code that nif expands into, evaluates the first clause and assumes the result to be a non-complex number. It then evaluates one of the three respective clauses, depending on whether the result is positive (plusp), zero (zerop), or negative (otherwise). We can use it to test the variable x like so:</p>
+<p>关于变量捕获有两种观点。 变量捕获是一些无法预测的错误的根源，但如果使用得当，它也也可以是个很理想的宏功能。 让我们从 Graham 在 On Lisp 中定义的一个简单宏开始考虑变量捕获：<strong>nif</strong>。 <strong>Nif</strong> 是个 <em>数字 if</em> ，它有四个必要子句，而常规的布尔值 <strong>if</strong> 有两个必要子句和一个可选的子句。 <strong>Nif</strong>，或者更确切地说是 <strong>nif</strong> 展开的代码，计算第一个子句并假设结果是一个非复数。 然后，它根据结果是正数（<strong>plusp</strong>）、零（<strong>zerop</strong>）还是负数（其他情况）来计算三个相应子句之一。 我们可以用 <strong>nif</strong> 测试变量 <strong>x</strong> ，如下所示：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">nif</span> <span class="n">x</span> <span class="s2">&quot;positive&quot;</span> <span class="s2">&quot;zero&quot;</span> <span class="s2">&quot;negative&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Nif is the ideal function for our discussion of variable capture and we will use it to illustrate a few key points and also as a test case for a new notation for macro construction. Before we present the version of nif defined by Graham, let’s define a nearly correct, but slightly buggy version:</p>
+<p><strong>Nif</strong> 是讨论变量捕获的理想函数，我们将使用它来说明几个关键点，并作为宏构造新符号的测试用例。 在展示 Graham 定义的 <strong>nif</strong> 版本之前，先自己定义个几乎正确但有一点问题的版本：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro nif-buggy (expr pos zero neg)
   `(let ((obscure-name ,expr))
      (cond ((plusp obscure-name) ,pos)
@@ -101,8 +101,8 @@
            (t ,neg))))
 </pre></div>
 </div>
-<p>Nif-buggy expands into a bit of code that uses let to bind the result of evaluating the user’s supplied expr form. We need to do this because it is possible that evaluating expr will incur side-effects and we need to use its value for two separate things: passing it to plusp and passing it to zerop. But what do we call this temporary binding? To introduce a subtle bug we chose an arbitrary symbol, obscure-name. Unless someone looks at the macro expansion, nobody will ever see this name anyways, so it’s no big deal, right?</p>
-<p>Nif-buggy will appear to work like nif in almost all cases. As long as the symbol obscure-name is never used in the forms supplied to nif-buggy9 then there is no possibility for unwanted variable capture. But what happens if obscure-name does appear in forms passed? In many cases, there is still no bug:</p>
+<p><strong>Nif-buggy</strong> 展开成一段代码，用 <strong>let</strong> 绑定计算用户传入的 <strong>expr</strong> 结构的结果。 我们需要这样做，因为计算 <strong>expr</strong> 可能会产生副作用，我们需要将它的值用于两件不同的语句：将其传给 <strong>plusp</strong> 和 <strong>zerop</strong>。 但是这个临时绑定叫什么呢？ 为了引入一个细微的错误，我们选择使用 <strong>obscure-name</strong>。 除非有人看宏展开，否则没人会看到这个变量名，所以没什么大不了的，对吧？</p>
+<p>几乎所有情况下，<strong>Nif-buggy</strong> 都会像 <strong>nif</strong> 一样工作。 只要 <strong>nif-buggy</strong>9 的参数中没有用到符号 <strong>obscure-name</strong>，就不可能有异常捕获变量。 但如果 <strong>obscure-name</strong> 确实出现在参数中会发生什么呢？ 在多数情况下，仍然没有错误：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">nif</span><span class="o">-</span><span class="n">buggy</span>
   <span class="n">x</span>
   <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">obscure</span><span class="o">-</span><span class="n">name</span> <span class="s1">&#39;pos))</span>
@@ -111,7 +111,7 @@
   <span class="s1">&#39;neg)</span>
 </pre></div>
 </div>
-<p>Even if x turns out to be positive, and even though we have injected the forbidden symbol into nif-buggy’s macroexpansion, this code still works as intended. When a new binding is created, and the references inside that binding always refer to the created binding, no unwanted variable capture occurs. The problem only appears when our usage of obscure-name crosses over its use in the expansion. Here is an example of unwanted variable capture:</p>
+<p>即使 <strong>x</strong> 输出的结果是正数，即使将禁止符号注入到 <strong>nif-buggy</strong> 的宏展开中，这段代码仍然可以按预期工作。 当一个新的绑定被创建，并且该绑定内的引用总是引用创建的绑定时，不会发生异常变量捕获。 只有在对 <strong>obscure-name</strong> 的使用超出了其展开中的使用时，才会出现问题。 这是异常变量捕获的示例：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">obscure</span><span class="o">-</span><span class="n">name</span> <span class="s1">&#39;pos))</span>
   <span class="p">(</span><span class="n">nif</span><span class="o">-</span><span class="n">buggy</span>
     <span class="n">x</span>
@@ -120,33 +120,35 @@
     <span class="s1">&#39;neg))</span>
 </pre></div>
 </div>
-<p>In this case, obscure-name will be bound to the result of the evaluation of x, so the symbol pos will not be returned as was intended10. This is because our use of a symbol crossed over an invisible use of a binding. Sometimes code with invisible bindings like this is said to not be referentially transparent.</p>
-<p>But isn’t this just an academic issue? Surely we can think of rare enough names so that the problem never shows up. Yes, in many cases, packages and smart variable naming can solve the problem of variable capture. However, most serious variable capture bugs don’t arise in code directly created by a programmer. Most variable capture problems only surface when other macros use your macro (combine with your macro) in ways you didn’t anticipate. Paul Graham’s has a direct answer for why to protect against unwanted variable capture:</p>
+<p>在这种情况下，<strong>obscure-name</strong> 将绑定到 <strong>x</strong> 的计算结果中，因此符号 <strong>pos</strong> 不会返回预期结果。 这是因为我们对符号的使用跨越了对绑定的无形使用。 有时，像这样具有不可见绑定的代码被称为不具有引用透明性。</p>
+<p>但这不就是一个学术问题吗？ 当然，我们可以想出足够稀有的名字，这样问题就永远不会出现。 是的，在很多情况下，包（packages）和智能变量（smart variable）命名可以解决变量捕获的问题。 但是，多数严重的变量捕获错误不会出现在程序员直接创建的代码中。 大多数变量捕获问题只有在其他宏以未预料到的方式调用宏（与你的宏结合）时才会出现。 Paul Graham’s 对为什么要防止异常变量捕获有个直接的答案：</p>
 <blockquote>
 <div><p>Why write programs with small bugs when you could write programs with no bugs?</p>
 </div></blockquote>
-<p>I think we can distill the issue even further: no matter how subtle, why do something incorrectly when you can do it correctly?</p>
-<p>Luckily, it turns out that variable capture, to the extent that it is a problem, is a solved problem with an easy solution. That last sentence is a controversial statement to many people, especially those who have decided they don’t like the obvious solution and have dedicated large portions of time looking for a better one. As a professional macro programmer you will come into contact with many of these variable capture solutions. The current popular solution is to use so-called hygienic macros11. These solutions try to limit or eliminate the impact of unwanted variable capture but unfortunately do so at the expense of wanted, desirable variable capture. Almost all approaches taken to reducing the impact of variable capture serve only to reduce what you can do with defmacro. Hygienic macros are, in the best of situations, a beginner’s safety guard-rail; in the worst of situations they form an electric fence, trapping their victims in a sanitised, capture-safe prison. Furthermore, recent research has shown that hygienic macro systems like those specified by various Scheme revisions can still be vulnerable to many interesting capture problems[SYNTAX-RULES-INSANE][SYNTAX-RULES-UNHYGIENIC].</p>
-<p>The real solution to variable capture is known as the generated symbol, or gensym for short. A gensym is a way of having lisp pick the name of a variable for us. But instead of picking lame names like obscure-name as we did previously, lisp picks good names. Really good names. These names are so good and unique that there is no way anyone (even gensym itself) will ever pick the same names again. How is this possible? In COMMON LISP, symbols (names) are associated with packages. A package is a collection of symbols from which you can get pointers to by providing strings, their symbol-name strings. The most important property of these pointers (usually just called symbols) is that they will be eq to all other pointers (symbols) that have been looked up in that package with that same symbol-name. A gensym is a symbol that doesn’t exist in any package, so there is no possible symbol-name that will return a symbol eq to it. Gensyms are for when you want to indicate to lisp that some symbol should be eq to some other symbol in an expression without having to name anything at all. Because you aren’t naming anything, name collisions just can’t happen.</p>
-<p>So by following these three simple, very important rules, avoiding unwanted variable capture in COMMON LISP is easy:</p>
+<p>我认为可以进一步提炼这个问题：无论错误有多么微小，在有正确的方法时，为什么要用这种有问题的方法呢？</p>
+<p>幸运的是，事实证明，变量捕获，就这个问题而言，是个有简单方案的已解决的问题。最后一句话对许多人来说是一个有争议的陈述，尤其是那些不喜欢明显的解决方案而花费大量时间寻找更好解决方案的人。作为专业的宏程序员，你将接触到许多这些变量捕获解决方案。当前主流的方法是用所谓的 <strong>卫生宏（hygienic macro)</strong>。这些解决方案试图限制或消除异常变量捕获的影响，但不幸的是，这样做是以牺牲需要的、理想的变量捕获为代价。几乎所有用于减少变量捕获影响的方法都只是为了减少使用 <strong>defmacro</strong> 执行的操作。在最好的情况下，卫生宏是初学者的安全护栏；在最坏的情况下，会变成电栅栏，将受害者困在一个经过消毒的、安全的监狱中。此外，最近的研究表明，各种方案修订版指定的卫生宏系统仍然容易受到许多有趣的捕获问题的影响[SYNTAX-RULES-INSANE][SYNTAX-RULES-UNHYGIENIC]。</p>
+<p>变量捕获的真正解决方法称为生成符号，或简称 gensym。 gensym 是种让 lisp 选择变量名称的方法。但是，lisp 不会像之前那样用 <strong>obscure-name</strong> 这样的蹩脚的名字，而是用个好名字。真正的好名字。这些名字是如此的好和独特，以至于任何人（甚至 gensym 本身）都不会再选择相同的名字。这怎么可能？在 COMMON LISP 中，符号（名称）与包（package）相关联。包是符号的集合，可以用字符串、符号名称字符串从中获取指向的指针。这些指针（通常只称为符号）最重要的属性是它们将与在该包中以相同符号名称查找的所有其他指针（符号）相等。 gensym 是在任何包中都不存在的符号，因此没有符号名称会返回一个与 gensym 相等的符号指针。 Gensyms 用在想向 lisp 指示某个符号应该与表达式中的某个其他符号相等而无需命名任何内容时。因为没有命名任何东西，所以不会发生名称冲突。</p>
+<p>因此，通过遵循这三个简单但很重要的规则，可就能简单地避免在 COMMON LISP 中捕获异常变量：</p>
 <blockquote>
 <div><p>Whenever you wrap a lexical or dynamic binding around code provided to your macro, name this binding with a gensym unless you want to capture it from the code you are wrapping.</p>
 </div></blockquote>
-<p>Whenever you wrap a function binding or a macrolet or symbol-macrolet macro around code provided to your macro, name this function or macro with a gensym unless you want to capture it from the code you are wrapping. Verify that this binding doesn’t conflict with any of the special forms, macros, or functions defined by the standard.</p>
+<p>每当在宏代码的周围封装函数绑定、<strong>macrolet</strong> 或 <strong>symbol-macrolet</strong> 宏时，请使用 gensym 命名此函数或宏，除非你想从封装的代码中捕获它。 确认此绑定与标准定义的任何特殊结构、宏或函数没有冲突。</p>
 <blockquote>
 <div><p>Never assign or re-bind a special form, macro, or function specified by COMMON LISP.</p>
 </div></blockquote>
-<p>Some lisps other than COMMON LISP, like Scheme, have the unfortunate property of combining the variable namespace with the function/macro namespace. Sometimes these lisps are termed lisp-1 lisps, while COMMON LISP, with its separate namespaces, is termed a lisp-2 lisp. With a hypothetical lisp-1 COMMON LISP we would also be obliged to follow these two additional rules when constructing macros:</p>
-<p>Verify that intentionally introduced lexical or dynamic bindings do not collide with intentionally introduced function or macro bindings, or any of the special forms, macros, or functions defined by the standard.</p>
-<p>Verify that intentionally introduced function or macro bindings do not collide with intentionally introduced lexical or dynamic bindings.</p>
-<p>COMMON LISP’s wise design decision to separate the variable namespace from the function namespace eliminates an entire dimension of unwanted variable capture problems. Of course lisp-1 lisps do not suffer any theoretical barrier to macro creation: if we follow the previous two rules, we can avoid variable capture in the same way as we do in COMMON LISP. However, when programming sophisticated macros it can be hard enough to keep track of symbols in a single, isolated namespace. Having any cross-pollination of names to consider just makes macro writing more difficult than it needs to be.</p>
-<p>More so than any other property except possibly its incomplete standard12, it is this defect of a single namespace that makes Scheme, an otherwise excellent language, unfit for serious macro construction13. Richard Gabriel and Kent Pitman summarise the issue with the following memorable quote[LISP2-4LIFE]:</p>
+<p>除了 COMMON LISP 之外的一些 lisp，如 Scheme，具有将变量命名空间与函数/宏命名空间结合起来的糟糕特性。 有时这些 lisp 被称为 <em>lisp-1</em> lisp，而具有独立名称空间的 COMMON LISP 被称为 <em>lisp-2</em> lisp。 使用假设的 <em>lisp-1</em> COMMON LISP，在构造宏时还必须遵循以下两个附加规则：</p>
+<ul class="simple">
+<li><p>确认有意引入的词法或动态绑定不会与有意引入的函数或宏绑定或标准定义的任何特殊结构、宏或函数发生冲突。</p></li>
+<li><p>确认有意引入的函数或宏绑定不会与有意引入的词法或动态绑定发生冲突。</p></li>
+</ul>
+<p>COMMON LISP 将变量命名空间与函数命名空间分开的明智设计决定消除了整个维度的异常变量捕获问题。 当然 <em>lisp-1</em> lisp 在创建宏时不会遇到任何理论上的障碍：如果我们遵循前面的两条规则，我们可以像在 COMMON LISP 中一样避免变量捕获。 但是，在编写复杂的宏时，要在单个隔离的命名空间中跟踪符号可能已经够难的了。 考虑名称的交叉引用只会使宏编写比设想的更困难。</p>
+<p>除了不完整的标准之外，比任何其他属性更重要的是，单一命名空间的这种缺陷使得 Scheme 这种原本优秀的语言不适合正经的宏构造。 Richard Gabriel 和 Kent Pitman 用以下令人难忘的引述[LISP2-4LIFE] 总结了这个问题：</p>
 <blockquote>
 <div><p>There are two ways to look at the arguments regarding macros and namespaces. The first is that a single namespace is of fundamental importance, and therefore macros are problematic. The second is that macros are fundamental, and therefore a single namespace is problematic.</p>
 </div></blockquote>
-<p>Because there is little of less importance than the quantity of namespaces, and little of more importance than the enabling of macros, it can only be concluded that Scheme made the wrong decision and COMMON LISP made the right decision.</p>
-<p>Still, calling gensym every single time we want a nameless symbol is clunky and inconvenient. It is no wonder that the Scheme designers have experimented with so-called hygienic macro systems to avoid having to type gensym all over the place. The wrong turn that Scheme took was to promote a domain specific language for the purpose of macro construction. While Scheme’s mini-language is undeniably powerful, it misses the entire point of macros: macros are great because they are written in lisp, not some dumbed down pre-processor language.</p>
-<p>This book presents a new syntax for gensyms that should be more palatable to the brevity-conscious yet remains a thin film over traditional lisp expressions. Our new notation for gensyms, which we will use as the foundation for most of the macros in this book, is most clearly described by peeling off the layers of a simple macro which uses the features our notation offers. Let’s continue with the nif example from the previous section. Here is how Graham defines a capture-safe nif:</p>
+<p>因为命名空间的数量再怎么重要，也没有比启用宏更重要，所以只能得出结论，Scheme 做出了错误的决定，而 COMMON LISP 做出了正确的决定。</p>
+<p>尽管如此，每次需要一个无名符号时都调用 <strong>gensym</strong> 既笨重又不方便。 难怪 Scheme  设计者决定使用所谓的卫生宏系统，以避免在所有地方输入 <strong>gensym</strong>。 Scheme 采取的错误转变是为了宏构造这一目的而推广一种特定于领域的语言。 虽然 Scheme 的迷你语言毫无疑问很强大，但忽略了宏的全部要点：宏很棒，因为它们是用 lisp 编写的，而不是一些愚蠢的预处理器语言。</p>
+<p>这本书介绍了一种新的 gensyms 语法，更适合那些有简洁意识的人，但仍然是传统 lisp 表达式的薄膜。 我们的新符号 gensyms 将用作本书中大多数宏的基础，通过剥开使用我们符号提供的功能的简单宏来清楚的描述这一语法。 继续上一节中的 <strong>nif</strong> 示例。 以下是 Graham 定义的捕获安全的 <strong>nif</strong>：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro nif (expr pos zero neg)
   (let ((g (gensym)))
     `(let ((,g ,expr))
@@ -155,20 +157,20 @@
              (t ,neg)))))
 </pre></div>
 </div>
-<p>This is how to use gensym correctly. As we saw in the previous section, a macro that can expand user input into something that could interfere with one of its variables must take care against variable capture. Graham presents a macro abbreviation with-gensyms that is somewhat more concise for situations where a number of gensyms need to be created:</p>
+<p>这是 <strong>gensym</strong> 的正确用法。 正如上一节中看到的，可以将用户输入展开为可能干扰其变量之一的宏必须注意变量捕获。 Graham 提出了一个缩写宏 <strong>with-gensyms</strong>，在需要创建多个 <strong>gensyms</strong> 的情况下更加简洁：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="k">with</span><span class="o">-</span><span class="n">gensyms</span> <span class="p">(</span><span class="n">a</span> <span class="n">b</span> <span class="n">c</span><span class="p">)</span>
   <span class="o">...</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Expands into</p>
+<p>展开成</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">a</span> <span class="p">(</span><span class="n">gensym</span><span class="p">))</span>
       <span class="p">(</span><span class="n">b</span> <span class="p">(</span><span class="n">gensym</span><span class="p">))</span>
       <span class="p">(</span><span class="n">c</span> <span class="p">(</span><span class="n">gensym</span><span class="p">)))</span>
   <span class="o">...</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Because needing gensyms in a defmacro form is so common, we decide to pursue the abbreviation further. In particular, notice that we have to type the temporary name for each of the gensyms (like a, b, and c) at least twice: once when we declare it a gensym and again when we use it. Can we eliminate this redundancy?</p>
-<p>First, consider how the nif macro uses gensyms. When the nif macro is expanded, it calls gensym which returns a generated symbol. Because this symbol is guaranteed to be unique, we can safely splice it into a macro expansion knowing that it will never capture any unintended references. But we still need to name this gensym in the definition of the macro so we are able to splice it into the expansion in the right places. Graham, for the scope of the nif macro definition, names this gensym g. Notice that this name never actually appears in the macro expansion of nif:</p>
+<p>因为在 <strong>defmacro</strong> 结构中需要 <strong>gensym</strong> 非常普遍，我们决定进一步改写缩写。 特别要注意的是，我们必须为每个 <strong>gensym</strong>（如 <strong>a</strong>、<strong>b</strong> 和 <strong>c</strong>）输入至少两次的临时名称：一次是声明它为 <strong>gensym</strong>，另一次是调用它时。 那么可以消除这种冗余吗？</p>
+<p>首先，想想 <strong>nif</strong> 宏如何使用 <strong>gensyms</strong>。 当 <strong>nif</strong> 宏展开时，会调用 <strong>gensym</strong> 返回一个生成的符号。 因为这个符号保证是唯一的，所以可以安全地将它拼接到一个宏展开中，因为这个符号知道它永远不会捕获意外引用。 但是仍需要在宏的定义中命名这个 <strong>gensym</strong>，以便能够将它拼接到正确位置的展开中。 对于 <strong>nif</strong> 宏定义的范围，Graham 将这个 <strong>gensym</strong> 命名为 <strong>g</strong>。 注意，此名称实际上从未出现在 <strong>nif</strong> 的宏展开中：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">macroexpand</span> <span class="s1">&#39;(nif x &#39;</span><span class="n">pos</span> <span class="s1">&#39;zero &#39;</span><span class="n">neg</span><span class="p">))</span>
 
 <span class="p">(</span><span class="n">LET</span> <span class="p">((</span><span class="c1">#:G1605 X))</span>
@@ -178,8 +180,8 @@
 <span class="n">T</span>
 </pre></div>
 </div>
-<p>The name g disappears in the macro expansion. Because g was only bound in our expander environment, the name given to such a variable is irrelevant with respect to capture in the expansions. All occurrences of g have, in the expansion, been replaced by a symbol with a print name of G1605. It is prefixed by #: because the symbol is not interned in any package—it is a gensym. When printing out forms, it is necessary to prefix gensyms in such a way because we want lisp to break if we ever use (evaluate) this form after reading it back in again. We want lisp to break because we can’t know by looking at the print names of two gensyms if they should be eq or not—that is their purpose. Lisp breaks in an interesting way: because each time a #: symbol is read in a new symbol is created, and because (eq ‘#:a ‘#:a) is never true, the inner #:G1605 symbols in the above expansion do not refer to the binding created by the let form so lisp considers the expression to have a free variable, indicating to us that a form with gensyms was read back in again.</p>
-<p>Despite the default printing behaviour for such uninterned symbols, it is still possible to save and reload macro expansions. For a more accurate printed representation of a form with gensyms, we can turn on <em>print-circle</em> mode when we print the results14:</p>
+<p>变量名 <strong>g</strong> 在宏展开中消失了。因为 <strong>g</strong> 只绑定在展开环境中，所以给这样一个变量的名称与展开中的捕获无关。在展开中，所有出现的 <strong>g</strong> 都被替换为打印名称为 <strong>G1605</strong> 的符号。以 <strong>#:</strong> 为前缀，因为该符号未在任何包中进行驻留——它是一个 gensym。打印结构时，有必要以这种方式为 gensyms 添加前缀，因为如果在再次读回该结构后使用（计算）该结构，我们希望 lisp 会中断。希望 lisp 中断，是因为我们无法通过查看两个 gensym 的打印名称来确定它们是否相等——这就是它们的目的。 Lisp 以一种有趣的方式中断：因为每次读取 <strong>#:</strong> 符号时都会创建一个新符号，并且因为 <strong>(eq ‘#:a ‘#:a)</strong> 永远不为真，所以上述展开中的内部 <strong>#:G1605</strong> 符号不会引用 let 结构创建的绑定，所以 lisp 认为表达式有一个自由变量，向我们表明一个带有 gensyms 的结构被再次读入。</p>
+<p>尽管此类非内部符号的默认打印行为，仍然可以保存和重新加载宏展开。 为了更准确地打印带有 gensyms 的结构，可以在打印结果时打开 <em>print-circle</em> 模式：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="o">*</span><span class="nb">print</span><span class="o">-</span><span class="n">circle</span><span class="o">*</span> <span class="n">t</span><span class="p">))</span>
     <span class="p">(</span><span class="nb">print</span>
       <span class="p">(</span><span class="n">macroexpand</span> <span class="s1">&#39;(nif x &#39;</span><span class="n">pos</span> <span class="s1">&#39;zero &#39;</span><span class="n">neg</span><span class="p">)))</span>
@@ -192,7 +194,7 @@
 <span class="n">T</span>
 </pre></div>
 </div>
-<p>In the above form, the lisp printer uses the #= and ## read macros. These read macros allow us to create self-referential forms which we will discuss in more depth in section 4.5, Cyclic Expressions. If we read in the above form, the symbols used inside will actually be the same as the symbol used in the let binding and the expansion will still work. It seems as though the above definition has avoided the dual-naming redundancy. Is there a way we can pull this back up into a macro writing macro template?</p>
+<p>在上面的代码中，lisp 输出使用 <strong>#=</strong> 和 <strong>##</strong> 读取宏。 这些读取宏可以让我们创建自引用结构，这将在<a class="reference internal" href="../Chapter04/4.5-cyclic-expressions.html"><span class="doc std std-doc">4.5 节：循环表达式</span></a>中深入地讨论。 如果我们阅读上面的代码，里面使用的符号实际上与 <strong>let</strong> 绑定中使用的符号相同，展开仍然有效。 似乎上述定义避免了双重命名冗余。 有没有办法可以让其使用一个宏编写宏模板？</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defun g!-symbol-p (s)
   (and (symbolp s)
        (&gt; (length (symbol-name s)) 2)
@@ -202,7 +204,7 @@
                 :end1 2)))
 </pre></div>
 </div>
-<p>Remember that we can name our gensyms anything in the macro definition, even, as Graham does, simple names like g, and they will disappear in the macro expansion. Because of this freedom in naming, let’s standardise on a naming convention for gensyms. As a compromise between brevity and uniqueness, any symbol that starts with the two characters G!, and is followed by at least one other character is considered to be a special gensym referencing symbol called a G-bang symbol. We define a predicate, g!-symbol-p, which is a predicate for determining whether a given atom is a G-bang symbol.</p>
+<p>记住，我们可以在宏定义中给 gensyms 任意的名字，甚至像 Graham 所做的那样，像 <strong>g</strong> 这样的简单名称，它们将在宏展开中消失。 由于命名自由，让我们对 gensyms 的命名约定进行标准化。 作为简洁性和唯一性之间的折衷，任何以两个字符 G! 开头且后面跟至少一个其他字符的符号都被认为是一种特殊的 gensym 引用符号，称为 G-bang 符号。 我们定义了一个谓词 <strong>g!-symbol-p</strong>，一个用于确定给定原子是否是 G-bang 符号的谓词。</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro defmacro/g! (name args &amp;rest body)
   (let ((syms (remove-duplicates
                 (remove-if-not #&#39;g!-symbol-p
@@ -217,13 +219,15 @@
          ,@body))))
 </pre></div>
 </div>
-<p>Now that we have G-bang symbols standardised, we can create a macro that writes macro definitions for us and exploits a macro writing shortcut known as automatic gensyms. The macro defmacro/g! defines a domain specific language for the domain of macro writing, but manages to retain all of lisp’s power. Defmacro/g! is simple, but how to use it, and how it works, may be non-obvious. Because of this, and because this is one of the first real macros we’ve presented in this book, we take the analysis of defmacro/g! slowly.</p>
-<p>When dissecting any macro, the first step is to stop. Don’t think of a macro as a syntax transformation or any other such nonsense abstraction. Think of a macro as a function. A macro is a function underneath, and works in the exact same way. The function is given the unevaluated expressions provided to it as arguments and is expected to return code for lisp to insert into other expressions.</p>
-<p>So, thinking about defmacro/g! as a function, consider its execution. Because we are programming a regular lisp function, we have access to all of lisp’s features, even utilities we’ve since added to the language. In defmacro/g!, we use Graham’s flatten utility, lisp’s remove-if-not and remove-duplicates functions, and our G-bang symbol predicate g!-symbol-p to create a new list consisting of all the G-bang symbols found inside the body form that was passed to our macro. Next, we use a backquote template to return a list representing the code we would like the macro to expand into. In our case, because we’re writing an improvement to defmacro, we would like our code to expand to a defmacro form itself. But we are adding new convenience features to the defmacro language and want to create a slightly more sophisticated expansion. In order to give each G-bang symbol found in the macro’s body a fresh gensym, we use mapcar to map a function over the list of collected G-bang symbols, creating a new list that can be spliced into the let form, establishing bindings for each gensym15.</p>
-<p>Notice how the lambda that we map contains an expression created with the backquote operator, resulting in what appears to be—but is not—a nested backquote situation. Because the mapcar that applies this function is unquoted, the unquoted expressions in the nested backquote are still evaluated in our original context. Nested backquotes are notoriously difficult to understand and we will return to this concept when we look at backquote in more depth in chapter 4, Read Macros.</p>
-<p>So what, exactly, does defmacro/g! let us do? It lets us exploit this technique of automatic gensyms, a way of checking for the presence of particular symbols in the lexical scope of code provided to the macro16. If we don’t use any G-bang symbols, we can use defmacro/g! exactly like defmacro. But any G-bang symbols that occur in the body of the macro expansion are interpreted to mean:</p>
-<p>I want a gensym to be bound around this expression, and I’ve already given the symbol. Make it happen.</p>
-<p>We can use this to save having to explicitly create a gensym in this re-definition of nif:</p>
+<p>现在我们已经标准化 G-bang 符号，可以创建一个宏来编写宏的定义并利宏编写叫做自动 gensyms 的快捷方式。 宏 <strong>defmacro/g!</strong> 为宏编写领域定义了一种特定于领域的语言，但保留了 lisp 的所有功能。 <strong>defmacro/g!</strong> 很简单，但是如何使用它以及它是如何工作的，并不是那么简单。 正因为如此，且因为这是本书中介绍的第一个真正的宏之一，我们慢慢地对 <strong>defmacro/g!</strong> 进行了分析。</p>
+<p>剖析宏时，第一步就是是停止。 不要将宏视为语法转换或任何其他此类无意义的抽象。 把宏想象成一个函数。 宏本质是函数，并且以完全相同的方式工作。 该函数被赋予作为参数提供给它的未计算表达式，并期望返回代码以供 lisp 插入到其他表达式中。</p>
+<p>所以，将 <strong>defmacro/g!</strong> 看作一个函数，考虑它的执行。因为我们正在编写一个常规的 lisp 函数，所以可以访问 lisp 的所有功能，甚至是之后添加到该语言中的实用程序。在 <strong>defmacro/g!</strong> 中，我们使用 Graham 的 <strong>flatten</strong> 实用程序、lisp 的 <strong>remove-if-not</strong> 和 <strong>remove-duplicates</strong> 函数以及 G-bang 符号谓词 <strong>g!-symbol-p</strong> 创建一个列表，该列表是由 <strong>body</strong>参数中所有的 G-bang 组成。接下来，使用反引号模板返回一个列表，该列表代表期望宏展开成的代码。在示例中，因为我们正在编写对 <strong>defmacro</strong> 的改进，我们希望我们的代码能够展开为 <strong>defmacro</strong> 结构本身。但是我们正在为 <strong>defmacro</strong> 语言添加新的便利功能，并希望创建一个稍微复杂的展开。为了给宏主体中找到的每个 G-bang 符号一个新的 <strong>gensym</strong>，我们用 <strong>mapcar</strong> 将一个函数应用到 G-bang 符号列表上，创建一个可以拼接到 <strong>let</strong> 结构的新列表，建立每个 <strong>gensym</strong> 的绑定。</p>
+<p>注意，映射的 lambda 如何包含使用反引号运算符创建的表达式，从而导致看似（但不是）嵌套反引号的情况。 因为应用这个函数的 <strong>mapcar</strong> 是不带引号的，所以嵌套反引号中的不带引号的表达式仍然在我们原来的上下文中求值。 众所周知，嵌套反引号很难理解，在<a class="reference internal" href="../Chapter04/index.html"><span class="doc std std-doc">第 4 章：阅读宏</span></a>中深入地研究反引号时，我们将回到这个概念。</p>
+<p>那么，<strong>defmacro/g!</strong>  到底可以让我们做什么？ 我们可以利用这种自动生成符号技术，一种检查宏的参数的词法范围内特定符号是否存在的方法。 如果我们不使用任何 G-bang 符号，使用 <strong>defmacro/g!</strong> 和 <strong>defmacro</strong> 完全一样。 但对出现在宏展开式主体中的任何 G-bang 符号都被解释为：</p>
+<blockquote>
+<div><p>我希望在这个表达式周围绑定一个 gensym，我已经给出了这个符号。 实现它。</p>
+</div></blockquote>
+<p>可以用 **defmacro/g!**在重新定义 <strong>nif</strong> 时避免显式创建 <strong>gensym</strong>：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro/g! nif (expr pos zero neg)
   `(let ((,g!result ,expr))
      (cond ((plusp ,g!result) ,pos)
@@ -231,8 +235,8 @@
             (t ,neg))))
 </pre></div>
 </div>
-<p>When we want to use a gensym we just use it. We need to be careful, of course, that all references to G-bang symbols are only evaluated by the macro expansion because that is the only place where the gensym will be bound17. Unquoting the G-bang symbols that occur inside a backquote, like above, is the most obvious way to do this, and we can see the direct parallel to the unquoting of the symbol g in Graham’s original definition of nif.</p>
-<p>So we have defined a macro nif that appears to function the same as Graham’s, but this improvement almost seems too good to be true. Does it really work? Let’s look at the macro expansion18 before we decide:</p>
+<p>当需要 <strong>gensym</strong> 时，直接就使用它。 当然，我们需要小心，所有对 G-bang 符号的引用仅由宏展开计算，因为这是 <strong>gensym</strong> 将被绑定的唯一位置。 像上面那样取消引用出现在反引号内的 G-bang 符号是最明显的方法，可以看到这与 Graham 的 <strong>nif</strong> 原始定义中符号 <strong>g</strong> 的取消引用直接平行。</p>
+<p>现在，我们定义了宏 <strong>nif</strong>，其的功能与 Graham 的相同，但这种改进似乎好得令人难以置信。 它真的有效吗？ 在做出决定之前，看一下宏展开：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* (macroexpand-1
     &#39;(defmacro/g! nif (expr pos zero neg)
        `(let ((,g!result ,expr))
@@ -249,25 +253,25 @@
 T
 </pre></div>
 </div>
-<p>It seems that defmacro/g! wrote essentially the same code that Graham did when he wrote the original version of nif. Seeing this example use of defmacro/g!, we see that no non-gensym bindings will be created in its expansions. Nif, defined with defmacro/g! like this, is free from variable capture problems.</p>
-<p>But since defmacro/g! is a macro itself, is it possible that there could be unwanted capture or substitution problems in the macro expansion environment? As with any sufficiently complex abstraction, the behaviour is, to an extent, arbitrary. In the same sense that variable capture itself is a flaw, certain properties of defmacro/g! that might appear to be flaws could simply be inherent to its design19. As always, the best solution is to understand the abstraction completely.</p>
-<p>An interesting corner-case of defmacro/g! is in G-bang macro defining G-bang macros. All defmacro/g! does is introduce a set of bindings into the expansion environment, each of which is bound to a gensym that the macro can use, if it wants. In cases where there are multiple possibilities of where the gensym could be bound, they are always distinguishable because of context. In other words, you can always specify which environment’s gensym should be used based on which environment you evaluate it in. Take this contrived example:</p>
+<p>但因为 <strong>defmacro/g!</strong> 本身也是个宏，宏展开环境中是否可能存在异常捕获或替换问题？ 与复杂的抽象一样，行为在一定程度上是任意的。 在同样的意义上，变量捕获本身就是一个缺陷，<strong>defmacro/g!</strong> 的某些属性可能看起来是缺陷，可能只是其设计固有的。 与往常一样，最好的解决方案是完全理解抽象。</p>
+<p>但因为 <strong>defmacro/g!</strong> 本身也是个宏，宏展开环境中是否可能存在异常捕获或替换问题？ 与复杂的抽象一样，行为在一定程度上是任意的。 在同样的意义上，变量捕获本身就是一个缺陷，<strong>defmacro/g!</strong> 的某些属性可能看起来是缺陷，可能只是其设计固有的。 与往常一样，最好的解决方案是完全理解抽象。</p>
+<p><strong>defmacro/g!</strong> 的一个有趣的极端案例是在 G-bang 宏中定义 G-bang 宏。 <strong>defmacro/g!</strong> 所做的是将一组绑定引入展开环境，如果需要，每个绑定都绑定到宏可以使用的 <strong>gensym</strong>。 在有多种可能绑定 gensym 的情况下，因为有上下文，它们总是可以区分的。 换句话说，始终可以根据处在的环境中计算它来指定应该使用哪个环境的 <strong>gensym</strong>。看下以下一个认为制造的示例：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defmacro/g! junk-outer ()
   `(defmacro/g! junk-inner ()
      `(let ((,g!abc))
         ,g!abc)))
 </pre></div>
 </div>
-<p>Here there are two gensyms created. The uses of g!abc are preceded by only one unquote (comma) so we know that the expansion refers to the inner gensym created by the expansion of junk-inner. If each had instead two unquotes, they would refer to the outer gensym created by the expansion of junk-outer.</p>
-<p>Defmacro/g! uses Graham’s flatten function. Flatten, as described in section 1.3, The Lisp Utility, takes a tree cons structure—our lisp code—and returns a new list of all the leaves/atoms. The use of flatten in defmacro/g! is a simple example of code-walking, a topic we will revisit throughout this book.</p>
-<p>Exercise: In the above G-bang macro defining G-bang macro, what would be the problem if the first gensym was prefixed with one unquote and the other was prefixed with two?</p>
+<p>这里创建了两个 gensyms。 <strong>g!abc</strong> 的用法前面只有一个非引号（逗号），因此我们知道展开是指由 <strong>junk-inner</strong> 展开创建的内部 <strong>gensym</strong>。 如果每个都有两个非引号，它们将引用由 <strong>junk-outer</strong> 展开创建的外部 <strong>gensym</strong>。</p>
+<p><strong>defmacro/g!</strong> 用了 Graham 的 <strong>flatten</strong> 函数。 <strong>Flatten</strong>，如第 1.3 节所述，Lisp 实用程序，接收一个 cons 树结构——我们的 lisp 代码——并返回所有叶子/原子的新列表。 **defmacro/g!**中 <strong>flatten</strong>的使用是代码遍历的一个简单示例，我们之后将在本书中重新讨论遍历代码这一主题。</p>
+<p>练习：在上面定义 G-bang 宏的 G-bang 宏中，如果第一个 gensym 前面有一个反引号（逗号），而另一个前面有两个反引号（两个逗号），会出现什么问题？</p>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="3.4-free-variables.html" class="btn btn-neutral float-left" title="3.4 Free Variables" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="3.4-free-variables.html" class="btn btn-neutral float-left" title="3.4 自由变量" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="3.6-once-only.html" class="btn btn-neutral float-right" title="3.6 Once Only" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
