@@ -1,4 +1,4 @@
-# 3.1 Iterative Development
+# 3.1 迭代开发
 ---
 
 Author: Doug Hoyte <[doug@hoytech.com](mailto:doug@hoytech.com)>
@@ -7,17 +7,12 @@ Translator: Yuqi Liu <[yuqi.lyle@outlook.com](mailto:yuqi.lyle@outlook.com)>
 
 ---
 
-
-
 > _Lisp has assisted a number of our most gifted fellow humans in thinking_
 > _previously impossible thoughts. —Edsger Dijkstra_
 
 
+宏的构建是个迭代的过程：所有复杂的宏都来自简单的宏。 从一个想法开始后，可以创建一个粗略的实现，最终的宏尤其演变而成，就像雕塑来自石头一样。 如果粗略的实现不够灵活，或导致低效或危险的展开，专业的宏程序员会稍微修改宏，添加功能或删除错误，直到满足所有要求。
 
-The construction of a macro is an iterative process: all complex macros come from simpler macros. After starting with an idea, a rough implementation can be created from which the ultimate macro will emerge, like a sculpture from a block of stone. If the rough implementation isn't flexible enough, or results in inefficient or dangerous expansions, the professional macro programmer will slightly modify the macro, adding features or removing bugs until it satisfies all requirements.
+宏构造的这种迭代过程的必要性部分是因为这是一般最有效的编程风格，部分是因为宏编程比其他类型的编程更复杂。 因为宏编程要求程序员考虑在多个时间点执行的多个级别的代码，所以复杂性问题比其他类型的编程更迅速地扩展。 与在没有这种持续反馈的情况下编写整个宏相比，迭代过程有利于确保概念模型更接近于实际创建的内容。
 
-
-The necessity of this iterative process for macro construction is partly because this is the most efficient programming style in general and partly because programming macros is more complicated than other types of programming. Because macro programming requires the programmer to think about multiple levels of code executed at multiple points in time, the complexity issues scale more rapidly than other types of programming. An iterative process helps ensure that your conceptual model is more closely aligned to what is actually being created than if the entire macro was written without this constant feedback.
-
-
-In this chapter we will write some basic macros by introducing two common macro concepts: _domain specific languages_ and _control structures_. Once these general macro areas are described, we take a step back and discuss the process of writing macros itself. Techniques like variable capture and free variable injection are introduced, along with the definition of a new, slightly more convenient syntax for defining lisp macros that is used throughout the remainder of this book.
+在本章中，我们将通过介绍两个常见的宏概念来编写一些基本的宏：领域特定语言和控制结构。 一旦讲清了这些通用宏概念，就回到讨论编写宏本身的过程。 然后将介绍异常捕获和自由变量注入等技术，以及用于定义 lisp 宏的新语法的定义，该语法将在本书的其余部分中使用。

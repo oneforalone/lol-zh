@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2.3 词法作用域与动态作用域 &mdash; Let Over Lambda 中文文档  文档</title>
+  <title>2.3 词法作用域与动态作用域 &mdash; Let Over Lambda 中文文档  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -15,10 +15,9 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/translations.js"></script>
     <script src="../_static/js/theme.js"></script>
-    <link rel="index" title="索引" href="../genindex.html" />
-    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="2.5 Let Over Lambda" href="2.5-let-over-lambda.html" />
     <link rel="prev" title="2.2 环境及拓展" href="2.2-environments-and-extent.html" /> 
 </head>
@@ -32,7 +31,7 @@
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -75,7 +74,7 @@
           <li><a href="index.html">第二章：闭包</a> &raquo;</li>
       <li>2.3 词法作用域与动态作用域</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/Chapter02/2.3-lexical-and-dynamic-scope.md.txt" rel="nofollow"> 查看页面源码</a>
+            <a href="../_sources/Chapter02/2.3-lexical-and-dynamic-scope.md.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -83,8 +82,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section class="tex2jax_ignore mathjax_ignore" id="id1">
-<h1>2.3 词法作用域与动态作用域<a class="headerlink" href="#id1" title="永久链接至标题"></a></h1>
+  <section id="id1">
+<h1>2.3 词法作用域与动态作用域<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h1>
 <hr class="docutils" />
 <p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
@@ -115,7 +114,7 @@
 </div>
 <p>词法作用域是闭包的基础。实际上，词法作用域通常被更具体的叫做词法闭包，用来区分于别的闭包，就是因为这两者定义很相近。除特别注明外，书中所说的都是词法闭包。
 ​</p>
-<p>除词法作用域外，COMMON LISP还有动态作用域。动态作用域是 lisp 方言中临时作用域和全局作用域的组合。这是lisp特有的作用域类型，因为它与词法作用域的语法相同，但表现方式却不一样。在COMMON LISP中，我们特意将动态作用域中的变量叫做特殊变量。这些特殊的变量可以用 <code class="docutils literal notranslate"><span class="pre">defvar</span></code>定义。一些程序员遵循用星号作为前缀和后缀的特殊变量名的惯例，比如 ** <em>temp-special</em> **​ 。这种命名方法有些掩耳盗铃。基于<a class="reference internal" href="../Chapter03/3.7-duality-of-syntax.html"><span class="doc std std-doc">3.7节：Dulity of Syntax</span></a>中阐述的原因，本书不会采用这种掩耳盗铃的命名方法，因此特殊变量声明如下:</p>
+<p>除词法作用域外，COMMON LISP还有动态作用域。动态作用域是 lisp 方言中临时作用域和全局作用域的组合。这是lisp特有的作用域类型，因为它与词法作用域的语法相同，但表现方式却不一样。在COMMON LISP中，我们特意将动态作用域中的变量叫做特殊变量。这些特殊的变量可以用 <code class="docutils literal notranslate"><span class="pre">defvar</span></code>定义。一些程序员遵循用星号作为前缀和后缀的特殊变量名的惯例，比如 ** <em>temp-special</em> **​ 。这种命名方法有些掩耳盗铃。基于<a class="reference internal" href="../Chapter03/3.7-duality-of-syntax.html"><span class="doc std std-doc">3.7节：语法二义性</span></a>中阐述的原因，本书不会采用这种掩耳盗铃的命名方法，因此特殊变量声明如下:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defvar</span> <span class="n">temp</span><span class="o">-</span><span class="n">special</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -154,7 +153,7 @@
 </pre></div>
 </div>
 <p>虽然词法绑定的内存位置或寄存器分配在编译时是已知的（这也是词法作用域有时也被叫做静态作用域的原因），但在某种意义上，全局变量绑定是在运行时确定的。由于一个巧妙的技巧，全局变量并不是看起来那么低效。全局变量实际上总是指向内存中的相同位置。在用<strong>let</strong>绑定全局变量时，实际上是在编译代码，这些代码将存储变量的副本，用一个新值覆盖内存位置，在<strong>let</strong>​主体中对表单求值，最后从副本中恢复原始值。</p>
-<p>全局变量总是与命名的符号相关联。全局变量指向的内存中的位置被叫做符号的“符号值”单元格。这与词法变量形成了直接的对比。词法变量仅在编译时用符号表示。因为词法变量只能从其绑定的词法范围内访问，所以编译器甚至没有理由记住用来引用词法变量的符号，因此编译器会在编译后的代码中删除这些符号。我们将在<a class="reference internal" href="../Chapter06/6.7-pandoric-macros.html"><span class="doc std std-doc">第6.7节：Pandoric Macros</span></a>中来详细的证明这一点。</p>
+<p>全局变量总是与命名的符号相关联。全局变量指向的内存中的位置被叫做符号的“符号值”单元格。这与词法变量形成了直接的对比。词法变量仅在编译时用符号表示。因为词法变量只能从其绑定的词法范围内访问，所以编译器甚至没有理由记住用来引用词法变量的符号，因此编译器会在编译后的代码中删除这些符号。我们将在<a class="reference internal" href="../Chapter06/6.7-pandoric-macros.html"><span class="doc std std-doc">第6.7节：潘多拉宏</span></a>中来详细的证明这一点。</p>
 <p>COMMON LISP的确是提供了动态范围的宝贵特性，但是词法变量是最常见的。动态作用域曾经是lisp中定义的特性，但在 Common Lisp之后，动态作用域几乎完全被词法作用域取代。因为词法作用域支持词法闭包(稍后我们将对此进行讨论)以及更有效的编译器优化，所以动态作用域的取代通常被视为一件好事。然而，COMMON LISP的设计者给我们留下了一个非常透明的窗口，让我们可以看到动态范围的世界，现在我们知道动态范围的真正含义：特殊。</p>
 </section>
 
@@ -162,19 +161,19 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="2.2-environments-and-extent.html" class="btn btn-neutral float-left" title="2.2 环境及拓展" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-        <a href="2.5-let-over-lambda.html" class="btn btn-neutral float-right" title="2.5 Let Over Lambda" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="2.2-environments-and-extent.html" class="btn btn-neutral float-left" title="2.2 环境及拓展" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="2.5-let-over-lambda.html" class="btn btn-neutral float-right" title="2.5 Let Over Lambda" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
+    <p>&#169; Copyright 2021-2022, Yuqi Liu, Xuting Yang.</p>
   </div>
 
-  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
-    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
    
 
 </footer>

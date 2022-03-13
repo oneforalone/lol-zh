@@ -1,4 +1,4 @@
-# 3.3 Control Structures
+# 3.3 控制结构
 
 ---
 
@@ -8,17 +8,16 @@ Translator: Yuqi Liu <[yuqi.lyle@outlook.com](mailto:yuqi.lyle@outlook.com)>
 
 ---
 
-Although this book is focused on COMMON LISP, it is written for and about the Scheme programming language as well. Scheme is a wonderful language that, although lacking many features lisp programmers take for granted, still offers a flexible enough core for the professional lisp programmer to extend as necessary[2](https://letoverlambda.com/index.cl/guest/chap3.html#). Similarly, there are a few features Scheme programmers rely on heavily that COMMON LISP doesn't specifically address. But comparisons between the features offered by each language are, with a few exceptions, meaningless. The gaps between the two languages can be, and frequently are, bridged. The bridges we use to cross between the two languages are, of course, macros.
+虽然这本书的重点是 COMMON LISP，但它也是为 Scheme 编程语言编写的，同时也是关于 Scheme 编程语言的。 Scheme 是一门很棒的语言，尽管缺少 lisp 程序员习以为常的特性，但它仍然为专业 lisp 程序员提供了足够灵活的核心，可以按需扩展[2](https://letoverlambda.com/index.cl/guest/chap3.html#)。 同样，Scheme 程序员严重依赖的一些 COMMON LISP 没有专门解决的特性。 但是，除了少数例外，每种语言提供的功能之间的比较是没有意义的。 两种语言之间的鸿沟可以且经常被弥合。 用来连接两种语言的桥梁当然是——宏。
 
-
-Scheme's **let** form is in one respect more powerful than its COMMON LISP counterpart. Scheme's **let** form supports something called a _named let_. In Scheme, you can optionally insert a symbol before the bind list of a **let** form and Scheme will bind a function named by the provided symbol around the let body[3](https://letoverlambda.com/index.cl/guest/chap3.html#). This function accepts new arguments for the values provided in the **let** bindings, providing a very convenient way to express loops.
+Scheme 的 **let** 结构 在某一方面比 COMMON LISP 对应的结构要更强大。 Scheme 的 let 结构支持一种*命名的 let（named let）* 。在 Scheme 中，可以在 let 结构的绑定列表之前插入一个符号，Scheme 将在 **let** 主体[3](https://letoverlambda.com/index.cl/guest/chap3.html#)周围绑定一个由提供的符号命名的函数。 此函数接受 **let** 绑定中提供的值的新参数，提供了一种非常方便的方式来表示循环。
 ```
 (defmacro nlet (n letargs &rest body)
   `(labels ((,n ,(mapcar #'car letargs)
               ,@body))
      (,n ,@(mapcar #'cadr letargs))))
 ```
-Luckily we can build a bridge between Scheme and COMMON LISP with the **nlet** macro. **Nlet** lets us code in a Scheme style by emulating Scheme's named lets. In **nlet-fact**, **nlet** is used to define the factorial function by using a named let:
+幸运的是，我们可以用 **nlet** 宏在 Scheme 和 COMMON LISP 之间架起一座桥梁。 **Nlet** 通过模拟 Scheme 的命名然后以 Scheme 风格进行编码。 在 **nlet-fact** 中，**nlet** 用于通过使用命名的 let 来定义阶乘函数：
 ```
 (defun nlet-fact (n)
   (nlet fact ((n n))
@@ -26,7 +25,7 @@ Luckily we can build a bridge between Scheme and COMMON LISP with the **nlet** m
       1
       (* n (fact (- n 1))))))
 ```
-Because **nlet** is one of our first macros, let's slow down and analyse it in depth. Sometimes to understand a macro it helps to _macroexpand_ an example use of this macro[4](https://letoverlambda.com/index.cl/guest/chap3.html#). To do that, provide a list representing this macro invocation to the **macroexpand** function. Notice that **macroexpand** will only expand macros that have their symbols in the first element of the list and will not expand nested macro invocations for you[5](https://letoverlambda.com/index.cl/guest/chap3.html#). In the following, we've copied an invocation of **nlet** directly from **nlet-fact**, quoted it, and passed it to **macroexpand**:
+因为 **nlet** 是我们的第一个宏，先放慢一下脚步，深入分析一下。 有时为了理解一个宏，展开一个宏[4](https://letoverlambda.com/index.cl/guest/chap3.html#)的使用示例会有所帮助。 为此，向 **macroexpand** 函数提供一个表示此宏调用的列表。 注意，**macroexpand** 只会展开其符号位于列表第一个元素中的宏，并且不会展开嵌套的宏调用[5](https://letoverlambda.com/index.cl/guest/chap3.html#)。 在下文中，我们直接从 **nlet-fact** 复制一个 **nlet** 调用，引用它，并将它传给 **macroexpand** 宏：
 ```
 * (macroexpand
     '(nlet fact ((n n))
@@ -41,19 +40,14 @@ Because **nlet** is one of our first macros, let's slow down and analyse it in d
   (FACT N))
 T
 ```
-The expansion uses the **labels** special form to bind a function around the provided body. The function is named according to the symbol used in the named let form. It takes as arguments the values bound with **nlet**, here only **n**. Since this function can be recursive, **nlet** implements a useful iteration construct.
+上面的展开中使用 **labels** 特殊结构在给定的主体周围绑定一个函数。 该函数根据命名 let 结构中使用的符号命名。 它将与 **nlet** 绑定的值作为参数，这里只有 **n**。 由于这个函数可以是递归的，所以 **nlet** 实现了一个有用的迭代构造。
 
+尽管简单的宏可能只是填充反引号模板，但大多数复杂的宏至少会使用 lisp 的扩展列表处理功能。 **Mapcar** 将函数应用于列表中的每个元素并返回结果值列表，在宏中尤其常见。 令人注意的是，**mapcar** 也经常出现在常规的 lisp 代码中。 Lisp 已被调整为尽量处理列表。 在各种 lisp 编程中，包括宏构造，拼接、合并、归约、映射和过滤列表。 唯一的区别是在编写宏时，输出随后被传递给编译器或解释器。 在 lisp 中编写宏实际上与编写常规 lisp 的过程相同。
 
-Although simple macros might just be filling out backquote templates, most complicated macros at minimum make use of lisp's extensive list processing functions. **Mapcar**, applying a function to every element in a list and returning a list of the resulting values, turns up especially often in macros. Tellingly, **mapcar** turns up often in regular lisp code as well. Lisp has been tuned to be as useful as possible for processing lists. In all kinds of lisp programming, including macro construction, we splice, merge, reduce, map, and filter lists. The only difference is that when programming macros, the output subsequently gets passed to a compiler or interpreter. Programming macros in lisp is actually the same process as programming regular lisp.
+但是说 **nlet** 是一种新的控制结构是什么意思呢？ 控制结构只是描述一些不遵循函数行为构造的一种奇特方式。 函数将从左到右计算执行每个参数，将结果绑定到环境中，并执行由某种 **lambda** 结构指定的机器代码。 由于 **nlet** 不直接计算执行参数，而是将参数拼接到 lisp 代码中，我们改变了 **nlet** 结构的计算执行流程，从而创建了一个新的控制结构。
 
+通过这个宽泛的定义，几乎所有的宏——至少有趣的宏——都定义了新的控制结构。 当别人说“只在函数不做的时候使用宏”时，他们的意思是对于任何不想计算某些参数的定义，或者想无序地计算它们，或者不止一次，你需要使用宏。 函数，无论编写得多么巧妙，都无法正常工作。
 
-But what does it mean to say that **nlet** is a new control structure? A control structure is just a fancy way of describing some construct that doesn't follow the behaviour of a function. A function will evaluate each argument from left to right, bind the results in an environment, and execute machine code specified by some **lambda** form. Since **nlet** doesn't evaluate its arguments directly, instead splicing them into some chunk of lisp code, we have changed the flow of evaluation for **nlet** forms and thus have created a new control structure.
+**nlet** 宏演示了 COMMON LISP 是为宏编写者设计的一种方式。 在诸如 **let** 之类的绑定结构中，如果没有随变量名一起指定值，则将变量绑定为 nil 是种默认操作。 换句话说， **(let ((a)) a)** 返回的结果为 nil。 在 Scheme 中，一种对宏编写器不太友好的语言，在迭代此类绑定时必须将这种情况作为特殊情况进行检查，因为 **(car nil)** 和 **(cdr nil)** 会引发类型错误。 在 COMMON LISP 中，**(car nil)**、**(cdr nil)**，以及 **(car (cdr nil))** 和 **(cadr nil)** 定义为返回 **nil**，即使空的 let 变量约定被使用了，**nlet** 中的第二个 **mapcar** 也能正常运行。 此 COMMON LISP 功能来自 Interlisp[INTERLISP]。
 
-
-By this broad definition, virtually all macros—at least all interesting macros—define new control structures. When people say "only use macros when functions won't do", they mean that for any definition where you don't want to evaluate certain arguments, or you want to evaluate them out of order, or more than once, you will need to use a macro. Functions, no matter how cleverly written, simply will not work.
-
-
-The **nlet** macro demonstrates one way that COMMON LISP was designed for macro writers. In binding forms such as **let**, it is a common convention for a variable to be bound to nil if no value is specified along with the variable name. In other words, **(let ((a)) a)** will be nil[6](https://letoverlambda.com/index.cl/guest/chap3.html#). In Scheme, a language slightly less macro-writer friendly, this case must be checked for as a special case when iterating through such bindings because **(car nil)** and **(cdr nil)** raise type errors. In COMMON LISP, **(car nil)**, **(cdr nil)**, and therefore **(car (cdr nil))** and **(cadr nil)** are defined to return **nil**, allowing the second **mapcar** in **nlet** to work even if the empty let variable convention is used. This COMMON LISP feature is from Interlisp[INTERLISP].
-
-
-Our **nlet** macro is different from Scheme's named lets in one subtle way. In this case, the interface to the macro is acceptable but the expansion may not be. As is common when programming across multiple levels, our mental model of the code can easily be slightly different from reality. In Scheme, a tail call of a named let is guaranteed to take up no additional stack space since Scheme is required, by the standard, to make this specific optimisation. This is not the case in COMMON LISP, however, so it is possible for stack overflows to occur in our COMMON LISP version of **nlet** that would not happen with named lets in Scheme. In [section 5.4, Code-Walking with Macrolet](https://letoverlambda.com/index.cl/guest/chap5.html#sec_4) we will see how to write a version of **nlet** with an identical interface but a potentially more efficient expansion[7](https://letoverlambda.com/index.cl/guest/chap3.html#).
+我们的 **nlet** 宏与 Scheme 的命名 let 有个微妙的差异。 在这种情况下，宏的接口是可以接受的，但展开可能不是。 在跨多个级别进行编程时很常见，我们代码的理想模型很容易与现实略有不同。 在 Scheme 中，命名 let 的尾调用保证不会占用额外的堆栈空间，因为根据标准，Scheme 需要进行这种特定的优化。 然而，在 COMMON LISP 中情况并非如此，因此在 COMMON LISP 版本的 **nlet** 中可能会发生堆栈溢出，而在 Scheme 中的命名 let 中不会发生这种情况。 在[5.4 节：使用 Macrolet 进行代码遍历](../Chapter05/5.4-code-walking-with-macrolet.md)中，我们将看到如何编写具有相同接口但可能更有效的扩展的 **nlet** 版本[7](https://letoverlambda.com/index.cl/guest/chap3.html#)。

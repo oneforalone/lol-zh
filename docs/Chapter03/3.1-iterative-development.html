@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh-CN" >
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>3.1 Iterative Development &mdash; Let Over Lambda 中文文档  文档</title>
+  <title>3.1 迭代开发 &mdash; Let Over Lambda 中文文档  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -15,11 +15,10 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/translations.js"></script>
     <script src="../_static/js/theme.js"></script>
-    <link rel="index" title="索引" href="../genindex.html" />
-    <link rel="search" title="搜索" href="../search.html" />
-    <link rel="next" title="3.2 Domain Specific Languages" href="3.2-domain-specific-languages.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3.2 领域特定语言" href="3.2-domain-specific-languages.html" />
     <link rel="prev" title="第三章：宏基础" href="index.html" /> 
 </head>
 
@@ -32,7 +31,7 @@
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -42,9 +41,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">第三章：宏基础</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">3.1 Iterative Development</a></li>
-<li class="toctree-l2"><a class="reference internal" href="3.2-domain-specific-languages.html">3.2 Domain Specific Languages</a></li>
-<li class="toctree-l2"><a class="reference internal" href="3.3-control-structures.html">3.3 Control Structures</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3.1 迭代开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3.2-domain-specific-languages.html">3.2 领域特定语言</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3.3-control-structures.html">3.3 控制结构</a></li>
 <li class="toctree-l2"><a class="reference internal" href="3.4-free-variables.html">3.4 Free Variables</a></li>
 <li class="toctree-l2"><a class="reference internal" href="3.5-unwanted-capture.html">3.5 Unwanted Capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="3.6-once-only.html">3.6 Once Only</a></li>
@@ -74,9 +73,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="index.html">第三章：宏基础</a> &raquo;</li>
-      <li>3.1 Iterative Development</li>
+      <li>3.1 迭代开发</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/Chapter03/3.1-iterative-development.md.txt" rel="nofollow"> 查看页面源码</a>
+            <a href="../_sources/Chapter03/3.1-iterative-development.md.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -84,8 +83,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section class="tex2jax_ignore mathjax_ignore" id="iterative-development">
-<h1>3.1 Iterative Development<a class="headerlink" href="#iterative-development" title="永久链接至标题"></a></h1>
+  <section id="id1">
+<h1>3.1 迭代开发<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h1>
 <hr class="docutils" />
 <p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
@@ -94,28 +93,28 @@
 <div><p><em>Lisp has assisted a number of our most gifted fellow humans in thinking</em>
 <em>previously impossible thoughts. —Edsger Dijkstra</em></p>
 </div></blockquote>
-<p>The construction of a macro is an iterative process: all complex macros come from simpler macros. After starting with an idea, a rough implementation can be created from which the ultimate macro will emerge, like a sculpture from a block of stone. If the rough implementation isn’t flexible enough, or results in inefficient or dangerous expansions, the professional macro programmer will slightly modify the macro, adding features or removing bugs until it satisfies all requirements.</p>
-<p>The necessity of this iterative process for macro construction is partly because this is the most efficient programming style in general and partly because programming macros is more complicated than other types of programming. Because macro programming requires the programmer to think about multiple levels of code executed at multiple points in time, the complexity issues scale more rapidly than other types of programming. An iterative process helps ensure that your conceptual model is more closely aligned to what is actually being created than if the entire macro was written without this constant feedback.</p>
-<p>In this chapter we will write some basic macros by introducing two common macro concepts: <em>domain specific languages</em> and <em>control structures</em>. Once these general macro areas are described, we take a step back and discuss the process of writing macros itself. Techniques like variable capture and free variable injection are introduced, along with the definition of a new, slightly more convenient syntax for defining lisp macros that is used throughout the remainder of this book.</p>
+<p>宏的构建是个迭代的过程：所有复杂的宏都来自简单的宏。 从一个想法开始后，可以创建一个粗略的实现，最终的宏尤其演变而成，就像雕塑来自石头一样。 如果粗略的实现不够灵活，或导致低效或危险的展开，专业的宏程序员会稍微修改宏，添加功能或删除错误，直到满足所有要求。</p>
+<p>宏构造的这种迭代过程的必要性部分是因为这是一般最有效的编程风格，部分是因为宏编程比其他类型的编程更复杂。 因为宏编程要求程序员考虑在多个时间点执行的多个级别的代码，所以复杂性问题比其他类型的编程更迅速地扩展。 与在没有这种持续反馈的情况下编写整个宏相比，迭代过程有利于确保概念模型更接近于实际创建的内容。</p>
+<p>在本章中，我们将通过介绍两个常见的宏概念来编写一些基本的宏：领域特定语言和控制结构。 一旦讲清了这些通用宏概念，就回到讨论编写宏本身的过程。 然后将介绍异常捕获和自由变量注入等技术，以及用于定义 lisp 宏的新语法的定义，该语法将在本书的其余部分中使用。</p>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="第三章：宏基础" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-        <a href="3.2-domain-specific-languages.html" class="btn btn-neutral float-right" title="3.2 Domain Specific Languages" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="第三章：宏基础" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="3.2-domain-specific-languages.html" class="btn btn-neutral float-right" title="3.2 领域特定语言" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021-2022, Yuqi Liu, Xuting Yang.</p>
+    <p>&#169; Copyright 2021-2022, Yuqi Liu, Xuting Yang.</p>
   </div>
 
-  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
-    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
    
 
 </footer>

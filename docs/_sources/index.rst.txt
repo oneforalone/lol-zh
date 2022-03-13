@@ -47,7 +47,7 @@ Sphinx 安装
   $ python3 -m pip install virtualenv
   $ python3 -m virtualenv sphinx
   $ source sphinx/bin/activate
-  (sphinx) $ pip install -U Sphinx sphinx-autobuild sphinx_rtd_theme sphinx_myst_parser
+  (sphinx) $ pip install -U Sphinx sphinx-autobuild sphinx_rtd_theme myst_parser
 
 .. note::
 
