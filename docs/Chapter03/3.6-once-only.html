@@ -91,9 +91,11 @@
 <hr class="docutils" />
 <p>Peter Norvig 是一位出色的程序员和作家。 在解决计算机科学家目前面临的许多最困难的问题之前，需要阅读他关于人工智能的书籍，尤其是《人工智能：一种现代方法》 [AIMA]。 lisp 程序员可能更熟悉 Norvig 的著作《人工智能编程范式：COMMON LISP中的案例研究》。 这本书可能有点过时，但对于认真的 lisp 学生来说仍然是必读的，且这本书包含许多重要的 lisp 见解。 本节专门针对 Peter Norvig，甚至以 PAIP 中描述的宏命名。 在它的最后几页中，隐藏在对序列函数实现的描述中，是</p>
 <blockquote>
-<div><p>once-only：宏的教程
-紧接着是句更有趣的话：
-If you can understand how to write and when to use once-only, then you truly understand macros.</p>
+<div><p>once-only：宏的教程</p>
+</div></blockquote>
+<p>紧接着是句更有趣的话：</p>
+<blockquote>
+<div><p>If you can understand how to write and when to use once-only, then you truly understand macros.</p>
 </div></blockquote>
 <p>现在我们已经知道了，没有人真正了解宏。 理解一个特定的宏，即使是一个和 once-only 一样重要的宏，也不会比理解一个重要的定理让你真正的、更进一步地理解数学。 因为到目前为止它们的可能性似乎是无限的，所以真正理解数学或宏是不可能的。</p>
 <p>这里不会给出 Norvig 的 <strong>once-only</strong> 的定义，但它是一个相当复杂的宏，具有一些有趣的属性，之后会稍有不同地实现这些属性。 <strong>once-only</strong> 最初是为已经消失的 lisp 机器编程环境编写的，因为不必要的原因而被排除在 COMMON LISP 之外。</p>
