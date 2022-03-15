@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.1 Run-Time at Read-Time &mdash; Let Over Lambda 中文文档  documentation</title>
+  <title>4.1 运行时与读取时 &mdash; Let Over Lambda 中文文档  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -42,7 +42,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">第四章：Read 宏</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">4.1 Run-Time at Read-Time</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.1 运行时与读取时</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4.2-backquote.html">4.2 Backquote</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4.3-reading-strings.html">4.3 Reading Strings</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4.4-cl-ppcre.html">4.4 CL-PPCRE</a></li>
@@ -72,7 +72,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="index.html">第四章：Read 宏</a> &raquo;</li>
-      <li>4.1 Run-Time at Read-Time</li>
+      <li>4.1 运行时与读取时</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/Chapter04/4.1-runtime-at-readtime.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -82,8 +82,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="run-time-at-read-time">
-<h1>4.1 Run-Time at Read-Time<a class="headerlink" href="#run-time-at-read-time" title="Permalink to this headline"></a></h1>
+  <section id="id1">
+<h1>4.1 运行时与读取时<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h1>
 <hr class="docutils" />
 <p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
@@ -91,11 +91,11 @@
 <blockquote>
 <div><p>Syntactic sugar causes cancer of the semicolon. –Alan Perlis</p>
 </div></blockquote>
-<p>Not only does lisp provide direct access to code that has been parsed into a cons cell structure, but it also provides access to the characters that make up your programs before they even reach that stage. Although regular macros work on programs in the form of trees, a special type of macro, called a <em>read macro</em>, operates on the raw characters that make up your program.</p>
-<p>In lisp, when we want to define a non-lisp syntax, it doesn’t make sense to use the lisp reader—that is only for reading lisp. The read macro is the device we use to process non-lisp syntax before the lisp reader gets its paws on it. The reason why the lisp reader is more powerful than that of other languages is that lisp gives you <em>hooks</em> for controlling every aspect of its behaviour. In particular, lisp lets you <em>extend</em> the reader, so that non-lisp objects are actually read in as lisp objects. Just as you build your applications on top of lisp, extending it with macros and functions, lisp applications can, and frequently do, ooze out into this dimension of extensibility as well. When this happens, any character based syntax can be read with the lisp reader, meaning that you have turned the syntax into lisp.</p>
-<p>While the transformations of code done by regular macros are only used for turning lisp code into new lisp code, read macros can be created so as to turn non-lisp code into lisp code. Like regular macros, read macros are implemented with functions underneath so we have available the full power of the lisp environment. Like macros that increase productivity because they create more concise domain specific languages for the programmer to use, read macros boost productivity by allowing expressions to be abbreviated to the point where they aren’t even lisp expressions anymore. Or are they?</p>
-<p>If all we have to do to parse these non-lisp domain specific languages is write a short read macro, maybe these non-lisp languages really are lisp, just in a clever disguise. If XML can be directly read in by the lisp reader[XML-AS-READ-MACRO], maybe XML, in a twisted sort of sense, is actually lisp. Similarly, read macros can be used to read regular expressions and SQL queries directly into lisp, so maybe these languages really are lisp too. This fuzzy distinction between code and data, lisp and non-lisp, is the source of many interesting philosophical issues that have perplexed lisp programmers since the very beginning.</p>
-<p>A basic read macro that comes built in with COMMON LISP is the #. read-time eval macro. This read macro lets you embed objects into the forms you read that can’t be serialised, but can be created with a bit of lisp code. One fun example is making forms that become different values each time they are read:</p>
+<p>lisp 不仅能直接访问已解析为 cons 单元结构的代码，而且还能访问构成程序的字符，甚至能在字符串到达该阶段（构成程序）之前。 尽管常规宏以树的形式作用于程序，但一种称为<em>读取宏</em>的特殊类型的宏可以操作构成程序的原始字符。</p>
+<p>在 lisp 中，当要定义一个非 lisp 语法时，使用 lisp 读取器（reader）是没有意义的——那只是为了读取 lisp。 读取宏是用来在 lisp 读取器上手之前处理非 lisp 语法的方法。 lisp 读取器比其他语言更强大的原因是 lisp 有控制其各个方面行为的钩子。 特别是，lisp 允许扩展读取器，以便非 lisp 对象实际上作为 lisp 对象读入。 就像在 lisp 之上构建应用程序并使用宏和函数对其进行扩展一样，lisp 应用程序也可以且经常会渗入这个可扩展性维度。 发生这种情况时，可以使用 lisp 读取器读取任何基于字符的语法，这意味着已将其转换为 lisp 语法了。</p>
+<p>虽然常规宏完成的代码转换仅用于将 lisp 代码转换为新的 lisp 代码，但可以创建读取宏将非 lisp 代码转换为 lisp 代码。 与常规宏一样，读取宏是通过下面的函数实现的，因此可以使用 lisp 环境的全部功能。 与提高生产力的宏一样，因为它们为程序员创建了更简洁的领域特定语言，读取宏通过将表达式缩写到甚至不再是 lisp 表达式的程度来提高生产力。 或者说这是真的吗？</p>
+<p>如果解析这些非 lisp 领域特定语言就是编写一个简短的读取宏，那么这些非 lisp 语言可能真的是 lisp，只是巧妙地伪装。 如果 lisp 读取器可以直接读取 XML [XML-AS-READ-MACRO]，那么从某种扭曲的意义上说，也许 XML 实际上是 lisp。 类似地，读取宏可以将正则表达式和 SQL 查询直接读入 lisp，所以也许这些语言真的也是 lisp。 代码和数据、lisp 和非 lisp 之间这种模糊区别是许多有趣的哲学问题的根源，这些问题从一开始就让 lisp 程序员感到困惑。</p>
+<p>COMMON LISP 内置的读取宏是 <strong>#</strong>。 读取时执行宏。 这个读取宏将对象嵌入到读取的无法序列化但可以使用一些 lisp 代码创建的结构中。 一个有趣的例子是让结构在每次被读取时变成不同的值：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="s1">&#39;(football-game</span>
      <span class="p">(</span><span class="n">game</span><span class="o">-</span><span class="n">started</span><span class="o">-</span><span class="n">at</span>
        <span class="c1">#.(get-internal-real-time))</span>
@@ -107,7 +107,7 @@
   <span class="p">(</span><span class="n">COIN</span><span class="o">-</span><span class="n">FLIP</span> <span class="n">HEADS</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>Even though it is the same expression, this form reads in differently each time:</p>
+<p>即使是同一个表达式，这种结构每次读入的内容都不同：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="s1">&#39;(football-game</span>
      <span class="p">(</span><span class="n">game</span><span class="o">-</span><span class="n">started</span><span class="o">-</span><span class="n">at</span>
        <span class="c1">#.(get-internal-real-time))</span>
@@ -119,13 +119,13 @@
   <span class="p">(</span><span class="n">COIN</span><span class="o">-</span><span class="n">FLIP</span> <span class="n">TAILS</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>Note that the two forms surrounded by #. are evaluated at read time, not when the form is evaluated. The complete list has been formed after they are evaluated, and the before-after equivalence (as defined by <strong>equal</strong>) can be seen by re-evaluating the last form read in and comparing it with the previous results, using the * and + convenience variables of the REPL<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">1</a>:</p>
+<p>注意 <strong>#</strong> 包围的两个结构。 在读取时执行，而不是在执行时执行。 完整的结构在它们执行之后形成，并且可以通过重新执行读入的最后一个结构并将其与之前的结果进行比较，使用 <strong>*</strong> 和 <strong>+</strong> 方便变量来看到前后等价（由 <strong>equal</strong> 定义）的 <em>REPL</em><a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">1</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">equal</span> <span class="o">*</span> <span class="p">(</span><span class="nb">eval</span> <span class="o">+</span><span class="p">))</span>
 
 <span class="n">T</span>
 </pre></div>
 </div>
-<p>Notice that because these forms are actually evaluated at read-time, this is different from using backquote, which we will look at more closely in the following section. We can evaluate a similar form that uses backquotes:</p>
+<p>注意，因为这些结构实际上是在读取时执行的，所以这与使用反引号不同，这将在下一节中更仔细地研究。 我们可以执行类似反引号的结构：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* `(football-game
      (game-started-at
        ,(get-internal-real-time))
@@ -137,7 +137,7 @@
   (COIN-FLIP HEADS))
 </pre></div>
 </div>
-<p>but it will evaluate to a different result when we re-evaluate it, since backquote reads in as code for evaluation:</p>
+<p>但是重新执行这段代码时，会得到到不同的结果，因为反引号作为执行代码的读入：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">equal</span> <span class="o">*</span> <span class="p">(</span><span class="nb">eval</span> <span class="o">+</span><span class="p">))</span>
 
 <span class="n">NIL</span> <span class="p">;</span> <span class="n">unless</span> <span class="n">you</span><span class="s1">&#39;re really fast and lucky</span>

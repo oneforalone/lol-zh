@@ -19,7 +19,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="4.3 Reading Strings" href="4.3-reading-strings.html" />
-    <link rel="prev" title="4.1 Run-Time at Read-Time" href="4.1-runtime-at-readtime.html" /> 
+    <link rel="prev" title="4.1 运行时与读取时" href="4.1-runtime-at-readtime.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -42,7 +42,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">第四章：Read 宏</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="4.1-runtime-at-readtime.html">4.1 Run-Time at Read-Time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4.1-runtime-at-readtime.html">4.1 运行时与读取时</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">4.2 Backquote</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4.3-reading-strings.html">4.3 Reading Strings</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4.4-cl-ppcre.html">4.4 CL-PPCRE</a></li>
@@ -181,13 +181,13 @@ TO-SPLICE
   `(LET ((LET &#39;,LET)) ,LET))
 </pre></div>
 </div>
-<p>To save you the <em>mental code-walk</em>:</p>
+<p>为了让你不需要在心中遍历代码：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">equal</span> <span class="o">*</span> <span class="o">+</span><span class="p">)</span>
 
 <span class="n">T</span>
 </pre></div>
 </div>
-<p>Exercise: In the following evaluation, why is the backquote expanded into a regular quote? Isn’t it quoted?</p>
+<p>练习：在下面的代码中，为什么将反引号展开为常规引号？ 不是引用了吗？（译者注，我自己在 sbcl 中执行返回的是 <strong>`Q</strong>，而不是 <strong>‘Q</strong>，需要和作者讨论以下）。</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="s1">&#39;`q</span>
 <span class="s1">&#39;Q</span>
 </pre></div>
@@ -198,7 +198,7 @@ TO-SPLICE
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="4.1-runtime-at-readtime.html" class="btn btn-neutral float-left" title="4.1 Run-Time at Read-Time" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="4.1-runtime-at-readtime.html" class="btn btn-neutral float-left" title="4.1 运行时与读取时" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="4.3-reading-strings.html" class="btn btn-neutral float-right" title="4.3 Reading Strings" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

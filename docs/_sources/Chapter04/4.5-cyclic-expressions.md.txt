@@ -7,11 +7,10 @@ Author: Doug Hoyte <[doug@hoytech.com](mailto:doug@hoytech.com)>
 Translator: Yuqi Liu <[yuqi.lyle@outlook.com](mailto:yuqi.lyle@outlook.com)>
 
 ---
+
 All our talk about lisp programs being _trees_ of cons cells has actually been a small lie. Sorry about that. Lisp programs are actually not trees but are instead _directed acyclic graphs_—trees with possibly shared branches. Since the evaluator doesn't care about where the branches it is evaluating come from, there is nothing wrong with evaluating code with shared structure.
 
-
 A useful provided read macro is #=. We already saw how lisp can be made to output forms with the #= macro when serialising macro expansions in [section 3.5, Unwanted Capture](https://letoverlambda.com/index.cl/guest/chap3.html#sec_5). #= and its partner ## let you create self-referential S-expressions. This allows you to do things like represent shared branches in directed acyclic graphs and other interesting data structures with little or no effort.
-
 
 But most importantly it allows you to serialise data without having to disassemble and reassemble an efficient in-memory data structure where large portions of the data are shared. Here is an example where the two lisp lists read in are distinct objects (not eq):
 ```
@@ -86,7 +85,6 @@ NIL
               (cyclic-p-aux (cdr l) seen))))))
 ```
 Is there an easy way to tell if a portion of list structure is cyclic or contains shared structure? Yes, the provided **cyclic-p** predicate uses the most obvious algorithm for discovering this: recurse across the structure keeping a _hash-table_ up to date with all the cons cells you've encountered so far. If you ever come across a cons cell that already exists in your hash-table, you have already been there and therefore have detected a cycle or a shared branch. Notice that because it only recurses across cons cells, **cyclic-p** is incapable of discovering such references in data structures like vectors.
-
 
 Finally, because most (see [SYNTACTICALLY-RECURSIVE]) lisp compilers forbid you from passing circular forms to the compiler, executing the following is undefined but likely to break your compiler by putting it into an infinite compiling loop:
 ```

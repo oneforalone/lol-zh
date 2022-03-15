@@ -42,7 +42,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">第四章：Read 宏</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="4.1-runtime-at-readtime.html">4.1 Run-Time at Read-Time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4.1-runtime-at-readtime.html">4.1 运行时与读取时</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4.2-backquote.html">4.2 Backquote</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4.3-reading-strings.html">4.3 Reading Strings</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4.4-cl-ppcre.html">4.4 CL-PPCRE</a></li>
@@ -95,7 +95,8 @@
 <p>The problem with standards for interchanging data is that, in order to support the standard, applications are forbidden from reducing what can be done with the protocol. There is usually some base-line behaviour that must be met in order for an application to conform to the standard. To make secure protocols we need to be able to make sure we accept only what we are certain we can handle and no more.</p>
 <p>So what is the lisp way to exchange data? The mechanism for getting data into lisp is called the <em>lisp reader</em> and the mechanism for getting it out is called the <em>lisp printer</em>. If you have made it this far into the book you already know more than enough to design and use lisp protocols. When you program lisp you are using such a protocol. You interact with lisp by feeding it lisp forms and this often turns out to be the best way to interact with the rest of the world too. Of course you don’t trust the rest of the world so precautions must be taken. Remember that to think about security you must think about attacks. The designers of COMMON LISP were thinking about attacks against the reader during design. Earlier in this chapter we described the <strong>#.</strong> read macro that lets the reader execute lisp expressions so we can encode non-serialisable data structures. To mitigate an obvious attack against the lisp reader, COMMON LISP provides <em><strong>read-eval</strong></em>. From CLtL2:</p>
 <blockquote>
-<div><p><em>Binding <em><strong>read-eval</strong></em> to <strong>nil</strong> is useful when reading data that came from an untrusted source, such as a network or a user-supplied data file; it prevents the <strong>#.</strong> read macro from being exploited as a “Trojan Horse” to cause arbitrary forms to be evaluated.</em></p>
+<div><p><em>Binding <em><strong>read-eval</strong></em> to <strong>nil</strong> is useful when reading data that came from an untrusted source, such as a network or a user-supplied data
+file; it prevents the <strong>#.</strong> read macro from being exploited as a “Trojan Horse” to cause arbitrary forms to be evaluated.</em></p>
 </div></blockquote>
 <p>When the ANSI COMMON LISP committee voted <em><strong>read-eval</strong></em> into being in June, 1989, they were thinking like attackers. What sort of trojan horse would an attacker include? The correct answer is, from a secure software author’s point of view, the worst conceivable one you can think of—or worse. Always think that an attacker would like to be able to completely control your system. Traditionally, that means the trojan horse should be something called <em>shell code</em>. This is usually a carefully crafted chunk of machine code that does something like provide a unix shell for an attacker to use to further r00t the victim. Crafting this shell code is really an art-form, especially because of the unusual circumstances that such attacks usually exploit. For instance, most shell code cannot contain null bytes because with C-style strings these bytes terminate the string, preventing the inclusion of further shell code. Here is what an example of lisp shell code might look like, assuming the victim is running CMUCL and has Hobbit’s original <em>netcat</em> (<strong>nc</strong>) [NETCAT] program installed:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#.(ext:run-program</span>
@@ -113,7 +114,7 @@ So we can disable the <strong>#.</strong> read macro fairly easily. But is this 
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Or this:</p>
+<p>或是这个：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">no</span><span class="o">-</span><span class="n">such</span><span class="o">-</span><span class="n">package</span><span class="p">:</span><span class="n">rewt3d</span>
 </pre></div>
 </div>

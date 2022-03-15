@@ -42,7 +42,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">第四章：Read 宏</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="4.1-runtime-at-readtime.html">4.1 Run-Time at Read-Time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4.1-runtime-at-readtime.html">4.1 运行时与读取时</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4.2-backquote.html">4.2 Backquote</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">4.3 Reading Strings</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4.4-cl-ppcre.html">4.4 CL-PPCRE</a></li>
@@ -146,11 +146,10 @@
   <span class="c1">#\# #\&gt; #&#39;|#&gt;-reader|)</span>
 </pre></div>
 </div>
-<p>We need a read macro that allows us to customise the delimiter for each specific context where we use it. As is often the case, we need to look no further than Larry Wall’s Perl language for inspiration on the design of programming shortcuts. Perl is a beautiful, wonderfully designed language and possesses many great ideas that are ripe for <em>pilfering</em> by lisp. Lisp is, in some sense, a big blob, a snowball perhaps, that rolls around assimilating ideas from other programming languages, making them its own<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">6</a>.
-​</p>
+<p>We need a read macro that allows us to customise the delimiter for each specific context where we use it. As is often the case, we need to look no further than Larry Wall’s Perl language for inspiration on the design of programming shortcuts. Perl is a beautiful, wonderfully designed language and possesses many great ideas that are ripe for <em>pilfering</em> by lisp. Lisp is, in some sense, a big blob, a snowball perhaps, that rolls around assimilating ideas from other programming languages, making them its own<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">6</a>.</p>
 <p>The <strong>#&gt;</strong> read macro is directly inspired by Perl’s <strong>&lt;&lt;</strong> operator. This operator allows Perl programmers to specify a string of text to act as the end delimiter for a quoted string. <strong>#&gt;</strong> reads characters until it finds a newline character, then reads characters, one-by-one, until it encounters a sequence of characters identical to the characters it found immediately after <strong>#&gt;</strong> and before the newline.
-​</p>
-<p>For example:</p>
+​
+例如：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="c1">#&gt;END</span>
 <span class="n">I</span> <span class="n">can</span> <span class="n">put</span> <span class="n">anything</span> <span class="n">here</span><span class="p">:</span> <span class="s2">&quot;, \, &quot;</span><span class="c1">#, and &gt;# are</span>
 <span class="n">no</span> <span class="n">problem</span><span class="o">.</span> <span class="n">The</span> <span class="n">only</span> <span class="n">thing</span> <span class="n">that</span> <span class="n">will</span> <span class="n">terminate</span>
