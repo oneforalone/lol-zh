@@ -1,4 +1,4 @@
-# 3.7 Duality of Syntax
+# 3.7 语法的二义性
 
 ---
 
