@@ -1,4 +1,4 @@
-# 4.3 Reading Strings
+# 4.3 读取字符串
 
 ---
 
@@ -8,13 +8,13 @@ Translator: Yuqi Liu <[yuqi.lyle@outlook.com](mailto:yuqi.lyle@outlook.com)>
 
 ---
 
-In lisp, strings are delimited by the double-quote (") character. Although strings can contain any character in the character set of your lisp implementation, you can't directly insert certain characters into the string. If you want to insert the " character or the \ character, you will need to prefix them with \ characters. This is called _escaping_ the characters. For example, here is how to enter a string containing " and \ characters:
+在 lisp 中，字符串由双引号 (**"**) 分隔。虽然字符串可以包含 lisp 实现的字符集中的任何字符，但和其他语言一样，某些特殊字符是不能直接插入的。如果要在字符串中表示引号和反斜杠，需要在其前面加上 `\`。 `\`由被称为转义字符。 例如，以下是包含 **"** 和 `\` 的字符串：
 ```
 * "Contains \" and \\."
 
 "Contains \" and \\."
 ```
-This obviously works, but sometimes typing these \ characters becomes tedious and error prone. This is lisp, of course, and if we don't like something we are free, even encouraged, to change it. In this spirit, this book presents a read macro called #", or sharp-double-quote. This read macro is for creating strings containing " and \ characters without invoking escapes.
+很明显这能顺利执行，但有时输入 `\` 字符会变得乏味且容易出错。 当然，这是 lisp，如果不喜欢某些东西，可以自由地，甚至鼓励去改变它。 本着这种精神，本书提出了一个名为 **#"** 或尖双引号的读取宏。这个读取宏用于创建包含 **"** 和 `\` 字符的字符串，而无需调用转义。
 ```
 (defun |#"-reader| (stream sub-char numarg)
   (declare (ignore sub-char numarg))
@@ -28,17 +28,17 @@ This obviously works, but sometimes typing these \ characters becomes tedious an
 (set-dispatch-macro-character
   #\# #\" #'|#"-reader|)
 ```
-Sharp-double-quote[5](https://letoverlambda.com/index.cl/guest/chap4.html#) will start reading the string immediately after its invocation characters: # and ". It will continue to read, character by character, until it encounters the two characters " and #, in sequence. When it finds this terminating sequence, it returns the string represented by all the characters between the #" and "#. The sharp-double-quote read macro used to be used for bit-strings, but COMMON LISP freed up this useful macro character for us by moving bit-strings to the #* read macro[EARLY-CL-VOTES].
+**井双引号**[5](https://letoverlambda.com/index.cl/guest/chap4.html#) 将在其调用字符 **#** 和 **"** 后立即开始读取字符串。它将继续逐个地读取字符，直到再次遇到 **"** 和 **#** 两个字符。 当它找到这个终止序列时，将返回由 **#"** 和 **"#** 之间的所有字符表示的字符串。 井双引号读取宏过去用于位字符串，但 COMMON LISP 通过将位字符串修改为 **#*** 读取宏[EARLY-CL-VOTES]，就释放了这个有用的宏字符。
 
-Here is an example evaluation of our new sharp-double-quote:
+这是新的井双引号执行示例：
 ```
 * #"Contains " and \."#
 
 "Contains \" and \\."
 ```
-Notice that when the REPL prints the string, it still uses the " character as a delimiter, so the " and \ characters are still escaped in the printed representation of the string. These strings are simply read in as if you escaped the characters manually.
+注意，当 REPL 打印字符串时，仍然用 **"** 字符作为分隔符，因此 **"** 和 `\` 字符在字符串的打印表示中仍然被转义。 这些字符串就像手动转义字符一样简单地读入。
 
-But sometimes #" isn't good enough. For instance, in this U-language paragraph you are reading right now, I have included the following sequence of characters: "#. Because of this, this paragraph couldn't have been delimited with #" and "#. And because I hate escaping things, take my word that it wasn't delimited with regular double quotes.
+但有时 **#"** 不够好。例如，当正在阅读的 U 语言段落中，包含了以下字符 **"#**. 正因为如此，这一段不能用**#"**和**"#**分隔。 而且因为我讨厌逃避事情，所以请相信这不是用常规双引号分隔的。
 ```
 (defun |#>-reader| (stream sub-char numarg)
   (declare (ignore sub-char numarg))
@@ -68,9 +68,9 @@ But sometimes #" isn't good enough. For instance, in this U-language paragraph y
 (set-dispatch-macro-character
   #\# #\> #'|#>-reader|)
 ```
-We need a read macro that allows us to customise the delimiter for each specific context where we use it. As is often the case, we need to look no further than Larry Wall's Perl language for inspiration on the design of programming shortcuts. Perl is a beautiful, wonderfully designed language and possesses many great ideas that are ripe for _pilfering_ by lisp. Lisp is, in some sense, a big blob, a snowball perhaps, that rolls around assimilating ideas from other programming languages, making them its own[6](https://letoverlambda.com/index.cl/guest/chap4.html#).
+我们需要一个读取宏，可以通过上下文自定义分隔符。 通常情况下，只需从 Larry Wall 的 Perl 语言中寻找编程快捷方式设计的灵感即可。 Perl 是一门美丽的、设计精美的语言，并且拥有许多可以被 lisp 借鉴的好想法。 从某种意义上说，Lisp 是一个大块，也许是一个雪球，不断吸收其他编程语言的思想，使这些思想成为自己的[6](https://letoverlambda.com/index.cl/guest/chap4.html#).
 
-The **#>** read macro is directly inspired by Perl's **<<** operator. This operator allows Perl programmers to specify a string of text to act as the end delimiter for a quoted string. **#>** reads characters until it finds a newline character, then reads characters, one-by-one, until it encounters a sequence of characters identical to the characters it found immediately after **#>** and before the newline.
+**#>** 读取宏直接受到 Perl 的 **<<** 运算符的启发。 Perl 程序员可以使用这个运算符指定一个文本字符串作为引用字符串结束的分隔符。 **#>** 读取字符直到找到换行符，然后一个接一个地读取字符，直到遇到与紧接在 **#>** 之后和换行符之前找到的字符相同的字符序列。
 ​
 例如：
 ```

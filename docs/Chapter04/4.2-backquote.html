@@ -1,73 +1,34 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>4.2 反引用 &mdash; Let Over Lambda 中文文档  documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="4.3 Reading Strings" href="4.3-reading-strings.html" />
+    <link rel="next" title="4.3 读取字符串" href="4.3-reading-strings.html" />
     <link rel="prev" title="4.1 运行时与读取时" href="4.1-runtime-at-readtime.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
-          
-
-          
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -75,18 +36,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
@@ -94,7 +44,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">第四章：Read 宏</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="4.1-runtime-at-readtime.html">4.1 运行时与读取时</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">4.2 反引用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="4.3-reading-strings.html">4.3 Reading Strings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4.3-reading-strings.html">4.3 读取字符串</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4.4-cl-ppcre.html">4.4 CL-PPCRE</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4.5-cyclic-expressions.html">4.5 Cyclic Expressions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4.6-reader-security.html">4.6 Reader Security</a></li>
@@ -107,80 +57,38 @@
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Let Over Lambda 中文文档</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="index.html">第四章：Read 宏</a> &raquo;</li>
-        
       <li>4.2 反引用</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/Chapter04/4.2-backquote.md.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="tex2jax_ignore mathjax_ignore section" id="id1">
-<h1>4.2 反引用<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+             
+  <section id="id1">
+<h1>4.2 反引用<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h1>
 <hr class="docutils" />
 <p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
 <hr class="docutils" />
-<p>反引号，有时也被叫做 <em>quasiquote</em><a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">2</a>，显示为 <strong>`</strong>（即 Esc 键下面那个键），是主流 lisp 编程相对较新的概念，而且这个概念对于 lisp 外的语言几乎是完全陌生的。</p>
+<p>反引号，有时也被叫做 <em>quasiquote</em><a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">2</a>，显示为 <strong>`</strong>（即 Esc 键下面那个键），是主流 lisp 编程相对较新的概念，而且这个概念对于 lisp 外的语言几乎是完全陌生的。</p>
 <p>反引号和 lisp 有一段奇异的发展历史。 据报道 [QUASIQUOTATION] 早期没人认为反引号嵌套能正常运行，直到一位敏锐的程序员意识到它们确实正确地运行——人们对正确的概念是错的。 众所周知，反引号嵌套很难理解。 就连 COMMON LISP 之父 Steele 也抱怨它[CLTL2-P530]。</p>
 <p>原则上，lisp 不需要反引号。 能用反引号完成的事情都能用其他结构构建功能来完成。 然而，反引号对宏编程非常有用，在 lisp 中意味着所有编程，以至于 lisp 专业人士已经开始严重依赖它。</p>
 <p>首先，我们需要了解常规引用。 在 lisp 中，当在一个结构前面加上引号 （<strong>’</strong>） 时，就是告诉 lisp 解释器 将以下结构看作原始数据，而不是要执行的代码。 更确切地说，引号作为代码读入，在执行时会返回一段代码表单。 有时也会说引号<em>停止或关闭对代码</em>的执行。</p>
@@ -195,7 +103,7 @@
 </div>
 <p>尽管上面代码中取消引用的表达式只是个简单的 <strong>s</strong>变量，但这可以是任意 lisp 表达式，在其出现在反引号模板中的任何上下文，都可以执行计算为有意义的东西。 无论结果是什么，都会插入到出现在反引号模版中结果列表的 <em>car</em> 位置。</p>
 <p>在 lisp 结构符号中，可以用 <strong>.</strong> 显示地把一些结构放在正在创建的列表结构的 <em>cdr</em> 中。 如果在那里放一个列表，则反引号的结果代码仍是一个有效的列表。 但如果在其中放置其他内容，将得到一个新的非列表结构。</p>
-<p>在反引号中拥有这种能力，就像在其他地方一样<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">3</a>。 多亏了反引号的设计，我们甚至可以在这个位置取消引用：</p>
+<p>在反引号中拥有这种能力，就像在其他地方一样<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">3</a>。 多亏了反引号的设计，我们甚至可以在这个位置取消引用：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* (let ((s &#39;(b c d)))
     `(a . ,s))
 
@@ -237,7 +145,7 @@ TO-SPLICE
 </pre></div>
 </div>
 <p>但上面这种格式没有成为编程习惯是有原因的。 反引号最常见的用途是编写宏，这是 lisp 编程中速度最不重要而清晰度最重要的部分。 如果在创建和解释宏时考虑拼接操作的副作用会让你分心，那可能不值得这么麻烦。 这本书坚持常规拼接。 反引号最常见的用途是在宏构造中，但这并不是它唯一的用途。 反引号实际上是一种有用的领域特定语言，用于将列表混在一起的领域，考虑到破坏性拼接的可能性，它变得更加有用。</p>
-<p>反引号是如何工作的？ 反引号是一个读取宏。 反引号结构作为代码读入，在执行时成为所需的列表。 回到上一节关于读取时求值的示例，可以关掉美观的打印，引用反引号结构的值，并将其打印出来查看反引号结构确切的读取方式<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">4</a>：</p>
+<p>反引号是如何工作的？ 反引号是一个读取宏。 反引号结构作为代码读入，在执行时成为所需的列表。 回到上一节关于读取时求值的示例，可以关掉美观的打印，引用反引号结构的值，并将其打印出来查看反引号结构确切的读取方式<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">4</a>：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">let</span> <span class="p">(</span><span class="o">*</span><span class="nb">print</span><span class="o">-</span><span class="n">pretty</span><span class="o">*</span><span class="p">)</span> <span class="p">;</span> <span class="n">bind</span> <span class="n">to</span> <span class="n">nil</span>
     <span class="p">(</span><span class="nb">print</span>
       <span class="s1">&#39;`(football-game</span>
@@ -284,54 +192,37 @@ TO-SPLICE
 <span class="s1">&#39;Q</span>
 </pre></div>
 </div>
-</div>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="4.3-reading-strings.html" class="btn btn-neutral float-right" title="4.3 Reading Strings" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="4.1-runtime-at-readtime.html" class="btn btn-neutral float-left" title="4.1 运行时与读取时" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="4.3-reading-strings.html" class="btn btn-neutral float-right" title="4.3 读取字符串" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2021-2022, Yuqi Liu, Xuting Yang.
-
-    </p>
+    <p>&#169; Copyright 2021-2022, Yuqi Liu, Xuting Yang.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
