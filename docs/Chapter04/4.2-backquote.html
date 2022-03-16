@@ -237,7 +237,7 @@ TO-SPLICE
 </pre></div>
 </div>
 <p>但上面这种格式没有成为编程习惯是有原因的。 反引号最常见的用途是编写宏，这是 lisp 编程中速度最不重要而清晰度最重要的部分。 如果在创建和解释宏时考虑拼接操作的副作用会让你分心，那可能不值得这么麻烦。 这本书坚持常规拼接。 反引号最常见的用途是在宏构造中，但这并不是它唯一的用途。 反引号实际上是一种有用的领域特定语言，用于将列表混在一起的领域，考虑到破坏性拼接的可能性，它变得更加有用。</p>
-<p>反引号是如何工作的？ 反引号是一个读取宏。 反引号结构作为代码读入，在执行时成为所需的列表。 回到上一节关于读取时求值的示例，可以关掉美观的打印，引用反引号结构的值，并将其打印出来查看反引号结构确切的读取方式：<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">4</a>:</p>
+<p>反引号是如何工作的？ 反引号是一个读取宏。 反引号结构作为代码读入，在执行时成为所需的列表。 回到上一节关于读取时求值的示例，可以关掉美观的打印，引用反引号结构的值，并将其打印出来查看反引号结构确切的读取方式<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">4</a>：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">let</span> <span class="p">(</span><span class="o">*</span><span class="nb">print</span><span class="o">-</span><span class="n">pretty</span><span class="o">*</span><span class="p">)</span> <span class="p">;</span> <span class="n">bind</span> <span class="n">to</span> <span class="n">nil</span>
     <span class="p">(</span><span class="nb">print</span>
       <span class="s1">&#39;`(football-game</span>
