@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.5 Cyclic Expressions &mdash; Let Over Lambda 中文文档  documentation</title>
+  <title>4.5 循环表达式 &mdash; Let Over Lambda 中文文档  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -18,7 +18,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="4.6 Reader Security" href="4.6-reader-security.html" />
+    <link rel="next" title="4.6 读取器的安全" href="4.6-reader-security.html" />
     <link rel="prev" title="4.4 CL-PPCRE" href="4.4-cl-ppcre.html" /> 
 </head>
 
@@ -46,8 +46,8 @@
 <li class="toctree-l2"><a class="reference internal" href="4.2-backquote.html">4.2 反引用</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4.3-reading-strings.html">4.3 读取字符串</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4.4-cl-ppcre.html">4.4 CL-PPCRE</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">4.5 Cyclic Expressions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="4.6-reader-security.html">4.6 Reader Security</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.5 循环表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4.6-reader-security.html">4.6 读取器的安全</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter05/index.html">第五章：Programs that program</a></li>
@@ -72,7 +72,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="index.html">第四章：Read 宏</a> &raquo;</li>
-      <li>4.5 Cyclic Expressions</li>
+      <li>4.5 循环表达式</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/Chapter04/4.5-cyclic-expressions.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -82,15 +82,15 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="cyclic-expressions">
-<h1>4.5 Cyclic Expressions<a class="headerlink" href="#cyclic-expressions" title="Permalink to this headline"></a></h1>
+  <section id="id1">
+<h1>4.5 循环表达式<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h1>
 <hr class="docutils" />
 <p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
 <hr class="docutils" />
-<p>All our talk about lisp programs being <em>trees</em> of cons cells has actually been a small lie. Sorry about that. Lisp programs are actually not trees but are instead <em>directed acyclic graphs</em>—trees with possibly shared branches. Since the evaluator doesn’t care about where the branches it is evaluating come from, there is nothing wrong with evaluating code with shared structure.</p>
-<p>A useful provided read macro is #=. We already saw how lisp can be made to output forms with the #= macro when serialising macro expansions in <a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap3.html#sec_5">section 3.5, Unwanted Capture</a>. #= and its partner ## let you create self-referential S-expressions. This allows you to do things like represent shared branches in directed acyclic graphs and other interesting data structures with little or no effort.</p>
-<p>But most importantly it allows you to serialise data without having to disassemble and reassemble an efficient in-memory data structure where large portions of the data are shared. Here is an example where the two lisp lists read in are distinct objects (not eq):</p>
+<p>所有关于 lisp 程序是 cons 单元树的讨论实际上都是一个小小的谎言。 对此很抱歉。 Lisp 程序实际上不是树，而是有向无环图——可能具有共享分支的树。 由于执行者不关心所执行的分支来自哪里，因此执行具有共享结构的代码并没有错。</p>
+<p>一个有用的读取宏是 <strong>#=</strong>。 在<a class="reference internal" href="../Chapter03/3.5-unwanted-capture.html"><span class="doc std std-doc">3.5 节：异常捕获</span></a>中，我们已经看到了如何在序列化宏展开时使用 <strong>#=</strong> 宏使 lisp 输出表单。<strong>#=</strong> 和它的伙伴 <strong>##</strong> 可以创建自引用的 S 表达式。 这可以让你毫不费力地做一些事情，例如在有向无环图中表示共享分支和其他有趣的数据结构。</p>
+<p>但最重要的是，你可以无需拆卸和重组一个高效的内存数据结构序列化数据，其中大部分数据是共享的。 以下是个示例，其中读入的两个 lisp 列表是不同的对象（不相等 <strong>eq</strong>）：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">defvar</span> <span class="ow">not</span><span class="o">-</span><span class="n">shared</span> <span class="s1">&#39;((1) (1)))</span>
 
 <span class="p">((</span><span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="mi">1</span><span class="p">))</span>
@@ -99,7 +99,7 @@
 <span class="n">NIL</span>
 </pre></div>
 </div>
-<p>But in the following example, with serialised data using the #= read macro, the 2 lists really are the same list:</p>
+<p>但在以下示例中，用 <strong>#=</strong> 读取宏序列化的数据，这两个列表实际上是同一个列表：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">defvar</span> <span class="n">shared</span> <span class="s1">&#39;(#1=(1) #1#))</span>
 
 <span class="p">((</span><span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="mi">1</span><span class="p">))</span>
@@ -108,7 +108,7 @@
 <span class="n">T</span>
 </pre></div>
 </div>
-<p>As mentioned, we can give shared, acyclic list structure to the evaluator with no trouble:</p>
+<p>正如之前所提到的，我们可以毫不费力地为执行其提供共享的非循环列表结构：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="nb">list</span>
     <span class="c1">#1=(list 0)</span>
     <span class="c1">#1#</span>
@@ -117,13 +117,13 @@
 <span class="p">((</span><span class="mi">0</span><span class="p">)</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">(</span><span class="mi">0</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>If we print the last form we just evaluated, we see it the same way the lisp evaluator does: a regular list with three separate branches:</p>
+<p>如果打印刚刚执行的最后一个结构，可以看到其执行方式与 lisp 执行器相同：有三个独立分支的普通列表：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="o">+</span>
 
 <span class="p">(</span><span class="n">LIST</span> <span class="p">(</span><span class="n">LIST</span> <span class="mi">0</span><span class="p">)</span> <span class="p">(</span><span class="n">LIST</span> <span class="mi">0</span><span class="p">)</span> <span class="p">(</span><span class="n">LIST</span> <span class="mi">0</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>But if we bind the <em><strong>print-circle</strong></em> special variable to a non-nil value when we print it, we see that the expression is not really a tree at all, but instead a directed acyclic graph:</p>
+<p>但是如果在打印时将 <strong><em>print-circle</em></strong> 特殊变量绑定到一个非 <strong>nil</strong> 值，会看到表达式根本不是一棵树，而是一个有向无环图：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="o">*</span><span class="nb">print</span><span class="o">-</span><span class="n">circle</span><span class="o">*</span> <span class="n">t</span><span class="p">))</span>
     <span class="p">(</span><span class="nb">print</span> <span class="o">++</span><span class="p">)</span>
     <span class="n">t</span><span class="p">)</span>
@@ -132,7 +132,7 @@
 <span class="n">T</span>
 </pre></div>
 </div>
-<p>As another fun example, here’s how to print an infinite list by pointing the cdr of a cons to itself, forming a so-called <em>cycle</em> or <em>circle</em>:</p>
+<p>作为另一个有趣的例子，下面代码展示的是如何通过将 cons 的 cdr 指向自身来打印无限列表，形成所谓的循环或圆：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="nb">print</span> <span class="s1">&#39;#1=(hello . #1#))</span>
 
 <span class="p">(</span><span class="n">HELLO</span> <span class="n">HELLO</span> <span class="n">HELLO</span> <span class="n">HELLO</span> <span class="n">HELLO</span> <span class="n">HELLO</span> <span class="n">HELLO</span>
@@ -141,7 +141,7 @@
  <span class="o">...</span>
 </pre></div>
 </div>
-<p>So unless you want that to happen, be sure you set <em><strong>print-circle</strong></em> when <em>serialising</em> cyclic data structures:</p>
+<p>因此，除非希望发生上面这种情况，否则请确保在序列化循环数据结构时设置 <strong><em>print-circle</em></strong> 为 <strong>t</strong>：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="o">*</span><span class="nb">print</span><span class="o">-</span><span class="n">circle</span><span class="o">*</span> <span class="n">t</span><span class="p">))</span>
     <span class="p">(</span><span class="nb">print</span> <span class="s1">&#39;#1=(hello . #1#))</span>
     <span class="n">nil</span><span class="p">)</span>
@@ -162,8 +162,8 @@
               <span class="p">(</span><span class="n">cyclic</span><span class="o">-</span><span class="n">p</span><span class="o">-</span><span class="n">aux</span> <span class="p">(</span><span class="n">cdr</span> <span class="n">l</span><span class="p">)</span> <span class="n">seen</span><span class="p">))))))</span>
 </pre></div>
 </div>
-<p>Is there an easy way to tell if a portion of list structure is cyclic or contains shared structure? Yes, the provided <strong>cyclic-p</strong> predicate uses the most obvious algorithm for discovering this: recurse across the structure keeping a <em>hash-table</em> up to date with all the cons cells you’ve encountered so far. If you ever come across a cons cell that already exists in your hash-table, you have already been there and therefore have detected a cycle or a shared branch. Notice that because it only recurses across cons cells, <strong>cyclic-p</strong> is incapable of discovering such references in data structures like vectors.</p>
-<p>Finally, because most (see [SYNTACTICALLY-RECURSIVE]) lisp compilers forbid you from passing circular forms to the compiler, executing the following is undefined but likely to break your compiler by putting it into an infinite compiling loop:</p>
+<p>有没有一种简单的方法来判断列表结构的一部分是环的还是包含共享结构？ 有的，<strong>cyclic-p</strong> 谓词用的就是最显然的算法来判断这一点：在结构中递归，使哈希表与迄今为止遇到的所有 cons 单元保持最新。 如果遇到过一个已经存在哈希表中的 cons 单元格，那么就在那里且因此检测到了一个环或一个共享分支。 注意，因为它只在 cons 单元中递归，所以 <strong>cyclic-p</strong> 无法在向量等数据结构中发现此类引用。</p>
+<p>最后，因为大多数（参见 [SYNTACTICALLY-RECURSIVE]）lisp 编译器禁止将循环结构传给编译器，执行以下命令是未定义的，但可能会通过将其放入无限编译循环来破坏编译器：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">progn</span>
   <span class="p">(</span><span class="n">defun</span> <span class="n">ouch</span> <span class="p">()</span>
     <span class="c1">#1=(progn #1#))</span>
@@ -177,7 +177,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="4.4-cl-ppcre.html" class="btn btn-neutral float-left" title="4.4 CL-PPCRE" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="4.6-reader-security.html" class="btn btn-neutral float-right" title="4.6 Reader Security" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="4.6-reader-security.html" class="btn btn-neutral float-right" title="4.6 读取器的安全" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
