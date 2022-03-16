@@ -1,34 +1,73 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.2 Backquote &mdash; Let Over Lambda 中文文档  documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+  <title>4.2 反引用 &mdash; Let Over Lambda 中文文档  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-    <script src="../_static/js/theme.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="4.3 Reading Strings" href="4.3-reading-strings.html" />
     <link rel="prev" title="4.1 运行时与读取时" href="4.1-runtime-at-readtime.html" /> 
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
+
+   
   <div class="wy-grid-for-nav">
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+          
+
+          
             <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          
+
+          
           </a>
+
+          
+            
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -36,14 +75,25 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter03/index.html">第三章：宏基础</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">第四章：Read 宏</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="4.1-runtime-at-readtime.html">4.1 运行时与读取时</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">4.2 Backquote</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.2 反引用</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4.3-reading-strings.html">4.3 Reading Strings</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4.4-cl-ppcre.html">4.4 CL-PPCRE</a></li>
 <li class="toctree-l2"><a class="reference internal" href="4.5-cyclic-expressions.html">4.5 Cyclic Expressions</a></li>
@@ -57,69 +107,111 @@
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
+            
+          
         </div>
+        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Let Over Lambda 中文文档</a>
+        
       </nav>
 
+
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
+    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="index.html">第四章：Read 宏</a> &raquo;</li>
-      <li>4.2 Backquote</li>
+        
+      <li>4.2 反引用</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
+        
+          
             <a href="../_sources/Chapter04/4.2-backquote.md.txt" rel="nofollow"> View page source</a>
+          
+        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
-  <section id="backquote">
-<h1>4.2 Backquote<a class="headerlink" href="#backquote" title="Permalink to this headline"></a></h1>
+            
+  <div class="tex2jax_ignore mathjax_ignore section" id="id1">
+<h1>4.2 反引用<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
 <hr class="docutils" />
-<p><em>Backquote</em>, sometimes known as <em>quasiquote</em><a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">2</a>, and displayed as `, is a relative new-comer to mainstream lisp programming, and the concept is still almost completely foreign to languages other than lisp.</p>
-<p>Backquote has a bizarre history of development in parallel with lisp. It is reported[QUASIQUOTATION] that early on nobody believed that nested backquotes worked right until a sharp programmer realised that they actually did work right—people’s ideas of what was right were wrong. The nested backquote is notoriously difficult to understand. Even Steele, the father of COMMON LISP, complains about it[CLTL2-P530].</p>
-<p>In principle, lisp doesn’t need backquote. Anything that can be done with backquote can be done with other list building functions. However, backquote is so useful for macro programming, which in lisp means all programming, that lisp professionals have come to rely on it heavily.</p>
-<p>First off, we need to understand regular quotation. In lisp, when we prefix a form with the quote character (’) we are informing lisp that the following form should be treated as raw data, and not code to be evaluated. Rather, quote reads in as code that, when evaluated, returns a form. We sometimes say that quote <em>stops</em> or <em>turns off</em> the evaluation of a form.</p>
-<p>Backquote can be used as a substitute for quote in lisp. Unless certain special characters, called <em>unquote</em> characters, appear in a form, backquote stops evaluation in the same way as quote. As the name suggests, these unquote characters reverse the evaluation semantics. We sometimes say that an unquote <em>restarts</em> or <em>turns back on</em> the evaluation of a form.</p>
-<p>There are three main types of unquote: regular unquote, splicing unquote, and destructive splicing unquote.</p>
-<p>To perform a regular unquote, we use the comma operator:</p>
+<p>反引号，有时也被叫做 <em>quasiquote</em><a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">2</a>，显示为 <strong>`</strong>（即 Esc 键下面那个键），是主流 lisp 编程相对较新的概念，而且这个概念对于 lisp 外的语言几乎是完全陌生的。</p>
+<p>反引号和 lisp 有一段奇异的发展历史。 据报道 [QUASIQUOTATION] 早期没人认为反引号嵌套能正常运行，直到一位敏锐的程序员意识到它们确实正确地运行——人们对正确的概念是错的。 众所周知，反引号嵌套很难理解。 就连 COMMON LISP 之父 Steele 也抱怨它[CLTL2-P530]。</p>
+<p>原则上，lisp 不需要反引号。 能用反引号完成的事情都能用其他结构构建功能来完成。 然而，反引号对宏编程非常有用，在 lisp 中意味着所有编程，以至于 lisp 专业人士已经开始严重依赖它。</p>
+<p>首先，我们需要了解常规引用。 在 lisp 中，当在一个结构前面加上引号 （<strong>’</strong>） 时，就是告诉 lisp 解释器 将以下结构看作原始数据，而不是要执行的代码。 更确切地说，引号作为代码读入，在执行时会返回一段代码表单。 有时也会说引号<em>停止或关闭对代码</em>的执行。</p>
+<p>反引号用来代替 lisp 中的引号。 除非某些特殊字符（叫做非引用（<strong>unquote</strong>）字符）出现在代码中，否则反引号会和引号一样不执行代码。 顾名思义，这些非引用字符保留了执行语义。 有时会说非引用是将重启或回到执行。</p>
+<p>非引用主要分为三种类型：常规非引用、拼接非引用和破坏性拼接非引用。</p>
+<p>要执行常规的非引用，需要用逗号运算符（<strong>,</strong>）：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* (let ((s &#39;hello))
     `(,s world))
 
 (HELLO WORLD)
 </pre></div>
 </div>
-<p>Although the expression we are unquoting is simply a symbol to evaluate, <strong>s</strong>, it can instead be any lisp expression that evaluates to something meaningful for whatever context it appears in the backquote template. Whatever the results are, they are inserted into the resulting list in the car position of where they appear in the backquote template.</p>
-<p>In lisp form notation, we can use . to indicate that we want to explicitly put something in the cdr of the list structure we are creating. If we put a list there, the resulting form from the backquote will remain a valid list. But if we put something else there, we will get a new, non-list structure.</p>
-<p>We have this ability inside of backquote like everywhere else<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">3</a>. Thanks to the design of backquote, we can even unquote things in this position:</p>
+<p>尽管上面代码中取消引用的表达式只是个简单的 <strong>s</strong>变量，但这可以是任意 lisp 表达式，在其出现在反引号模板中的任何上下文，都可以执行计算为有意义的东西。 无论结果是什么，都会插入到出现在反引号模版中结果列表的 <em>car</em> 位置。</p>
+<p>在 lisp 结构符号中，可以用 <strong>.</strong> 显示地把一些结构放在正在创建的列表结构的 <em>cdr</em> 中。 如果在那里放一个列表，则反引号的结果代码仍是一个有效的列表。 但如果在其中放置其他内容，将得到一个新的非列表结构。</p>
+<p>在反引号中拥有这种能力，就像在其他地方一样<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">3</a>。 多亏了反引号的设计，我们甚至可以在这个位置取消引用：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* (let ((s &#39;(b c d)))
     `(a . ,s))
 
 (A B C D)
 </pre></div>
 </div>
-<p>Inserting lists into the cdr position of a list being created from a backquote template is so common that backquote takes it a step further with splicing unquote. The ., combination above is useful, but is incapable of inserting elements into the middle of a list. For that, we have the splicing unquote operator:</p>
+<p>在反引号创建的列表的 <em>cdr</em> 位置插入列表插入很常见，以至于反引号通过拼接非引用更进一步。上面的 **.,**组合很有用，但无法在列表中间插入元素。 为此，就有拼接非引用运算符：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* (let ((s &#39;(b c d)))
     `(a ,@s e))
 
 (A B C D E)
 </pre></div>
 </div>
-<p>Neither ., nor ,&#64; modify the list being spliced in. For instance, after evaluating the backquote in both of the previous forms, <strong>s</strong> will still be bound to the three element list <strong>(B C D)</strong>. Although it is not strictly required to by the standard, the <strong>(B C D)</strong> in the <strong>(A B C D)</strong> form above is allowed to share structure with the spliced-in list, <strong>s</strong>. However, in the list <strong>(A B C D E)</strong>, this list structure is guaranteed to be freshly allocated when the backquote is evaluated since ,&#64; is forbidden to modify the lists being spliced in. Splicing unquote is non-destructive because generally we want to think about backquote as being a re-usable template for creating lists. Destructively modifying the list structure of data that isn’t freshly allocated on every evaluation of the backquote code can have undesirable effects upon future expansions.</p>
-<p>However, COMMON LISP also provides a destructive version of splicing unquote which can be used anywhere splicing unquote can. To splice destructively, use ,. instead. Destructive splicing works the same as regular splicing except that the list being spliced in may be modified during the evaluation of the backquote template. As well as being only one character different from regular splicing, this notation is a clever re-use of the . character from the ., cdr position unquoting we looked at above.
-To see this in action, here we destructively modify the list pointed to by to-splice:</p>
+<p><strong>.</strong> 和 <strong>,&#64;</strong> 都不会修改被拼接的列表。例如，在对前面两种结构的反引号进行求值之后，<strong>s</strong> 仍然会绑定到这三个元素列表 <strong>(B C D)</strong> 。 虽然标准没有严格要求，但允许上面 <strong>(A B C D)</strong> 列表中的 <strong>(B C D)</strong> 与拼接列表共享列表 <strong>s</strong>。 然而，在列表 <strong>(A B C D E)</strong> 中，这个列表结构保证在执行反引号时被重新分配，因为禁止修改正在拼接的列表。拼接非引用是非破坏性的，因为通常要考虑反引号用作可重用的创建列表模板。 每次对反引用代码求值时，破坏性地修改不是最新分配的数据的列表结构，这可能会对之后的展开产生不良影响。</p>
+<p>然而，COMMON LISP 也提供了个破坏性版本的拼接非引用，可以在拼接非引用能使用的地方使用。 要进行破坏性拼接，使用 <strong>,.</strong> 。 破坏性拼接的工作方式与常规拼接相同，只是在执行反引号模板期间可以修改正在拼接的列表。 除了一个不同于常规拼接的字符之外，这种表示法还巧妙地重用了上面 <strong>.,</strong> cdr 的位置的取消引用。</p>
+<p>为了验证这一点，我们在这里破坏性地修改了 <strong>to-splice</strong> 指向的列表：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* (defvar to-splice &#39;(B C D))
 
 TO-SPLICE
@@ -131,21 +223,21 @@ TO-SPLICE
 (B C D E)
 </pre></div>
 </div>
-<p>Destructively modifying lists to be spliced in can be dangerous. Consider the following use of destructive splicing:</p>
+<p>破坏性地修改要拼接的列表可能很危险。 想想以下破坏性拼接的使用：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defun dangerous-use-of-bq ()
   `(a ,.&#39;(b c d) e))
 </pre></div>
 </div>
-<p>The first time <strong>dangerous-use-of-bq</strong> is called, the expected answer is returned: <strong>(A B C D E)</strong>. But since it uses destructive splicing and modifies a list that isn’t freshly generated—the quoted list—we can expect various undesirable consequences. In this case, the second time <strong>dangerous-use-of-bq</strong> is evaluated, the <strong>(B C D)</strong> form is now really a <strong>(B C D E)</strong> form, and when backquote tries to destructively splice this list onto the remainder of the backquote template, <strong>(E)</strong>—its own tail—it creates a list containing a <em>cycle</em>. We discuss cycles in more detail in <a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#sec_5">section 4.5, Cyclic Expressions</a>.</p>
-<p>However, there are many cases where destructive splicing is perfectly safe. Don’t let <strong>dangerous-use-of-bq</strong> scare you if you need more efficiency in your backquote forms. There are many operations that create fresh list structure that you are probably planning on throwing out anyways. For instance, splicing the results of a mapcar is so common and safe that the following could probably become a programming idiom:</p>
+<p>第一次调用 <strong>dangerous-use-of-bq</strong> 时，返回预期的答案：<strong>(A B C D E)</strong>。 但由于它使用破坏性拼接并修改了一个不是新生成的列表——引用列表——可以预料到各种不良后果。 在这种情况下，第二次执行 <strong>dangerous-use-of-bq</strong> 时，<strong>(B C D)</strong> 列表现在实际上是 <strong>(B C D E)</strong> 列表，并且当反引号试图破坏性地将该列表拼接到反引号模板的其余部分时，<strong>(E)</strong> ——它自己的尾巴——创建了一个包含循环的列表。 我们在<a class="reference internal" href="4.5-cyclic-expressions.html"><span class="doc std std-doc">4.5节：循环表达式</span></a>中会详细地讨论循环。</p>
+<p>但是，在许多情况下，破坏性拼接是完全安全的。 如果需要提高反引号结构的效率，不要被 <strong>dangerous-use-of-bq</strong> 吓到。 有许多操作可以创建新的列表结构，可能无论如何都要丢弃它们。 例如，拼接 <strong>mapcar</strong> 的结果是如此普遍和安全，以至于以下可能成为编程习惯：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(defun safer-use-of-bq ()
   `(a
     ,.(mapcar #&#39;identity &#39;(b c d))
     e))
 </pre></div>
 </div>
-<p>But there is a reason it hasn’t. The most common use of backquote is for authoring macros, the part of lisp programming where speed matters least and where clarity matters most. If thinking about the <em>side-effects</em> of your splicing operations distracts you even for a split second while creating and interpreting macros, it is probably not worth the trouble. This book sticks with regular splicing. The most common use of backquote is in macro construction but this is not its only use. Backquote is actually a useful domain specific language for the domain of mashing together lists, one made even more useful given the possibility of destructive splicing.</p>
-<p>How does backquote work? Backquote is a read macro. Backquoted forms read in as code that, when evaluated, becomes the desired list. Going back to the example of the previous section on read-time evaluation, we can turn off <em>pretty printing</em>, quote the value of the backquote form, and print it out to see exactly how backquote forms read<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">4</a>:</p>
+<p>但上面这种格式没有成为编程习惯是有原因的。 反引号最常见的用途是编写宏，这是 lisp 编程中速度最不重要而清晰度最重要的部分。 如果在创建和解释宏时考虑拼接操作的副作用会让你分心，那可能不值得这么麻烦。 这本书坚持常规拼接。 反引号最常见的用途是在宏构造中，但这并不是它唯一的用途。 反引号实际上是一种有用的领域特定语言，用于将列表混在一起的领域，考虑到破坏性拼接的可能性，它变得更加有用。</p>
+<p>反引号是如何工作的？ 反引号是一个读取宏。 反引号结构作为代码读入，在执行时成为所需的列表。 回到上一节关于读取时求值的示例，可以关掉美观的打印，引用反引号结构的值，并将其打印出来查看反引号结构确切的读取方式：<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">4</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">let</span> <span class="p">(</span><span class="o">*</span><span class="nb">print</span><span class="o">-</span><span class="n">pretty</span><span class="o">*</span><span class="p">)</span> <span class="p">;</span> <span class="n">bind</span> <span class="n">to</span> <span class="n">nil</span>
     <span class="p">(</span><span class="nb">print</span>
       <span class="s1">&#39;`(football-game</span>
@@ -170,8 +262,8 @@ TO-SPLICE
 <span class="n">T</span>
 </pre></div>
 </div>
-<p>In the above <em>ugly printed</em> form, the function <strong>LISP::BACKQ-LIST</strong> is identical to list, except for its pretty printing behaviour. Notice that the comma operators are gone. COMMON LISP is fairly liberal in what it allows backquote to read in as, particularly for operations where shared structure is permitted.</p>
-<p>Backquote also provides many interesting solutions to the amusing <em>non-problem</em> of writing a lisp expression that evaluates to itself. These expressions are commonly called <em>quines</em> after Willard Quine who studied them extensively and who, in fact, coined the term quasiquote—an alternative name for backquote[FOUNDATIONS-P31-FOOTNOTE3]. Here is a fun example of a quine that is attributed to Mike McMahon in [QUASIQUOTATION]:</p>
+<p>在上面这个**打印的很丑（ugly-printed）**的结构中，函数 <strong>LISP::BACKQ-LIST</strong> 与列表相同，除了列表的打印输出比较美观。 注意，逗号运算符已消失。 COMMON LISP 在用反引号读入方面相当自由，特别是对可以共享结构的操作。</p>
+<p>反引用还有很多好玩的方法来解决编写一个对自身求值的 lisp 表达式这一有趣的<em>难题（non-problem）</em>。 这些表达式在 Willard Quine 对其进行认真的研究之后被普遍称为 <em>quines</em>，事实上，Quine 创造了 quasiquote 一词——反引号的替代名称[FOUNDATIONS-P31-FOOTNOTE3]。 一下是个来自[QUASIQUOTATION] 中 Mike McMahon 的有趣 quine 示例：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* (let ((let &#39;`(let ((let &#39;,let))
                  ,let)))
     `(let ((let &#39;,let)) ,let))
@@ -192,37 +284,54 @@ TO-SPLICE
 <span class="s1">&#39;Q</span>
 </pre></div>
 </div>
-</section>
+</div>
 
 
            </div>
+           
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="4.1-runtime-at-readtime.html" class="btn btn-neutral float-left" title="4.1 运行时与读取时" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="4.3-reading-strings.html" class="btn btn-neutral float-right" title="4.3 Reading Strings" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="4.1-runtime-at-readtime.html" class="btn btn-neutral float-left" title="4.1 运行时与读取时" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2022, Yuqi Liu, Xuting Yang.</p>
-  </div>
+    <p>
+        &#169; Copyright 2021-2022, Yuqi Liu, Xuting Yang.
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
         </div>
       </div>
+
     </section>
+
   </div>
-  <script>
+  
+
+  <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
