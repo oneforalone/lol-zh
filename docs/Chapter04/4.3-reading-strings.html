@@ -1,34 +1,73 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
   <title>4.3 读取字符串 &mdash; Let Over Lambda 中文文档  documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-    <script src="../_static/js/theme.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="4.4 CL-PPCRE" href="4.4-cl-ppcre.html" />
     <link rel="prev" title="4.2 反引用" href="4.2-backquote.html" /> 
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
+
+   
   <div class="wy-grid-for-nav">
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+          
+
+          
             <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          
+
+          
           </a>
+
+          
+            
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -36,7 +75,18 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
@@ -57,38 +107,80 @@
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
+            
+          
         </div>
+        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Let Over Lambda 中文文档</a>
+        
       </nav>
 
+
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
+    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="index.html">第四章：Read 宏</a> &raquo;</li>
+        
       <li>4.3 读取字符串</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
+        
+          
             <a href="../_sources/Chapter04/4.3-reading-strings.md.txt" rel="nofollow"> View page source</a>
+          
+        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
-  <section id="id1">
-<h1>4.3 读取字符串<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h1>
+            
+  <div class="tex2jax_ignore mathjax_ignore section" id="id1">
+<h1>4.3 读取字符串<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
 <hr class="docutils" />
-<p>在 lisp 中，字符串由双引号 (<strong>”</strong>) 分隔。虽然字符串可以包含 lisp 实现的字符集中的任何字符，但和其他语言一样，某些特殊字符是不能直接插入的。如果要在字符串中表示引号和反斜杠，需要在其前面加上 <code class="docutils literal notranslate"><span class="pre">\</span></code>。 <code class="docutils literal notranslate"><span class="pre">\</span></code>由被称为转义字符。 例如，以下是包含 <strong>“</strong> 和 <code class="docutils literal notranslate"><span class="pre">\</span></code> 的字符串：</p>
+<p>在 lisp 中，字符串由双引号 (<strong>“</strong>) 分隔。虽然字符串可以包含 lisp 实现的字符集中的任何字符，但和其他语言一样，某些特殊字符是不能直接插入的。如果要在字符串中表示引号和反斜杠，需要在其前面加上 <code class="docutils literal notranslate"><span class="pre">\</span></code>。 <code class="docutils literal notranslate"><span class="pre">\</span></code>由被称为转义字符。 例如，以下是包含 <strong>“</strong> 和 <code class="docutils literal notranslate"><span class="pre">\</span></code> 的字符串：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="s2">&quot;Contains </span><span class="se">\&quot;</span><span class="s2"> and </span><span class="se">\\</span><span class="s2">.&quot;</span>
 
 <span class="s2">&quot;Contains </span><span class="se">\&quot;</span><span class="s2"> and </span><span class="se">\\</span><span class="s2">.&quot;</span>
@@ -108,7 +200,7 @@
   <span class="c1">#\# #\&quot; #&#39;|#&quot;-reader|)</span>
 </pre></div>
 </div>
-<p><strong>井双引号</strong><a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">5</a> 将在其调用字符 <strong>#</strong> 和 <strong>“</strong> 后立即开始读取字符串。它将继续逐个地读取字符，直到再次遇到 <strong>“</strong> 和 <strong>#</strong> 两个字符。 当它找到这个终止序列时，将返回由 <strong>#”</strong> 和 <strong>“#</strong> 之间的所有字符表示的字符串。 井双引号读取宏过去用于位字符串，但 COMMON LISP 通过将位字符串修改为 <strong>#</strong>* 读取宏[EARLY-CL-VOTES]，就释放了这个有用的宏字符。</p>
+<p><strong>井双引号</strong><a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">5</a> 将在其调用字符 <strong>#</strong> 和 <strong>“</strong> 后立即开始读取字符串。它将继续逐个地读取字符，直到再次遇到 <strong>“</strong> 和 <strong>#</strong> 两个字符。 当它找到这个终止序列时，将返回由 <strong>#”</strong> 和 <strong>“#</strong> 之间的所有字符表示的字符串。 井双引号读取宏过去用于位字符串，但 COMMON LISP 通过将位字符串修改为 <strong>#</strong>* 读取宏[EARLY-CL-VOTES]，就释放了这个有用的宏字符。</p>
 <p>这是新的井双引号执行示例：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="c1">#&quot;Contains &quot; and \.&quot;#</span>
 
@@ -146,7 +238,7 @@
   <span class="c1">#\# #\&gt; #&#39;|#&gt;-reader|)</span>
 </pre></div>
 </div>
-<p>我们需要一个读取宏，可以通过上下文自定义分隔符。 通常情况下，只需从 Larry Wall 的 Perl 语言中寻找编程快捷方式设计的灵感即可。 Perl 是一门美丽的、设计精美的语言，并且拥有许多可以被 lisp 借鉴的好想法。 从某种意义上说，Lisp 是一个大块，也许是一个雪球，不断吸收其他编程语言的思想，使这些思想成为自己的<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">6</a>.</p>
+<p>我们需要一个读取宏，可以通过上下文自定义分隔符。 通常情况下，只需从 Larry Wall 的 Perl 语言中寻找编程快捷方式设计的灵感即可。 Perl 是一门美丽的、设计精美的语言，并且拥有许多可以被 lisp 借鉴的好想法。 从某种意义上说，Lisp 是一个大块，也许是一个雪球，不断吸收其他编程语言的思想，使这些思想成为自己的<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">6</a>.</p>
 <p><strong>#&gt;</strong> 读取宏直接受到 Perl 的 <strong>&lt;&lt;</strong> 运算符的启发。 Perl 程序员可以使用这个运算符指定一个文本字符串作为引用字符串结束的分隔符。 <strong>#&gt;</strong> 读取字符直到找到换行符，然后一个接一个地读取字符，直到遇到与紧接在 <strong>#&gt;</strong> 之后和换行符之前找到的字符相同的字符序列。
 ​
 例如：</p>
@@ -160,37 +252,54 @@
 <span class="n">the</span> <span class="n">reading</span> <span class="n">of</span> <span class="n">this</span> <span class="n">string</span> <span class="ow">is</span><span class="o">...</span><span class="s2">&quot;</span>
 </pre></div>
 </div>
-</section>
+</div>
 
 
            </div>
+           
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="4.2-backquote.html" class="btn btn-neutral float-left" title="4.2 反引用" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="4.4-cl-ppcre.html" class="btn btn-neutral float-right" title="4.4 CL-PPCRE" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="4.2-backquote.html" class="btn btn-neutral float-left" title="4.2 反引用" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2022, Yuqi Liu, Xuting Yang.</p>
-  </div>
+    <p>
+        &#169; Copyright 2021-2022, Yuqi Liu, Xuting Yang.
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
         </div>
       </div>
+
     </section>
+
   </div>
-  <script>
+  
+
+  <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

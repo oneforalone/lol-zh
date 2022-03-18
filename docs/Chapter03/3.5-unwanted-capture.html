@@ -1,34 +1,73 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
   <title>3.5 异常捕获 &mdash; Let Over Lambda 中文文档  documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-    <script src="../_static/js/theme.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="3.6 Once Only" href="3.6-once-only.html" />
     <link rel="prev" title="3.4 自由变量" href="3.4-free-variables.html" /> 
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
+
+   
   <div class="wy-grid-for-nav">
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+          
+
+          
             <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          
+
+          
           </a>
+
+          
+            
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -36,7 +75,18 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
@@ -58,33 +108,75 @@
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
+            
+          
         </div>
+        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Let Over Lambda 中文文档</a>
+        
       </nav>
 
+
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
+    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="index.html">第三章：宏基础</a> &raquo;</li>
+        
       <li>3.5 异常捕获</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
+        
+          
             <a href="../_sources/Chapter03/3.5-unwanted-capture.md.txt" rel="nofollow"> View page source</a>
+          
+        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
-  <section id="id1">
-<h1>3.5 异常捕获<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h1>
+            
+  <div class="tex2jax_ignore mathjax_ignore section" id="id1">
+<h1>3.5 异常捕获<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
@@ -265,37 +357,54 @@ T
 <p>这里创建了两个 gensyms。 <strong>g!abc</strong> 的用法前面只有一个非引号（逗号），因此我们知道展开是指由 <strong>junk-inner</strong> 展开创建的内部 <strong>gensym</strong>。 如果每个都有两个非引号，它们将引用由 <strong>junk-outer</strong> 展开创建的外部 <strong>gensym</strong>。</p>
 <p><strong>defmacro/g!</strong> 用了 Graham 的 <strong>flatten</strong> 函数。 <strong>Flatten</strong>，如第 1.3 节所述，Lisp 实用程序，接收一个 cons 树结构——我们的 lisp 代码——并返回所有叶子/原子的新列表。 **defmacro/g!**中 <strong>flatten</strong>的使用是代码遍历的一个简单示例，我们之后将在本书中重新讨论遍历代码这一主题。</p>
 <p>练习：在上面定义 G-bang 宏的 G-bang 宏中，如果第一个 gensym 前面有一个反引号（逗号），而另一个前面有两个反引号（两个逗号），会出现什么问题？</p>
-</section>
+</div>
 
 
            </div>
+           
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="3.4-free-variables.html" class="btn btn-neutral float-left" title="3.4 自由变量" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="3.6-once-only.html" class="btn btn-neutral float-right" title="3.6 Once Only" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="3.4-free-variables.html" class="btn btn-neutral float-left" title="3.4 自由变量" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2022, Yuqi Liu, Xuting Yang.</p>
-  </div>
+    <p>
+        &#169; Copyright 2021-2022, Yuqi Liu, Xuting Yang.
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
         </div>
       </div>
+
     </section>
+
   </div>
-  <script>
+  
+
+  <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

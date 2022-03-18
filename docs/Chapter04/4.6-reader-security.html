@@ -1,34 +1,73 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
   <title>4.6 读取器的安全 &mdash; Let Over Lambda 中文文档  documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-    <script src="../_static/js/theme.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="第五章：Programs that program" href="../Chapter05/index.html" />
     <link rel="prev" title="4.5 循环表达式" href="4.5-cyclic-expressions.html" /> 
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
+
+   
   <div class="wy-grid-for-nav">
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+          
+
+          
             <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          
+
+          
           </a>
+
+          
+            
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -36,7 +75,18 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
@@ -57,41 +107,83 @@
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
+            
+          
         </div>
+        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Let Over Lambda 中文文档</a>
+        
       </nav>
 
+
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
+    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="index.html">第四章：Read 宏</a> &raquo;</li>
+        
       <li>4.6 读取器的安全</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
+        
+          
             <a href="../_sources/Chapter04/4.6-reader-security.md.txt" rel="nofollow"> View page source</a>
+          
+        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
-  <section id="id1">
-<h1>4.6 读取器的安全<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h1>
+            
+  <div class="tex2jax_ignore mathjax_ignore section" id="id1">
+<h1>4.6 读取器的安全<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
 <hr class="docutils" />
 <p>可扩展性，让原本不打算或预期的事情发生的能力，几乎总是一件好事。 事实上，尽量鼓励可扩展性是 lisp 这么出色的原因。 但是，有时我们希望事物尽可能不可扩展。 特别是，我们不希望外部人员在我们不知情或未经同意的情况下将自己的代码扩展到我们的系统中。 这被称为被黑客入侵或被入侵。 今天，有趣的计算主要是关于通信和网络。 当完全控制两个程序交换数据时，显然是信任整个系统。 但是，一旦某些不受信任的一方有可能甚至部分控制其中一个程序，信任系统就会完全崩溃，就像倒塌的纸牌屋一样。</p>
-<p>这些安全问题的最大来源是程序员戏称的<em>阻抗失配（impedance mismatch）</em>。每当使用不完全理解的东西时，有可能是用错了。有两种方法可以解决阻抗不匹配问题：样式（不要使用 <strong>strcpy(3)</strong>）和理解（真正阅读手册页）。 Lisp 是编写安全软件的好语言，因为 lisp 比其他语言更能达到。如果你总是遵循 lisp 做正确的假设，那么几乎不会出错。例如，如果尝试在字符串或向量的范围之外写入，这明显是有问题的，lisp 会抛出异常并立即报告该问题。事实上，lisp 做的比预想的更正确：遇到异常后，可以选择在程序的另一个位置重新启动程序，保留大部分计算状态。换句话说，COMMON LISP 的异常系统不会在发生异常时自动销毁计算堆栈：可能仍想使用该堆栈。主要是由于篇幅限制，本书没有详细描述异常系统<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">13</a>。相反，我推荐 Peter Seibel 的 Practical COMMON LISP[PRACTICAL-CL]。</p>
+<p>这些安全问题的最大来源是程序员戏称的<em>阻抗失配（impedance mismatch）</em>。每当使用不完全理解的东西时，有可能是用错了。有两种方法可以解决阻抗不匹配问题：样式（不要使用 <strong>strcpy(3)</strong>）和理解（真正阅读手册页）。 Lisp 是编写安全软件的好语言，因为 lisp 比其他语言更能达到。如果你总是遵循 lisp 做正确的假设，那么几乎不会出错。例如，如果尝试在字符串或向量的范围之外写入，这明显是有问题的，lisp 会抛出异常并立即报告该问题。事实上，lisp 做的比预想的更正确：遇到异常后，可以选择在程序的另一个位置重新启动程序，保留大部分计算状态。换句话说，COMMON LISP 的异常系统不会在发生异常时自动销毁计算堆栈：可能仍想使用该堆栈。主要是由于篇幅限制，本书没有详细描述异常系统<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">13</a>。相反，我推荐 Peter Seibel 的 Practical COMMON LISP[PRACTICAL-CL]。</p>
 <p>但学习 lisp 的一部分是发现一切皆可扩展。 到底该如何限制这一点？ 事实证明，这是以错误的方向思考问题。 和所有的计算机安全领域一样，在考虑进攻之前，不能考虑防御。 在其他编程领域，可以建设性地获得不错的结果，即通过构建和使用抽象。 在安全方面，必须进行破坏性思考。 必须试着破坏代码来查找错误，而不是等待然后修复错误。</p>
-<p>那么我们关注哪些攻击呢？ 除非以某种方式控制程序的输入，否则无法攻击该程序。 当然，在网络世界中，大多数程序都是毫无用处的，除非人们提供输入。 互联网上有很多用于混洗数据的协议<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">14</a>。 我们想做的事情种类繁多，无法为数据交换创建通用标准。 做的最好的事情是提供一个可扩展的框架，并允许程序员自定义协议以适应正在创建的应用程序。 通常，这意味着更少的网络开销、更好的传输算法和更高的可靠性。 然而，主要优点是，当我们设计协议时，可以减少或消除阻抗失配，这就是制作安全协议的方法。</p>
+<p>那么我们关注哪些攻击呢？ 除非以某种方式控制程序的输入，否则无法攻击该程序。 当然，在网络世界中，大多数程序都是毫无用处的，除非人们提供输入。 互联网上有很多用于混洗数据的协议<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">14</a>。 我们想做的事情种类繁多，无法为数据交换创建通用标准。 做的最好的事情是提供一个可扩展的框架，并允许程序员自定义协议以适应正在创建的应用程序。 通常，这意味着更少的网络开销、更好的传输算法和更高的可靠性。 然而，主要优点是，当我们设计协议时，可以减少或消除阻抗失配，这就是制作安全协议的方法。</p>
 <p>数据交换标准的问题在于，为了支持标准，应用程序要被禁止减少协议可以做的事情。 为了使应用程序符合标准，通常要满足一些基线行为。 为了制定安全协议，我们需要能够确保只接受确定可以处理的内容，除此之外一概拒绝。</p>
 <p>那么 lisp 交换数据的方式是什么？ 将数据输入 lisp 的机制称为 lisp 读取器，将数据取出的机制称为 lisp 打印机。 如果你已深入本书，那么你已经知道了足够多的知识来设计和使用 lisp 协议。 当编写 lisp 程序时，你就在使用这样的协议。 向 lisp 提供 lisp 结构与 lisp 进行交互，这通常也是与世界其他地方交互的最佳方式。 当然，你不信任世界其他地方，因此必须采取预防措施。 记住，要考虑安全性，就必须考虑攻击。 COMMON LISP 的设计者在设计时考虑了对读取器的攻击。 在本章前面我们描述了 <strong>#.</strong> 读取宏，让读取器执行 lisp 表达式，因此可以编码不可序列化的数据结构。 为了减轻对 lisp 读取器的显示攻击，COMMON LISP 有 <strong><em>read-eval</em></strong>。以下是从 CLtL2 摘抄下来的：</p>
 <blockquote>
@@ -142,8 +234,8 @@
       <span class="n">fail</span><span class="p">)))</span>
 </pre></div>
 </div>
-<p><strong>safe-read-from-string</strong> 是对读取器安全问题的部分回答。 与本书中的大多数代码相比，该函数不太适合生产使用。 建议仔细思考应用程序的安全要求，并为应用程序调整（甚至重写）此代码。 <strong>safe-read-from-string</strong> 是 <strong>read-from-string</strong> 的一个很锁定的版本。 它有默认的 lisp <em>readtable</em> 的副本。 此副本已删除大部分有趣的读取宏，包括 <strong>#</strong> 调度宏。 这意味着向量、位向量、gensyms、循环引用、<strong>#.</strong> 和所有其他的都没有了。 <strong>safe-read-from-string</strong> 甚至不允许关键字或外来包符号。 但是，它不仅允许格式良好的列表，还允许 cons 结构。同时还允许数字<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">15</a>和字符串。</p>
-<p><strong>safe-read-from-string</strong> 使用 lisp 的异常系统来捕获所有由 lisp <strong>read-from-string</strong> 函数抛出的异常。 如果从字符串中读取有任何问题，包括遇到不匹配的括号或遇到在 <strong>safe-read-from-string-blacklist</strong> 变量中列入黑名单的其他读取宏，则 <strong>safe-read-from-string</strong> 将返回第二个参数的值，如果没有第二个参数，则为 <strong>nil</strong>（记住，你可能希望读取 <strong>nil</strong>）。 以下是经典的用法<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">16</a>：</p>
+<p><strong>safe-read-from-string</strong> 是对读取器安全问题的部分回答。 与本书中的大多数代码相比，该函数不太适合生产使用。 建议仔细思考应用程序的安全要求，并为应用程序调整（甚至重写）此代码。 <strong>safe-read-from-string</strong> 是 <strong>read-from-string</strong> 的一个很锁定的版本。 它有默认的 lisp <em>readtable</em> 的副本。 此副本已删除大部分有趣的读取宏，包括 <strong>#</strong> 调度宏。 这意味着向量、位向量、gensyms、循环引用、<strong>#.</strong> 和所有其他的都没有了。 <strong>safe-read-from-string</strong> 甚至不允许关键字或外来包符号。 但是，它不仅允许格式良好的列表，还允许 cons 结构。同时还允许数字<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">15</a>和字符串。</p>
+<p><strong>safe-read-from-string</strong> 使用 lisp 的异常系统来捕获所有由 lisp <strong>read-from-string</strong> 函数抛出的异常。 如果从字符串中读取有任何问题，包括遇到不匹配的括号或遇到在 <strong>safe-read-from-string-blacklist</strong> 变量中列入黑名单的其他读取宏，则 <strong>safe-read-from-string</strong> 将返回第二个参数的值，如果没有第二个参数，则为 <strong>nil</strong>（记住，你可能希望读取 <strong>nil</strong>）。 以下是经典的用法<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">16</a>：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">let</span><span class="o">*</span> <span class="p">((</span><span class="n">g</span> <span class="p">(</span><span class="n">gensym</span><span class="p">))</span>
        <span class="p">(</span><span class="n">v</span> <span class="p">(</span><span class="n">safe</span><span class="o">-</span><span class="n">read</span><span class="o">-</span><span class="n">from</span><span class="o">-</span><span class="n">string</span>
             <span class="n">user</span><span class="o">-</span><span class="n">supplied</span><span class="o">-</span><span class="n">string</span> <span class="n">g</span><span class="p">)))</span>
@@ -157,37 +249,54 @@
 <p>因此，可以在觉得必要的时候尽可能严格地锁定读取器，事实上，就像应用程序允许的那样严格。但是，即使在通过用于读取表单的软件确定不存在攻击向量之后，如何才能最大限度地减少我们认为的 lisp 表单的结构与实际可能的结构之间的阻抗不匹配？我们必须验证它是否符合预期。一些数据标准将此过程称为针对模式的验证，但 lisp 将其称为针对扩展的 lambda 形式的 <strong>destructuring-bind</strong>。所有这些术语听起来都比其所代表的简单概念更重要。其思想是，希望确保数据的形式或结构符合给定处理的要求。 <strong>destructuring-bind</strong> 检查这个结构，提供了一种非常有用的模式语言，其中包括关键字和可选参数，还有一个好处是可以在进行过程中命名结构的不同部分。</p>
 <p>我可以举一些例子来说明如何使用 <strong>destructuring-bind</strong>，但实际上没有必要：我们一直在使用解构。 当我们使用 <strong>defmacro</strong>、<strong>defmacro!</strong> 或 <strong>destructuring-bind</strong> 时，我们在宏名称之后立即插入的参数或参数列表称为扩展 lambda 列表，以强调它比对普通 lambda 列表执行的解构更强大的事实。 使用扩展 lambda 列表，可以嵌套扩展 lambda 列表以解构任意深度的列表结构。 Paul Graham 的 On Lisp 对解构有很好的处理。 尤其是 <strong>with-places</strong> 宏[ON-LISP-P237]，最好在阅读<a class="reference internal" href="../Chapter06/6.7-pandoric-macros.html"><span class="doc std std-doc">6.7 节：潘多拉宏</span></a> 之后再去看看 <strong>with-places</strong> 宏。</p>
 <p>因此，每次编写宏或函数时，在某种意义上，都将宏或函数将接收的参数视为数据，并将扩展或常规 lambda 列表视为模式。 有鉴于此，数据验证似乎很容易。 Lisp 可以验证数据是否按照应有的结构进行了构建，如果不是，则会引发错误情况。 和上面的读取器一样，在处理不太信任的数据时，应该非常仔细地考虑可能的攻击，然后用 lisp 强大的异常和宏系统来构建一个验证方案，只允许应用程序的最低要求，并直接映射到应用程序如何工作，减少或消除任何阻抗失配。 CL-PPCRE 正则表达式对于这项任务也是必不可少的。 没有其他语言具有 lisp 所具备的安全软件潜力，且随着时间的推移，这一点只会变得更加明显。</p>
-</section>
+</div>
 
 
            </div>
+           
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="4.5-cyclic-expressions.html" class="btn btn-neutral float-left" title="4.5 循环表达式" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="../Chapter05/index.html" class="btn btn-neutral float-right" title="第五章：Programs that program" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="4.5-cyclic-expressions.html" class="btn btn-neutral float-left" title="4.5 循环表达式" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2022, Yuqi Liu, Xuting Yang.</p>
-  </div>
+    <p>
+        &#169; Copyright 2021-2022, Yuqi Liu, Xuting Yang.
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
         </div>
       </div>
+
     </section>
+
   </div>
-  <script>
+  
+
+  <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

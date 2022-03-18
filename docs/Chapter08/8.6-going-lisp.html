@@ -1,34 +1,73 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
   <title>8.6 在 forth 中写 lisp 代码 &mdash; Let Over Lambda 中文文档  documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-    <script src="../_static/js/theme.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="附录" href="../Appendices/index.html" />
     <link rel="prev" title="8.5 forth 的拓展" href="8.5-going-forther.html" /> 
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
+
+   
   <div class="wy-grid-for-nav">
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+          
+
+          
             <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          
+
+          
           </a>
+
+          
+            
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -36,7 +75,18 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
@@ -57,33 +107,75 @@
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
+            
+          
         </div>
+        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Let Over Lambda 中文文档</a>
+        
       </nav>
 
+
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
+    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="index.html">第八章：Lisp 与 Forth</a> &raquo;</li>
+        
       <li>8.6 在 forth 中写 lisp 代码</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
+        
+          
             <a href="../_sources/Chapter08/8.6-going-lisp.md.txt" rel="nofollow"> View page source</a>
+          
+        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
-  <section id="forth-lisp">
-<h1>8.6 在 forth 中写 lisp 代码<a class="headerlink" href="#forth-lisp" title="Permalink to this headline"></a></h1>
+            
+  <div class="tex2jax_ignore mathjax_ignore section" id="forth-lisp">
+<h1>8.6 在 forth 中写 lisp 代码<a class="headerlink" href="#forth-lisp" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
@@ -362,37 +454,54 @@
 <p>如前所述，由于 lisp 和forth 之间的差异，我们的 <code class="docutils literal notranslate"><span class="pre">forth-to-lisp</span></code>编译器有一定的局限性。 例如，我们不再提供对返回堆栈的访问，因此任何使用 <code class="docutils literal notranslate"><span class="pre">r&gt;</span></code> 或 <code class="docutils literal notranslate"><span class="pre">&gt;r</span></code> 的单词都被禁止。 这包括退出，因此之前的单词倒计时将不起作用。 但是，因为它不使用退出，<code class="docutils literal notranslate"><span class="pre">countdown-for-teh-hax0rz</span></code> 可以正常工作。 因为 lisp 程序无法访问它们的返回堆栈，所以并非所有的控制结构都可以用像 Common Lisp 这样的 Flub 语言来实现。 练习：添加 <code class="docutils literal notranslate"><span class="pre">exit</span></code> 作为一个特殊情况的词，它使用 lisp 块从一个词返回。</p>
 <p>另一个限制是 lisp 代码无法编译非 Flub 代码，因此我们无法翻译出 forth 中用来编译的单词，例如 <code class="docutils literal notranslate"><span class="pre">if</span></code>、<code class="docutils literal notranslate"><span class="pre">then</span></code>、<code class="docutils literal notranslate"><span class="pre">begin</span></code> 和 <code class="docutils literal notranslate"><span class="pre">again</span></code>。 当然，请注意，用这些词创建的 forth 线程仍然可以用于编译词，如上与事实一样。 最后一个限制是，在 forth 中，<code class="docutils literal notranslate"><span class="pre">branch-if</span></code>可以跳转到任何线程，即使它是在与当前执行的单词不同的单词中创建的。 在 lisp 中，只能转到 <code class="docutils literal notranslate"><span class="pre">tagbody</span></code>中的其他位置。 Forth 允许非本地分支，但一般的非本地分支不能在像 Common Lisp 这样的 Flubs 中完成。</p>
 <p>等一等。 当我们之前在 forth 环境中进行编程时，我们不是只避免了所有这些 Flub 限制吗？ 是的。 宏允许我们将程序与 lisp 相互转换。 多亏了宏，任何东西都可以用 lisp 编程。</p>
-</section>
+</div>
 
 
            </div>
+           
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="8.5-going-forther.html" class="btn btn-neutral float-left" title="8.5 forth 的拓展" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="../Appendices/index.html" class="btn btn-neutral float-right" title="附录" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="8.5-going-forther.html" class="btn btn-neutral float-left" title="8.5 forth 的拓展" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2022, Yuqi Liu, Xuting Yang.</p>
-  </div>
+    <p>
+        &#169; Copyright 2021-2022, Yuqi Liu, Xuting Yang.
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
         </div>
       </div>
+
     </section>
+
   </div>
-  <script>
+  
+
+  <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

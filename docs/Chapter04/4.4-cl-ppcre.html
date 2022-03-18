@@ -1,34 +1,75 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
   <title>4.4 CL-PPCRE &mdash; Let Over Lambda 中文文档  documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-    <script src="../_static/js/theme.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="4.5 循环表达式" href="4.5-cyclic-expressions.html" />
     <link rel="prev" title="4.3 读取字符串" href="4.3-reading-strings.html" /> 
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
+
+   
   <div class="wy-grid-for-nav">
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+          
+
+          
             <a href="../index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          
+
+          
           </a>
+
+          
+            
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -36,7 +77,18 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Chapter01/index.html">第一章：概述</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Chapter02/index.html">第二章：闭包</a></li>
@@ -57,33 +109,75 @@
 <li class="toctree-l1"><a class="reference internal" href="../Appendices/index.html">附录</a></li>
 </ul>
 
+            
+          
         </div>
+        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Let Over Lambda 中文文档</a>
+        
       </nav>
 
+
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
+    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="index.html">第四章：Read 宏</a> &raquo;</li>
+        
       <li>4.4 CL-PPCRE</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
+        
+          
             <a href="../_sources/Chapter04/4.4-cl-ppcre.md.txt" rel="nofollow"> View page source</a>
+          
+        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
-  <section id="cl-ppcre">
-<h1>4.4 CL-PPCRE<a class="headerlink" href="#cl-ppcre" title="Permalink to this headline"></a></h1>
+            
+  <div class="tex2jax_ignore mathjax_ignore section" id="cl-ppcre">
+<h1>4.4 CL-PPCRE<a class="headerlink" href="#cl-ppcre" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <p>Author: Doug Hoyte &lt;<a class="reference external" href="mailto:doug&#37;&#52;&#48;hoytech&#46;com">doug<span>&#64;</span>hoytech<span>&#46;</span>com</a>&gt;</p>
 <p>Translator: Yuqi Liu &lt;<a class="reference external" href="mailto:yuqi&#46;lyle&#37;&#52;&#48;outlook&#46;com">yuqi<span>&#46;</span>lyle<span>&#64;</span>outlook<span>&#46;</span>com</a>&gt;</p>
@@ -92,10 +186,10 @@
 <p>PPCRE，对于那些还不熟悉的人来说，全称是 Portable Perl Compatible Regular Expressions。 CL-PPCRE 与本书中的代码一样，是可移植的，因为它可以在任何符合 ANSI 的 COMMON LISP 环境中运行。 CL-PPCRE 和本书中的代码一样，是开源的并且免费提供。 尽管 CL-PPCRE 与 Perl 几乎完美兼容，但它在一些重要方面与 Perl 不同。 CL-PPCRE 为正则表达式提供了几个值得注意的 lispy 增强。 CL-PPCRE 与 Perl 中正则表达式的实现有三种实质性的不同。</p>
 <p>首先，CL-PPCRE 速度很快。 真的很快。 当使用正常的本机代码编译器进行编译时，基准测试表明对于大多数正则表达式，CL-PPCRE 的速度大约是 Perl 的两倍，通常要快得多。 然而 Perl 拥有最快的非 lisp 正则表达式引擎之一：一个用 C 编写的高度优化的引擎。这怎么可能？ Perl 的底层实现肯定比用 lisp 等高级语言编写的任何东西都具有性能优势。</p>
 <p>这种误解被称为性能神话，一般版本如下：低级语言导致代码更快，因为可以更接近硬件进行编程。 正如本书希望解释的那样，对于复杂的系统，这个神话是错误的。 像 CL-PPCRE 这样的例子就证明了这一点。 语言越低级，就越会阻止程序员和其编译器进行真正重要的效率优化。</p>
-<p>使用 CL-PPCRE，性能提升的技术原因很简单：用于实现 CL-PPCRE 的语言 COMMON LISP 比用于实现 Perl 的语言 C 更强大。当 Perl 读入正则表达式时，它可以执行分析和优化，但最终正则表达式将存储到某种 C 数据结构中，供静态正则表达式引擎在尝试匹配时使用。但是在强大的语言 COMMON LISP 中，将这个正则表达式转换成一个 lisp 程序，然后将该 lisp 程序传递给优化的、原生代码的 lisp 编译器，用于构建余下的 lisp 系统<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">7</a>部分，基本上不再困难。 因为用 C 编译器编译的程序无法访问 C 编译器，所以 Perl 无法将正则表达式一直编译为机器代码。 Lisp 的编译模型与 C 完全不同。在 COMMON LISP 中，在运行时（在任何时候）编译东西是可移植的、无缝的、在与 lisp 镜像相同的过程中完成、在不再需要时收集垃圾，并且由于其增量性质，效率很高。</p>
+<p>使用 CL-PPCRE，性能提升的技术原因很简单：用于实现 CL-PPCRE 的语言 COMMON LISP 比用于实现 Perl 的语言 C 更强大。当 Perl 读入正则表达式时，它可以执行分析和优化，但最终正则表达式将存储到某种 C 数据结构中，供静态正则表达式引擎在尝试匹配时使用。但是在强大的语言 COMMON LISP 中，将这个正则表达式转换成一个 lisp 程序，然后将该 lisp 程序传递给优化的、原生代码的 lisp 编译器，用于构建余下的 lisp 系统<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">7</a>部分，基本上不再困难。 因为用 C 编译器编译的程序无法访问 C 编译器，所以 Perl 无法将正则表达式一直编译为机器代码。 Lisp 的编译模型与 C 完全不同。在 COMMON LISP 中，在运行时（在任何时候）编译东西是可移植的、无缝的、在与 lisp 镜像相同的过程中完成、在不再需要时收集垃圾，并且由于其增量性质，效率很高。</p>
 <p>CL-PPCRE 和 Perl 之间的第二个主要区别是 CL-PPCRE 不依赖于正则表达式的基于字符串的表示法。 CL-PPCRE 已从字符表示中解放出来，并允许我们将正则表达式编码为 lisp 表达式（有时称为 S 表达式）。 由于这些表达式正是用来编写 lisp 程序和宏的符号，因此我们在抽象中获得了更多凝聚力的机会。 请参阅 CL-PPCRE[CL-PPCRE] 的文档和代码以获取有关使用此正则表达式表示法的详细信息，以及精心设计的 lispy 域特定语言的示例。</p>
 <p>当然，CL-PPCRE 很棒，但为什么要在关于读取宏的章节中讨论它呢？ 答案是 CL-PPCRE 与 Perl 第三个不同点，也是最后一个不同点。 在 Perl 中，正则表达式与语言密切相关。 虽然 lisp 的语法是适应元编程的方式，但 Perl 的语法是适应正则表达式和其他类型的语法快捷方式的方式。 在 Perl 代码中频繁地使用正则表达式的部分原因是因为编写它们的体验很简短和轻松。</p>
-<p>要以 Perlish 风格添加方便的程序员的接口，读取宏就会很方便。 因为编写读取宏就是编写 lisp，所以从一个实用函数开始：<strong>segment-reader</strong>。 给定一个流、一个分隔符和一个计数，<strong>segment-reader</strong> 将从流中读取字符，直到遇到分隔符。 如果计数大于 1，<strong>segment-reader</strong> 将返回一个 cons。 这个 cons 的 car 是个字符串，而 cdr 是在给定递减小计数参数的情况下递归调用 <strong>segment-reader</strong> 的结果，以获取下一个字符片段<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">8</a>.</p>
+<p>要以 Perlish 风格添加方便的程序员的接口，读取宏就会很方便。 因为编写读取宏就是编写 lisp，所以从一个实用函数开始：<strong>segment-reader</strong>。 给定一个流、一个分隔符和一个计数，<strong>segment-reader</strong> 将从流中读取字符，直到遇到分隔符。 如果计数大于 1，<strong>segment-reader</strong> 将返回一个 cons。 这个 cons 的 car 是个字符串，而 cdr 是在给定递减小计数参数的情况下递归调用 <strong>segment-reader</strong> 的结果，以获取下一个字符片段<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">8</a>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">defun</span> <span class="n">segment</span><span class="o">-</span><span class="n">reader</span> <span class="p">(</span><span class="n">stream</span> <span class="n">ch</span> <span class="n">n</span><span class="p">)</span>
   <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="o">&gt;</span> <span class="n">n</span> <span class="mi">0</span><span class="p">)</span>
     <span class="p">(</span><span class="n">let</span> <span class="p">((</span><span class="n">chars</span><span class="p">))</span>
@@ -107,7 +201,7 @@
             <span class="p">(</span><span class="n">segment</span><span class="o">-</span><span class="n">reader</span> <span class="n">stream</span> <span class="n">ch</span> <span class="p">(</span><span class="o">-</span> <span class="n">n</span> <span class="mi">1</span><span class="p">))))))</span>
 </pre></div>
 </div>
-<p>例如，从流 <strong>t</strong><a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">9</a> 中读取带有 <strong>/</strong> 分隔符的 3 个字符段，如下所示：</p>
+<p>例如，从流 <strong>t</strong><a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">9</a> 中读取带有 <strong>/</strong> 分隔符的 3 个字符段，如下所示：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">segment</span><span class="o">-</span><span class="n">reader</span> <span class="n">t</span> <span class="c1">#\/ 3)</span>
 <span class="n">abc</span><span class="o">/</span><span class="n">def</span><span class="o">/</span><span class="n">ghi</span><span class="o">/</span>
 
@@ -118,11 +212,11 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$my_boolean = ($var =~ m/^\w+/);
 </pre></div>
 </div>
-<p>上面代码是检查 <strong>$var</strong> 的内容是否以一个或多个字母数字字符开头。 类似地，如果要用替换正则表达式，也可以使用 Perl <strong>=~</strong> 运算符将替换正则表达式用在字符串变量 <strong>$var</strong> 上，以下代码是将第一次在 <strong>$var</strong>中出现的 <strong>dog</strong> 替换为 <strong>cat</strong>：</p>
+<p>上面代码是检查 <strong><span class="math notranslate nohighlight">\(var** 的内容是否以一个或多个字母数字字符开头。 类似地，如果要用替换正则表达式，也可以使用 Perl **=~** 运算符将替换正则表达式用在字符串变量 **\)</span>var</strong> 上，以下代码是将第一次在 <strong>$var</strong>中出现的 <strong>dog</strong> 替换为 <strong>cat</strong>：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$var =~ s/dog/cat/;
 </pre></div>
 </div>
-<p>Perl 语法的伟大之处在于分隔符可以是任何方便使用的字符。 如果想使用正则表达式或包含 / 字符的替换，我们可以使用不同的字符来避免冲突<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">10</a>：</p>
+<p>Perl 语法的伟大之处在于分隔符可以是任何方便使用的字符。 如果想使用正则表达式或包含 / 字符的替换，我们可以使用不同的字符来避免冲突<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">10</a>：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$var =~ s|/usr/bin/rsh|/usr/bin/ssh|;
 </pre></div>
 </div>
@@ -143,7 +237,7 @@
 </pre></div>
 </div>
 <p>定义一个读取宏来复制这两种 Perl 语法，就有机会展示一种有趣的宏技术，即双反引号。 这个想法是，有时，就像在 <strong>match-mode-ppcre-lambda-form</strong> 和 <strong>subst-mode-ppcre-lambda-form</strong> 宏中一样，我们想要编写生成列表的代码。 注意，通常在定义宏并使用单个反引号时，正在生成一个表示代码的列表并将其从宏中返回，以便将其拼接到表达式中进行执行。 使用双反引号，仍然会生成一个表示代码的列表，但此代码在执行时将使用反引号构建的代码以返回一个列表。 在我们的例子中，这两个宏展开为代码，可以用这些代码来创建对应用 CL-PPCRE 正则表达式有帮助的 lambda 结构。</p>
-<p>我们在这些宏和下面的一些其他表达式前面加上 <strong>#+</strong> 读取宏。 在执行以下代码之前，此读取宏会测试是否有可用的 CL-PPCRE<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">11</a>。 如果从本书加载源代码时 CL-PPCRE 不可用，则本节的功能将不可用。</p>
+<p>我们在这些宏和下面的一些其他表达式前面加上 <strong>#+</strong> 读取宏。 在执行以下代码之前，此读取宏会测试是否有可用的 CL-PPCRE<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">11</a>。 如果从本书加载源代码时 CL-PPCRE 不可用，则本节的功能将不可用。</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#+cl-ppcre</span>
 <span class="p">(</span><span class="n">defun</span> <span class="o">|</span><span class="c1">#~-reader| (stream sub-char numarg)</span>
   <span class="p">(</span><span class="n">declare</span> <span class="p">(</span><span class="n">ignore</span> <span class="n">sub</span><span class="o">-</span><span class="n">char</span> <span class="n">numarg</span><span class="p">))</span>
@@ -172,7 +266,7 @@
 <span class="c1">#&lt;Interpreted Function&gt;</span>
 </pre></div>
 </div>
-<p>现在可以像调用普通函数一样将此函数应用于字符串<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html#">12</a>：</p>
+<p>现在可以像调用普通函数一样将此函数应用于字符串<a class="reference external" href="https://letoverlambda.com/index.cl/guest/chap4.html">12</a>：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">(</span><span class="n">funcall</span> <span class="o">*</span> <span class="s2">&quot;123abc&quot;</span><span class="p">)</span>
 
 <span class="mi">3</span>
@@ -222,37 +316,54 @@
 </div>
 <p>这是一个长度为 2 的字符串。反斜杠去哪儿了？ 双引号认为我们的意思是转义 <strong>w</strong> 字符而不是写一个文字 <code class="docutils literal notranslate"><span class="pre">\</span></code> 字符。 对于 <strong>#~</strong> 读取宏，只读取字符并查找适当的分隔符，这不是问题，可以像在 Perl 中一样编写正则表达式——无需转义。 请参阅上面 URL 正则表达式的引用。</p>
 <p>虽然本节定义的 <strong>#~</strong> 读取宏已经很方便了，但仍有改进和增强的空间。 练习：改进它。 第一步明显就是支持正则表达式修饰符，例如匹配中不区分大小写。 如果使用与 Perl 相同的语法完成，这会用到函数 <strong>unread-char</strong>，这在读取宏中很常见，以避免意外吞掉其他读取宏可能期望的字符。</p>
-</section>
+</div>
 
 
            </div>
+           
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="4.3-reading-strings.html" class="btn btn-neutral float-left" title="4.3 读取字符串" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="4.5-cyclic-expressions.html" class="btn btn-neutral float-right" title="4.5 循环表达式" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="4.3-reading-strings.html" class="btn btn-neutral float-left" title="4.3 读取字符串" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2022, Yuqi Liu, Xuting Yang.</p>
-  </div>
+    <p>
+        &#169; Copyright 2021-2022, Yuqi Liu, Xuting Yang.
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
         </div>
       </div>
+
     </section>
+
   </div>
-  <script>
+  
+
+  <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
