@@ -89,8 +89,6 @@ Sphinx 安装
 TODO:
 -------
 
-* 翻译 Chapter02
-* 翻译 Chapter03
-* 翻译 Chapter04
-
-* 完全区分 markdown 格式和 reStructureText 格式
+* 将每章的小节合并成一个文件
+* 将 markdown 格式 改写为 reStructureText 格式
+* 校对
