@@ -9,6 +9,7 @@ SOURCEDIR     = source
 BUILDDIR      = _build
 MARKDOWNDIR   = markdown
 
+
 # Put it first so that "make" without argument is like "make help".
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
@@ -29,7 +30,7 @@ github:
 
 # for Markdown format
 md:
-	@$(SPHINXBUILD) -M html "$(MARKDOWNDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(0)
+	@$(SPHINXBUILD) -M html "$(MARDKOWNDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(0)
 
 # build markdown format for github
 md-github:

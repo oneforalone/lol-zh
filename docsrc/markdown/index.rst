@@ -1,27 +1,31 @@
-.. lol-zh documentation master file, created by
-   sphinx-quickstart on Sun Sep  5 21:23:02 2021.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
-.. _lol_zh:
-
-Let Over Lambda 中文文档（Markdown 不完全版）
-==============================================
+==========================
+Let Over Lambda 中文版
+==========================
 
 .. toctree::
    :maxdepth: 2
 
-   Chapter01/index
-   Chapter02/index
-   Chapter03/index
-   Chapter04/index
-   Chapter05/index
-   Chapter06/index
-   Chapter07/index
-   Chapter08/index
-   Appendices/index
+   chapter01.md
+   chapter02.md
+   chapter03.md
+   chapter04.md
+   chapter05.md
+   chapter06.md
+   chapter07.md
+   chapter08.md
+   appendices.md
 
 
+-------
+TODO:
+-------
+
+* 将 markdown 格式 改写为 reStructureText 格式
+* 校对
+
+
+=================================
 如何加入
 ==================================
 
@@ -67,28 +71,20 @@ Sphinx 安装
 
 在对应的章节目录下创建对应的章节文档，如第一章第一节::
 
-  (sphinx)$ cd lol-zh/docsrc/markdown
-  (sphinx)$ touch Chapter01/1.1-macros.md
+  (sphinx)$ cd lol-zh/docsrc/markdown/drafts/
+  (sphinx)$ touch 1.1-macros.md
 
 .. note::
 
-  如果是 markdown 格式的则创建 .md 为后缀的文件。其中英文文档为 ``lol-zh/ori/lol.pdf``，同时，我使用爬虫爬过有道翻译，结果保存在 ``lol-zh/text`` 目录下。
+  如果是 markdown 格式的则创建 .md 为后缀的文件。其中英文文档为 ``lol-zh/lol.pdf``。
 
 编译完后进行本地预览::
 
   (sphinx)$ sphinx-autobuild markdown _build/html
 
-其中 ``source``、 ``markdown``、``_build/html`` 均在 ``lol-zh/docsrc`` 目录下，所以以上命令是在 ``lol-zh/docsrc`` 目录下执行的。确认没问题后执行::
+其中 ``rst`` ``markdown``、``_build/html`` 均在 ``lol-zh/docsrc`` 目录下，所以以上命令是在 ``lol-zh/docsrc`` 目录下执行的。确认没问题后执行::
 
   (sphinx) $ make md-github
 
 
 之后就是 ``git add <添加的文件>``、``git commit -m "<添加的文件>"``、``git push``
-
-
-TODO:
--------
-
-* 将每章的小节合并成一个文件
-* 将 markdown 格式 改写为 reStructureText 格式
-* 校对
