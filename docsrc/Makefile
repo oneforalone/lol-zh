@@ -30,7 +30,7 @@ github:
 
 # for Markdown format
 md:
-	@$(SPHINXBUILD) -M html "$(MARDKOWNDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(0)
+	@$(SPHINXBUILD) -M html "$(MARKDOWNDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(0)
 
 # build markdown format for github
 md-github:
