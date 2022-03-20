@@ -48,10 +48,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#more-phors">6.1 More Phors?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#sharp-backquote">6.2 Sharp-Backquote：#`</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#alet">6.3 <strong>alet</strong> 和有限状态机</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id1">6.4 间接链</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">6.5 热修复闭包</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">6.6 词法作用域</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">6.7 潘多拉宏</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#indirection-chains">6.4 间接链</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hotpatching-closures">6.5 热修复闭包</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sub-lexical-scope">6.6 子词法作用域</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pandoric-macros">6.7 潘多拉宏</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="chapter07.html">第七章：宏的效率</a></li>
@@ -84,7 +84,7 @@
            <div itemprop="articleBody">
              
   <section id="anaphoric">
-<h1>第六章：回指（Anaphoric）宏<a class="headerlink" href="#anaphoric" title="Permalink to this headline"></a></h1>
+<span id="chapter06"></span><h1>第六章：回指（Anaphoric）宏<a class="headerlink" href="#anaphoric" title="Permalink to this headline"></a></h1>
 <dl class="field-list simple">
 <dt class="field-odd">Author</dt>
 <dd class="field-odd"><p>Doug Hoyte</p>
@@ -94,7 +94,7 @@
 </dd>
 </dl>
 <section id="more-phors">
-<h2>6.1 More Phors?<a class="headerlink" href="#more-phors" title="Permalink to this headline"></a></h2>
+<span id="id1"></span><h2>6.1 More Phors?<a class="headerlink" href="#more-phors" title="Permalink to this headline"></a></h2>
 <p>Paul Graham 的 <a class="reference external" href="http://www.paulgraham.com/onlisp.html">OnLisp</a> 中一些有趣的宏是回指宏（anaphoric macros）。回指宏是特意从
 宏结构中捕捉变量的宏。多亏了它们的显示声明，这些特意捕获的变量为我们提供了控制宏展开
 的窗口。通过这些窗口，可以用组合操作来控制宏展开。</p>
@@ -151,7 +151,7 @@ true 子句(辅助子句或结果子句)使用中使用。<strong>aif</strong> �
 研究课题。</p>
 </section>
 <section id="sharp-backquote">
-<h2>6.2 Sharp-Backquote：#`<a class="headerlink" href="#sharp-backquote" title="Permalink to this headline"></a></h2>
+<span id="id2"></span><h2>6.2 Sharp-Backquote：#`<a class="headerlink" href="#sharp-backquote" title="Permalink to this headline"></a></h2>
 <p>尽管大多数回指是由常规宏引入的，但 read 宏也有可能引入代码，隐形地创建绑定。当 read
 宏这样做时，它们被称为读回指（read anaphora）。本节介绍了一个这样的 read 宏，虽然
 它本身很短，但它却是本书中最有用的宏之一，连我自己都感到惊讶。我已经尽可能快地引入
@@ -257,7 +257,7 @@ true 子句(辅助子句或结果子句)使用中使用。<strong>aif</strong> �
 等的原因是什么？</p>
 </section>
 <section id="alet">
-<h2>6.3 <strong>alet</strong> 和有限状态机<a class="headerlink" href="#alet" title="Permalink to this headline"></a></h2>
+<span id="alet-and-finite-state-machines"></span><h2>6.3 <strong>alet</strong> 和有限状态机<a class="headerlink" href="#alet" title="Permalink to this headline"></a></h2>
 <p>对 <strong>lambda</strong> 和 <strong>if</strong>，只有一个有用的回指配置，但却是最有趣的回指宏类型，该宏是以
 不可预见的方式展开。本节 —— 甚至本章的大部分内容 —— 都是基于这样一个宏：<strong>alet</strong>。
 有哪些额外的绑定对 let 结构主体中的结构有用呢？ <strong>let</strong> 的目的就是创建这样的绑定，
@@ -479,8 +479,8 @@ alambda 的模式创建一对相互引用的函数。只要所有的状态都变
 放心地向房子外面的人扔东西，即使这些东西不用费心去抓，但你最好确保你能
 抓住扔向你的东西。</p>
 </section>
-<section id="id1">
-<h2>6.4 间接链<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h2>
+<section id="indirection-chains">
+<span id="id3"></span><h2>6.4 间接链<a class="headerlink" href="#indirection-chains" title="Permalink to this headline"></a></h2>
 <p>有很多方法来使用 <strong>alet</strong> 的 <strong>this</strong> 回指。由于环境是通过虚拟闭包来访问的，该闭包将所有
 调用转发给 <strong>this</strong> 所指向的真实闭包，所以可以随意的引用这个虚拟闭包，根据需要复制它。
 这样的间接方法很有用，因为可以更改调用这个虚拟闭包时发生的事情，而不必更改对虚拟
@@ -689,8 +689,8 @@ alambda 的模式创建一对相互引用的函数。只要所有的状态都变
 间接链的另一种有趣的思考方式，请参阅第 [7.4 指针作用域](chapter07.md) 。还可以查看 CLOS 的
 <strong>before</strong>、<strong>after</strong> 和 <strong>around</strong> 函数。</p>
 </section>
-<section id="id2">
-<h2>6.5 热修复闭包<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h2>
+<section id="hotpatching-closures">
+<span id="id4"></span><h2>6.5 热修复闭包<a class="headerlink" href="#hotpatching-closures" title="Permalink to this headline"></a></h2>
 <p>本节的目的有三个。首先，介绍 <strong>alet</strong> 中 <strong>this</strong> 回指的另一个有趣的用法。其次，讨论了
 <em>let over dlambda</em> 。最后，介绍了一种很有用的宏技术，称为回指闭合（<em>anaphor closing</em>）。
 要详细说明回指闭合，将不用 <strong>alet</strong> 宏，而是使用一个由内而外的展开。<strong>alet-hotpatch%</strong>
@@ -792,11 +792,11 @@ alambda 的模式创建一对相互引用的函数。只要所有的状态都变
 回指并不是在展开的整个词法作用域内起生效，而只在另一个有限的范围内生效。下节将进一步讲解
 这个有效范围。</p>
 </section>
-<section id="id3">
-<h2>6.6 词法作用域<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h2>
-<p>在 [3.5 异常捕获]中定义的 <strong>defmacro!</strong> 宏中用了 Graham 的 <strong>flatten**实用工具来查找代
+<section id="sub-lexical-scope">
+<span id="id5"></span><h2>6.6 子词法作用域<a class="headerlink" href="#sub-lexical-scope" title="Permalink to this headline"></a></h2>
+<p>在 [3.5 异常捕获]中定义的 <strong>defmacro!</strong> 宏中用了 Graham 的 <strong>flatten</strong> 实用工具来查找代
 码中的自动 gensyms。现在是时候承认本书撒的一个小谎了。在此之前，因为没有解释自由变量插入和回
-指，我们假设 G-bang 符号名在 **defmacro!</strong> 定义适用于宏定义的词法范围。实质上这是不对的 ——
+指，我们假设 G-bang 符号名在 <strong>defmacro!</strong> 定义适用于宏定义的词法范围。实质上这是不对的 ——
 <strong>defmacro!</strong> 在略微不同类型的作用域（叫做 <em>子词法作用域 sub-lexical scope</em> ）下提供了这
 些绑定。</p>
 <div class="admonition note">
@@ -1042,13 +1042,13 @@ _sub-lexical scope</em>）。</p>
 </pre></div>
 </div>
 <p>通过 <strong>sublet</strong> 和 <strong>sublet*</strong>，可以用词法作用域或超词法作用域来控制在什么级别的宏展开中变
-量**a** 是有效的。如上所述，超子词法作用域实际上是一个无限类的范围，一个几乎完全未被智力探索的
+量 <strong>a</strong> 是有效的。如上所述，超子词法作用域实际上是一个无限类的范围，一个几乎完全未被智力探索的
 范围。超子词法作用域的方法和遍历代码的方法（很多）一样多。这类作用域引出了另一类基本未被探索的
 宏：这类宏改变 lisp 宏如何执行，何时展开，引用在哪里有效，特殊形式如何解释等。最终，就有了个可
 编程宏（macro-programmable）的宏扩展器。</p>
 </section>
-<section id="id4">
-<h2>6.7 潘多拉宏<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h2>
+<section id="pandoric-macros">
+<span id="id6"></span><h2>6.7 潘多拉宏<a class="headerlink" href="#pandoric-macros" title="Permalink to this headline"></a></h2>
 <p>潘多拉魔盒是个关于世界上第一个女人的希腊神话：潘多拉。潘朵拉，U 语言的符号，希腊语
 翻译过来是全能。潘多拉，这个女人，在好奇心的诱惑下，打开了一个小盒子，无可挽回地释放
 了人类所有的罪恶和罪恶。虽然本节中描述的宏非常强大，可能会教你一种永远不会忘记的编程
@@ -1201,8 +1201,8 @@ variables</em> 和 <em>符号宏（symbol macro</em>。本节就借此机会展�
 很简单：访问一个泛化变量在语法上是双重的。只有一种 setter 结构：<strong>setf</strong>，<strong>setf</strong> 能够通过
 使用访问变量时使用的相同语法设置所有类型的变量。</p>
 <p>例如，通常是通过变量的变量名来访问其值，假设这个变量名为 <strong>x</strong>。可以用 <strong>(setf x 5)</strong> 来
-设置 <strong>x</strong> 的值为 5。同样，要想访问个调用的 cons 的 car 单元，假设也为 <strong>x</strong>，可以使用 **
-(car x)**，也可以通过 <strong>(setf (car x) 5)</strong> 来设置其值。。这隐藏了个事实，机设置 cons 的
+设置 <strong>x</strong> 的值为 5。同样，要想访问个调用的 cons 的 car 单元，假设也为 <strong>x</strong>，可以使用
+<strong>(car x)</strong>，也可以通过 <strong>(setf (car x) 5)</strong> 来设置其值。。这隐藏了个事实，机设置 cons 的
 实际方法是使用 <strong>rplaca</strong> 函数。通过实现这种二义性语法，我们将需要记住的访问器和设置其的数量
 减少了一半，更重要的是，为宏提供了的新方法。</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(declaim (inline get-pandoric))
@@ -1286,7 +1286,7 @@ getter 可以表示为一个函数或宏，对其所有参数精确计算。注�
 <strong>with-pandoric</strong> 宏用 <strong>symbol-macrolet</strong> 来设置这些泛型变量，这些泛型变量看起来是新的
 词法变量，其名称与闭合变量相同。这些变量引用了 <strong>pandoriclet</strong> 创建的原始环境，但是，这些环
 境是不同的词法上下文。</p>
-<p>作为个例子，我们将这种打开闭包的功能与 [6.5 热修复闭包](chapter06.md) 中的 <strong>hotpatch</strong>
+<p>作为示例，我们将这种打开闭包的功能与 <a class="reference internal" href="#hotpatching-closures"><span class="std std-ref">6.5 热修复闭包</span></a> 中的 <strong>hotpatch</strong>
 宏进行了比较。回顾一下 <strong>let-hotpatch</strong> 及其同名的闭包 <strong>let-hotpatch</strong>，这两个宏使用间接
 环境创建闭包，以便可以动态更改在调用闭包时调用的函数。这些宏的最大限制是，当对前一个匿名函数进行
 热补丁时，会强制抛出所有在该函数上关闭的词法绑定。这种情况是不可避免的，因为在编写这些宏时，闭包

@@ -43,12 +43,12 @@
 <li class="toctree-l1"><a class="reference internal" href="chapter02.html">第二章：闭包</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter03.html">第三章：宏基础</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">第四章：读取宏</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id2">4.1 运行时与读取时</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">4.2 反引用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">4.3 读取字符串</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#runtime-at-readtime">4.1 读取时执行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#backquote">4.2 反引用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reading-strings">4.3 读取字符串</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#cl-ppcre">4.4 CL-PPCRE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">4.5 循环表达式</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">4.6 读取器的安全</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cyclic-expressions">4.5 循环表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reader-security">4.6 读取器的安全</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="chapter05.html">第五章：Programs that program</a></li>
@@ -82,8 +82,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="id1">
-<h1>第四章：读取宏<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h1>
+  <section id="chapter04">
+<span id="id1"></span><h1>第四章：读取宏<a class="headerlink" href="#chapter04" title="Permalink to this headline"></a></h1>
 <dl class="field-list simple">
 <dt class="field-odd">Author</dt>
 <dd class="field-odd"><p>Doug Hoyte</p>
@@ -92,8 +92,8 @@
 <dd class="field-even"><p>Yuqi Liu</p>
 </dd>
 </dl>
-<section id="id2">
-<h2>4.1 运行时与读取时<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h2>
+<section id="runtime-at-readtime">
+<span id="id2"></span><h2>4.1 读取时执行<a class="headerlink" href="#runtime-at-readtime" title="Permalink to this headline"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Syntactic</span> <span class="n">sugar</span> <span class="n">causes</span> <span class="n">cancer</span> <span class="n">of</span> <span class="n">the</span> <span class="n">semicolon</span><span class="o">.</span> <span class="o">--</span><span class="n">Alan</span> <span class="n">Perlis</span>
 </pre></div>
 </div>
@@ -168,8 +168,8 @@ lisp，所以也许这些语言真的也是 lisp。 代码和数据、lisp 和�
 </pre></div>
 </div>
 </section>
-<section id="id3">
-<h2>4.2 反引用<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h2>
+<section id="backquote">
+<span id="id3"></span><h2>4.2 反引用<a class="headerlink" href="#backquote" title="Permalink to this headline"></a></h2>
 <p>反引号，有时也被叫做 <em>quasiquote</em> ，显示为 <strong>`</strong> （即 Esc 键下面那个键），是主流 lisp 编
 程相对较新的概念，而且这个概念对于 lisp 外的语言几乎是完全陌生的。</p>
 <p>反引号和 lisp 有一段奇异的发展历史。 据报道 [QUASIQUOTATION] 早期没人认为反引号嵌套能正常运
@@ -315,8 +315,8 @@ quine 示例：</p>
 </pre></div>
 </div>
 </section>
-<section id="id4">
-<h2>4.3 读取字符串<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h2>
+<section id="reading-strings">
+<span id="id4"></span><h2>4.3 读取字符串<a class="headerlink" href="#reading-strings" title="Permalink to this headline"></a></h2>
 <p>在 lisp 中，字符串由双引号 ( <strong>“</strong> ) 分隔。虽然字符串可以包含 lisp 实现的字符集中的任何字
 符，但和其他语言一样，某些特殊字符是不能直接插入的。如果要在字符串中表示引号和反斜杠，需要在其前
 面加上 <cite>\</cite> 。 <cite>\</cite> 由被称为转义字符。例如，以下是包含 <strong>“</strong> 和 <cite>\</cite> 的字符串：</p>
@@ -406,7 +406,7 @@ lisp 借鉴的好想法。 从某种意义上说，Lisp 是一个大块，也许
 </div>
 </section>
 <section id="cl-ppcre">
-<h2>4.4 CL-PPCRE<a class="headerlink" href="#cl-ppcre" title="Permalink to this headline"></a></h2>
+<span id="id5"></span><h2>4.4 CL-PPCRE<a class="headerlink" href="#cl-ppcre" title="Permalink to this headline"></a></h2>
 <p>CL-PPCRE[CL-PPCRE]是一个基于COMMON LISP编写的高性能正则表达式库。 是由备受尊崇的 lisp 黑
 客 Edi Weitz 创建的。替所有从 CL-PPCRE 和 Edi Weitz 的其他软件中受益匪浅的 lisp 专业人
 士，本节献给 Edi Weitz。 当其他人在争论时，Edi 在编码； 代码比争论更有说服力。</p>
@@ -578,8 +578,8 @@ Perl 中一样编写正则表达式——无需转义。 请参阅上面 URL 正
 是支持正则表达式修饰符，例如匹配中不区分大小写。 如果使用与 Perl 相同的语法完成，这会用到函数
 <strong>unread-char</strong>，这在读取宏中很常见，以避免意外吞掉其他读取宏可能期望的字符。</p>
 </section>
-<section id="id5">
-<h2>4.5 循环表达式<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h2>
+<section id="cyclic-expressions">
+<span id="id6"></span><h2>4.5 循环表达式<a class="headerlink" href="#cyclic-expressions" title="Permalink to this headline"></a></h2>
 <p>所有关于 lisp 程序是 cons 单元树的讨论实际上都是一个小小的谎言。 对此很抱歉。 Lisp 程序实际
 上不是树，而是有向无环图 —— 可能具有共享分支的树。 由于执行者不关心所执行的分支来自哪里，因此执
 行具有共享结构的代码并没有错。</p>
@@ -677,8 +677,8 @@ Perl 中一样编写正则表达式——无需转义。 请参阅上面 URL 正
 </pre></div>
 </div>
 </section>
-<section id="id6">
-<h2>4.6 读取器的安全<a class="headerlink" href="#id6" title="Permalink to this headline"></a></h2>
+<section id="reader-security">
+<span id="id7"></span><h2>4.6 读取器的安全<a class="headerlink" href="#reader-security" title="Permalink to this headline"></a></h2>
 <p>可扩展性，让原本不打算或预期的事情发生的能力，几乎总是一件好事。 事实上，尽量鼓励可扩展性是
 lisp 这么出色的原因。 但是，有时我们希望事物尽可能不可扩展。 特别是，我们不希望外部人员在我们
 不知情或未经同意的情况下将自己的代码扩展到我们的系统中。这被称为被黑客入侵或被入侵。 今天，有趣

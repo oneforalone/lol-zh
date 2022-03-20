@@ -48,11 +48,11 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">第七章：宏的效率</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#lisp-is-fast">7.1 Lisp Is Fast</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#lisp">7.2 宏让 Lisp 很快</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">7.3 了解反汇编</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">7.4 指针作用域</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-to-know-your-disassembler">7.3 了解反汇编</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pointer-scope">7.4 指针作用域</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tlist-cons">7.5 Tlist 和 cons 池</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">7.6 排序</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">7.7 编写基准测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sorting-networks">7.6 排序</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#writing-and-benchmarking-compilers">7.7 编写基准测试</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="chapter08.html">第八章：Lisp 和 Forth</a></li>
@@ -83,8 +83,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="id1">
-<h1>第七章：宏的效率<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h1>
+  <section id="chapter07">
+<span id="id1"></span><h1>第七章：宏的效率<a class="headerlink" href="#chapter07" title="Permalink to this headline"></a></h1>
 <dl class="field-list simple">
 <dt class="field-odd">Author</dt>
 <dd class="field-odd"><p>Doug Hoyte</p>
@@ -94,7 +94,7 @@
 </dd>
 </dl>
 <section id="lisp-is-fast">
-<h2>7.1 Lisp Is Fast<a class="headerlink" href="#lisp-is-fast" title="Permalink to this headline"></a></h2>
+<span id="id2"></span><h2>7.1 Lisp Is Fast<a class="headerlink" href="#lisp-is-fast" title="Permalink to this headline"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>如果用指甲盖大小的瓷砖来铺地面的话，就不会有太多的浪费。 —— Paul Graham
 </pre></div>
 </div>
@@ -139,7 +139,7 @@ CMUCL 使用调优的堆排序实现对列表和向量的排序，使用 Mersenn
 C 语言程序一样长且危险呢？不，Lisp 有宏。</p>
 </section>
 <section id="lisp">
-<h2>7.2 宏让 Lisp 很快<a class="headerlink" href="#lisp" title="Permalink to this headline"></a></h2>
+<span id="macros-make-lisp-fast"></span><h2>7.2 宏让 Lisp 很快<a class="headerlink" href="#lisp" title="Permalink to this headline"></a></h2>
 <p>本节展示了用三种类型的宏来协助创建高效程序的示例：常规宏、读取宏和这里介绍的
 新类型宏 —— 编译宏。</p>
 <p>宏可以用来控制算法、数据结构、类型检查、安全检查、代码或部分代码的优化级别等等。
@@ -224,7 +224,7 @@ SPEED 的参数设为 0:</p>
 </pre></div>
 </div>
 <p>在尝试宏扩展时，有时会想看看在将宏扩展嵌入不同的词法上下文时会发生什么。
-将 [4.1 运行时和读取时](chapter04.md) 中的读取时计算宏与 <strong>*</strong> 变量
+将 <a class="reference internal" href="chapter04.html#runtime-at-readtime"><span class="std std-ref">4.1 读取时执行</span></a> 中的读取时计算宏与 <strong>*</strong> 变量
 （保持最后三个REPL结果可用）结合起来，可以看到我们的代码的计算结果如预期
 的那样:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (let ((a 0))
@@ -250,8 +250,7 @@ SPEED 的参数设为 0:</p>
 <span class="linenos">5</span>  (THE FIXNUM (+ A 1)))
 </pre></div>
 </div>
-<p>就是这样。所以现在有三次机会让它工作。试试编译它，看下会不会得到个 _fixnum_
-的封装：</p>
+<p>就是这样。所以现在有三次机会让它工作。试试编译它，看下会不会得到个 <em>fixnum</em> 的封装：</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (funcall
 <span class="linenos">2</span>    (compile nil
 <span class="linenos">3</span>      `(lambda ()
@@ -267,7 +266,7 @@ SPEED 的参数设为 0:</p>
 是常量，因此它知道结果也将是常量，所以就没必要在运行时计算它。当 lisp 这样做的
 时候，它看到我们对一个 fixnum 的声明肯定是错误的。这个警告是用 lisp 的方式告诉
 我们“你这个笨蛋，我无视你的声明，因为你不可信。”如果稍微改变一下表达式，让
-lisp 不能折叠任何常量，最终可以看到 _fixnum_ 封装的效果:</p>
+lisp 不能折叠任何常量，最终可以看到 <em>fixnum</em> 封装的效果:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (funcall
 <span class="linenos">2</span>    (compile nil
 <span class="linenos">3</span>`(lambda (a)
@@ -320,7 +319,7 @@ lisp专业人员的工具包。</p>
 代码的效率，而不需要修改代码。我们可以使用一个现有的代码库 —— 一个可能使用了
 大量函数调用的代码 —— 并通过引入双重语法来改变代码的编译方式。我们所要做的就是
 找到代价很高的函数调用，然后实现编译器宏，将它们转换为代价低的展开。</p>
-<p>哪种类型的函数调用开销高呢？作为第一个例子，回想一下 [4.6 读取器的安全](chapter04.md) 中，
+<p>哪种类型的函数调用开销高呢？作为第一个例子，回想一下 <a class="reference internal" href="chapter04.html#reader-security"><span class="std std-ref">4.6 读取器的安全</span></a> 中，
 函数可以执行 lambda 析构，而且这是更通用的 defmacro 析构的子集。当函数接受关键字
 参数时，我们将它们作为分组的关键字符号对及其对应的值进行传递。关键字参数非常有用，
 但遗憾的是，使用关键字参数的函数比不使用关键字参数的函数调用开销更大。解构不是
@@ -401,7 +400,7 @@ rests 等）。练习：扩展 <strong>fast-keywords-strip</strong> 来处理所
 </div>
 <p><strong>keywords-benchamrk</strong> 是个简单的函数，其中使用了 <strong>time</strong> 宏来告诉我们对这两个
 函数进行等价的一系列调用需要多长时间。注意，我们还编译了 <strong>keywords-benchmark</strong>。
-关于基准测试的更多内容将在 [7.7 编写基准测试](chapter07.md) 中介绍。</p>
+关于基准测试的更多内容将在 <a class="reference internal" href="#writing-and-benchmarking-compilers"><span class="std std-ref">7.7 编写基准测试</span></a> 中介绍。</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (keywords-benchmark 100000000)
 <span class="linenos">2</span>Slow keys:
 <span class="linenos">3</span>; Evaluation took:
@@ -530,7 +529,7 @@ lisp 也将要求编译宏不对 form 进一步展开 —— 即便是我们正�
 的宏 —— 编译宏来定制代码性能的方法。希望本节和本章的其余部分能说服你，
 如果想编写真正有效的代码，就需要 COMMON LISP。因为宏，你需要
 COMMON LISP。</p>
-<p>练习1：下载 Edi Weitz 的 CL-PPCRE（在 [4.4 CL-PPCRE](chapter04.md) 中），
+<p>练习1：下载 Edi Weitz 的 CL-PPCRE（在 <a class="reference internal" href="chapter04.html#cl-ppcre"><span class="std std-ref">4.4 CL-PPCRE</span></a> 中），
 看看 <strong>api.lisp</strong> 怎么使用编译宏。访问Edi 的网站并下载一些他的 lisp 包，
 这些包看起来很有趣。</p>
 <p>练习2：当我们为 <strong>fformat</strong> 编写编译宏时，我们被迫显式地使用 <strong>gensym</strong>，
@@ -538,8 +537,8 @@ COMMON LISP。</p>
 较难的练习：定义 <strong>define-compiler-macro!</strong> 这样就能使用了 <strong>defmacro!</strong>
 的功能而不用调用 <strong>gensym</strong>。提示：跳出思维定势。</p>
 </section>
-<section id="id2">
-<h2>7.3 了解反汇编<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h2>
+<section id="getting-to-know-your-disassembler">
+<span id="id3"></span><h2>7.3 了解反汇编<a class="headerlink" href="#getting-to-know-your-disassembler" title="Permalink to this headline"></a></h2>
 <p>如果不检查处理器为不同的 lisp 结构执行的原始指令，就很难真正了解在 lisp 中那些代码
 的开销昂贵。就像在编写宏时，查看它们的展开通常很有帮助，有时查看lisp 程序编译后
 的展开（通常是汇编指令）也很有用。因为 lisp 编译器可以并且经常被认为是宏扩展器，
@@ -625,7 +624,7 @@ COMMON LISP。</p>
 </div>
 <p>机器码应该相当短，但这是因为调用了一个预编译函数 —— 这个函数足够的智能来提供
 所有花哨的 lisp 数字特性，如类型感染、有理数简化等，从而隐藏了大部分的复杂性。
-这被称为 _间接（ indirection ）_ ，在反汇编器的输出中可能相当明显:</p>
+这被称为 <em>间接（indirection）</em> ，在反汇编器的输出中可能相当明显:</p>
 <p>CALL #x1000148 ; GENERIC-+</p>
 <p>用三个参数试试看：</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(dis (a b c)
@@ -643,7 +642,7 @@ COMMON LISP。</p>
 类型在编译时是未知的，因此可能需要 lisp 的所有花哨的数值行为，比如
 感染。</p>
 <p>这不是获得高效代码的方法。事实上，这段代码的效率甚至可能比前一段
-代码略低。为了编写高效代码，需要用到一个称为 _内联（ inlining ）_ 的
+代码略低。为了编写高效代码，需要用到一个称为 <em>内联（inlining）</em> 的
 进程。对于一些特殊的操作，当有足够的类型信息时，lisp 编译器知道如何
 避免间接或直接向正在编译的函数中添加机器代码来执行所需的操作。
 下面的通用加法函数中不应该有间接：</p>
@@ -711,8 +710,8 @@ C 程序慢一些，但几乎总是更安全。因为 lisp 为程序员提供了
 系统日益增长的复杂性需求，问题就从如何使 lisp 像低级语言一样高效变成
 了如何使其他语言像 lisp 一样高效。当然，答案是在 lisp 中用宏实现它们。</p>
 </section>
-<section id="id3">
-<h2>7.4 指针作用域<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h2>
+<section id="pointer-scope">
+<span id="id4"></span><h2>7.4 指针作用域<a class="headerlink" href="#pointer-scope" title="Permalink to this headline"></a></h2>
 <p>从一种语言中删除指针是否会降低该语言的能力？特别是，lisp 缺乏显式的指针作用域
 是否妨碍我们有效地实现指针算法中指定的算法？事实证明不是这样的，在 lisp 中缺乏
 对指针的直接支持在理论上和实践上都不构成挑战。在像 C 这样的语言中，任何可以用
@@ -747,11 +746,11 @@ C 程序慢一些，但几乎总是更安全。因为 lisp 为程序员提供了
 他建议使用闭包来模拟指针，并为 Scheme 提供了一个实现。</p>
 <p><strong>pointer-&amp;</strong> 和 <strong>pointer-*</strong> 展示了一种通过闭包模拟指针间接指向的可能。当使用
 <strong>pointer-&amp;</strong> 宏时，它会展开成 lambda 结构，其中有一些智能，以确定您是否想要获取
-或设置值，并相应地执行。 <strong>pointer-&amp;</strong> 使用 _gensyms_ 来做到这一点。而不是使用它们
+或设置值，并相应地执行。 <strong>pointer-&amp;</strong> 使用 <em>gensyms</em> 来做到这一点。而不是使用它们
 作为绑定的名字以避免不必要的变量捕获在编译时， <strong>pointer-&amp;</strong> 使用它们以确保没有
 运行时的异常捕获，这里阻止将闭包的值设为个确定值，因为它与我们的实现冲突。例如，
 我们可能已经为这个选择了 lisp 默认值 <strong>nil</strong>，通常这可以运行，除非我们将 <strong>nil</strong> 作为
-参数传参。 _gensym_ 在运行时使用很方便，因为我们知道永远不会有另一个值 <strong>eq</strong> _gensym_ 。
+参数传参。<em>gensym</em> 在运行时使用很方便，因为我们知道永远不会有另一个值 <strong>eq</strong> <em>gensym</em>。
 这就是他们存在的理由。</p>
 <p><strong>pointer-*</strong> 及其 <strong>defsetf</strong> 是通过泛型变量访问这些间接值的框架。这里 <strong>pointer-&amp;</strong>
 中的 <strong>defsetf</strong> ，在 <strong>pointer-&amp;</strong> 展开中知道如何设置嵌套的间接指向。一个简单的例子，
@@ -819,8 +818,8 @@ C 程序慢一些，但几乎总是更安全。因为 lisp 为程序员提供了
 访问的闭包是固定的。用于访问和设置它们的代码 —— 不管是什么 —— 都会在编译时
 添加到间接环境中。即使在上面的简单示例中，我们至少使用了两种不同类型的闭包，
 由于泛型变量的存在，这两种闭包都可以通过统一的解引用语法进行访问。我们最初
-所指的 <strong>x</strong> 是一个词法变量，而我们所指的 <strong>temp-pointer</strong> _tunnel_ 变量是动态变量。
-正如 [6.7 潘多拉宏](chapter06.md) 中，我们可以随意定制闭包，因此也可以随意定制
+所指的 <strong>x</strong> 是一个词法变量，而我们所指的 <strong>temp-pointer</strong> <em>tunnel</em> 变量是动态变量。
+正如 <a class="reference internal" href="chapter06.html#pandoric-macros"><span class="std std-ref">6.7 潘多拉宏</span></a> 中，我们可以随意定制闭包，因此也可以随意定制
 间接闭包。</p>
 <p>所以闭包实际上比 C 风格的指针更灵活、更安全。当你认为你需要一个指针时，你可能
 需要一个闭包。闭包不仅仅是个可以用作地址的固定数字，它是编译后用于在任何环境中
@@ -832,7 +831,7 @@ COMMON LISP 做得更好。</p>
 类型和安全检查，所以编译也和 C 一样。最后，用宏使整个过程方便和安全。</p>
 <p>通常，为数组建立索引是一个复杂而缓慢的过程。编译器需要检查索引是否为数字，在
 索引数组时，确保索引在数组的范围内。此外，不同类型的数组有不同的代码来访问元素。
-加载了这本书的代码后，试着执行下面代码（ <strong>dis</strong> 详见 [7.3 了解反汇编]）：</p>
+加载了这本书的代码后，试着执行下面代码（ <strong>dis</strong> 详见 <a class="reference internal" href="#getting-to-know-your-disassembler"><span class="std std-ref">7.3 了解反汇编</span></a>）：</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(dis (arr ind)
 <span class="linenos">2</span>  (aref arr ind))
 </pre></div>
@@ -853,7 +852,7 @@ COMMON LISP 做得更好。</p>
 在内存中相邻，就像 C 风格的内存。在上面我们指定了固定数值作为数组元素，但是
 COMMON LISP 环境可能还提供了不同大小、字节、无符号字节、浮点数、双浮点数等类型
 的固定数值。虽然上面没有包含间接的，但是仍然有很多代码实现了在 lisp 编程时通常依赖
-的类型和安全检查。然而，正如我们可以使用[7.2 宏让 Lisp 很快]中的
+的类型和安全检查。然而，正如我们可以使用 <a class="reference internal" href="#macros-make-lisp-fast"><span class="std std-ref">7.2 宏让 Lisp 很快</span></a> 中的
 <strong>#f</strong> 读取宏 告诉 lisp 使算术更快，同样也可以用于数组引用：</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(dis (((simple-array fixnum) arr)
 <span class="linenos">2</span>  (fixnum ind))
@@ -906,7 +905,7 @@ COMMON LISP 环境可能还提供了不同大小、字节、无符号字节、�
 <p>高效访问数组的宏示例是 <strong>with-fast-stack</strong>。选择这个宏是为了讨论 <em>摊销（amortisation）</em>。
 <strong>with-fast-stack</strong> 实现了个名为 <strong>sym</strong> 的堆栈数据结构。不同于 COMMON LISP <strong>push</strong>
 和 <strong>pop</strong> 使用 cons 单元存储任何类型的栈的元素，<strong>with-fast-stack</strong> 中用简单的数组存储可
-以用 <strong>:type</strong> 关键字来指定类型的固定类型。数组的大小也是固定的，但是这个大小可以通过 :size
+以用 <strong>:type</strong> 关键字来指定类型的固定类型。数组的大小也是固定的，但是这个大小可以通过 <strong>:size</strong>
 关键字来设置。通过使用一些宏定义的局部宏来访问堆栈。如果堆栈名是 <strong>input</strong>，则宏绑定将是
 <strong>fast-push-input</strong>、<strong>fast-pop-input</strong> 和 <strong>check-stacks-input</strong> 。用 <strong>dis</strong> 检
 查编译后的展开：</p>
@@ -940,12 +939,12 @@ COMMON LISP 环境可能还提供了不同大小、字节、无符号字节、�
 操作。如果需要高效，可以将 <strong>i</strong> 声明为固定值，并向循环中添加速度声明，就像
 之前看到的那样。安全代码可以与高效代码共存。当然，刚刚反汇编的代码非常危险。
 它从不检查堆栈的高度来缠看是否上溢或下溢出边界。这是为了效率而尽量避免的。
-<strong>with-fast-stack</strong> 提供的解决方案是受到 _forth_ 编程语言中 <strong>stack</strong> 一词的启发。
+<strong>with-fast-stack</strong> 提供的解决方案是受到 <em>forth</em> 编程语言中 <strong>stack</strong> 一词的启发。
 通过 <strong>check-stacks-input</strong> 本地宏，我们的代码可以验证堆栈是否在边界内，
-否则会抛出异常。由于 _forth_ 被设计为在最有限的硬件平台上性能也很好，因此 _forth_
+否则会抛出异常。由于 <em>forth</em> 被设计为在最有限的硬件平台上性能也很好，因此 <em>forth</em>
 分摊了执行边界检查的成本。与默认情况下 lisp 在每个操作之后执行不同，它只在每
-N 个操作之后执行。在 _forth_ 中，这个词通常只在对 REPL 中的结构求值之后才会被
-调用（关于 _forth_，我们将在 [第八章：Lisp 与 Forth](chapter08.md) 中介绍）。
+N 个操作之后执行。在 <em>forth</em> 中，这个词通常只在对 REPL 中的结构求值之后才会被
+调用（关于 <em>forth</em>，我们将在 <a class="reference internal" href="chapter08.html#chapter08"><span class="std std-ref">第八章：Lisp 和 Forth</span></a> 中介绍）。
 因此，我们可以每 10 个操作检查一次边界，而不是每次操作都检查边界，也许可以减少 90%
 的边界检查成本。当我们检查堆栈时，我们知道，最坏情况下，有 10 个超出边界的元素。或者
 可能在代码中有一些方便的、非关键性能的地方可以使用 check 宏。</p>
@@ -998,7 +997,7 @@ N 个操作之后执行。在 _forth_ 中，这个词通常只在对 REPL 中的
 最不突出和最安全的方法。当然，如果不想承担这些风险 —— 坚持使用闭包。</p>
 </section>
 <section id="tlist-cons">
-<h2>7.5 Tlist 和 cons 池<a class="headerlink" href="#tlist-cons" title="Permalink to this headline"></a></h2>
+<span id="tlists-and-cons-pools"></span><h2>7.5 Tlist 和 cons 池<a class="headerlink" href="#tlist-cons" title="Permalink to this headline"></a></h2>
 <p>本节是关于内存管理的，但可能并不是你所想象的那样。 我甚至都不想介绍它，因为我
 害怕延续一个关于 lisp 的错误传言，即 consing 很慢的错误观念。 不好意思，
 但这个传言是错的； consing 其实很快。 当然，最小化无限范围存储的算法通常是
@@ -1104,8 +1103,8 @@ cons 单元格。 Teitelman 没有发明一些 API 来满足每个人的需求�
 <span class="linenos">7</span>  (cons a b))
 </pre></div>
 </div>
-<p>Common Lisp 没有为监听或控制内存分配指定太多功能。 所以需要自己写一些。 首先，回顾[3.5 异常
-捕获]，我们不允许重新定义或重新绑定 Common Lisp 指定的函数。 我们不能直接拦截对 cons 的调
+<p>Common Lisp 没有为监听或控制内存分配指定太多功能。 所以需要自己写一些。 首先，回顾 <a class="reference internal" href="chapter03.html#unwanted-capture"><span class="std std-ref">3.5 异常捕获</span></a>，
+我们不允许重新定义或重新绑定 Common Lisp 指定的函数。 我们不能直接拦截对 cons 的调
 用，所以改为使用包装器。 <strong>counting-cons</strong> 与 cons 相同，只是每次调用它时都会增加
 <strong>number-of-conses</strong>。</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro! with-conses-counted (&amp;rest body)
@@ -1206,8 +1205,8 @@ cons 单元格。 Teitelman 没有发明一些 API 来满足每个人的需求�
 <strong>push</strong> 和 <strong>pop</strong> 宏更新的列表。 但是，我们的数据结构与 <strong>push</strong> 和 <strong>pop</strong> 不同，
 因为它不是透明指定的。 这些堆栈的实现细节与它们的实际使用方式是分开的。 这很重要，
 因为我们不想要求我们堆栈的用户使用他们自己的方法来推送和弹出数据，而是希望他们使用
-我们的内存优化版本。 <strong>make-cons-pool-stack</strong> 使用 [5.7 Dlambda](chapter05.md)
-中的 dlambda。 以下的示例中，我们创建了一个包含新堆栈数据结构的词法 cons 池，
+我们的内存优化版本。 <strong>make-cons-pool-stack</strong> 使用 <a class="reference internal" href="chapter05.html#dlambda"><span class="std std-ref">5.7 Dlambda</span></a> 中的
+<strong>dlambda</strong>。 以下的示例中，我们创建了一个包含新堆栈数据结构的词法 cons 池，
 然后推送和弹出一个 item 100 次：</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (with-cons-pool
 <span class="linenos">2</span>    (let ((stack (make-cons-pool-stack)))
@@ -1273,8 +1272,8 @@ cons 单元被回收而不是被收集。 如果这个循环发生在编译的�
 一直在调整内存。他们肯定会这样做一段时间。 内存管理很难 —— 唯一可以肯定的是宏是用来做这个的最好
 工具。</p>
 </section>
-<section id="id4">
-<h2>7.6 排序<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h2>
+<section id="sorting-networks">
+<span id="id5"></span><h2>7.6 排序<a class="headerlink" href="#sorting-networks" title="Permalink to this headline"></a></h2>
 <p>没有比 lisp 更好的工具来试验效率或实际实现高效程序了。 Lisp 是独一无二的，因为它不仅让我们能
 够专注于智能算法和设计，还让我们能够利用最先进的机器代码编译器最大限度地利用这些算法和设计。 本
 节从 lisp 的角度描述了已被广泛研究但仍远未穷尽的计算机科学的一个角落：排序。 大多数人考虑对已
@@ -1681,15 +1680,15 @@ ASCII 图表图片有助于可视化 <strong>bad-3-sn</strong> 中基于列表�
 <p>练习：调整剪枝算法（及其污染方法），使其产生四分位选择网络。 这些网络不仅确定了中位数，而且还确
 定了有序元素的高半部分和低半部分的中值元素。</p>
 </section>
-<section id="id5">
-<h2>7.7 编写基准测试<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h2>
+<section id="writing-and-benchmarking-compilers">
+<span id="id6"></span><h2>7.7 编写基准测试<a class="headerlink" href="#writing-and-benchmarking-compilers" title="Permalink to this headline"></a></h2>
 <p>编译器对大多数程序员来说是一个可怕的概念，因为大多数语言都不适合编写编译器。下面是个类比：解析一
 个复杂的日志文件对于只知道 C 或汇编的程序员来说可能是一个令人生畏的、容易出错的愿景，但由于
 Perl 和正则表达式，这对我们多语言程序员来说不是问题。同样，如果我们不了解 lisp，那么设计一种功
 能强大、富有表现力的编程语言，然后创建一个编译器将这种语言的程序转换为高效的机器代码将是项令人生
 畏的任务。在编写编译器方面，Lisp 的优势不仅使它比其他语言好一点——实际上让表达式上了一个新台
 阶。一般来说，这个优势是能与不能的区别。 Lisp 程序员在任何地方都使用编译器，且有时以非 lisp
-程序员难以置信的方式和任务使用。有多少 C 程序员考虑过 [7.2 宏让 Lisp 很快](chapter07.md)中
+程序员难以置信的方式和任务使用。有多少 C 程序员考虑过 <a class="reference internal" href="#macros-make-lisp-fast"><span class="std std-ref">7.2 宏让 Lisp 很快</span></a> 中
 描述（并克服）的 printf 函数的解释开销？有多少人会尝试为 printf 编写编译器？而这在 lisp 的
 课程中却是标准。一切都应该编译成 lisp。</p>
 <p>什么是编译器？如果你来自 Blub，答案可能隐藏在一大堆解释解析、语法定向翻译、上下文无关语法等的书
@@ -1711,12 +1710,12 @@ Perl 和正则表达式，这对我们多语言程序员来说不是问题。同
 <span class="linenos">10</span>    arr))
 </pre></div>
 </div>
-<p>当在[7.2 宏让 Lisp 很快]中创建编译器宏来处理格式时，格式化程序编译器扩展成什么？ 这是一个
-lambda 结构。 编译为 lambda 结构有时是有意义的，因为我们可以使用 compile 函数直接将它们转换
-为机器代码。回到上一章的排序网络，<strong>sn-to-lambda-form%</strong> 是一个返回 lambda 结构的函数。
+<p>当在 <a class="reference internal" href="#macros-make-lisp-fast"><span class="std std-ref">7.2 宏让 Lisp 很快</span></a> 中创建编译器宏来处理格式时，格式化程序编译器扩展成什么？
+这是一个 lambda 结构。 编译为 lambda 结构有时是有意义的，因为我们可以使用 compile 函数直接将
+它们转换为机器代码。回到上一章的排序网络，<strong>sn-to-lambda-form%</strong> 是一个返回 lambda 结构的函数。
 这种 lambda 结构将对基于列表的排序网络中的每个比较交换操作都有一个指令。 每条指令都会（不安全
 地）索引到一个 <strong>fixnum</strong> 数组，比较并可能使用 <strong>rotatef</strong> 来交换元素。 <strong>fixnum</strong> 数组
-将作为参数 ( <strong>arr</strong> ) 传递给由此 lambda 结构创建的函数。 这就是一个体面的机器代码编译器的
+将作为参数 (<strong>arr</strong>) 传递给由此 lambda 结构创建的函数。 这就是一个体面的机器代码编译器的
 全部内容。与所有 lambda结构一样，由于 lambda 宏，我们能够计算它们以获取函数：</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (eval
 <span class="linenos">2</span>    (sn-to-lambda-form%
@@ -1848,7 +1847,7 @@ lambda 结构。 编译为 lambda 结构有时是有意义的，因为我们可�
 <p>如果你来自 Blub 语言，那么像 <strong>sn-to-lambda-form</strong> 宏那样展开为 lambda 结构可能是实现编
 译器的最明显方式。源代码以 lambda 结构编译到反汇编循环感觉很像Blub的编辑、编译、反汇编循环。
 把源代码放进去，然后把机器代码拿出来。 但是，这种方法可能更笨拙。 在 lisp 中，通常将编译器创建
-为不可见的 - 直接合并到其他 lisp 程序中。理想情况下，除非我们想让东西快速运行，否则永远不会调
+为不可见的 —— 直接合并到其他 lisp 程序中。理想情况下，除非我们想让东西快速运行，否则永远不会调
 用 <strong>compile</strong> 函数。 宏不应该一直编译到机器代码，而只是足以创建一个良好的展开，以便编译器在
 运行时，将有足够的信息来使整个程序高效。</p>
 <p>我们特别不想在运行时调用 <strong>compile</strong>。 编译是一项昂贵的操作，因为需要展开许多级别的宏来编译某

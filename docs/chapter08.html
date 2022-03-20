@@ -47,11 +47,11 @@
 <li class="toctree-l1"><a class="reference internal" href="chapter06.html">第六章：回指（Anaphoric）宏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter07.html">第七章：宏的效率</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">第八章：Lisp 和 Forth</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id1">8.1 奇怪的设计</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#weired-by-design">8.1 奇怪的设计</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#cons">8.2 cons 线程代码</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">8.3 语法二元性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#duality-of-syntax-defined">8.3 语法二元性</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#forth">8.4 开始构建 forth</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">8.5 forth 的拓展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#going-forther">8.5 forth 的拓展</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#forth-lisp">8.6 在 forth 中写 lisp 代码</a></li>
 </ul>
 </li>
@@ -83,7 +83,7 @@
            <div itemprop="articleBody">
              
   <section id="lisp-forth">
-<h1>第八章：Lisp 和 Forth<a class="headerlink" href="#lisp-forth" title="Permalink to this headline"></a></h1>
+<span id="chapter08"></span><h1>第八章：Lisp 和 Forth<a class="headerlink" href="#lisp-forth" title="Permalink to this headline"></a></h1>
 <dl class="field-list simple">
 <dt class="field-odd">Author</dt>
 <dd class="field-odd"><p>Doug Hoyte</p>
@@ -92,8 +92,8 @@
 <dd class="field-even"><p>Yuqi Liu</p>
 </dd>
 </dl>
-<section id="id1">
-<h2>8.1 奇怪的设计<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h2>
+<section id="weired-by-design">
+<span id="id1"></span><h2>8.1 奇怪的设计<a class="headerlink" href="#weired-by-design" title="Permalink to this headline"></a></h2>
 <p>本章是迄今为止我们在本书中看到的许多宏技术的高潮。 使用已开发的宏抽象，我们创建
 了我最喜欢的编程语言之一的实现：forth。 虽然这个实现体现了 forth 的大部分重要思想，
 但它非常不同并且很混乱。 尽管本章中的代码有一些有趣的用途，但主要目的是向 lisp 读者
@@ -180,7 +180,7 @@ pop 宏，这意味着这些堆栈是用 cons 单元链表实现的，而不是�
 是可能的，而且是鼓励的。像 lisp 一样，forth 与格式无关，而与强大有关。</p>
 </section>
 <section id="cons">
-<h2>8.2 cons 线程代码<a class="headerlink" href="#cons" title="Permalink to this headline"></a></h2>
+<span id="cons-threaded-code"></span><h2>8.2 cons 线程代码<a class="headerlink" href="#cons" title="Permalink to this headline"></a></h2>
 <p>在上一节中，我们专注于抽象寄存器。 这些寄存器是个重点，这就是为什么 forth 哲学认为
 它们如此基础，但这些寄存器实际上只是个更普遍的概念的组成部分：抽象机器。 不同的
 forth 系统最显着的特性可能是它们对线程代码的实现。 线程代码的含义与抢占式调度共享
@@ -321,10 +321,10 @@ lisp 结构。</p>
 元素。 我们没有做错任何事。 符号独立于它们有时用来表示的函数或宏。 可以在任何地方使用任何符号，
 只要不违反重要的变量捕获规则。 这仅在编写 lisp 时起作用； 我们正在编写 forth。</p>
 </section>
-<section id="id2">
-<h2>8.3 语法二元性<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h2>
+<section id="duality-of-syntax-defined">
+<span id="id2"></span><h2>8.3 语法二元性<a class="headerlink" href="#duality-of-syntax-defined" title="Permalink to this headline"></a></h2>
 <p>如果忘了本书中的其他内容，那么请记住本节的信息。 在这里，我们最终定义并解释了一个我们一直触及
-的概念：语法的二元性。 本节假定你至少阅读了三个介绍性章节、[第六章：回指宏]和前面的 forth 章
+的概念：语法的二元性。 本节假定你至少阅读了三个介绍性章节、<a class="reference internal" href="chapter06.html#chapter06"><span class="std std-ref">第六章：回指（Anaphoric）宏</span></a> 和前面的 forth 章
 节。</p>
 <p>对于大多数 lisp 程序员来说，lisp 编程比 Blub 编程更有效率，最终看来也更自然，这一点在经验上
 是显而易见的，但要回答为什么会出现这种情况很难。 虽然 lisp 确实从宏中获得了惊人的表达能力——
@@ -416,8 +416,8 @@ nil。注意，这个宏的功能上留下了很多漏洞。 我们发现不得�
 语）可以存储在一个列表中。 变量 <strong>forth-stdlib</strong> 保存了这个 forth 代码列表，当新的 forths
 被创建并且 <strong>forth-stdlib-add</strong> 宏展开为 lisp 代码时，它将把新的 forth 代码追加到
 <strong>forth-stdlib</strong> 列表中。</p>
-<p>适配 <strong>new-forth</strong> 以支持加载此标准库的最简单方法是什么？ 还记得在 6.3 节：Alet 和有限状态
-机中写的 alet 宏吗？ 这个宏的目的是使用 Common Lisp 的 let 创建对偶语法，同时将回指变量
+<p>适配 <strong>new-forth</strong> 以支持加载此标准库的最简单方法是什么？ 还记得在 <a class="reference internal" href="chapter06.html#alet-and-finite-state-machines"><span class="std std-ref">6.3 alet 和有限状态机</span></a>
+中写的 <strong>alet</strong> 宏吗？ 这个宏的目的是使用 Common Lisp 的 let 创建对偶语法，同时将回指变量
 <strong>this</strong> 绑定在提供的代码周围。这将指向从 alet 返回的结果—— forth 闭包。</p>
 <p>所以改变我们的草图比预期的更容易。 所要做的就是将草图中的第一个 <strong>let</strong> 关键词改为
 <strong>alet</strong>，然后添加一些代码以将标准环境加载到 forth 闭包中。 不必调整其他的代码，因为
@@ -441,7 +441,7 @@ nil。注意，这个宏的功能上留下了很多漏洞。 我们发现不得�
 forth 抽象寄存器也是有用的。不幸的是，这些变量被一个 let over lambda 封闭。我们将不得不再次
 更改程序以使其可访问。当然，有很多方法可以做到这一点。可以在 forth 环境中嵌入并返回多个闭包，
 其中一些可以保存和访问抽象寄存器，或者可以重新考虑完全放弃 lambda 策略。但在这样做之前，是否有
-任何二元性可以帮助我们？还记得[6.7 潘多拉宏]中的 plambda 吗？它的目的是使用 lambda 创建一种
+任何二元性可以帮助我们？还记得 <a class="reference internal" href="chapter06.html#pandoric-macros"><span class="std std-ref">6.7 潘多拉宏</span></a> 中的 plambda 吗？它的目的是使用 lambda 创建一种
 二元语法，但它创建的闭包实际上对外部环境开放。更改我们的草图以支持这一点很简单，只需在我们作为闭
 包返回的 lambda 添加个前缀字符 p 并添加要导出的变量列表。我们的列表可以方便地在 forth 寄存器
 中提供给我们。草图变成：</p>
@@ -520,7 +520,7 @@ amount of dual syntax available in the programming language used.</p>
 功能，同时删除那些最终会带来更多麻烦的功能。</p>
 </section>
 <section id="forth">
-<h2>8.4 开始构建 forth<a class="headerlink" href="#forth" title="Permalink to this headline"></a></h2>
+<span id="going-forth"></span><h2>8.4 开始构建 forth<a class="headerlink" href="#forth" title="Permalink to this headline"></a></h2>
 <p>在本节中，我们将通过填补上一节中 <strong>new-forth</strong> 宏中留下的漏洞来真正开始工作。 在验证了
 forth 线程机制有效之后，我们引导了一个 forth 编程环境，并在此过程中解释了forth 即时性是什么
 以及它与 lisp 宏的关系。</p>
@@ -738,7 +738,7 @@ ANSI Forth 词，它结合并澄清了几个传统的 forth 词。postpone 用�
 <span class="linenos">3</span>  <span class="ss">&#39;}</span> <span class="nv">name</span> <span class="nv">immediate</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>类似地，我们在标准库中添加了一个补充词 <strong>}**（替换了传统 forth 的 **:</strong> ）。 实际上没有理由
+<p>类似地，我们在标准库中添加了一个补充词 <strong>}</strong> （替换了传统 forth 的 <strong>:</strong> ）。 实际上没有理由
 定义这个词——它唯一的作用就是让我们脱离编译状态。 我们已经有了 <strong>[</strong> 来为我们做这件事。 尽管如
 此，定义 <strong>{</strong> 还是有用的，因为它通过创建一对单词 { 和 } 为我们提供了正常的平衡括号，这使得定
 义新单词变得直观。</p>
@@ -805,8 +805,8 @@ ANSI Forth 词，它结合并澄清了几个传统的 forth 词。postpone 用�
 间的区别是如此模糊，以至于几乎无法辨别。 本章的其余部分在进一步解释元编程时试图使这种区别更模
 糊。</p>
 </section>
-<section id="id3">
-<h2>8.5 forth 的拓展<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h2>
+<section id="going-forther">
+<span id="id3"></span><h2>8.5 forth 的拓展<a class="headerlink" href="#going-forther" title="Permalink to this headline"></a></h2>
 <p>Common Lisp 有很多我们希望能够包含在的 forth 线程中的函数。
 <strong>forth-unary-word-definer</strong> 展开为与传递给其宏体的元素一样多的 <strong>def-forth-prim</strong> 结
 构。 假定元素是表示函数或宏的符号，但它们也可以是lambda 结构。 由 lambda 形式命名的原语的唯
@@ -1004,7 +1004,7 @@ forth 的一个有趣属性是，被调用的单词可以决定它是否是尾�
 <strong>compile</strong> 也使用这种模式。<strong>compile</strong> 是一个裸原语，它将获取当前正在执行的线程中下一个单
 元格的值，然后将该值编译到添加到字典中的最后一个单词的线程中——通常是当前正在编译的单词。
 <strong>here</strong> 是个简单的原语，它将正在编译的线程的最后一个 cons 单元推入参数堆栈。这里的
-<strong>here**与这里的常规 forth 中的 **here</strong> 词略有不同。forth 中，<strong>here</strong> 通常推送将被编译
+<strong>here</strong> 与这里的常规 forth 中的 <strong>here</strong> 词略有不同。forth 中，<strong>here</strong> 通常推送将被编译
 的下一个位置，而不是最后编译的位置。这是因为，在传统的 forth 中，此时要编译的内存位置是已知的
 ——它将是下一个相邻的内存单元。使用 cons 线程代码我们无法知道这一点，因为我们还没有占用该内存。</p>
 <p>有了 <strong>compile</strong> 和 <strong>here</strong>，现在可以开始编写 forth 宏了。记住，当 forth 单词是立即的
@@ -1139,7 +1139,7 @@ forth 的控制堆栈，嵌套任何对应堆栈的控制结构是完全可以�
 种组合技术是我认为在未来十年左右的语言研究中将在程序员生产力方面取得最大胜利的地方。</p>
 </section>
 <section id="forth-lisp">
-<h2>8.6 在 forth 中写 lisp 代码<a class="headerlink" href="#forth-lisp" title="Permalink to this headline"></a></h2>
+<span id="going-lisp"></span><h2>8.6 在 forth 中写 lisp 代码<a class="headerlink" href="#forth-lisp" title="Permalink to this headline"></a></h2>
 <p>到目前为止，本章已经定义了一个极简的 forth 环境，并从 lispy 的角度展示了一些最重要的 forth
 元编程概念。希望它已经表明，当拥有正确的工具（Common Lisp）时，设计和实现 forth 语言所需的努
 力是多么的少。 我们可以编写 forth 程序来编写 forth 程序——但我们已经知道了。 这就是一切。 此
@@ -1466,7 +1466,7 @@ shake 线程（递归地 shake 所有连接的线程），然后应用 Flubifica
 </div>
 <p>如前所述，由于 lisp 和forth 之间的差异，我们的 <strong>forth-to-lisp</strong> 编译器有一定的局限性。
 例如，我们不再提供对返回堆栈的访问，因此任何使用 <strong>r&gt;</strong> 或 <strong>&gt;r</strong> 的单词都被禁止。 这包括
-退出，因此之前的单词倒计时将不起作用。 但是，因为它不使用退出，<em>countdown-for-teh-hax0rz*</em>
+退出，因此之前的单词倒计时将不起作用。 但是，因为它不使用退出，<em>countdown-for-teh-hax0rz</em>
 可以正常工作。 因为 lisp 程序无法访问它们的返回堆栈，所以并非所有的控制结构都可以用像 Common
 Lisp 这样的 Flub 语言来实现。 练习：添加 <strong>exit</strong> 作为一个特殊情况的词，它使用lisp 块从一
 个词返回。</p>

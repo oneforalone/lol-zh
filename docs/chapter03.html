@@ -42,13 +42,13 @@
 <li class="toctree-l1"><a class="reference internal" href="chapter01.html">第一章：概述</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter02.html">第二章：闭包</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">第三章：宏基础</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id2">3.1 迭代开发</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">3.2 领域特定语言</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">3.3 控制结构</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">3.4 自由变量</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">3.5 异常捕获</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#iterative">3.1 迭代开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#domain-specific">3.2 领域特定语言</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#control-structures">3.3 控制结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#free-variables">3.4 自由变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#unwanted-capture">3.5 异常捕获</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#once-only">3.6 Once Only</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id7">3.7 语法的二义性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#duality-of-syntax">3.7 语法的二义性</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="chapter04.html">第四章：读取宏</a></li>
@@ -83,8 +83,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="id1">
-<h1>第三章：宏基础<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h1>
+  <section id="chapter03">
+<span id="id1"></span><h1>第三章：宏基础<a class="headerlink" href="#chapter03" title="Permalink to this headline"></a></h1>
 <dl class="field-list simple">
 <dt class="field-odd">Author</dt>
 <dd class="field-odd"><p>Doug Hoyte</p>
@@ -93,8 +93,8 @@
 <dd class="field-even"><p>Yuqi Liu</p>
 </dd>
 </dl>
-<section id="id2">
-<h2>3.1 迭代开发<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h2>
+<section id="iterative">
+<span id="id2"></span><h2>3.1 迭代开发<a class="headerlink" href="#iterative" title="Permalink to this headline"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Lisp has assisted a number of our most gifted fellow humans in thinking
 previously impossible thoughts. -—Edsger Dijkstra
 </pre></div>
@@ -110,8 +110,8 @@ previously impossible thoughts. -—Edsger Dijkstra
 旦讲清了这些通用宏概念，就回到讨论编写宏本身的过程。 然后将介绍异常捕获和自由变量注入等
 技术，以及用于定义 lisp 宏的新语法的定义，该语法将在本书的其余部分中使用。</p>
 </section>
-<section id="id3">
-<h2>3.2 领域特定语言<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h2>
+<section id="domain-specific">
+<span id="id3"></span><h2>3.2 领域特定语言<a class="headerlink" href="#domain-specific" title="Permalink to this headline"></a></h2>
 <p>COMMON LISP 与大多数其他编程环境一样，也有 <strong>sleep</strong> 函数 ，<strong>sleep</strong> 函数会让进程
 休眠 <strong>n</strong> 秒，其中 <strong>n</strong> 是一个非负数、非复杂的数字。 例如，想要休眠 3 分钟（180 秒
 的话），可以执行下面的语句：</p>
@@ -236,12 +236,12 @@ previously impossible thoughts. -—Edsger Dijkstra
 </pre></div>
 </div>
 <p>像 <strong>unit-of-time</strong> 这样简单的宏为解决特定领域的问题提供了更好的语法，并且可以带来显著的生产
-力和正确性优势。 我们将在[5.2 自上而下编程]中继续开发这种单元语言。 与大多数编程语言不同，
+力和正确性优势。 我们将在 <a class="reference internal" href="chapter05.html#topdown-programming"><span class="std std-ref">5.2 自上而下的编程</span></a> 中继续开发这种单元语言。 与大多数编程语言不同，
 lisp 为创建编程环境的人提供了相同的工具。宏足以实现 COMMON LISP 语言，也足以实现领域特定语
 言。</p>
 </section>
-<section id="id4">
-<h2>3.3 控制结构<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h2>
+<section id="control-structures">
+<span id="id4"></span><h2>3.3 控制结构<a class="headerlink" href="#control-structures" title="Permalink to this headline"></a></h2>
 <p>虽然这本书的重点是 COMMON LISP，但它也是为 Scheme 编程语言编写的，同时也是关于 Scheme 编程
 语言的。 Scheme 是一门很棒的语言，尽管缺少 lisp 程序员习以为常的特性，但它仍然为专业 lisp 程
 序员提供了足够灵活的核心，可以按需扩展。 同样，Scheme 程序员严重依赖的一些 COMMON LISP 没有
@@ -315,8 +315,8 @@ Scheme 中，命名 let 的尾调用保证不会占用额外的堆栈空间，�
 能会发生堆栈溢出，而在 Scheme 中的命名 let 中不会发生这种情况。 在[5.4 使用 Macrolet 代码
 遍历]中，我们将看到如何编写具有相同接口但可能更有效的扩展的 <strong>nlet</strong> 版本。</p>
 </section>
-<section id="id5">
-<h2>3.4 自由变量<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h2>
+<section id="free-variables">
+<span id="id5"></span><h2>3.4 自由变量<a class="headerlink" href="#free-variables" title="Permalink to this headline"></a></h2>
 <p><em>自由变量</em> 是在无全局绑定或词法闭包绑定的表达式中引用的变量或函数。 在下面的表达式中，<strong>x</strong> 是
 自由的：</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(+ 1 x)
@@ -332,8 +332,8 @@ Scheme 中，命名 let 的尾调用保证不会占用额外的堆栈空间，�
 将表达式 <strong>(+ 1 x)</strong> 嵌入到任意位置，从而允许表达式访问周围代码中名为 <strong>x</strong> 的绑定。然后我们
 说代码已经捕获了自由变量。在表达式中的自由变量被捕获后，如上面的 <strong>let</strong> 结构，其他周围的代码
 没有选择捕获变量 <strong>x</strong>。之前的自由变量已经被捕获。现在完全清楚它指的是哪个 <strong>x</strong>。因此，
-lisp 根本不需要在代码中保留对符号 <strong>x</strong> 的引用。正如[2.3 词法作用域和动态作用域]中描述的那
-样，lisp 编译器会忘记用于表示词法变量的符号。</p>
+lisp 根本不需要在代码中保留对符号 <strong>x</strong> 的引用。正如 <a class="reference internal" href="chapter02.html#lexical-and-dynamic-scope"><span class="std std-ref">2.3 词法作用域与动态作用域</span></a>
+中描述的那样，lisp 编译器会忘记用于表示词法变量的符号。</p>
 <p>尽管带有表达式的语言都可以有带有自由变量的表达式，但 lisp 的宏功能意味着自由变量在 lisp 中比
 在其他语言中更有用。在大多数语言中，我们被迫遵守 <em>引用透明性</em>。 如果 Blub 程序中没有定义全局或
 对象变量 <strong>x</strong>，则下面代码毫无疑问是错误的：</p>
@@ -370,15 +370,15 @@ On Lisp 中讨论过这种自由变量注入</p>
 能地扩展词法上下文，仅在需要计算参数或只是停止并想要新的词法上下文时才使用函数。在 [3.6 Once
 Only] 中，我们将看到一种在需要计算参数时避免丢弃词法环境的方法。尽量保持词法环境允许的有趣的宏
 组合，其中宏在使用一个或多个其他宏时添加词法上下文。展开成所定义的宏的代码是宏组合的一种特殊情
-况，在[5.5 递归展开](chapter05.md)中进行了讨论。</p>
+况，在 <a class="reference internal" href="chapter05.html#recursive-expansions"><span class="std std-ref">5.5 递归展开</span></a> 中进行了讨论。</p>
 <p>两点之间最短的距离是直线。 自由变量，通俗点说，扩展词法上下文通常是以编程方式构造程序的最简单方
 法。 以这种方式使用宏可能看起来像是一种 hack，且在风格上可能会令人反感，但它可以方便且可靠地工
-作。 尤其是我们在[5.4 用 <cite>Macrolet</cite> 遍历代码]中思考了 <strong>macrolet</strong> 之后，这种编程风格——结
-合宏——会开始看起来更舒服。 记住，宏编程与风格无关； 而是关乎能力。 宏允许我们实现很多语言不可能
-做的事情。 自由变量注入就是其中之一。</p>
+作。 尤其是我们在 <a class="reference internal" href="chapter05.html#code-walking-with-macrolet"><span class="std std-ref">5.4 使用 macrolet 遍历代码</span></a> 中思考了 <strong>macrolet</strong> 之后，
+这种编程风格——结合宏——会开始看起来更舒服。 记住，宏编程与风格无关； 而是关乎能力。 宏允许我们
+实现很多语言不可能做的事情。 自由变量注入就是其中之一。</p>
 </section>
-<section id="id6">
-<h2>3.5 异常捕获<a class="headerlink" href="#id6" title="Permalink to this headline"></a></h2>
+<section id="unwanted-capture">
+<span id="id6"></span><h2>3.5 异常捕获<a class="headerlink" href="#unwanted-capture" title="Permalink to this headline"></a></h2>
 <p>关于变量捕获有两种观点。 变量捕获是一些无法预测的错误的根源，但如果使用得当，它也也可以是个很理
 想的宏功能。 让我们从Graham 在 On Lisp 中定义的一个简单宏开始考虑变量捕获：<strong>nif</strong>。
 <strong>Nif</strong> 是个 <em>数字 if</em> ，它有四个必要子句，而常规的布尔值 <strong>if</strong> 有两个必要子句和一个可选的
@@ -401,8 +401,8 @@ Only] 中，我们将看到一种在需要计算参数时避免丢弃词法环�
 要这样做，因为计算 <strong>expr</strong> 可能会产生副作用，我们需要将它的值用于两件不同的语句：将其传给
 <strong>plusp</strong> 和 <strong>zerop</strong>。 但是这个临时绑定叫什么呢？ 为了引入一个细微的错误，我们选择使用
 <strong>obscure-name</strong>。 除非有人看宏展开，否则没人会看到这个变量名，所以没什么大不了的，对吧？</p>
-<p>几乎所有情况下，<strong>Nif-buggy</strong> 都会像 <strong>nif</strong> 一样工作。 只要 <strong>nif-buggy**9 的参数中没有
-用到符号 **obscure-name</strong>，就不可能有异常捕获变量。 但如果 <strong>obscure-name</strong> 确实出现在参
+<p>几乎所有情况下，<strong>Nif-buggy</strong> 都会像 <strong>nif</strong> 一样工作。 只要 <strong>nif-buggy</strong> 的参数中没有
+用到符号 <strong>obscure-name</strong>，就不可能有异常捕获变量。 但如果 <strong>obscure-name</strong> 确实出现在参
 数中会发生什么呢？在多数情况下，仍然没有错误：</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(nif-buggy
 <span class="linenos">2</span>  x
@@ -555,9 +555,9 @@ lisp 中断，是因为我们无法通过查看两个 gensym 的打印名称来�
 </pre></div>
 </div>
 <p>在上面的代码中，lisp 输出使用 <strong>#=</strong> 和 <strong>##</strong> 读取宏。 这些读取宏可以让我们创建自引用结
-构，这将在[4.5 循环表达式]中深入地讨论。 如果我们阅读上面的代码，里面使用的符号实际上与
-<strong>let</strong> 绑定中使用的符号相同，展开仍然有效。 似乎上述定义避免了双重命名冗余。 有没有办法可以让
-其使用一个宏编写宏模板？</p>
+构，这将在 <a class="reference internal" href="chapter04.html#cyclic-expressions"><span class="std std-ref">4.5 循环表达式</span></a> 中深入地讨论。 如果我们阅读上面的代码，里面使用
+的符号实际上与 <strong>let</strong> 绑定中使用的符号相同，展开仍然有效。 似乎上述定义避免了双重命名冗余。
+有没有办法可以让其使用一个宏编写宏模板？</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defun g!-symbol-p (s)
 <span class="linenos">2</span>  (and (symbolp s)
 <span class="linenos">3</span>      (&gt; (length (symbol-name s)) 2)
@@ -605,8 +605,8 @@ gensym 引用符号，称为 G-bang 符号。 我们定义了一个谓词 <stron
 <strong>gensym</strong> 的绑定。</p>
 <p>注意，映射的 lambda 如何包含使用反引号运算符创建的表达式，从而导致看似（但不是）嵌套反引号的情
 况。 因为应用这个函数的 <strong>mapcar</strong> 是不带引号的，所以嵌套反引号中的不带引号的表达式仍然在我们
-原来的上下文中求值。 众所周知，嵌套反引号很难理解，在[第四章：读取宏]中深入地研究反引号时，我们
-将回到这个概念。</p>
+原来的上下文中求值。 众所周知，嵌套反引号很难理解，在 <a class="reference internal" href="chapter04.html#chapter04"><span class="std std-ref">第四章：读取宏</span></a> 中深入地研究反引号时，
+我们将回到这个概念。</p>
 <p>那么，<strong>defmacro/g!</strong>  到底可以让我们做什么？ 我们可以利用这种自动生成符号技术，一种检查宏的
 参数的词法范围内特定符号是否存在的方法。 如果我们不使用任何 G-bang 符号，使用 <strong>defmacro/
 g!</strong> 和 <strong>defmacro</strong> 完全一样。 但对出现在宏展开式主体中的任何 G-bang 符号都被解释为：</p>
@@ -667,7 +667,7 @@ g!</strong> 中 <strong>flatten</strong> 的使用是代码遍历的一个简单
 一个前面有两个反引号（两个逗号），会出现什么问题？</p>
 </section>
 <section id="once-only">
-<h2>3.6 Once Only<a class="headerlink" href="#once-only" title="Permalink to this headline"></a></h2>
+<span id="id7"></span><h2>3.6 Once Only<a class="headerlink" href="#once-only" title="Permalink to this headline"></a></h2>
 <p>Peter Norvig 是一位出色的程序员和作家。 在解决计算机科学家目前面临的许多最困难的问题之前，需
 要阅读他关于人工智能的书籍，尤其是《人工智能：一种现代方法》 [AIMA]。 lisp 程序员可能更熟悉
 Norvig 的著作《人工智能编程范式：COMMON LISP中的案例研究》。这本书可能有点过时，但对于认真
@@ -829,8 +829,8 @@ gensym 呢？通过调用上面由 <strong>o!-symbol-to-g!-symbol</strong> 定�
 <strong>defmacro!</strong> 可以将宏参数中的求值语义从常规未求值的宏结构，翻转为从左到右的单独求值的
 lambda 参数。</p>
 </section>
-<section id="id7">
-<h2>3.7 语法的二义性<a class="headerlink" href="#id7" title="Permalink to this headline"></a></h2>
+<section id="duality-of-syntax">
+<span id="id8"></span><h2>3.7 语法的二义性<a class="headerlink" href="#duality-of-syntax" title="Permalink to this headline"></a></h2>
 <p>lisp 有个重要的概念称为语法二义性。 理解二义性及其重要性是编写宏和本书的基本主题。 二义性有时
 是设计出来的，有时是意外发现的。对于非 lisp 语言的程序员来说，二义性语法的现实令人难以置信，以
 至于无法在本书中进行描述，所以我们现在回避直接定义。 相反，你，本书的读者，会一次又一次地发现

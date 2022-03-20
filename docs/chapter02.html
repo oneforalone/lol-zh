@@ -42,8 +42,8 @@
 <li class="toctree-l1"><a class="reference internal" href="chapter01.html">第一章：概述</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">第二章：闭包</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#closure-oriented">2.1 面向闭包编程</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">2.2 环境及拓展</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">2.3 词法作用域与动态作用域</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#environments-and-extent">2.2 环境及拓展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lexical-and-dynamic-scope">2.3 词法作用域与动态作用域</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#let-it-be-lambda">2.4 Let It Be Lambda</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#let-over-lambda">2.5 Let Over Lambda</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#lambda-over-let-over-lambda">2.6 Lambda Over Let Over Lambda</a></li>
@@ -83,8 +83,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="id1">
-<h1>第二章：闭包<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h1>
+  <section id="chapter02">
+<span id="id1"></span><h1>第二章：闭包<a class="headerlink" href="#chapter02" title="Permalink to this headline"></a></h1>
 <dl class="field-list simple">
 <dt class="field-odd">Author</dt>
 <dd class="field-odd"><p>Doug Hoyte</p>
@@ -116,8 +116,8 @@ CLOS 的灵活性和特性印象深刻，但我很少发现需要使用其更高
 使用，并提供将在本书其余部分中使用的闭包通用术语。本章还检查了闭包的效率影响，并考虑了现代编译器
 对它们的优化程度。</p>
 </section>
-<section id="id3">
-<h2>2.2 环境及拓展<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h2>
+<section id="environments-and-extent">
+<span id="id3"></span><h2>2.2 环境及拓展<a class="headerlink" href="#environments-and-extent" title="Permalink to this headline"></a></h2>
 <p>斯蒂尔所说的可分配值单元的意思是一种环境，用于存储指向数据的指针，该环境受制于所谓的无限范围。这
 是一种花哨的说法，可以在未来的任何时候继续参考这样的环境。一旦分配了这个环境，它和它的引用在需要
 用到时就会一直存在。想一想以下的 C 函数：</p>
@@ -142,7 +142,7 @@ CLOS 的灵活性和特性印象深刻，但我很少发现需要使用其更高
 <p>C 环境和 lisp 环境之间的区别在于，除非在 lisp 中显示定义，否则默认使用无限范围。换句话说，
 lisp 总是像上面那样调用 <strong>malloc()</strong> 。可以说，这本质上比使用临时范围效率低，但收益几乎总是
 超过边际性能成本。更重要的是，lisp 通常可以确定何时能安全地在堆栈上分配数据，并且会自动执行此操
-作。甚至可以使用声明来告诉 lisp 显式地执行此操作。我们将在[第七章：宏观效率主题]中更详细地讨论
+作。甚至可以使用声明来告诉 lisp 显式地执行此操作。我们将在 <a class="reference internal" href="chapter07.html#chapter07"><span class="std std-ref">第七章：宏的效率</span></a> 中更详细地讨论
 如何声明。
 ​
 但是由于 lisp 的动态特性，它不像 C 那样具有显式的指针值或类型。如果是 C 程序员习惯于转换指针
@@ -163,8 +163,8 @@ lisp 总是像上面那样调用 <strong>malloc()</strong> 。可以说，这本
 <p>随着 lisp 编译技术的最新技术水平的提高，无限程度的效率劣势正在接近无关紧要。环境和范围与闭包密
 切相关，本章将详细介绍它们。</p>
 </section>
-<section id="id4">
-<h2>2.3 词法作用域与动态作用域<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h2>
+<section id="lexical-and-dynamic-scope">
+<span id="id4"></span><h2>2.3 词法作用域与动态作用域<a class="headerlink" href="#lexical-and-dynamic-scope" title="Permalink to this headline"></a></h2>
 <p>变量的有效作用范围叫做作用域。现代的变成语言中比较通用的作用域是——词法作用域。当变量作用于代码
 段中，那么该变量就被称为是该代码段的词法作用域的绑定。最为通用的创建编定的的关键词 ——
 <strong>let</strong>，可以来介绍词法作用域中的变量：</p>
@@ -187,10 +187,9 @@ Lisp。由于有着悠久而丰富的历史，词法作用域的许多优点渐�
 分的CPU）中的寄存器和内存，然后使用这种语言访问和操作数据结构，并对运行程序的CPU发出相当直接的
 命令。在没有较好的lisp编译器之前，如果需要考虑到性能的话，指针作用域是很有必要的，但如今却成了
 现代编程语言的问题，而不是特性。</p>
-<p>尽管lisp程序员很少考虑指针，但对指针作用域的理解对构造高效的lisp代码是很有有价值的。在[7.4 指
-针作用域]中，我们将会研究在某些需要通知编译器生成特定的代码特殊情况中实现指针作用域。目前我们只
-需要讨论它的机制。在C语言中，有时需要访问定义在函数之外的变量，如 <strong>pointer_scope_test</strong> 函
-数:</p>
+<p>尽管lisp程序员很少考虑指针，但对指针作用域的理解对构造高效的lisp代码是很有有价值的。在 <a class="reference internal" href="chapter07.html#pointer-scope"><span class="std std-ref">7.4 指针作用域</span></a>
+中，我们将会研究在某些需要通知编译器生成特定的代码特殊情况中实现指针作用域。目前我们
+只需要讨论它的机制。在C语言中，有时需要访问定义在函数之外的变量，如 <strong>pointer_scope_test</strong> 函数:</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
 <span class="linenos">2</span>
 <span class="linenos">3</span><span class="kt">void</span><span class="w"> </span><span class="nf">pointer_scope_test</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -214,8 +213,8 @@ Lisp。由于有着悠久而丰富的历史，词法作用域的许多优点渐�
 组合。这是lisp 特有的作用域类型，因为它与词法作用域的语法相同，但表现方式却不一样。在COMMON
 LISP 中，我们特意将动态作用域中的变量叫做特殊变量。这些特殊的变量可以用 <strong>defvar</strong> 定义。一
 些程序员遵循用星号作为前缀和后缀的特殊变量名的惯例，比如 *temp-special*。这种命名方法有些
-掩耳盗铃。基于[3.7 语法二义性]中阐述的原因，本书不会采用这种掩耳盗铃的命名方法，因此特殊变量声
-明如下:</p>
+掩耳盗铃。基于 <a class="reference internal" href="chapter03.html#duality-of-syntax"><span class="std std-ref">3.7 语法的二义性</span></a> 中阐述的原因，本书不会采用这种掩耳盗铃的命名方法，
+因此特殊变量声明如下:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defvar temp-special)
 </pre></div>
 </div>
@@ -274,7 +273,7 @@ Common Lisp 中，语法是共享的。许多 lisper 认为这是一个特性。
 <p>全局变量总是与命名的符号相关联。全局变量指向的内存中的位置被叫做符号的“符号值”单元格。这与词法
 变量形成了直接的对比。词法变量仅在编译时用符号表示。因为词法变量只能从其绑定的词法范围内访问，所
 以编译器甚至没有理由记住用来引用词法变量的符号，因此编译器会在编译后的代码中删除这些符号。我们将
-在[6.7 潘多拉宏]中来详细的证明这一点。</p>
+在 <a class="reference internal" href="chapter06.html#pandoric-macros"><span class="std std-ref">6.7 潘多拉宏</span></a> 中来详细的证明这一点。</p>
 <p>COMMON LISP的确是提供了动态范围的宝贵特性，但是词法变量是最常见的。动态作用域曾经是lisp中定义
 的特性，但在 Common Lisp 之后，动态作用域几乎完全被词法作用域取代。因为词法作用域支持词法闭包
 (稍后我们将对此进行讨论)以及更有效的编译器优化，所以动态作用域的取代通常被视为一件好事。然而，
@@ -282,7 +281,7 @@ COMMON LISP的设计者给我们留下了一个非常透明的窗口，让我们
 动态范围的真正含义：特殊。</p>
 </section>
 <section id="let-it-be-lambda">
-<h2>2.4 Let It Be Lambda<a class="headerlink" href="#let-it-be-lambda" title="Permalink to this headline"></a></h2>
+<span id="id5"></span><h2>2.4 Let It Be Lambda<a class="headerlink" href="#let-it-be-lambda" title="Permalink to this headline"></a></h2>
 <p><strong>Let</strong> 是 Lisp 中特殊的表单，用于创建并初始化相应表单名称(绑定)的环境。这些名称对于
 <strong>let</strong> 主体中有效是，且该求值是连续的，并返回最终表单的结果。虽然 <strong>let</strong> 做了什么很明确，
 但具体是怎么做的却没指明。<strong>let</strong> 结果与过程是分离的。在某种程度上， <strong>let</strong> 需要提供一个数
@@ -316,7 +315,7 @@ CPU 寄存器中来优化此函数。结果可能是以下的机器代码：</p>
 <p>注意，地址 <strong>4</strong> 中存储的是 <strong>1</strong>，<strong>400</strong> 中存储的是 <strong>100</strong>，因为在编译后的代码中，
 <strong>fixnums</strong> 移动了两位。这与标记有关，这是一种假装某些东西是指针但实际上在其中存储数据的方
 法。lisp编译器的标记方案有一个很好的好处，即不需要发生移位来索引字对齐内[DESIGN-OF-CMUCL]。
-我们将在[第七章：宏效率主题]中深入了解 lisp 编译器。</p>
+我们将在 <a class="reference internal" href="chapter07.html#chapter07"><span class="std std-ref">第七章：宏的效率</span></a> 中深入了解 lisp 编译器。</p>
 <p>但是，如果 lisp 确定之后可能要引用此环境，则它必须使用比寄存器更短暂的东西。在环境中存储指针的
 常见结构是数组。如果每个环境都有一个数组，并且包含在该环境中的所有变量引用都只是对该数组的引用，
 那么就有一个具有潜在无限范围的高效环境。</p>
@@ -430,7 +429,7 @@ COMMON LISP[GRAHAM-ANSI-CL] 中认为这个宏，连同它的简洁优势，“�
 <p>使用包含上述 lambda 的 let 非常重要，我们将在本章的剩余部分中讨论它的模式和变体。</p>
 </section>
 <section id="let-over-lambda">
-<h2>2.5 Let Over Lambda<a class="headerlink" href="#let-over-lambda" title="Permalink to this headline"></a></h2>
+<span id="id6"></span><h2>2.5 Let Over Lambda<a class="headerlink" href="#let-over-lambda" title="Permalink to this headline"></a></h2>
 <p><em>Let over lambda</em> 是词法闭包的昵称。Let over lambda 比大多数术语更清晰地反映用于创建闭包
 的 lisp 代码。在 let over lambda 场景中， <strong>let</strong> 语句返回的最后一个结构是 <strong>lambda</strong>
 表达式。它看起来就像 <strong>let</strong> 坐在 <strong>lambda</strong> 之上：</p>
@@ -466,12 +465,12 @@ over lambda 经典实现：</p>
 </pre></div>
 </div>
 <p>这个 <em>let over two lambdas</em> 结构将返回两个函数，这两个函数都访问相同的封闭计数器变量。第一
-个增加它，第二个减少它。还有许多其他方法可以实现这一点。其中一个便是[5.7 Dlambda] 中进行了讨
+个增加它，第二个减少它。还有许多其他方法可以实现这一点。其中一个便是 <a class="reference internal" href="chapter05.html#dlambda"><span class="std std-ref">5.7 Dlambda</span></a> 中进行了讨
 论的 <strong>dlambda</strong> 。基于之后介绍的原因，本书中的代码将使用闭包而不是对象来构造所有数据。提示：
 与宏有关。</p>
 </section>
 <section id="lambda-over-let-over-lambda">
-<h2>2.6 Lambda Over Let Over Lambda<a class="headerlink" href="#lambda-over-let-over-lambda" title="Permalink to this headline"></a></h2>
+<span id="lambda-over-letoverlambda"></span><h2>2.6 Lambda Over Let Over Lambda<a class="headerlink" href="#lambda-over-let-over-lambda" title="Permalink to this headline"></a></h2>
 <p>在一些对象系统中，对象、具有关联状态的过程集合和类（用于创建对象的数据结构）之间存在明显区别。闭
 包不存在这种区别。我们看到了可以执行以创建闭包的结构示例，其中大多数遵循 lambda 模式，但是程序
 如何根据需要创建这些对象？</p>
@@ -545,7 +544,7 @@ lambda 的很好演示。下面是它使用，假装是某种通信磁带，注�
 </div>
 </section>
 <section id="let-over-lambda-over-let-over-lambda">
-<h2>2.7 Let Over Lambda Over Let Over Lambda<a class="headerlink" href="#let-over-lambda-over-let-over-lambda" title="Permalink to this headline"></a></h2>
+<span id="letoverlambda-over-letoverlambda"></span><h2>2.7 Let Over Lambda Over Let Over Lambda<a class="headerlink" href="#let-over-lambda-over-let-over-lambda" title="Permalink to this headline"></a></h2>
 <p>对象系统的用户将他们希望在某个类的所有对象之间共享的值存储到所谓的类变量或静态变量中。在 lisp
 中，闭包之间共享状态的概念由环境处理，就像闭包本身存储状态一样。由于环境可以无限访问，只要它仍然
 可以引用它，就能保证它在需要时可用。</p>

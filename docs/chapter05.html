@@ -44,12 +44,12 @@
 <li class="toctree-l1"><a class="reference internal" href="chapter03.html">第三章：宏基础</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter04.html">第四章：读取宏</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">第五章：Programs that program</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id1">5.1 非函数式编程</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">5.2 自上而下的编程</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">5.3 隐式上下文</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lisp-is-not-funcitonal">5.1 非函数式编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#topdown-programming">5.2 自上而下的编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#implicit-contexts">5.3 隐式上下文</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#macrolet">5.4 使用 <strong>macrolet</strong> 遍历代码</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">5.5 递归展开</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">5.6 递归方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recursive-expansions">5.5 递归展开</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recursive-solutions">5.6 递归方案</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dlambda">5.7 Dlambda</a></li>
 </ul>
 </li>
@@ -84,7 +84,7 @@
            <div itemprop="articleBody">
              
   <section id="programs-that-program">
-<h1>第五章：Programs that program<a class="headerlink" href="#programs-that-program" title="Permalink to this headline"></a></h1>
+<span id="chapter05"></span><h1>第五章：Programs that program<a class="headerlink" href="#programs-that-program" title="Permalink to this headline"></a></h1>
 <dl class="field-list simple">
 <dt class="field-odd">Author</dt>
 <dd class="field-odd"><p>Doug Hoyte</p>
@@ -93,8 +93,8 @@
 <dd class="field-even"><p>Yuqi Liu</p>
 </dd>
 </dl>
-<section id="id1">
-<h2>5.1 非函数式编程<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h2>
+<section id="lisp-is-not-funcitonal">
+<span id="id1"></span><h2>5.1 非函数式编程<a class="headerlink" href="#lisp-is-not-funcitonal" title="Permalink to this headline"></a></h2>
 <p>对 Lisp 常见的一种偏见是将其叫做函数式编程语言。但 lisp 不是函数式语言。事实上，
 lisp 是有史以来最不像函数式的语言。这个误解的根源很有趣，同时也是个很好例子，
 说明了一个小的用词不当可以产生持久的影响，并在用词不当的原因变得无关紧要之后
@@ -174,8 +174,8 @@ lisp 是有史以来最不像函数式的语言。这个误解的根源很有趣
 函数描述与实际发生的机制分离开来。Lisp 肯定不是函数式，但由于宏的存在，没有比
 Lisp 更好的实现函数式语言的平台或工具。</p>
 </section>
-<section id="id2">
-<h2>5.2 自上而下的编程<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h2>
+<section id="topdown-programming">
+<span id="id2"></span><h2>5.2 自上而下的编程<a class="headerlink" href="#topdown-programming" title="Permalink to this headline"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>你教不会初学者自顶向下编程，因为他们不知道哪一端是上。 --C.A.R. Hoare
 </pre></div>
 </div>
@@ -210,7 +210,7 @@ Lisp 更好的实现函数式语言的平台或工具。</p>
 <span class="linenos">6</span>  us 1/1000000)
 </pre></div>
 </div>
-<p><strong>defunits%</strong> 会展开成定义宏的代码，就像在 [3.2 领域特定语言] 中编写的
+<p><strong>defunits%</strong> 会展开成定义宏的代码，就像在 <a class="reference internal" href="chapter03.html#domain-specific"><span class="std std-ref">3.2 领域特定语言</span></a> 中编写的
 <strong>unit-of-time</strong> ，允许我们将任意的时间单位转换为秒。还能写的更好吗？</p>
 <p>在设计头脑风暴中，创新在大多数编程语言中都停滞不前。刚刚我们创建了一种将不同单位的
 乘数值映射到代码中的方法，这种方法让我们能够方便地转换单位。但作为一个专业的 lisp
@@ -236,10 +236,10 @@ Lisp 更好的实现函数式语言的平台或工具。</p>
 结果，或者说更重要的是，与其他计算结果尽可能保持一致，都使用英里做单位。这是因为
 我们可以添加找到的最精确的转换因子，而不需要自己进行任何转换，宏让我们在其他语言
 中无法实现的表达式级别上构建转换例程。</p>
-<p>使用 [3.5 异常捕获] 中的 <strong>gensym</strong> ，<strong>defunits%</strong> 就很容易编写。
+<p>使用 <a class="reference internal" href="chapter03.html#unwanted-capture"><span class="std std-ref">3.5 异常捕获</span></a> 中的 <strong>gensym</strong> ，<strong>defunits%</strong> 就很容易编写。
 Graham 的 <strong>symb</strong> 函数可以将转换宏生成个新的名字。例如，当 <strong>time</strong> 是内置的表示单位，
 那么转换宏就是 <strong>unit-of-time</strong>。 <strong>defunits%</strong> 是由最初定义的 <strong>unit-of-time</strong> 构建
-的，<strong>unit-of-time</strong> 是在 [3.2 领域特定语言] 中定义的，在 <strong>defunits%</strong> 中，
+的，<strong>unit-of-time</strong> 是在 <a class="reference internal" href="chapter03.html#domain-specific"><span class="std std-ref">3.2 领域特定语言</span></a> 中定义的，在 <strong>defunits%</strong> 中，
 由 <strong>defmacro!</strong> 和反引号组成，用来替换宏调用时需要重新生成的部分。</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -401,8 +401,8 @@ lisp 中却很容易，所以lisp程序员通常不会把所有东西都塞到�
 </pre></div>
 </div>
 </section>
-<section id="id3">
-<h2>5.3 隐式上下文<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h2>
+<section id="implicit-contexts">
+<span id="id3"></span><h2>5.3 隐式上下文<a class="headerlink" href="#implicit-contexts" title="Permalink to this headline"></a></h2>
 <p>宏可以使用隐式上下文的技术。在常用的代码中，或者说是需要绝对简洁且没有很细节的代码中，
 有时要隐式地在表达式的某些部分添加 lisp 代码，这样就不必每次使用抽象时都去编写它。之前
 也有介绍过隐式上下文，而且也很清楚的表达了，即便是不使用宏，隐式上下文也是 lisp 编程的
@@ -578,7 +578,7 @@ lisp 中却很容易，所以lisp程序员通常不会把所有东西都塞到�
 中进一步介绍。</p>
 </section>
 <section id="macrolet">
-<h2>5.4 使用 <strong>macrolet</strong> 遍历代码<a class="headerlink" href="#macrolet" title="Permalink to this headline"></a></h2>
+<span id="code-walking-with-macrolet"></span><h2>5.4 使用 <strong>macrolet</strong> 遍历代码<a class="headerlink" href="#macrolet" title="Permalink to this headline"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Lisp 不是门语言，而是构建语言的原料。 —— Alan Kay
 </pre></div>
 </div>
@@ -727,8 +727,8 @@ lisp 代码，只是不像原始版本那样压缩。接下来，通常我们将
 <p>高阶或低阶的区别在 lisp 中不适用，lisp 程序的级别完全取决于视角。 Lisp 不是门语言，而是
 迄今为止所发现的最灵活的软件构建原料。</p>
 </section>
-<section id="id4">
-<h2>5.5 递归展开<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h2>
+<section id="recursive-expansions">
+<span id="id4"></span><h2>5.5 递归展开<a class="headerlink" href="#recursive-expansions" title="Permalink to this headline"></a></h2>
 <p>在用例子教初学者 lisp 时，在课程中不可避免地会出现一个问题</p>
 <blockquote>
 <div><p>cadr 是什么玩意?</p>
@@ -940,8 +940,8 @@ A 或 D 字符被替换为 X。 在 <strong>cxr%</strong> 中，第一个参数�
 <p>通常我们会发现将宏组合起来很有用：<strong>cxr</strong> 可以展开成之前写的宏 <strong>nlet-tail</strong>。同样的，
 有时将宏自身组合起来也很有用，这样就会有递归展开。</p>
 </section>
-<section id="id5">
-<h2>5.6 递归方案<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h2>
+<section id="recursive-solutions">
+<span id="id5"></span><h2>5.6 递归方案<a class="headerlink" href="#recursive-solutions" title="Permalink to this headline"></a></h2>
 <p>上节我们定义的 <strong>cxr</strong> 宏似乎包含了函数 <strong>car</strong> 和 <strong>cdr</strong> 的组合，以及普通的一元列表
 <strong>(flat list)</strong> 访问器函数 <strong>nth</strong> 和 <strong>nthcdr</strong>。但是像 <strong>first</strong>, <strong>second</strong> 和 <strong>tenth</strong>
 这样的英语访问器呢？</p>
@@ -1128,7 +1128,7 @@ LISP 中定义了。</p>
 我们采用了经过验证的解决方法：分而治之。</p>
 </section>
 <section id="dlambda">
-<h2>5.7 Dlambda<a class="headerlink" href="#dlambda" title="Permalink to this headline"></a></h2>
+<span id="id6"></span><h2>5.7 Dlambda<a class="headerlink" href="#dlambda" title="Permalink to this headline"></a></h2>
 <p>在讨论闭包时，我们提到了怎么将闭包当作对象使用，以及一般情况下，不确定范围和词法
 作用域怎么替代复杂的对象系统。但是，到目前为止，我们忽略了对象通常都有的一个特性：
 多方法。换句话说，虽然我们简单的计数器闭包示例只允许一个操作，即增量，但对象通常
