@@ -37,4 +37,4 @@ md-github:
 	@rm -rf ../docs/*
 	@rm -rf _build/html
 	@make md
-	@cp -a _build/html/ ../docs
+	@cp -a _build/html/. ../docs
