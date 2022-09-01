@@ -1,7 +1,7 @@
 name: Auto build and deploy to Github Pages
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "master"]
   pull_request:
 
 # start build
