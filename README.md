@@ -1,5 +1,7 @@
 # Let Over Lambda 中文翻译项目
 
+[![Auto build and deploy to Github Pages](https://github.com/oneforalone/lol-zh/actions/workflows/build-and-deploy.yml/badge.svg)](https://github.com/oneforalone/lol-zh/actions/workflows/build-and-deploy.yml)
+
 本项目文档由 Sphinx 引擎生成。原文链接文：https://letoverlambda.com。
 
 源文件在 docsrc 目录下，编辑完源文件后执行 `make github` ，然后在提交到 Github 上。
