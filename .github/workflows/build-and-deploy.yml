@@ -1,78 +1,57 @@
-name: Auto build and deploy to Github Pages
+name: Github Pages
 on:
   push:
-    branches: ["main", "master"]
+    branches:
+      - master
   pull_request:
 
-# start build
 jobs:
   build:
-    name: Generate html files
+    name: build and deploy to Github Pages
+
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
 
     steps:
       - uses: actions/checkout@v3
 
-      # Setup Python3.10
-      - uses: actions/setup-python@v4
+      - name: Setup Python3.10
+        uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
-      # Install other dependencies
-      - name: Install other dependencies
-        run: |
-          sudo apt update
-          sudo apt install make -y
+      - name: Upgrade pip
+        run: python3 -m pip install --upgrade pip
 
-      # Install sphinx
-      - name: Install sphinx
+      - name: Get pip cache dir
+        id: pip-cache
+        run: echo "::set-output name=dir::$(pip cache dir)"
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.pip-cache.outputs.dir }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
         run: |
-          python3.10 -m pip install --upgrade pip
           if [ -f requirements.txt ]; then
           pip install -r requirements.txt
           else
-          pip install Sphinx sphinx-autobuild myst_parser sphinx_rtd_theme
+          pip install Sphinx myst_parser sphinx_rtd_theme
           fi
 
-      # Generate html files from docsrc
-      - name: Generate html files from docsrc
-        run: |
-          cd ./docsrc
-          make github
+      - run: sphinx-build source _site
 
-      # Cleanup building temporary files
-      - name: Cleanup temporary files
-        run: rm -rf _build
-
-  # Deploy github pages after build
-  deploy:
-    name: deploy github pages
-    needs: build
-
-    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
-    permissions:
-      pages: write # to deploy to Pages
-      id-token: write # to verify the deployment originates from an appropriate source
-
-    # Deploy to the github-pages environment
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      # Upload pages artifact
-      - name: Upload pages artifact
-        uses: actions/upload-pages-artifact@v1
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          path: ./docs
-
-      # Deploy pages
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site

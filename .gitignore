@@ -5,6 +5,4 @@ bin/
 lib/
 pyvenv.cfg
 
-docsrc/_build
-docs/.buildinfo
-docs/.doctrees
+_build
