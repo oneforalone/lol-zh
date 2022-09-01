@@ -26,7 +26,9 @@ windows 上失败，一个简单的解决办法是使用 git bash（安装 git �
 - markdown：https://www.markdown.xyz/basic-syntax/
 - reStructured: https://docs.readthedocs.io/en/stable/index.html
 
-**Update from Sep 1, 2022**：改用 `venv` 来保持项目环境的统一，Python 的版本有点烦。
+**UPDATE from Sep 1, 2022**：改用 `venv` 来保持项目环境的统一，Python 的版本有点烦。
+同时添加了 Github Actioon 的 CI/CD，每次 push 后会自动生成 html 并部署成 Github Pages。
+简化操作，每次只需要编辑源文件然后提交修改然后再 push 到 repo 上就可以了。
 
 下载安装好 Git，Make，Python3 后，然后执行以下命令安装 Sphinx 即其插件：
 
