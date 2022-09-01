@@ -2,6 +2,7 @@
 
 # python venv files
 bin/
+include/
 lib/
 pyvenv.cfg
 
