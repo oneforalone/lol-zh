@@ -1,5 +1,10 @@
 .DS_Store
 
+# python venv files
+bin/
+lib/
+pyvenv.cfg
+
 docsrc/_build
 docs/.buildinfo
 docs/.doctrees
