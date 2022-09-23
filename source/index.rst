@@ -15,6 +15,11 @@ Let Over Lambda 中文版
    chapter07.rst
    chapter08.rst
    appendices.rst
+   reference.rst
+   specification.rst
+   original-code.rst
+   production-code.rst
+
 
 -------
 TODO:

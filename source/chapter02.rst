@@ -1,17 +1,14 @@
 .. _chapter02:
 
-=================
+****************
 第二章：闭包
-=================
-
-:Author: Doug Hoyte
-:Translator: Yuqi Liu
+****************
 
 
 .. _2-1-closure-oriented:
 
 2.1 面向闭包编程
---------------------
+===================
 
 ::
 
@@ -42,14 +39,13 @@ CLOS 的灵活性和特性印象深刻，但我很少发现需要使用其更高
 .. _2-2-environments-and-extent:
 
 2.2 环境及拓展
------------------
+==================
 
 斯蒂尔所说的可分配值单元的意思是一种环境，用于存储指向数据的指针，该环境受制于所谓的无限范围。这
 是一种花哨的说法，可以在未来的任何时候继续参考这样的环境。一旦分配了这个环境，它和它的引用在需要
 用到时就会一直存在。想一想以下的 C 函数：
 
 .. code-block:: c
-    :linenos:
 
     #include <stdlib.h>
 
@@ -66,7 +62,6 @@ CLOS 的灵活性和特性印象深刻，但我很少发现需要使用其更高
 相比之下，下面的例子是有缺陷的。C 程序员认为在函数返回时会自动收集 **a**，因为环境是在堆栈上分配的。换句话说，从 lisp 程序员的角度来看， **a** 被分配了临时范围。
 
 .. code-block:: c
-    :linenos:
 
     int *environment_with_temporary_extent(int input) {
       int a = input;
@@ -94,7 +89,6 @@ lisp 总是像上面那样调用 **malloc()** 。可以说，这本质上比使�
 及指向输入的指针）具有无限的范围，因此可以在需要时继续引用它：
 
 .. code-block:: none
-    :linenos:
 
     (defun environment-with-indefinite-extent (input)
       (cons input nil))
@@ -106,14 +100,13 @@ lisp 总是像上面那样调用 **malloc()** 。可以说，这本质上比使�
 .. _2-3-lexical-and-dynamic-scope:
 
 2.3 词法作用域与动态作用域
----------------------------
+==================================
 
 变量的有效作用范围叫做作用域。现代的变成语言中比较通用的作用域是——词法作用域。当变量作用于代码
 段中，那么该变量就被称为是该代码段的词法作用域的绑定。最为通用的创建编定的的关键词 ——
 **let**，可以来介绍词法作用域中的变量：
 
 .. code-block:: none
-    :linenos:
 
     * (let ((x 2))
         x)
@@ -141,7 +134,6 @@ Lisp。由于有着悠久而丰富的历史，词法作用域的许多优点渐�
 只需要讨论它的机制。在C语言中，有时需要访问定义在函数之外的变量，如 **pointer_scope_test** 函数:
 
 .. code-block:: c
-    :linenos:
 
     #include <stdio.h>
 
@@ -156,7 +148,6 @@ Lisp。由于有着悠久而丰富的历史，词法作用域的许多优点渐�
 可以对词法变量 **a** 进行赋值，即便 **scanf** 定义在词法作用域外:
 
 .. code-block:: none
-    :linenos:
 
     (let (a)
       (scanf "%d" (lambda (v) (setf a v))))
@@ -172,7 +163,6 @@ LISP 中，我们特意将动态作用域中的变量叫做特殊变量。这些
 因此特殊变量声明如下:
 
 .. code-block:: none
-    :linenos:
 
     (defvar temp-special)
 
@@ -185,7 +175,6 @@ Common Lisp 中，语法是共享的。许多 lisper 认为这是一个特性。
 **\*temp-special\*** 赋值:
 
 .. code-block:: none
-    :linenos:
 
     (setq temp-special 1)
 
@@ -194,7 +183,6 @@ Common Lisp 中，语法是共享的。许多 lisper 认为这是一个特性。
 是覆盖时就变的有趣了。假设现在定义一个简单的函数，该函数返回 **temp-special** 的值：
 
 .. code-block:: none
-    :linenos:
 
     (defun temp-special-returner ()
       temp-special)
@@ -202,7 +190,6 @@ Common Lisp 中，语法是共享的。许多 lisper 认为这是一个特性。
 当这这个函数被调用时，可以用来展示 lisp 是怎样对 **temp-special** 求值的。
 
 .. code-block:: none
-    :linenos:
 
     * (temp-special-returner)
     1
@@ -213,7 +200,6 @@ Common Lisp 中，语法是共享的。许多 lisper 认为这是一个特性。
 有创建一个词法的环境，看起来就是如此）。
 
 .. code-block:: none
-    :linenos:
 
     * (let ((temp-special 2))
         (temp-special-returner))
@@ -225,7 +211,6 @@ Common Lisp 中，语法是共享的。许多 lisper 认为这是一个特性。
 中无法实现的：
 
 .. code-block:: c
-    :linenos:
 
     int global_var = 0;
 
@@ -259,7 +244,7 @@ COMMON LISP的设计者给我们留下了一个非常透明的窗口，让我们
 .. _2-4-let-it-be-lambda:
 
 2.4 Let It Be Lambda
------------------------------
+================================
 
 **Let** 是 Lisp 中特殊的表单，用于创建并初始化相应表单名称(绑定)的环境。这些名称对于
 **let** 主体中有效是，且该求值是连续的，并返回最终表单的结果。虽然 **let** 做了什么很明确，
@@ -272,7 +257,6 @@ COMMON LISP的设计者给我们留下了一个非常透明的窗口，让我们
 息，用来提高编译器的效率，如下代码所示：
 
 .. code-block:: none
-    :linenos:
 
     (defun register-allocated-fixnum ()
       (declare (optimize (speed 3) (safety 0)))
@@ -288,7 +272,6 @@ lisp 创建一个无限范围的环境来保存 **acc** 和 **i**，但 lisp 编
 CPU 寄存器中来优化此函数。结果可能是以下的机器代码：
 
 .. code-block:: none
-    :linenos:
 
     ; 090CEB52:       31C9             XOR ECX, ECX
     ;       54:       B804000000       MOV EAX, 4
@@ -336,7 +319,6 @@ lambda 的许多变体，但我们很高兴地称它为 lambda，就像我们之
 构，可以用 **function** 关键词将其转换为函数：
 
 .. code-block:: console
-    :linenos:
 
     * (function '(lambda (x) (+ 1 x)))
 
@@ -346,7 +328,6 @@ COMMON LISP 使用 **#'** （井号加单引号）读取宏为我们提供了个
 可以使用这个简写，而不是像上面那样编写函数：
 
 .. code-block:: console
-    :linenos:
 
     * #'(lambda (x) (+ 1 x))
 
@@ -356,7 +337,6 @@ COMMON LISP 使用 **#'** （井号加单引号）读取宏为我们提供了个
 LISP ANSI 标准需要 [ANSI-CL-ISO-COMPATIBILITY] 一个 **lambda** 宏，定义如下：
 
 .. code-block:: none
-    :linenos:
 
     (defmacro lambda (&whole form &rest body)
       (declare (ignore body))
@@ -366,7 +346,6 @@ LISP ANSI 标准需要 [ANSI-CL-ISO-COMPATIBILITY] 一个 **lambda** 宏，定�
 执行函数指示符以创建函数，因为它们被扩展为 **#'** 形式：
 
 .. code-block:: console
-    :linenos:
 
     * (lambda (x) (+ 1 x))
 
@@ -385,7 +364,6 @@ COMMON LISP[GRAHAM-ANSI-CL] 中认为这个宏，连同它的简洁优势，“�
 结构，则假设它表示一个匿名函数：
 
 .. code-block:: none
-    :linenos:
 
     * ((lambda (x) (+ 1 x)) 2)
 
@@ -400,7 +378,6 @@ lambda 表达式在很大程度上与 C 和其他语言中的函数无关，它�
 做 *lambda 折叠*：
 
 .. code-block:: none
-    :linenos:
 
     (defun compiler-test ()
       (funcall
@@ -412,7 +389,6 @@ lambda 表达式在很大程度上与 C 和其他语言中的函数无关，它�
 译程序时吸收了开销。换句话说，返回另一个函数的函数将只是个指针返回函数常量时间：
 
 .. code-block:: none
-    :linenos:
 
     (defun lambda-returner ()
       (lambda (x) (+ 1 x)))
@@ -421,7 +397,6 @@ lambda 表达式在很大程度上与 C 和其他语言中的函数无关，它�
 词法闭包隐含的垃圾收集开销是无限的。
 
 .. code-block:: none
-    :linenos:
 
     (defun let-over-lambda-returner ()
       (let ((y 1))
@@ -432,7 +407,6 @@ lambda 表达式在很大程度上与 C 和其他语言中的函数无关，它�
 代码的常量指针嵌入到这个新环境中，然后返回结果闭包。可以用 **time** 来看看这个环境有多小：
 
 .. code-block:: console
-    :linenos:
 
     * (progn
         (compile 'let-over-lambda-returner)
@@ -454,14 +428,13 @@ lambda 表达式在很大程度上与 C 和其他语言中的函数无关，它�
 .. _2-5-let-over-lambda:
 
 2.5 Let Over Lambda
------------------------
+=============================
 
 *Let over lambda* 是词法闭包的昵称。Let over lambda 比大多数术语更清晰地反映用于创建闭包
 的 lisp 代码。在 let over lambda 场景中， **let** 语句返回的最后一个结构是 **lambda**
 表达式。它看起来就像 **let** 坐在 **lambda** 之上：
 
 .. code-block:: console
-    :linenos:
 
     * (let ((x 0))
         (lambda () x))
@@ -479,7 +452,6 @@ lambda 结构会产生一个函数。但是，**let** 中的最后一个结构�
 over lambda 经典实现：
 
 .. code-block:: none
-    :linenos:
 
     (let ((counter 0))
       (lambda () (incf counter)))
@@ -494,7 +466,6 @@ over lambda 经典实现：
 个方法的一种可能方法是简单地从同一词法范围内返回多个 **lambda** ：
 
 .. code-block:: none
-    :linenos:
 
     (let ((counter 0))
       (values
@@ -510,7 +481,7 @@ over lambda 经典实现：
 .. _2-6-lambda-over-letoverlambda:
 
 2.6 Lambda Over Let Over Lambda
---------------------------------
+====================================
 
 在一些对象系统中，对象、具有关联状态的过程集合和类（用于创建对象的数据结构）之间存在明显区别。闭
 包不存在这种区别。我们看到了可以执行以创建闭包的结构示例，其中大多数遵循 lambda 模式，但是程序
@@ -521,7 +492,6 @@ over lambda 经典实现：
 看起来像这样：
 
 .. code-block:: none
-    :linenos:
 
     (lambda ()
       (let ((counter 0))
@@ -539,7 +509,6 @@ lambda 表达式是常量：仅仅是指向机器代码的指针。这个表达�
 常如何命名函数？ 当然是用 **defun** 关键字了。命名后，上面的匿名类就变成了：
 
 .. code-block:: none
-    :linenos:
 
     (defun counter-class ()
       (let ((counter 0))
@@ -555,7 +524,6 @@ lambda 表达式是常量：仅仅是指向机器代码的指针。这个表达�
 的 lisp 程序员提供一些东西，但在只需用 lambda 时就不要用 CLOS。
 
 .. code-block:: none
-    :linenos:
 
     (defun block-scanner (trigger-string)
       (let* ((trig (coerce trigger-string 'list))
@@ -585,7 +553,6 @@ lambda 表达式是常量：仅仅是指向机器代码的指针。这个表达�
 lambda 的很好演示。下面是它使用，假装是某种通信磁带，注意特定的单词，*jihad*：
 
 .. code-block:: console
-    :linenos:
 
     * (defvar scanner
         (block-scanner "jihad"))
@@ -605,7 +572,7 @@ lambda 的很好演示。下面是它使用，假装是某种通信磁带，注�
 .. _2-7-letoverlambda-over-letoverlambda:
 
 2.7 Let Over Lambda Over Let Over Lambda
---------------------------------------------
+==============================================
 
 对象系统的用户将他们希望在某个类的所有对象之间共享的值存储到所谓的类变量或静态变量中。在 lisp
 中，闭包之间共享状态的概念由环境处理，就像闭包本身存储状态一样。由于环境可以无限访问，只要它仍然
@@ -615,7 +582,6 @@ lambda 的很好演示。下面是它使用，假装是某种通信磁带，注�
 let over lambda over let over lambda 模式：
 
 .. code-block:: none
-    :linenos:
 
     (let ((direction 'up))
       (defun toggle-counter-direction ()

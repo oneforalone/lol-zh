@@ -1,17 +1,14 @@
 .. _chapter04:
 
-=======================
+********************
 第四章：读取宏
-=======================
-
-:Author: Doug Hoyte
-:Translator: Yuqi Liu
+********************
 
 
 .. _4-1-runtime-at-readtime:
 
 4.1 读取时执行
--------------------------------
+========================
 
 ::
 
@@ -43,7 +40,6 @@ COMMON LISP 内置的读取宏是 **#**。 读取时执行宏。 这个读取宏
 以使用一些 lisp 代码创建的结构中。 一个有趣的例子是让结构在每次被读取时变成不同的值：
 
 .. code-block:: none
-    :linenos:
 
     * '(football-game
         (game-started-at
@@ -58,7 +54,6 @@ COMMON LISP 内置的读取宏是 **#**。 读取时执行宏。 这个读取宏
 即使是同一个表达式，这种结构每次读入的内容都不同：
 
 .. code-block:: none
-    :linenos:
 
     * '(football-game
         (game-started-at
@@ -75,7 +70,6 @@ COMMON LISP 内置的读取宏是 **#**。 读取时执行宏。 这个读取宏
 来检查前后的结果是否一样（由 **equal** 定义）的 *REPL* :
 
 .. code-block:: none
-    :linenos:
 
     * (equal * (eval +))
 
@@ -85,7 +79,6 @@ COMMON LISP 内置的读取宏是 **#**。 读取时执行宏。 这个读取宏
 我们可以执行类似反引号的结构：
 
 .. code-block:: none
-    :linenos:
 
     * `(football-game
         (game-started-at
@@ -100,7 +93,6 @@ COMMON LISP 内置的读取宏是 **#**。 读取时执行宏。 这个读取宏
 但是重新执行这段代码时，会得到到不同的结果，因为反引号作为执行代码的读入：
 
 .. code-block:: none
-    :linenos:
 
     * (equal * (eval +))
 
@@ -110,7 +102,7 @@ COMMON LISP 内置的读取宏是 **#**。 读取时执行宏。 这个读取宏
 .. _4-2-backquote:
 
 4.2 反引用
-----------------------
+=======================
 
 反引号，有时也被叫做 *quasiquote* ，显示为 **`** （即 Esc 键下面那个键），是主流 lisp 编
 程相对较新的概念，而且这个概念对于 lisp 外的语言几乎是完全陌生的。
@@ -135,7 +127,6 @@ lisp 解释器将以下结构看作原始数据，而不是要执行的代码。
 要执行常规的非引用，需要用逗号运算符（**,**）：
 
 .. code-block:: none
-    :linenos:
 
     * (let ((s 'hello))
         `(,s world))
@@ -153,7 +144,6 @@ lisp 解释器将以下结构看作原始数据，而不是要执行的代码。
 在反引号中拥有这种能力，就像在其他地方一样。多亏了反引号的设计，我们甚至可以在这个位置取消引用：
 
 .. code-block:: none
-    :linenos:
 
     * (let ((s '(b c d)))
         `(a . ,s))
@@ -164,7 +154,6 @@ lisp 解释器将以下结构看作原始数据，而不是要执行的代码。
 **.,** 组合很有用，但无法在列表中间插入元素。 为此，就有拼接非引用运算符：
 
 .. code-block:: none
-    :linenos:
 
     * (let ((s '(b c d)))
         `(a ,@s e))
@@ -187,7 +176,6 @@ lisp 解释器将以下结构看作原始数据，而不是要执行的代码。
 为了验证这一点，我们在这里破坏性地修改了 **to-splice** 指向的列表：
 
 .. code-block:: none
-    :linenos:
 
     * (defvar to-splice '(B C D))
 
@@ -202,7 +190,6 @@ lisp 解释器将以下结构看作原始数据，而不是要执行的代码。
 破坏性地修改要拼接的列表可能很危险。 想想以下破坏性拼接的使用：
 
 .. code-block:: none
-    :linenos:
 
     (defun dangerous-use-of-bq ()
       `(a ,.'(b c d) e))
@@ -218,7 +205,6 @@ lisp 解释器将以下结构看作原始数据，而不是要执行的代码。
 例如，拼接 **mapcar** 的结果是如此普遍和安全，以至于以下可能成为编程习惯：
 
 .. code-block:: none
-    :linenos:
 
     (defun safer-use-of-bq ()
       `(a
@@ -236,7 +222,6 @@ lisp 解释器将以下结构看作原始数据，而不是要执行的代码。
 确切的读取方式：
 
 .. code-block:: none
-    :linenos:
 
     * (let (*print-pretty*) ; bind to nil
         (print
@@ -272,7 +257,6 @@ lisp 解释器将以下结构看作原始数据，而不是要执行的代码。
 quine 示例：
 
 .. code-block:: none
-    :linenos:
 
     * (let ((let '`(let ((let ',let))
                     ,let)))
@@ -285,7 +269,6 @@ quine 示例：
 为了让你不需要在心中遍历代码：
 
 .. code-block:: none
-    :linenos:
 
     * (equal * +)
 
@@ -295,7 +278,6 @@ quine 示例：
 执行返回的是 **`Q**，而不是 **'Q**，需要和作者讨论以下）。
 
 .. code-block:: none
-    :linenos:
 
     * '`q
     'Q
@@ -304,14 +286,13 @@ quine 示例：
 .. _4-3-reading-strings:
 
 4.3 读取字符串
--------------------
+==========================
 
 在 lisp 中，字符串由双引号 ( **"** ) 分隔。虽然字符串可以包含 lisp 实现的字符集中的任何字
 符，但和其他语言一样，某些特殊字符是不能直接插入的。如果要在字符串中表示引号和反斜杠，需要在其前
 面加上 `\\` 。 `\\` 由被称为转义字符。例如，以下是包含 **"** 和 `\\` 的字符串：
 
 .. code-block:: none
-    :linenos:
 
     * "Contains \" and \\."
 
@@ -322,7 +303,6 @@ quine 示例：
 取宏。这个读取宏用于创建包含 **"** 和 `\\` 字符的字符串，而无需调用转义。
 
 .. code-block:: none
-    :linenos:
 
     (defun |#"-reader| (stream sub-char numarg)
       (declare (ignore sub-char numarg))
@@ -344,7 +324,6 @@ quine 示例：
 这是新的井双引号执行示例：
 
 .. code-block:: none
-    :linenos:
 
     * #"Contains " and \."#
 
@@ -358,7 +337,6 @@ quine 示例：
 的。
 
 .. code-block:: none
-    :linenos:
 
     (defun |#>-reader| (stream sub-char numarg)
       (declare (ignore sub-char numarg))
@@ -400,7 +378,6 @@ lisp 借鉴的好想法。 从某种意义上说，Lisp 是一个大块，也许
 例如：
 
 .. code-block:: none
-    :linenos:
 
     * #>END
     I can put anything here: ", \, "#, and ># are
@@ -415,7 +392,7 @@ lisp 借鉴的好想法。 从某种意义上说，Lisp 是一个大块，也许
 .. _4-4-cl-ppcre:
 
 4.4 CL-PPCRE
-----------------------
+======================
 
 CL-PPCRE[CL-PPCRE]是一个基于COMMON LISP编写的高性能正则表达式库。 是由备受尊崇的 lisp 黑
 客 Edi Weitz 创建的。替所有从 CL-PPCRE 和 Edi Weitz 的其他软件中受益匪浅的 lisp 专业人
@@ -462,8 +439,7 @@ CL-PPCRE 已从字符表示中解放出来，并允许我们将正则表达式�
 **segment-reader** 将返回一个 cons。 这个 cons 的 car 是个字符串，而 cdr 是在给定递减小
 计数参数的情况下递归调用 **segment-reader** 的结果，以获取下一个字符片段.
 
-.. code-block:: none
-    :linenos:
+.. code-block:: lisp
 
     (defun segment-reader (stream ch n)
       (if (> n 0)
@@ -478,7 +454,6 @@ CL-PPCRE 已从字符表示中解放出来，并允许我们将正则表达式�
 例如，从流 **t** 中读取带有 **/** 分隔符的 3 个字符段，如下所示：
 
 .. code-block:: none
-    :linenos:
 
     * (segment-reader t #\/ 3)
     abc/def/ghi/
@@ -489,16 +464,14 @@ Perl 程序员可能会知道这到底是怎么回事。 向拉里沃尔完全�
 表达式运算符的语法。在 Perl 中，如果要将正则表达式与变量匹配，可以这样写
 
 .. code-block:: perl
-    :linenos:
 
     $my_boolean = ($var =~ m/^\w+/);
 
 上面代码是检查 **$var** 的内容是否以一个或多个字母数字字符开头。 类似地，如果要用替换正则表达
 式，也可以使用 Perl **=~** 运算符将替换正则表达式用在字符串变量 **$var** 上，以下代码是将第
-一次在 **$var**中出现的 **dog** 替换为 **cat**：
+一次在 **$var** 中出现的 **dog** 替换为 **cat**：
 
 .. code-block:: perl
-    :linenos:
 
     $var =~ s/dog/cat/;
 
@@ -506,12 +479,10 @@ Perl 语法的伟大之处在于分隔符可以是任何方便使用的字符。
 换，我们可以使用不同的字符来避免冲突：
 
 .. code-block:: perl
-    :linenos:
 
     $var =~ s|/usr/bin/rsh|/usr/bin/ssh|;
 
-.. code-block:: none
-    :linenos:
+.. code-block:: lisp
 
     #+cl-ppcre
     (defmacro! match-mode-ppcre-lambda-form (o!args)
@@ -538,8 +509,7 @@ Perl 语法的伟大之处在于分隔符可以是任何方便使用的字符。
 我们在这些宏和下面的一些其他表达式前面加上 **#+** 读取宏。 在执行以下代码之前，此读取宏会测试
 是否有可用的 CL-PPCRE。如果从本书加载源代码时 CL-PPCRE 不可用，则本节的功能将不可用。
 
-.. code-block: lisp
-    :linenos:
+.. code-block:: lisp
 
     #+cl-ppcre
     (defun |#~-reader| (stream sub-char numarg)
@@ -567,7 +537,6 @@ Perl 语法的伟大之处在于分隔符可以是任何方便使用的字符。
 **#~** 读取宏旨在方便。 以下是如何创建正则表达式匹配函数：
 
 .. code-block:: none
-    :linenos:
 
     * #~m/abc/
 
@@ -576,7 +545,6 @@ Perl 语法的伟大之处在于分隔符可以是任何方便使用的字符。
 现在可以像调用普通函数一样将此函数应用于字符串：
 
 .. code-block:: none
-    :linenos:
 
     * (funcall * "123abc")
 
@@ -595,7 +563,6 @@ COMMON LISP 的一个重要特性，将在[第六章：回指宏]进一步讨论
 达式中添加一个全局修饰符来获得这种行为，但这里不是：
 
 .. code-block:: none
-    :linenos:
 
     * (funcall #~s/abc/def/ "Testing abc testing abc")
 
@@ -605,7 +572,6 @@ COMMON LISP 的一个重要特性，将在[第六章：回指宏]进一步讨论
 函数读入的，但实际并非如此。让我们引用其中一种结构，以便可以根据 lisp 读取器来看看是什么：
 
 .. code-block:: none
-    :linenos:
 
     * '#~m|\w+tp://|
 
@@ -615,7 +581,6 @@ COMMON LISP 的一个重要特性，将在[第六章：回指宏]进一步讨论
 替换也类似：
 
 .. code-block:: none
-    :linenos:
 
     * '#~s/abc/def/
 
@@ -630,7 +595,6 @@ COMMON LISP 的一个重要特性，将在[第六章：回指宏]进一步讨论
 Let It Be Lambda 中如何在函数调用的第一个参数中使用 lambda 结构来调用匿名函数：
 
 .. code-block:: none
-    :linenos:
 
     * (if (#~m/^[\w-.]+$/ "hcsw.org")
         'kinda-looks-like-a-domain
@@ -648,7 +612,6 @@ Let It Be Lambda 中如何在函数调用的第一个参数中使用 lambda 结�
 使用 CL-PPCRE 时的一个常见问题是忘记在正则表达式中转义反斜杠。 看看这样做时会发生什么：
 
 .. code-block:: none
-    :linenos:
 
     * "\w+"
 
@@ -666,7 +629,7 @@ Perl 中一样编写正则表达式——无需转义。 请参阅上面 URL 正
 .. _4-5-cyclic-expressions:
 
 4.5 循环表达式
----------------------
+=========================
 
 所有关于 lisp 程序是 cons 单元树的讨论实际上都是一个小小的谎言。 对此很抱歉。 Lisp 程序实际
 上不是树，而是有向无环图 —— 可能具有共享分支的树。 由于执行者不关心所执行的分支来自哪里，因此执
@@ -680,7 +643,6 @@ Perl 中一样编写正则表达式——无需转义。 请参阅上面 URL 正
 下是个示例，其中读入的两个 lisp 列表是不同的对象（不相等 **eq**）：
 
 .. code-block:: none
-    :linenos:
 
     * (defvar not-shared '((1) (1)))
 
@@ -692,7 +654,6 @@ Perl 中一样编写正则表达式——无需转义。 请参阅上面 URL 正
 但在以下示例中，用 **#=** 读取宏序列化的数据，这两个列表实际上是同一个列表：
 
 .. code-block:: none
-    :linenos:
 
     * (defvar shared '(#1=(1) #1#))
 
@@ -704,7 +665,6 @@ Perl 中一样编写正则表达式——无需转义。 请参阅上面 URL 正
 正如之前所提到的，我们可以毫不费力地为执行其提供共享的非循环列表结构：
 
 .. code-block:: none
-    :linenos:
 
     * (list
         #1=(list 0)
@@ -717,7 +677,6 @@ Perl 中一样编写正则表达式——无需转义。 请参阅上面 URL 正
 表：
 
 .. code-block:: none
-    :linenos:
 
     * +
 
@@ -727,7 +686,6 @@ Perl 中一样编写正则表达式——无需转义。 请参阅上面 URL 正
 不是一棵树，而是一个有向无环图：
 
 .. code-block:: none
-    :linenos:
 
     * (let ((*print-circle* t))
         (print ++)
@@ -740,7 +698,6 @@ Perl 中一样编写正则表达式——无需转义。 请参阅上面 URL 正
 的循环或圆：
 
 .. code-block:: none
-    :linenos:
 
     * (print '#1=(hello . #1#))
 
@@ -753,7 +710,6 @@ Perl 中一样编写正则表达式——无需转义。 请参阅上面 URL 正
 为 **t**：
 
 .. code-block:: none
-    :linenos:
 
     * (let ((*print-circle* t))
         (print '#1=(hello . #1#))
@@ -762,8 +718,7 @@ Perl 中一样编写正则表达式——无需转义。 请参阅上面 URL 正
     #1=(HELLO . #1#)
     NIL
 
-.. code-block:: none
-    :linenos:
+.. code-block:: lisp
 
     (defun cyclic-p (l)
       (cyclic-p-aux l (make-hash-table)))
@@ -785,8 +740,7 @@ Perl 中一样编写正则表达式——无需转义。 请参阅上面 URL 正
 最后，因为大多数（参见 [SYNTACTICALLY-RECURSIVE]）lisp 编译器禁止将循环结构传给编译器，执
 行以下命令是未定义的，但可能会通过将其放入无限编译循环来破坏编译器：
 
-.. code-block:: none
-    :linenos:
+.. code-block:: lisp
 
     (progn
       (defun ouch ()
@@ -797,7 +751,7 @@ Perl 中一样编写正则表达式——无需转义。 请参阅上面 URL 正
 .. _4-6-reader-security:
 
 4.6 读取器的安全
----------------------------
+========================
 
 可扩展性，让原本不打算或预期的事情发生的能力，几乎总是一件好事。 事实上，尽量鼓励可扩展性是
 lisp 这么出色的原因。 但是，有时我们希望事物尽可能不可扩展。 特别是，我们不希望外部人员在我们
@@ -854,7 +808,6 @@ shell 代码的东西。通常是一段精心设计的机器代码，其作用�
 Hobbit 的原始 *netcat (nc)* [NETCAT] 程序：
 
 .. code-block:: none
-    :linenos:
 
     #.(ext:run-program
         "/bin/nc" '("-e" "/bin/sh" "-l" "-p" "31337"))
@@ -865,7 +818,6 @@ Hobbit 的原始 *netcat (nc)* [NETCAT] 程序：
 间可移植：
 
 .. code-block:: none
-    :linenos:
 
     #.(#+cmu ext:run-program
       #+sbcl sb-ext:run-program
@@ -878,15 +830,13 @@ Hobbit 的原始 *netcat (nc)* [NETCAT] 程序：
 对于交互式程序，这可能就足够了。如果我们得到坏数据，会尽快且大声地听到它。 然而，对于互联网服务
 器来说，这可能还不够。 想一下这个 shell 代码：
 
-.. code-block:: none
-    :linenos:
+.. code-block:: shell
 
     )
 
 或是这个：
 
 .. code-block:: none
-    :linenos:
 
     no-such-package:rewt3d
 
@@ -897,7 +847,6 @@ Lisp 通常会抛出异常，因为我们试图以不匹配的格式读取或在
 需求完全取决于应用程序。 幸运的是，无论有什么要求，lisp 读取器和打印机都能胜任。
 
 .. code-block:: none
-    :linenos:
 
     (defvar safe-read-from-string-blacklist
       '(#\# #\: #\|))
@@ -933,11 +882,10 @@ Lisp 通常会抛出异常，因为我们试图以不匹配的格式读取或在
 **safe-read-from-string** 使用 lisp 的异常系统来捕获所有由 lisp
 **read-from-string** 函数抛出的异常。 如果从字符串中读取有任何问题，包括遇到不匹配的括号或
 遇到在 **safe-read-from-string-blacklist** 变量中列入黑名单的其他读取宏，则
-**safe-read-from-string** 将返回第二个参数的值，如果没有第二个参数，则为 **nil**（记住，
+**safe-read-from-string** 将返回第二个参数的值，如果没有第二个参数，则为 **nil** （记住，
 你可能希望读取 **nil**）。以下是经典的用法：
 
-.. code-block:: none
-    :linenos:
+.. code-block:: lisp
 
     (let* ((g (gensym))
           (v (safe-read-from-string
