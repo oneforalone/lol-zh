@@ -138,7 +138,12 @@ Chapter02
 Chapter03
 ========================
 
-.. code-block:: none
+.. _sleep-uints%:
+
+``sleep-uints%``
+---------------------
+
+.. code-block:: lisp
 
     (defun sleep-units% (value unit)
     (sleep
@@ -151,7 +156,12 @@ Chapter03
             ((ms) 1/1000)
             ((us) 1/1000000)))))
 
+.. _sleep-units:
 
+``sleep-uints``
+----------------------
+
+.. code-block:: lisp
 
     (defmacro sleep-units (value unit)
     `(sleep
@@ -164,7 +174,12 @@ Chapter03
             ((ms) 1/1000)
             ((us) 1/1000000)))))
 
+.. _unit-of-time:
 
+``unit-of-time``
+----------------------
+
+.. code-block:: lisp
 
     (defmacro unit-of-time (value unit)
     `(* ,value
@@ -176,14 +191,24 @@ Chapter03
             ((ms) 1/1000)
             ((us) 1/1000000))))
 
+.. _nlet:
 
+``nlet``
+--------------------
+
+.. code-block:: lisp
 
     (defmacro nlet (n letargs &rest body)
     `(labels ((,n ,(mapcar #'car letargs)
                 ,@body))
         (,n ,@(mapcar #'cadr letargs))))
 
+.. _g!-symbol-p:
 
+``g!-symbol-p``
+---------------------
+
+.. code-block:: lisp
 
     (defun g!-symbol-p (s)
     (and (symbolp s)
@@ -193,7 +218,12 @@ Chapter03
                     :start1 0
                     :end1 2)))
 
+.. _defmacro/g!:
 
+``defmacro/g!``
+-----------------------
+
+.. code-block:: lisp
 
     (defmacro defmacro/g! (name args &rest body)
     (let ((syms (remove-duplicates
@@ -208,7 +238,12 @@ Chapter03
                 syms)
             ,@body))))
 
+.. _o!-symbol-p:
 
+``o!-symbol-p``
+----------------------
+
+.. code-block:: lisp
 
     (defun o!-symbol-p (s)
     (and (symbolp s)
@@ -218,11 +253,23 @@ Chapter03
                     :start1 0
                     :end1 2)))
 
+.. _o!-symbol-to-g!-symbol:
+
+``o!-symbol-to-g!-symbol``
+----------------------------
+
+.. code-block:: lisp
+
     (defun o!-symbol-to-g!-symbol (s)
     (symb "G!"
             (subseq (symbol-name s) 2)))
 
+.. _defmacro!:
 
+``defmacro!``
+------------------------------
+
+.. code-block:: lisp
 
     (defmacro defmacro! (name args &rest body)
     (let* ((os (remove-if-not #'o!-symbol-p args))
@@ -231,7 +278,12 @@ Chapter03
         `(let ,(mapcar #'list (list ,@gs) (list ,@os))
             ,(progn ,@body)))))
 
+.. _nif:
 
+``nif``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro! nif (o!expr pos zero neg)
     `(cond ((plusp ,g!expr) ,pos)
@@ -243,7 +295,12 @@ Chapter03
 Chapter04
 ======================
 
-.. code-block:: none
+.. _#"-reader:
+
+``#"-reader``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun |#"-reader| (stream sub-char numarg)
     (declare (ignore sub-char numarg))
@@ -257,7 +314,12 @@ Chapter04
     (set-dispatch-macro-character
     #\# #\" #'|#"-reader|)
 
+.. _#>-reader:
 
+``#>-reader``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun |#>-reader| (stream sub-char numarg)
     (declare (ignore sub-char numarg))
@@ -287,7 +349,12 @@ Chapter04
     (set-dispatch-macro-character
     #\# #\> #'|#>-reader|)
 
+.. _segment-reader:
 
+``segment-reader``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun segment-reader (stream ch n)
     (if (> n 0)
@@ -299,7 +366,12 @@ Chapter04
         (cons (coerce (nreverse chars) 'string)
                 (segment-reader stream ch (- n 1))))))
 
+.. _match-mode-ppcre-lambda-form:
 
+``match-mode-ppcre-lambda-form``
+----------------------------------------
+
+.. code-block:: lisp
 
     #+cl-ppcre
     (defmacro! match-mode-ppcre-lambda-form (o!args)
@@ -307,6 +379,13 @@ Chapter04
         (cl-ppcre:scan
         ,(car ,g!args)
         ,',g!str)))
+
+.. _subst-mode-ppcre-lambda-form:
+
+``subst-mode-ppcre-lambda-form``
+---------------------------------------
+
+.. code-block:: lisp
 
     #+cl-ppcre
     (defmacro! subst-mode-ppcre-lambda-form (o!args)
@@ -316,7 +395,12 @@ Chapter04
         ,',g!str
         ,(cadr ,g!args))))
 
+.. _#~-reader:
 
+``#~-reader``
+-----------------------------
+
+.. code-block:: lisp
 
     #+cl-ppcre
     (defun |#~-reader| (stream sub-char numarg)
@@ -338,10 +422,22 @@ Chapter04
     #+cl-ppcre
     (set-dispatch-macro-character #\# #\~ #'|#~-reader|)
 
+.. _cyclic-p:
 
+``cyclic-p``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun cyclic-p (l)
     (cyclic-p-aux l (make-hash-table)))
+
+.. _cyclic-p-aux:
+
+``cyclic-p-aux``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun cyclic-p-aux (l seen)
     (if (consp l)
@@ -351,7 +447,12 @@ Chapter04
             (or (cyclic-p-aux (car l) seen)
                 (cyclic-p-aux (cdr l) seen))))))
 
+.. _safe-read-from-string-blacklist:
 
+``safe-read-from-string-blacklist``
+------------------------------------------
+
+.. code-block:: lisp
 
     (defvar safe-read-from-string-blacklist
     '(#\# #\: #\|))
@@ -364,6 +465,13 @@ Chapter04
     (dolist (c safe-read-from-string-blacklist)
         (set-macro-character
         c #'safe-reader-error nil rt))
+
+.. _safe-read-from-string:
+
+``safe-read-from-string``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun safe-read-from-string (s &optional fail)
         (if (stringp s)
@@ -382,7 +490,12 @@ Chapter04
 Chapter05
 ========================
 
-.. code-block:: none
+.. _defunits%:
+
+``defunits%``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro! defunits% (quantity base-unit &rest units)
     `(defmacro ,(symb 'unit-of- quantity) (,g!val ,g!un)
@@ -393,8 +506,12 @@ Chapter05
                         `((,(car x)) ,(cadr x)))
                         (group units 2))))))
 
+.. _defunits-chaining%:
 
+``defunits-chaining%``
+-----------------------------
 
+.. code-block:: lisp
 
     (defun defunits-chaining% (u units)
     (let ((spec (find u units :key #'car)))
@@ -408,7 +525,12 @@ Chapter05
                 units))
             chain)))))
 
+.. _defunits%%:
 
+``defunits%%``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro! defunits%% (quantity base-unit &rest units)
     `(defmacro ,(symb 'unit-of- quantity) (,g!val ,g!un)
@@ -423,7 +545,12 @@ Chapter05
                                     (group units 2)))))
                         (group units 2))))))
 
+.. _defunits-chaining:
 
+``defunits-chaining``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun defunits-chaining (u units prev)
     (if (member u prev)
@@ -441,6 +568,13 @@ Chapter05
                 (cons u prev)))
             chain)))))
 
+.. _defunits:
+
+``defunits``
+-----------------------------
+
+.. code-block:: lisp
+
     (defmacro! defunits (quantity base-unit &rest units)
     `(defmacro ,(symb 'unit-of- quantity)
                 (,g!val ,g!un)
@@ -457,7 +591,12 @@ Chapter05
                                 nil)))
                         (group units 2))))))
 
+.. _units:
 
+``units``
+-----------------------------
+
+.. code-block:: lisp
 
     (defunits distance m
     km 1000
@@ -483,6 +622,12 @@ Chapter05
         (1/100 old-brit-cable))
 
 
+.. _tree-leaves%:
+
+``tree-leaves%``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun tree-leaves% (tree result)
     (if tree
@@ -494,7 +639,12 @@ Chapter05
                         result))
         result)))
 
+.. _predicate-splitter:
 
+``predicate-splitter``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun predicate-splitter (orderp splitp)
     (lambda (a b)
@@ -503,7 +653,12 @@ Chapter05
             (funcall orderp a b)
             s))))
 
+.. _tree-leaves%%:
 
+``tree-leaves%%``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun tree-leaves%% (tree test result)
     (if tree
@@ -515,7 +670,12 @@ Chapter05
             (funcall result tree)
             tree))))
 
+.. _tree-leaves:
 
+``tree-leaves``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro tree-leaves (tree test result)
     `(tree-leaves%%
@@ -527,7 +687,12 @@ Chapter05
         (declare (ignorable x))
         ,result)))
 
+.. _nlet-tail:
 
+``nlet-tail``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro! nlet-tail (n letargs &rest body)
     (let ((gs (loop for i in letargs
@@ -548,7 +713,12 @@ Chapter05
                 ,g!n (return-from
                         ,g!b (progn ,@body))))))))
 
+.. _cxr%:
 
+``cxr%``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro cxr% (x tree)
     (if (null x)
@@ -563,6 +733,12 @@ Chapter05
                     ,tree)))))
 
 
+.. _cxr:
+
+``cxr``
+-----------------------------
+
+.. code-block:: lisp
 
     (defvar cxr-inline-thresh 10)
 
@@ -588,7 +764,12 @@ Chapter05
                 (,g!name (- ,g!count 1)
                         (,op ,g!val))))))))
 
+.. _def-english-list-accessors:
 
+``def-english-list-accessors``
+---------------------------------
+
+.. code-block:: lisp
 
     (defmacro def-english-list-accessors (start end)
     (if (not (<= 1 start end))
@@ -606,13 +787,23 @@ Chapter05
                 (arg)
                 (cxr (1 a ,(- i 1) d) arg)))))
 
+.. _cxr-calculator:
 
+``cxr-calculator``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun cxr-calculator (n)
     (loop for i from 1 to n
             sum (expt 2 i)))
 
+.. _cxr-symbol-p:
 
+``cxr-symbol-p``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun cxr-symbol-p (s)
     (if (symbolp s)
@@ -629,7 +820,12 @@ Chapter05
                         (char= c #\D)))
                     (cdr (butlast chars))))))))
 
+.. _cxr-symbol-to-cxr-list:
 
+``cxr-symbol-to-cxr-list``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun cxr-symbol-to-cxr-list (s)
     (labels ((collect (l)
@@ -647,7 +843,12 @@ Chapter05
                 (symbol-name s)
                 'list))))))
 
+.. _with-all-cxrs:
 
+``with-all-cxrs``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro with-all-cxrs (&rest forms)
     `(labels
@@ -662,7 +863,12 @@ Chapter05
                 (flatten forms)))))
         ,@forms))
 
+.. _dlambda:
 
+``dlambda``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro! dlambda (&rest ds)
     `(lambda (&rest ,g!args)
@@ -684,21 +890,36 @@ Chapter05
 Chapter06
 ===========================
 
-.. code-block:: none
+.. _alambda:
+
+``alambda``
+-----------------------------
+
+.. code-block:: lisp
 
     ;; Graham's alambda
     (defmacro alambda (parms &body body)
     `(labels ((self ,parms ,@body))
         #'self))
 
+.. _aif:
 
+``aif``
+-----------------------------
+
+.. code-block:: lisp
 
     ;; Graham's aif
     (defmacro aif (test then &optional else)
     `(let ((it ,test))
         (if it ,then ,else)))
 
+.. _#`-reader:
 
+``#`-reader``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun |#`-reader| (stream sub-char numarg)
     (declare (ignore sub-char))
@@ -711,7 +932,12 @@ Chapter06
     (set-dispatch-macro-character
     #\# #\` #'|#`-reader|)
 
+.. _alet%:
 
+``alet%``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro alet% (letargs &rest body)
     `(let ((this) ,@letargs)
@@ -719,7 +945,12 @@ Chapter06
         ,@(butlast body)
         this))
 
+.. _alet:
 
+``alet``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro alet (letargs &rest body)
     `(let ((this) ,@letargs)
@@ -728,14 +959,24 @@ Chapter06
         (lambda (&rest params)
         (apply this params))))
 
+.. _alet-fsm:
 
+``alet-fsm``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro alet-fsm (&rest states)
     `(macrolet ((state (s)
                     `(setq this #',s)))
         (labels (,@states) #',(caar states))))
 
+.. _ichain-before:
 
+``ichain-beofre``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro! ichain-before (&rest body)
     `(let ((,g!indir-env this))
@@ -745,7 +986,12 @@ Chapter06
             (apply ,g!indir-env
                     ,g!temp-args)))))
 
+.. _ichain-after:
 
+``ichain-after``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro! ichain-after (&rest body)
     `(let ((,g!indir-env this))
@@ -756,7 +1002,12 @@ Chapter06
                     ,g!temp-args)
             ,@body)))))
 
+.. _ichain-intercept%:
 
+``ichain-intercept%``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro! ichain-intercept% (&rest body)
     `(let ((,g!indir-env this))
@@ -768,7 +1019,12 @@ Chapter06
                         ,g!temp-args)
                 ,@body))))))
 
+.. _ichain-intercept:
 
+``ichain-intercept``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro! ichain-intercept (&rest body)
     `(let ((,g!indir-env this))
@@ -784,7 +1040,12 @@ Chapter06
                         ,g!temp-args)
                 ,@body)))))))
 
+.. _alet-hotpatch%:
 
+``alet-hotpatch%``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro alet-hotpatch% (letargs &rest body)
     `(let ((this) ,@letargs)
@@ -795,7 +1056,12 @@ Chapter06
             (setq this (cadr args))
             (apply this args)))))
 
+.. _alet-hotpatch:
 
+``alet-hotpatch``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro alet-hotpatch (letargs &rest body)
     `(let ((this) ,@letargs)
@@ -807,7 +1073,12 @@ Chapter06
         (t (&rest args)
             (apply this args)))))
 
+.. _let-hotpatch:
 
+``let-hotpatch``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro! let-hotpatch (letargs &rest body)
     `(let ((,g!this) ,@letargs)
@@ -819,7 +1090,12 @@ Chapter06
         (t (&rest args)
             (apply ,g!this args)))))
 
+.. _let-binding-transform:
 
+``let-binding-transform``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun let-binding-transform (bs)
     (if bs
@@ -832,7 +1108,12 @@ Chapter06
                 (error "Bad let bindings")))
         (let-binding-transform (cdr bs)))))
 
+.. _sublet:
 
+``sublet``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro sublet (bindings% &rest body)
     (let ((bindings (let-binding-transform
@@ -850,13 +1131,23 @@ Chapter06
             #1=(member x bindings :key #'cadr)
             (caar #1#)))))
 
+.. _sublet*:
 
+``sublet*``
+-----------------------------
+
+.. code-block:: none
 
     (defmacro sublet* (bindings &rest body)
     `(sublet ,bindings
         ,@(mapcar #'macroexpand-1 body)))
 
+.. _pandoriclet:
 
+``pandoriclet``
+-----------------------------
+
+.. code-block:: none
 
     (defmacro pandoriclet (letargs &rest body)
     (let ((letargs (cons
@@ -874,7 +1165,12 @@ Chapter06
             (t (&rest args)
             (apply this args))))))
 
+.. _pandoriclet-get:
 
+``pandoriclet-get``
+-----------------------------
+
+.. code-block:: none
 
     (defun pandoriclet-get (letargs)
     `(case sym
@@ -883,6 +1179,13 @@ Chapter06
         (t (error
             "Unknown pandoric get: ~a"
             sym))))
+
+.. _pandoriclet-set:
+
+``pandoriclet-set``
+-----------------------------
+
+.. code-block:: none
 
     (defun pandoriclet-set (letargs)
     `(case sym
@@ -893,7 +1196,12 @@ Chapter06
             "Unknown pandoric set: ~a"
             sym val))))
 
+.. _get-pandoric:
 
+``get-pandoric``
+-----------------------------
+
+.. code-block:: lisp
 
     (declaim (inline get-pandoric))
 
@@ -905,7 +1213,12 @@ Chapter06
         (funcall ,box :pandoric-set ,sym ,val)
         ,val))
 
+.. _with-pandoric:
 
+``with-pandoric``
+-----------------------------
+
+.. code-block:: none
 
     (defmacro! with-pandoric (syms o!box &rest body)
     `(symbol-macrolet
@@ -913,19 +1226,34 @@ Chapter06
                     syms))
         ,@body))
 
+.. _pandoric-hotpatch:
 
+``pandoric-hotpatch``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun pandoric-hotpatch (box new)
     (with-pandoric (this) box
         (setq this new)))
 
+.. _pandoric-recode:
 
+``pandoric-recode``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro pandoric-recode (vars box new)
     `(with-pandoric (this ,@vars) ,box
         (setq this ,new)))
 
+.. _plambda:
 
+``plambda``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro plambda (largs pargs &rest body)
     (let ((pargs (mapcar #'list pargs)))
@@ -940,7 +1268,12 @@ Chapter06
                     (t (&rest args)
                     (apply this args)))))))
 
+.. _make-stats-counter:
 
+``make-stats-counter``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun make-stats-counter
         (&key (count 0)
@@ -951,7 +1284,12 @@ Chapter06
         (incf sum n)
         (incf count)))
 
+.. _defpan:
 
+``defpan``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro defpan (name args &rest body)
     `(defun ,name (self)
@@ -977,7 +1315,12 @@ Chapter06
     (defpan stats-counter-stddev ()
     (sqrt (stats-counter-variance self)))
 
+.. _make-noisy-stats-counter:
 
+``make-noisy-stats-counter``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun make-noisy-stats-counter
         (&key (count 0)
@@ -994,7 +1337,12 @@ Chapter06
             (stats-counter-variance self)
             (stats-counter-stddev self))))
 
+.. _pandoric-eval:
 
+``pandoric-eval``
+-----------------------------
+
+.. code-block:: lisp
 
     (defvar pandoric-eval-tunnel)
 
@@ -1027,17 +1375,32 @@ Chapter07
         `(declare (optimize (speed ,numarg)
                             (safety ,(- 3 numarg))))))
 
+.. _fast-progn:
 
+``fast-progn``
+-----------------------------
+
+.. code-block:: none
 
     (defmacro fast-progn (&rest body)
     `(locally #f ,@body))
 
+.. _safe-progn:
 
+``safe-progn``
+-----------------------------
+
+.. code-block:: none
 
     (defmacro safe-progn (&rest body)
     `(locally #0f ,@body))
 
+.. _fast-keywords-strip:
 
+``fast-keywords-strip``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun fast-keywords-strip (args)
     (if args
@@ -1051,7 +1414,12 @@ Chapter07
         (t
             (cons (car args) #1#)))))
 
+.. _defun-with-fast-keywords:
 
+``defun-with-fast-keywords``
+-----------------------------
+
+.. code-block:: none
 
     (defmacro! defun-with-fast-keywords
             (name args &rest body)
@@ -1066,7 +1434,12 @@ Chapter07
             (list ',g!fast-fun
                 ,@(fast-keywords-strip args))))))
 
+.. _defun-keywords-test:
 
+``defun-keywords-test``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun
     slow-keywords-test (a b &key (c 0) (d 0))
@@ -1078,7 +1451,12 @@ Chapter07
     fast-keywords-test (a b &key (c 0) (d 0))
     (+ a b c d))
 
+.. _keywords-benchmark:
 
+``keywords-benchmark``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun keywords-benchmark (n)
     (format t "Slow keys:~%")
@@ -1092,7 +1470,12 @@ Chapter07
 
     (compile 'keywords-benchmark)
 
+.. _fformat:
 
+``fformat``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun fformat (&rest all)
     (apply #'format all))
@@ -1112,7 +1495,12 @@ Chapter07
                 ,g!stream ,@args))))
         form))
 
+.. _fformat-benchmark:
 
+``fformat-benchmark``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun fformat-benchmark (n)
     (format t "Format:~%")
@@ -1126,7 +1514,12 @@ Chapter07
 
     (compile 'fformat-benchmark)
 
+.. _dis:
 
+``dis``
+-----------------------------
+
+.. code-block:: none
 
     (defmacro dis (args &rest body)
     `(disassemble
@@ -1142,7 +1535,12 @@ Chapter07
                 (remove-if-not #'consp args)))
             ,@body))))
 
+.. _pointer-&:
 
+``pointer-&``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro! pointer-& (obj)
     `(lambda (&optional (,g!set ',g!temp))
@@ -1159,7 +1557,12 @@ Chapter07
     (defsetf pointer-& (addr) (val)
     `(setf (pointer-* ,addr) ,val))
 
+.. _with-fast-stack:
 
+``with-fast-stack``
+-----------------------------
+
+.. code-block:: none
 
     (defmacro! with-fast-stack
             ((sym &key (type 'fixnum) (size 1000)
@@ -1190,7 +1593,12 @@ Chapter07
                             ',',sym)))))
             ,@body)))
 
+.. _make-tlist:
 
+``make-tlist``
+-----------------------------
+
+.. code-block:: lisp
 
     (declaim (inline make-tlist tlist-left
                     tlist-right tlist-empty-p))
@@ -1200,7 +1608,12 @@ Chapter07
     (defun tlist-right (tl) (cadr tl))
     (defun tlist-empty-p (tl) (null (car tl)))
 
+.. _tlist-add:
 
+``tlist-add``
+-----------------------------
+
+.. code-block:: lisp
 
     (declaim (inline tlist-add-left
                     tlist-add-right))
@@ -1218,7 +1631,12 @@ Chapter07
         (setf (cddr tl) x))
         (setf (cdr tl) x)))
 
+.. _tlist-rem:
 
+``tlist-rem``
+-----------------------------
+
+.. code-block:: none
 
     (declaim (inline tlist-rem-left))
 
@@ -1231,14 +1649,24 @@ Chapter07
             (setf (cdr tl) nil)) ;; For gc
         (car x))))
 
+.. _tlist-update:
 
+``tlist-update``
+-----------------------------
+
+.. code-block:: lisp
 
     (declaim (inline tlist-update))
 
     (defun tlist-update (tl)
     (setf (cdr tl) (last (car tl))))
 
+.. _counting-cons:
 
+``counting-cons``
+-----------------------------
+
+.. code-block:: lisp
 
     (defvar number-of-conses 0)
 
@@ -1248,19 +1676,34 @@ Chapter07
     (incf number-of-conses)
     (cons a b))
 
+.. _with-conses-counted:
 
+``with-conses-counted``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro! with-conses-counted (&rest body)
     `(let ((,g!orig number-of-conses))
         ,@body
         (- number-of-conses ,g!orig)))
 
+.. _counting-push:
 
+``counting-push``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro counting-push (obj stack)
     `(setq ,stack (counting-cons ,obj ,stack)))
 
+.. _with-cons-pool:
 
+``with-cons-pool``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro with-cons-pool (&rest body)
     `(let ((cons-pool)
@@ -1271,7 +1714,12 @@ Chapter07
                             cons-pool-limit))
         ,@body))
 
+.. _cons-pool-cons:
 
+``cons-pool-cons``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro! cons-pool-cons (o!car o!cdr)
     `(if (= cons-pool-count 0)
@@ -1283,7 +1731,12 @@ Chapter07
                 (cdr ,g!cell) ,g!cdr)
         ,g!cell)))
 
+.. _cons-pool-free:
 
+``cons-pool-free``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro! cons-pool-free (o!cell)
     `(when (<= cons-pool-count
@@ -1292,7 +1745,12 @@ Chapter07
         (setf (car ,g!cell) nil)
         (push ,g!cell cons-pool)))
 
+.. _make-cons-pool-stack:
 
+``make-cons-pool-stack``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro make-cons-pool-stack ()
     `(let (stack)
@@ -1309,13 +1767,23 @@ Chapter07
             (cons-pool-free cell)
             elem)))))
 
+.. _make-shared-cons-pool-stack:
 
+``make-shared-cons-pool-stack``
+-----------------------------------
+
+.. code-block:: lisp
 
     (with-cons-pool
     (defun make-shared-cons-pool-stack ()
         (make-cons-pool-stack)))
 
+.. _with-dynamic-cons-pools:
 
+``with-dynamic-cons-pools``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro with-dynamic-cons-pools (&rest body)
     `(locally (declare (special cons-pool
@@ -1323,7 +1791,12 @@ Chapter07
                                 cons-pool-limit))
         ,@body))
 
+.. _fill-cons-pool:
 
+``fill-cons-pool``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro fill-cons-pool ()
     `(let (tp)
@@ -1335,17 +1808,32 @@ Chapter07
         (loop while tp
             do (cons-pool-free (pop tp)))))
 
+.. _bad-3-sn:
 
+``bad-3-sn``
+-----------------------------
+
+.. code-block:: lisp
 
     (defvar bad-3-sn
     '((0 1) (0 2) (1 2)))
 
+.. _good-3-sn:
 
+``good-3-sn``
+-----------------------------
+
+.. code-block:: lisp
 
     (defvar good-3-sn
     '((0 2) (0 1) (1 2)))
 
+.. _interpret-sn:
 
+``interpret-sn``
+-----------------------------
+
+.. code-block:: lisp
 
     (defvar tracing-interpret-sn nil)
 
@@ -1362,7 +1850,12 @@ Chapter07
         (incf step))
         (values swaps data)))
 
+.. _all-sn-perms:
 
+``all-sn-perms``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun all-sn-perms (n)
     (let (perms curr)
@@ -1378,14 +1871,24 @@ Chapter07
         (loop for i from 1 to n collect i))
         perms))
 
+.. _average-swaps-calc:
 
+``average-swaps-calc``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun average-swaps-calc (n sn)
     (/ (loop for i in (all-sn-perms n) sum
         (interpret-sn (copy-list i) sn))
         (fact n)))
 
+.. _build-batcher-sn:
 
+``build-batcher-sn``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun build-batcher-sn (n)
     (let* (network
@@ -1406,7 +1909,12 @@ Chapter07
         (setf p (ash p -1)))
         (nreverse network)))
 
+.. _prune-sn-for-median:
 
+``prune-sn-for-median``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun prune-sn-for-median (elems network)
     (let ((mid (floor elems 2)))
@@ -1430,7 +1938,12 @@ Chapter07
         (prune-sn-for-median-aux
             (cdr network) contam))))
 
+.. _prune-sn-for-median-calc:
 
+``prune-sn-for-median-calc``
+-------------------------------
+
+.. code-block:: lisp
 
     (defun prune-sn-for-median-calc (n)
     (loop for i from 2 to n collect
@@ -1440,14 +1953,24 @@ Chapter07
             (length sn)
             (length snp)))))
 
+.. _paeth-9-median-sn:
 
+``paeth-9-median-sn``
+-----------------------------
+
+.. code-block:: lisp
 
     (defvar paeth-9-median-sn
     '((0 3) (1 4) (2 5) (0 1) (0 2) (4 5) (3 5) (1 2)
         (3 4) (1 3) (1 6) (4 6) (2 6) (2 3) (4 7) (2 4)
         (3 7) (4 8) (3 8) (3 4)))
 
+.. _paeth-25-median-sn:
 
+``paeth-25-median-sn``
+-----------------------------
+
+.. code-block:: lisp
 
     (defvar paeth-25-median-sn
     '((0 1) (3 4) (2 4) (2 3) (6 7) (5 7) (5 6) (9 10)
@@ -1467,7 +1990,12 @@ Chapter07
         (7 17) (7 10) (12 18) (7 12) (10 18) (12 20)
         (10 20) (10 12)))
 
+.. _sn-to-lambda-form%:
 
+``sn-to-lambda-form%``
+-----------------------------
+
+.. code-block:: none
 
     (defun sn-to-lambda-form% (sn)
     `(lambda (arr)
@@ -1480,7 +2008,12 @@ Chapter07
             sn)
         arr))
 
+.. _sn-to-lambda-form:
 
+``sn-to-lambda-form``
+-----------------------------
+
+.. code-block:: none
 
     (defun sn-to-lambda-form (sn)
     `(lambda (arr)
@@ -1495,7 +2028,12 @@ Chapter07
             sn)
         arr))
 
+.. _sortf:
 
+``sortf``
+-----------------------------
+
+.. code-block:: none
 
     (defmacro! sortf (comparator &rest places)
     (if places
@@ -1508,7 +2046,12 @@ Chapter07
                         #2# ,g!a)))
             (build-batcher-sn (length places))))))
 
+.. _sort-benchmark-time:
 
+``sort-benchmark-time``
+-----------------------------
+
+.. code-block:: none
 
     (defmacro sort-benchmark-time ()
     `(progn
@@ -1521,7 +2064,12 @@ Chapter07
                 (setf (aref arr j) (random n)))
             (funcall sorter arr))))))
 
+.. _do-sort-benchmark:
 
+``do-sort-benchmark``
+-----------------------------
+
+.. code-block:: none
 
     (defun do-sort-benchmark (n iters)
     (let ((rs (make-random-state *random-state*)))
@@ -1549,7 +2097,12 @@ Chapter07
 
     (compile 'do-sort-benchmark)
 
+.. _medianf-get-best-sn:
 
+``medianf-get-best-sn``
+-----------------------------
+
+.. code-block:: none
 
     (defun medianf-get-best-sn (n)
     (case n
@@ -1558,6 +2111,13 @@ Chapter07
         ((25) paeth-25-median-sn)
         (t    (prune-sn-for-median n
                 (build-batcher-sn n)))))
+
+.. _medianf:
+
+``medianf``
+-----------------------------
+
+.. code-block:: none
 
     (defmacro! medianf (&rest places)
     `(progn
@@ -1583,12 +2143,22 @@ Chapter08
             '(pstack rstack pc
             dict compiling dtable))
 
+.. _forth-word:
 
+``forth-word``
+-----------------------------
+
+.. code-block:: lisp
 
     (defstruct forth-word
     name prev immediate thread)
 
+.. _forth-lookup:
 
+``forth-lookup``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun forth-lookup (w last)
     (if last
@@ -1597,7 +2167,12 @@ Chapter08
         (forth-lookup
             w (forth-word-prev last)))))
 
+.. _forth-inner-interpreter:
 
+``forth-inner-interpreter``
+------------------------------
+
+.. code-block:: lisp
 
     (defmacro forth-inner-interpreter ()
     `(loop
@@ -1614,7 +2189,12 @@ Chapter08
                 (setf pc (cdr pc))))
         until (and (null pc) (null rstack))))
 
+.. _prim-form:
 
+``prim-form``
+-----------------------------
+
+.. code-block:: lisp
 
     ;; Prim-form: (name immediate . forms)
     (defvar forth-prim-forms nil)
@@ -1627,7 +2207,12 @@ Chapter08
         ,@code
         (setf pc (cdr pc))))
 
+.. _prim-forms:
 
+``prim-forms``
+-----------------------------
+
+.. code-block:: lisp
 
     (def-forth-prim nop nil)
 
@@ -1653,13 +2238,23 @@ Chapter08
     (def-forth-prim r> nil
     (push (pop rstack) pstack))
 
+.. _go-forth:
 
+``go-forth``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro! go-forth (o!forth &rest words)
     `(dolist (w ',words)
         (funcall ,g!forth w)))
 
+.. _forth-stdlib:
 
+``forth-stdlib``
+-----------------------------
+
+.. code-block:: lisp
 
     (defvar forth-stdlib nil)
 
@@ -1668,7 +2263,12 @@ Chapter08
             (nconc forth-stdlib
                     ',all)))
 
+.. _new-forth:
 
+``new-forth``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro new-forth ()
     `(alet ,forth-registers
@@ -1682,7 +2282,12 @@ Chapter08
             (forth-handle-found)
             (forth-handle-not-found))))))
 
+.. _forth-install-prims:
 
+``forth-install-prims``
+-----------------------------
+
+.. code-block:: none
 
     ;; Prim-form: (name immediate . forms)
     (defmacro forth-install-prims ()
@@ -1700,7 +2305,12 @@ Chapter08
                     ',(cddr a1)))
             forth-prim-forms)))
 
+.. _forth-prims:
 
+``forth-prims``
+-----------------------------
+
+.. code-block:: lisp
 
     (def-forth-prim [ t ; <- t means immediate
     (setf compiling nil))
@@ -1708,14 +2318,24 @@ Chapter08
     (def-forth-prim ] nil ; <- not immediate
     (setf compiling t))
 
+.. _forth-compile-in:
 
+``forth-compile-in``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro forth-compile-in (v)
     `(setf (forth-word-thread dict)
             (nconc (forth-word-thread dict)
                     (list ,v))))
 
+.. _forth-handle-found:
 
+``forth-handle-found``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro forth-handle-found ()
     `(if (and compiling
@@ -1725,7 +2345,12 @@ Chapter08
         (setf pc (list (forth-word-thread word)))
         (forth-inner-interpreter))))
 
+.. _forth-handle-not-found:
 
+``forth-handle-not-found``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro forth-handle-not-found ()
     `(cond
@@ -1745,7 +2370,12 @@ Chapter08
             (forth-compile-in v)
             (push v pstack)))))
 
+.. _forth-create-name-immediate:
 
+``forth-create-name-immediate``
+----------------------------------
+
+.. code-block:: lisp
 
     (def-forth-prim create nil
     (setf dict (make-forth-word :prev dict)))
@@ -1756,20 +2386,35 @@ Chapter08
     (def-forth-prim immediate nil
     (setf (forth-word-immediate dict) t))
 
+.. _forth-stdlib-add-create:
 
+``forth-stdlib-add-create``
+---------------------------------------
+
+.. code-block:: lisp
 
     (forth-stdlib-add
     create
         ] create ] [
     '{ name)
 
+.. _forth-stdlib-add-name-immediate:
 
+``forth-stdlib-add-name-immediate``
+-----------------------------------------
+
+.. code-block:: lisp
 
     (forth-stdlib-add
     { (postpone [) [
     '} name immediate)
 
+.. _forth-prim-@-!:
 
+``forth-prim-@-!``
+-----------------------------
+
+.. code-block:: lisp
 
     (def-forth-prim @ nil
     (push (car (pop pstack))
@@ -1779,7 +2424,12 @@ Chapter08
     (let ((location (pop pstack)))
         (setf (car location) (pop pstack))))
 
+.. _forth-unary-word-definer:
 
+``forth-unary-word-definer``
+--------------------------------
+
+.. code-block:: none
 
     (defmacro forth-unary-word-definer (&rest words)
     `(progn
@@ -1789,7 +2439,12 @@ Chapter08
                     pstack))
             words)))
 
+.. _forth-binary-word-definer:
 
+``forth-binary-word-definer``
+---------------------------------
+
+.. code-block:: none
 
     (defmacro! forth-binary-word-definer (&rest words)
     `(progn
@@ -1802,7 +2457,12 @@ Chapter08
             words)))
 
 
+.. _forth-unary-word-definers:
 
+``forth-unary-word-definers``
+--------------------------------
+
+.. code-block:: lisp
 
     (forth-unary-word-definer
     not car cdr cadr caddr cadddr
@@ -1811,19 +2471,34 @@ Chapter08
     eq equal + - / = < > <= >=
     max min and or)
 
+.. _forth-prim-branch-if:
 
+``forth-prim-branch-if``
+-----------------------------
+
+.. code-block:: lisp
 
     (def-forth-naked-prim branch-if nil
     (setf pc (if (pop pstack)
                 (cadr pc)
                 (cddr pc))))
 
+.. _forth-stdlib-add-drop:
 
+``forth-stdlib-add-drop``
+-----------------------------
+
+.. code-block:: lisp
 
     (forth-stdlib-add
     { r> drop } 'exit name)
 
+.. _forth-prim-compile-here:
 
+``forth-prim-compile-here``
+-----------------------------
+
+.. code-block:: lisp
 
     (def-forth-naked-prim compile nil
     (setf (forth-word-thread dict)
@@ -1835,7 +2510,12 @@ Chapter08
     (push (last (forth-word-thread dict))
             pstack))
 
+.. _forth-stdlib-add-compile:
 
+``forth-stdlib-add-compile``
+-----------------------------
+
+.. code-block:: lisp
 
     (forth-stdlib-add
     { compile not
@@ -1843,19 +2523,34 @@ Chapter08
         compile nop
         here } 'if name immediate)
 
+.. _forth-stdlib-add-here:
 
+``forth-stdlib-add-here``
+-----------------------------
+
+.. code-block:: lisp
 
     (forth-stdlib-add
     { compile nop
         here swap ! } 'then name immediate)
 
+.. _forth-stdlib-add-abs:
 
+``forth-stdlib-add-abs``
+-----------------------------
+
+.. code-block:: lisp
 
     (forth-stdlib-add
     { 0 swap - } 'negate name
     { dup 0 < if negate then } 'abs name)
 
+.. _forth-stdlib-add-swap:
 
+``forth-stdlib-add-swap``
+-----------------------------
+
+.. code-block:: lisp
 
     (forth-stdlib-add
     { compile 't
@@ -1865,12 +2560,22 @@ Chapter08
         compile nop
         here swap ! } 'else name immediate)
 
+.. _forth-stdlib-add-mod2:
 
+``forth-stdlib-add-mod2``
+-----------------------------
+
+.. code-block:: lisp
 
     (forth-stdlib-add
     { evenp if 0 else 1 then } 'mod2 name)
 
+.. _forth-stdlib-add-again:
 
+``forth-stdlib-add-again``
+-----------------------------
+
+.. code-block:: lisp
 
     (forth-stdlib-add
     { compile nop
@@ -1880,19 +2585,36 @@ Chapter08
         compile nop
         here ! } 'again name immediate)
 
+.. _get-forth-thread:
 
+``get-forth-thread``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun get-forth-thread (forth word)
     (with-pandoric (dict) forth
         (forth-word-thread
         (forth-lookup word dict))))
 
+.. _print-forth-thread:
+
+``print-forth-thread``
+-----------------------------
+
+.. code-block:: lisp
+
     (defun print-forth-thread (forth word)
     (let ((*print-circle* t))
         (print (get-forth-thread forth word))
         t))
 
+.. _flubify-aux:
 
+``flubify-aux``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro flubify-aux ()
     `(alambda (c)
@@ -1922,7 +2644,12 @@ Chapter08
                 `(push ',(car c) pstack)
                 (self (cdr c))))))))
 
+.. _assemble-flub:
 
+``assemble-flub``
+-----------------------------
+
+.. code-block:: lisp
 
     (defmacro assemble-flub (form rest)
     `(if (gethash c go-ht)
@@ -1932,7 +2659,12 @@ Chapter08
         (list* ,form
                 ,rest)))
 
+.. _flubify:
 
+``flubify``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun flubify (forth thread prim-ht
                     thread-ht branch-if)
@@ -1956,7 +2688,12 @@ Chapter08
                                 (flubify-aux)
                                 thread))))))
 
+.. _compile-flubified:
 
+``compile-flubified``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun compile-flubified (thread thread-ht)
     `(labels (,@(let (collect)
@@ -1971,7 +2708,12 @@ Chapter08
                     (nreverse collect)))
         (funcall #',(car (gethash thread thread-ht)))))
 
+.. _flubify-thread-shaker:
 
+``flubify-thread-shaker``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun flubify-thread-shaker
         (forth thread ht tmp-ht branch-if compile)
@@ -2000,7 +2742,12 @@ Chapter08
             (with-pandoric (dtable) forth
                 (gethash thread dtable)))))))
 
+.. _forth-to-lisp:
 
+``forth-to-lisp``
+-----------------------------
+
+.. code-block:: lisp
 
     (defun forth-to-lisp (forth word)
     (let ((thread (get-forth-thread forth word))
