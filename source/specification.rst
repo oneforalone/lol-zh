@@ -16,6 +16,7 @@
    form
    body
    fixnum
+   lispy
 
 implementation 
 ----------------------
@@ -103,4 +104,13 @@ fixnum
 .. note::
 
   fixnum 有时是一种类型。有时指的计算机内存结构
+    
+lispy
+----------------------
+
+lisp 化
+
+.. note::
+
+  f指的是 lisp 风格化的内容
 
