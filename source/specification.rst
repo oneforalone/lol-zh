@@ -28,7 +28,7 @@ implementation
   CommonLisp 相关的书籍的汉译版本均将其翻译为“实现”。在牛津词典中可以查到 `implementation <https://www.oxfordlearnersdictionaries.com/definition/english/implementation?q=+implementation>`_ 。然而，
   在中文里“实现”有两种词性，动词和名词，出现在译文中很容易让人摸不到头脑。原文中是指根据 lisp 理论开发出的编译器，
   这些编译器实现了对 lisp 语言开发程序的支持，又因为在 lisp 发展的中间阶段缺乏统一的标准，同样遵循 lisp 理论，但是
-  却形成了不同的 lisp 方言。因而 lisp 有 `Scheme <http://groups.csail.mit.edu/mac/projects/scheme/>`_ 、 `CommonLisp <https://common-lisp.net/>`_ 、 `ulisp <http://www.ulisp.com/>`_  等。同时同一种 lisp 也有不同的编译器，比如对于
+  却形成了不同的 lisp 方言。因而 lisp 有 `Scheme <http://groups.csail.mit.edu/mac/projects/scheme/>`_ 、 `CommonLisp <https://common-lisp.net/>`_ 、 `ulisp <http://www.ulisp.com/>`_  、Autolisp（即vlisp）等。同时同一种 lisp 也有不同的编译器，比如对于
   CommonLisp 来说，有 `CMUCL <https://cmucl.org/>`_ 、 `SBCL <http://www.sbcl.org/>`_ 、
   `Lispworks <http://www.lispworks.com/>`_ 、 
   `Ecl <https://common-lisp.net/project/ecl/>`_ 、 `ALLEGROCL <https://franz.com/products/allegrocl/>`_ 、 `CLOZURECL <https://ccl.clozure.com/>`_ 、 `CLISP <http://www.clisp.org/>`_ ,  `ABCL <https://www.abcl.org/>`_ , `MKCL <https://cliki.net/MKCL>`_ 等。这些也就是常说的“ CommonLisp implementation ”。
