@@ -17,6 +17,7 @@
    body
    fixnum
    lispy
+   duality-of-syntax
 
 implementation 
 ----------------------
@@ -112,5 +113,14 @@ lisp 化
 
 .. note::
 
-  f指的是 lisp 风格化的内容
+  指的是 lisp 风格化的内容
+    
+duality-of-syntax
+----------------------
+
+语法二义性
+
+.. note::
+
+  xxxxxx
 
