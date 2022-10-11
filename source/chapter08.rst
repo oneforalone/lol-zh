@@ -4,13 +4,6 @@
 第八章：Lisp 和 Forth
 ***************************
 
-   :sup:`【1】` 
-.. hint:: 【1】 
-  一种U语言引语
-      :sup:`（1）`  
-.. note:: （1）
-  回指  Anaphoric
-
 .. _8-1-weired-by-design:
 
 8.1 奇怪的设计
