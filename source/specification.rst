@@ -18,6 +18,11 @@
    fixnum
    lispy
    duality-of-syntax
+   indirection
+   pointer scope
+   dereference
+   slot 
+   anaphor 
 
 implementation 
 ----------------------
@@ -123,4 +128,50 @@ duality-of-syntax
 .. note::
 
   xxxxxx
+    
+indirection
+----------------------
 
+间接
+
+.. note::
+
+  xxxxxx chapter07 L707
+
+pointer scope
+----------------------
+
+指针作用域
+
+.. note::
+
+  xxxxxx chapter07.4 L834
+
+dereference
+----------------------
+
+间接引用
+
+.. note::
+
+  xxxxxx chapter07.4 L908
+ 
+  
+  
+slot 
+----------------------
+
+槽
+
+.. note::
+
+  Lisp 中结构体元素被称为“槽”， slot.
+ 
+ anaphor 
+----------------------
+
+回指语
+
+.. note::
+
+  Lisp 中结构体元素被称为“槽”， slot.
