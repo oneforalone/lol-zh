@@ -316,7 +316,7 @@ let-over-lambda.lisp
         (error ()
         (pushnew 'old-sbcl *features*))))
 
-.. _group:
+.. _group2:
 
 ``group``
 ------------
@@ -339,7 +339,7 @@ let-over-lambda.lisp
 
     (eval-when (:compile-toplevel :execute :load-toplevel)
     
-.. _mkstr:
+.. _mkstr2:
 
 ``mkstr``
 ------------
@@ -353,7 +353,7 @@ let-over-lambda.lisp
         (with-output-to-string (s)
         (dolist (a args) (princ a s))))
 
-.. _symb:
+.. _symb2:
 
 ``symb``
 ------------
@@ -366,7 +366,7 @@ let-over-lambda.lisp
     (defun symb (&rest args)
         (values (intern (apply #'mkstr args))))
 
-.. _flatten:
+.. _flatten2:
 
 ``flatten``
 ------------
@@ -387,7 +387,7 @@ let-over-lambda.lisp
                                 (rec (cdr x) acc))))))
         (rec x nil)))
 
-.. _g!-symbol-p:
+.. _g!-symbol-p2:
 
 ``g!-symbol-p``
 ------------------------
@@ -404,7 +404,7 @@ let-over-lambda.lisp
                     :start1 0
                     :end1 2)))
 
-.. _o!-symbol-p:
+.. _o!-symbol-p2:
 
 ``o!-symbol-p``
 ------------------------
@@ -422,7 +422,7 @@ let-over-lambda.lisp
                     :start1 0
                     :end1 2)))
 
-.. _o!-symbol-to-g!-symbol:
+.. _o!-symbol-to-g!-symbol2:
 
 ``o!-symbol-to-g!-symbol``
 ------------------------------------
@@ -436,7 +436,7 @@ let-over-lambda.lisp
         (symb "G!"
             (subseq (symbol-name s) 2))))
 
-.. _defmacro/g!:
+.. _defmacro/g!2:
 
 ``defmacro/g!``
 ------------------------
@@ -464,7 +464,7 @@ let-over-lambda.lisp
                     syms)
             ,@body)))))
 
-.. _defmacro!:
+.. _defmacro!2:
 
 ``defmacro!``
 ------------------------
@@ -486,7 +486,7 @@ let-over-lambda.lisp
             `(let ,(mapcar #'list (list ,@gs) (list ,@os))
                 ,(progn ,@body))))))
 
-.. _defun!:
+.. _defun!2:
 
 ``defun!``
 ------------------------
@@ -515,7 +515,7 @@ let-over-lambda.lisp
     ;; Nestable suggestion from Daniel Herring
     (eval-when (:compile-toplevel :load-toplevel :execute)
     
-.. _|#"-reader|:
+.. _|#"-reader|2:
 
 ``|#"-reader|``
 ------------------------
@@ -567,7 +567,7 @@ let-over-lambda.lisp
     ; This version is from Martin Dirichs
     (eval-when (:compile-toplevel :load-toplevel :execute)
     
-.. _|#>-reader|:
+.. _|#>-reader|2:
 
 ``|#>-reader|``
 ------------------------
@@ -605,7 +605,7 @@ let-over-lambda.lisp
 
     ; (set-dispatch-macro-character #\# #\> #'|#>-reader|)
 
-.. _segment-reader:
+.. _segment-reader2:
 
 ``segment-reader``
 ------------------------
@@ -626,7 +626,7 @@ let-over-lambda.lisp
                 (segment-reader stream ch (- n 1))))))
 
 
-.. _match-mode-ppcre-lambda-form:
+.. _match-mode-ppcre-lambda-form2:
 
 ``match-mode-ppcre-lambda-form``
 ------------------------
@@ -653,7 +653,7 @@ let-over-lambda.lisp
         ,',g!str
         ,(cadr ,g!args))))
 
-.. _|#~-reader|:
+.. _|#~-reader|2:
 
 ``|#~-reader|``
 ------------------------
@@ -688,7 +688,7 @@ let-over-lambda.lisp
 
     ; #+cl-ppcre (set-dispatch-macro-character #\# #\~ #'|#~-reader|)
 
-.. _dlambda:
+.. _dlambda2:
 
 ``dlambda``
 ------------------------
@@ -712,7 +712,7 @@ let-over-lambda.lisp
                             `(cdr ,g!args)))))
             ds))))
 
-.. _alambda:
+.. _alambda2:
 
 ``alambda``
 ------------------------
@@ -727,7 +727,7 @@ let-over-lambda.lisp
     `(labels ((self ,parms ,@body))
         #'self))
 
-.. _aif:
+.. _aif2:
 
 ``aif``
 ------------------------
@@ -742,7 +742,7 @@ let-over-lambda.lisp
     `(let ((it ,test))
         (if it ,then ,else)))
 
-.. _|#`-reader|:
+.. _|#`-reader|2:
 
 ``|#`-reader|``
 ------------------------
@@ -761,7 +761,7 @@ let-over-lambda.lisp
         ,(funcall
             (get-macro-character #\`) stream nil)))
 
-.. _|#f-reader|:
+.. _|#f-reader|2:
 
 ``|#f-reader|``
 ------------------------
@@ -779,7 +779,7 @@ let-over-lambda.lisp
         `(declare (optimize (speed ,numarg)
                             (safety ,(- 3 numarg)))))
 
-.. _lol-syntax:
+.. _lol-syntax2:
 
 ``lol-syntax``
 ------------------------
@@ -798,7 +798,7 @@ let-over-lambda.lisp
         (:dispatch-macro-char #\# #\` #'|#`-reader|)
         (:dispatch-macro-char #\# #\f #'|#f-reader|)))
 
-.. _nlet-tail:
+.. _nlet-tail2:
 
 ``nlet-tail``
 ------------------------
@@ -829,7 +829,7 @@ let-over-lambda.lisp
                 ,g!n (return-from
                         ,g!b (progn ,@body))))))))
 
-.. _alet%s:
+.. _alet%s2:
 
 ``alet%``
 ------------------------
@@ -845,7 +845,7 @@ let-over-lambda.lisp
         ,@(butlast body)
         this))
 
-.. _alet:
+.. _alet2:
 
 ``alet``
 ------------------------
@@ -862,7 +862,7 @@ let-over-lambda.lisp
         (lambda (&rest params)
         (apply this params))))
 
-.. _let-binding-transform:
+.. _let-binding-transform2:
 
 ``let-binding-transform``
 ------------------------------------------------
@@ -883,7 +883,7 @@ let-over-lambda.lisp
                 (error "Bad let bindings")))
         (let-binding-transform (cdr bs)))))
 
-.. _pandoriclet:
+.. _pandoriclet2:
 
 ``pandoriclet``
 ------------------------
@@ -909,7 +909,7 @@ let-over-lambda.lisp
             (t (&rest args)
             (apply this args))))))
 
-.. _pandoriclet-get:
+.. _pandoriclet-get2:
 
 ``pandoriclet-get``
 ------------------------
@@ -927,7 +927,7 @@ let-over-lambda.lisp
             "Unknown pandoric get: ~a"
             sym))))
 
-.. _pandoriclet-set:
+.. _pandoriclet-set2:
 
 ``pandoriclet-set``
 ------------------------
@@ -946,7 +946,7 @@ let-over-lambda.lisp
             "Unknown pandoric set: ~a"
             sym))))
 
-.. _get-pandoric:
+.. _get-pandoric2:
 
 ``get-pandoric``
 ------------------------
@@ -961,7 +961,7 @@ let-over-lambda.lisp
     (defun get-pandoric (box sym)
     (funcall box :pandoric-get sym))
 
-.. _get-pandoric:
+.. _get-pandoric2:
 
 ``get-pandoric``
 ------------------------
@@ -976,7 +976,7 @@ let-over-lambda.lisp
         (funcall ,box :pandoric-set ,sym ,val)
         ,val))
 
-.. _with-pandoric:
+.. _with-pandoric2:
 
 ``with-pandoric``
 ------------------------
@@ -994,7 +994,7 @@ let-over-lambda.lisp
                         syms))
             ,@body))))
 
-.. _pandoric-hotpatch:
+.. _pandoric-hotpatch2:
 
 ``pandoric-hotpatch``
 ------------------------
@@ -1008,7 +1008,7 @@ let-over-lambda.lisp
     (with-pandoric (this) box
         (setq this new)))
 
-.. _pandoric-recode:
+.. _pandoric-recode2:
 
 ``pandoric-recode``
 ------------------------
@@ -1022,7 +1022,7 @@ let-over-lambda.lisp
     `(with-pandoric (this ,@vars) ,box
         (setq this ,new)))
 
-.. _plambda:
+.. _plambda2:
 
 ``plambda``
 ------------------------
@@ -1045,7 +1045,7 @@ let-over-lambda.lisp
                     (t (&rest args)
                     (apply this args)))))))
 
-.. _pandoric-eval-tunnel:
+.. _pandoric-eval-tunnel2:
 
 ``pandoric-eval-tunnel``
 ------------------------
@@ -1057,7 +1057,7 @@ let-over-lambda.lisp
  
     (defvar pandoric-eval-tunnel)
 
-.. _pandoric-eval:
+.. _pandoric-eval2:
 
 ``pandoric-eval``
 ------------------------
@@ -1087,7 +1087,7 @@ Chapter 7
     ;; Chapter 7
 
 
-.. _fast-progn:
+.. _fast-progn2:
 
 ``fast-progn``
 ------------------------
@@ -1100,7 +1100,7 @@ Chapter 7
     (defmacro fast-progn (&rest body)
     `(locally #f ,@body))
 
-.. _safe-progn:
+.. _safe-progn2:
 
 ``safe-progn``
 ------------------------
@@ -1112,7 +1112,7 @@ Chapter 7
     (defmacro safe-progn (&rest body)
     `(locally #0f ,@body))
 
-.. _fformat:
+.. _fformat2:
 
 ``fformat``
 ------------------------
@@ -1124,7 +1124,7 @@ Chapter 7
     (defun fformat (&rest all)
     (apply #'format all))
 
-.. _fformat:
+.. _fformat2:
 
 ``fformat``
 ------------------------
@@ -1146,7 +1146,7 @@ Chapter 7
                 ,g!stream ,@args))))
         form))
 
-.. _inline make-tlist tlist-left tlist-right tlist-empty-p:
+.. _inline make-tlist tlist-left tlist-right tlist-empty-p2:
 
 ``inline make-tlist tlist-left tlist-right tlist-empty-p``
 ------------------------------------------------------------------------
@@ -1159,7 +1159,7 @@ Chapter 7
     (declaim (inline make-tlist tlist-left
                     tlist-right tlist-empty-p))
 
-.. _make-tlist:
+.. _make-tlist2:
 
 ``make-tlist``
 ------------------------
@@ -1170,7 +1170,7 @@ Chapter 7
  
     (defun make-tlist () (cons nil nil))
     
-.. _tlist-left:
+.. _tlist-left2:
 
 ``tlist-left``
 ------------------------
@@ -1181,7 +1181,7 @@ Chapter 7
  
     (defun tlist-left (tl) (caar tl))
     
-.. _tlist-right:
+.. _tlist-right2:
 
 ``tlist-right``
 ------------------------
@@ -1193,7 +1193,7 @@ Chapter 7
  
     (defun tlist-right (tl) (cadr tl))
     
-.. _tlist-empty-p:
+.. _tlist-empty-p2:
 
 ``tlist-empty-p``
 ------------------------
@@ -1205,7 +1205,7 @@ Chapter 7
  
     (defun tlist-empty-p (tl) (null (car tl)))
 
-.. _inline tlist-add-left tlist-add-right:
+.. _inline tlist-add-left tlist-add-right2:
 
 ``inline tlist-add-left tlist-add-right``
 ------------------------------------------------
@@ -1218,7 +1218,7 @@ Chapter 7
     (declaim (inline tlist-add-left
                     tlist-add-right))
 
-.. _tlist-add-left:
+.. _tlist-add-left2:
 
 ``tlist-add-left``
 ------------------------
@@ -1234,7 +1234,7 @@ Chapter 7
         (setf (cdr tl) x))
         (setf (car tl) x)))
 
-.. _tlist-add-right:
+.. _tlist-add-right2:
 
 ``tlist-add-right``
 ------------------------
@@ -1251,7 +1251,7 @@ Chapter 7
         (setf (cddr tl) x))
         (setf (cdr tl) x)))
 
-.. _tlist-rem-left:
+.. _tlist-rem-left2:
 
 ``tlist-rem-left``
 ------------------------
@@ -1271,7 +1271,7 @@ Chapter 7
             (setf (cdr tl) nil)) ;; For gc
         (car x))))
 
-.. _tlist-update:
+.. _tlist-update2:
 
 ``tlist-update``
 ------------------------
@@ -1286,7 +1286,7 @@ Chapter 7
     (defun tlist-update (tl)
     (setf (cdr tl) (last (car tl))))
 
-.. _build-batcher-sn:
+.. _build-batcher-sn2:
 
 ``build-batcher-sn``
 ------------------------
@@ -1315,7 +1315,7 @@ Chapter 7
         (setf p (ash p -1)))
         (nreverse network)))
 
-.. _sortf:
+.. _sortf2:
 
 ``sortf``
 ------------------------
@@ -1336,7 +1336,7 @@ Chapter 7
                         #2# ,g!a)))
             (build-batcher-sn (length places))))))
 
-.. _dollar-symbol-p:
+.. _dollar-symbol-p2:
 
 ``dollar-symbol-p``
 ------------------------
@@ -1357,7 +1357,7 @@ Chapter 7
                     :end1 1)
         (ignore-errors (parse-integer (subseq (symbol-name s) 1)))))
 
-.. _if-match:
+.. _if-match2:
 
 ``if-match``
 ------------------------
@@ -1386,7 +1386,7 @@ Chapter 7
                 ,then
                 ,else))))))
 
-.. _when-match:
+.. _when-match2:
 
 ``when-match``
 ------------------------

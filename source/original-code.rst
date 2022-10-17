@@ -29,7 +29,7 @@ Chapter01
 
 .. _mkstr:
 
-``mkst``
+``mkstr``
 ------------
 
 .. code-block:: lisp

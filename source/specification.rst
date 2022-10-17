@@ -128,7 +128,7 @@ duality-of-syntax
 
 .. note::
 
-  xxxxxx
+  根据语境执行不同
     
 indirection
 ----------------------
@@ -137,7 +137,7 @@ indirection
 
 .. note::
 
-  xxxxxx chapter07 L707
+  传递引用
 
 pointer scope
 ----------------------
@@ -146,7 +146,7 @@ pointer scope
 
 .. note::
 
-  xxxxxx chapter07.4 L834
+  指针影响范围
 
 dereference
 ----------------------
@@ -155,7 +155,7 @@ dereference
 
 .. note::
 
-  xxxxxx chapter07.4 L908
+  传递引用
  
   
   
