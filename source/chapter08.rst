@@ -569,8 +569,8 @@ forth 抽象寄存器也是有用的。不幸的是，这些变量被一个 let 
 定在列表的函数位置使用 **lambda** 结构时，不得不做更多的修改。广义变量还提供了一个非常重要的二义性：
 在编写宏时，相同的结构可以拼接成展开式，用于访问和修改变量。 Common Lisp 对于空列表和 false 布
 尔值的双重含义是又一个例子——除了语法的二义性之外，没有真正的理由这两者应该相同。二义性也是本书
-提倡闭包而不是其他 CLOS 特性 :sup:`【14】`（如 **defclass** 和 **defmethod** ）的原因。与修改使用类和对
-象的程序相比，修改使用闭包的程序时阻力通常更小，因为我们有很多很好的闭包语法二义性，而且编程宏来构建闭包是更加统一的  :sup:`【15】` 。考虑到这些和其他例子，终于可以对语法二元性的含义给出一个清晰的定义：  :sup:`（17）` 
+提倡闭包而不是其他 CLOS 特性 :sup:`【14】` （如 **defclass** 和 **defmethod** ）的原因。与修改使用类和对
+象的程序相比，修改使用闭包的程序时阻力通常更小，因为我们有很多很好的闭包语法二义性，而且编程宏来构建闭包是更加统一的  :sup:`【15】`  。考虑到这些和其他例子，终于可以对语法二元性的含义给出一个清晰的定义：  :sup:`（17）` 
   
 .. hint:: 【13】 
   或者可能在代码中留下不正确的文档。
@@ -926,67 +926,66 @@ ANSI Forth 词，它结合并澄清了几个传统的 forth 词。**postpone** �
     * (setq my-forth (new-forth))
     #<Interpreted Function>
 
-| 以下是使用新定义的单词 **{** 和 **}** 的 **square** 结构：
+ 以下是使用新定义的单词 **{** 和 **}** 的 **square** 结构：
 
-| .. code-block:: lisp
-|     :linenos:
+ .. code-block:: lisp
+     :linenos:
 
-|     * (go-forth my-forth
-|         { dup * } 'square name)
-|     NIL
-|     * (go-forth my-forth
-|         5 square print)
-|     25
+     * (go-forth my-forth
+         { dup * } 'square name)
+     NIL
+     * (go-forth my-forth
+         5 square print)
+     25
 
-| 并且新线程就可以像引用原语一样容易地引用自定义创建的单词。 以下是我们如何将单词 **quartic** 定义为
-| 带有两个指向 **square** 单词指针的线程：
+ 并且新线程就可以像引用原语一样容易地引用自定义创建的单词。 以下是我们如何将单词 **quartic** 定义为
+ 带有两个指向 **square** 单词指针的线程：
 
-| .. code-block:: lisp
-|     :linenos:
+ .. code-block:: lisp
+     :linenos:
 
-|     * (go-forth my-forth
-|         { square square } 'quartic name)
-|     NIL
+     * (go-forth my-forth
+         { square square } 'quartic name)
+     NIL
 
-| **(Expt 1/2 4)** 的结果是 **1/16**:
+ **(Expt 1/2 4)** 的结果是 **1/16**:
 
-| .. code-block:: lisp
-|     :linenos:
+ .. code-block:: lisp
+     :linenos:
 
-|     * (go-forth my-forth
-|         1/2 quartic print)
-|     1/16
-|     NIL
+     * (go-forth my-forth
+         1/2 quartic print)
+     1/16
+     NIL
 
-| 因为非符号被直接编译到 forth 线程中，并且我们的内部解释器将非函数视为数据项以在遇到时压入堆栈，我们可以
-| 将数字包含在单词定义中：
+ 因为非符号被直接编译到 forth 线程中，并且我们的内部解释器将非函数视为数据项以在遇到时压入堆栈，我们可以
+ 将数字包含在单词定义中：
 
-| .. code-block:: lisp
-|     :linenos:
+ .. code-block:: lisp
+     :linenos:
 
-|     * (go-forth my-forth
-|         { 3 } 'three name
-|         three three * print)
-|     9
-|     NIL
+     * (go-forth my-forth
+         { 3 } 'three name
+         three three * print)
+     9
+     NIL
 
-| 回想一下，我们使用 **eql** 函数查找传递给 forth 的所有元素，以查看它们之前是否在字典中被命名
-| 过。 这样做的结果是我们可以使用任何 lisp 对象来命名一个单词。 在这里，我们使用数字 :sup:`【19】` ：
-  
+ 回想一下，我们使用 **eql** 函数查找传递给 forth 的所有元素，以查看它们之前是否在字典中被命名
+ 过。 这样做的结果是我们可以使用任何 lisp 对象来命名一个单词。 在这里，我们使用数字 :sup:`【19】` ：
+
 .. hint:: 【19】 
   在许多方面，0、1、-1 等常见数字被定义为单词，因为对单词的编译引用通常比编译文字占用更少的内存。
-    
-| .. code-block:: lisp
-|     :linenos:
 
-|     * (go-forth my-forth
-|         { 4.0 } '4 name
-|         4 4 * print)
-|     16.0
-|     NIL
+.. code-block:: none
+    :linenos:
 
-| Forth 是学习如何使用指针作用域的优秀语言。 Forth 定义了两个简单的运算符，用于从内存中读取和写
-| 入值： **@** (取出) 和 **!** （存储）。 因为我们的 forth 字存储在 cons 单元中而不是内存字
+    * (go-forth my-forth
+        { 4.0 } '4 name
+        4 4 * print)
+      16.0
+      NIL
+
+Forth 是学习如何使用指针作用域的优秀语言。 Forth 定义了两个简单的运算符，用于从内存中读取和写入值： **@** (取出) 和 **!** （存储）。 因为我们的 forth 字存储在 cons 单元中而不是内存字
 中，所以使用 fetch 取消引用指针是通过获取指针的 car 来实现的。 用 store 设置它是通过使用
 **setf** 设置它的 car 来实现的。 Fetch 将从参数堆栈中弹出一个值，假设它是一个 cons 单元，
 获取它的 car，然后将其压入堆栈。 Store 将从参数堆栈中弹出一个值，假设它是一个 cons 单元格，
@@ -994,20 +993,21 @@ ANSI Forth 词，它结合并澄清了几个传统的 forth 词。**postpone** �
 
 .. code-block:: lisp
     :linenos:
-(def-forth-prim @ nil
-  (push (car (pop pstack))
-	pstack))
 
-(def-forth-prim ! nil
-  (let ((location (pop pstack)))
-    (setf (car location) (pop pstack))))
+    (def-forth-prim @ nil
+      (push (car (pop pstack))
+      pstack))
 
-    
-    * (let ((*print-circle* t))
-        (go-forth my-forth
-          '(nil) dup dup ! print))
-    #1=(#1#)
-    NIL
+    (def-forth-prim ! nil
+      (let ((location (pop pstack)))
+        (setf (car location) (pop pstack))))
+
+        
+        * (let ((*print-circle* t))
+            (go-forth my-forth
+              '(nil) dup dup ! print))
+        #1=(#1#)
+        NIL
 
 所以现在我们正在使用线程代码在 forth 中进行编程。 还是说我们真的这样吗？ 我们离开过 lisp 吗？ 两种语言之
 间的区别是如此模糊，以至于几乎无法辨别。 本章的其余部分在进一步解释元编程时试图使这种区别更模
