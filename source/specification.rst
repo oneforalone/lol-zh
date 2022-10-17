@@ -23,6 +23,7 @@
    dereference
    slot 
    anaphor 
+   destructuring
 
 implementation 
 ----------------------
@@ -175,3 +176,14 @@ slot
 .. note::
 
   Lisp 中结构体元素被称为“槽”， slot.
+
+
+   
+destructuring
+----------------------
+
+解构
+
+.. note::
+
+  Lisp 中数据块解析为树结构，并且用符号命名其中部分，从而建立对该部分的引用。
