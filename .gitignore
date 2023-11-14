@@ -1,0 +1,9 @@
+.DS_Store
+
+# python venv files
+bin/
+include/
+lib/
+pyvenv.cfg
+
+_build
