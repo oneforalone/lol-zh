@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>术语表 &mdash; Let Over Lambda 中文文档  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="源代码" href="original-code.html" />
+    <link rel="prev" title="参考文档" href="reference.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="preface.html">译者序</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter01.html">第一章：概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter02.html">第二章：闭包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter03.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter04.html">第四章：读取宏 <sup>（1）</sup></a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter05.html">第五章：Programs that program <sup>（1）</sup></a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter06.html">第六章：回指 <sup>（1）</sup> 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter07.html">第七章：宏的效率</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter08.html">第八章：Lisp 和 Forth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendices.html">附录</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">参考文档</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">术语表</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#implementation">implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#indefinite-extent">indefinite extent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#unwanted-capture">unwanted capture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#predicate">predicate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#transparent-specification">transparent specification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#form">form</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#body">body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fixnum">fixnum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lispy">lispy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#duality-of-syntax">duality-of-syntax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#indirection">indirection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pointer-scope">pointer scope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dereference">dereference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#slot">slot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#destructuring">destructuring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="original-code.html">源代码</a></li>
+<li class="toctree-l1"><a class="reference internal" href="production-code.html">生产代码</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>术语表</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/specification.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="specification">
+<span id="id1"></span><h1>术语表<a class="headerlink" href="#specification" title="Permalink to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="implementation">
+<h2>implementation<a class="headerlink" href="#implementation" title="Permalink to this heading"></a></h2>
+<p>编译器</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>CommonLisp 相关的书籍的汉译版本均将其翻译为“实现”。在牛津词典中可以查到 <a class="reference external" href="https://www.oxfordlearnersdictionaries.com/definition/english/implementation?q=+implementation">implementation</a> 。然而，
+在中文里“实现”有两种词性，动词和名词，出现在译文中很容易让人摸不到头脑。原文中是指根据 lisp 理论开发出的编译器，
+这些编译器实现了对 lisp 语言开发程序的支持，又因为在 lisp 发展的中间阶段缺乏统一的标准，同样遵循 lisp 理论，但是
+却形成了不同的 lisp 方言。因而 lisp 有 <a class="reference external" href="http://groups.csail.mit.edu/mac/projects/scheme/">Scheme</a> 、 <a class="reference external" href="https://common-lisp.net/">CommonLisp</a> 、 <a class="reference external" href="http://www.ulisp.com/">ulisp</a>  、Autolisp（即vlisp）等。同时同一种 lisp 也有不同的编译器，比如对于
+CommonLisp 来说，有 <a class="reference external" href="https://cmucl.org/">CMUCL</a> 、 <a class="reference external" href="http://www.sbcl.org/">SBCL</a> 、
+<a class="reference external" href="http://www.lispworks.com/">Lispworks</a> 、
+<a class="reference external" href="https://common-lisp.net/project/ecl/">Ecl</a> 、 <a class="reference external" href="https://franz.com/products/allegrocl/">ALLEGROCL</a> 、 <a class="reference external" href="https://ccl.clozure.com/">CLOZURECL</a> 、 <a class="reference external" href="http://www.clisp.org/">CLISP</a> ,  <a class="reference external" href="https://www.abcl.org/">ABCL</a> , <a class="reference external" href="https://cliki.net/MKCL">MKCL</a> 等。这些也就是常说的“ CommonLisp implementation ”。
+翻译成编译器对于读者来说会更一目了然，易于理解。</p>
+</div>
+</section>
+<section id="indefinite-extent">
+<h2>indefinite extent<a class="headerlink" href="#indefinite-extent" title="Permalink to this heading"></a></h2>
+<p>不限定范围</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>indefinite 无限期的; 期限不定的; 模糊不清的; 不明确的。
+extent 程度; 限度; 大小; 面积; 范围。
+indefinite extent 直译可以是“无限范围； 不限定范围； 不明确范围”。翻译成“不限定范围”更贴合语境。</p>
+</div>
+</section>
+<section id="unwanted-capture">
+<h2>unwanted capture<a class="headerlink" href="#unwanted-capture" title="Permalink to this heading"></a></h2>
+<p>不想要的捕捉</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>unwanted capture 可以直译为“不想要的捕捉； 不需要的捕捉； 异常捕捉”（捕捉也可以译为捕获）。
+虽然“异常捕捉”是专业术语。然而对于 CommonLisp 的宏来说， 利用自由变量以及特定的回指并不是“异常的”，
+也不会有报错。翻译成“不想要的捕捉”对于读者来说，脑海中更有意象。</p>
+</div>
+</section>
+<section id="predicate">
+<h2>predicate<a class="headerlink" href="#predicate" title="Permalink to this heading"></a></h2>
+<p>谓词</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>predicate 有断言、谓词的意思。一般的读者听到谓词会不知所云， 然而稍微检索一下， 就知道在语言文法中， 谓词就是指的
+有判断意思的逻辑词。</p>
+</div>
+</section>
+<section id="transparent-specification">
+<h2>transparent specification<a class="headerlink" href="#transparent-specification" title="Permalink to this heading"></a></h2>
+<p>易读的具体说明</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>transparent 透明的;清澈的;易识破的;易看穿的;显而易见的;易懂的
+specification 规格;规范;明细单;说明书
+transparent specification 直译为”透明规范”。然而， 原文中这样翻译“易读的具体说明”更合适。  indefinite 无限期的; 期限不定的; 模糊不清的; 不明确的。</p>
+</div>
+</section>
+<section id="form">
+<h2>form<a class="headerlink" href="#form" title="Permalink to this heading"></a></h2>
+<p>形式体</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>form 形式；结构；表单。出现在原文中高频的有“let form” 。虽然确实是一个列表。但是翻译成“表单”，总是有点含混不清。翻译成“形式”，
+也是缺点意思。“形式体”就能比较好的指代那部分代码。其他地方的 form 也一样。翻译成“结构”的话，有地方会有歧义。</p>
+</div>
+</section>
+<section id="body">
+<h2>body<a class="headerlink" href="#body" title="Permalink to this heading"></a></h2>
+<p>代码主体</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>body 身体；主体；主要部分。这是个文中出现的高频词汇。如果只是翻译成“主体”，也有点令读者难以理解。</p>
+</div>
+</section>
+<section id="fixnum">
+<h2>fixnum<a class="headerlink" href="#fixnum" title="Permalink to this heading"></a></h2>
+<p>固定数字</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>fixnum 有时是一种类型。有时指的计算机内存结构</p>
+</div>
+</section>
+<section id="lispy">
+<h2>lispy<a class="headerlink" href="#lispy" title="Permalink to this heading"></a></h2>
+<p>lisp 化</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>指的是 lisp 风格化的内容</p>
+</div>
+</section>
+<section id="duality-of-syntax">
+<h2>duality-of-syntax<a class="headerlink" href="#duality-of-syntax" title="Permalink to this heading"></a></h2>
+<p>语法二义性</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>根据语境执行不同</p>
+</div>
+</section>
+<section id="indirection">
+<h2>indirection<a class="headerlink" href="#indirection" title="Permalink to this heading"></a></h2>
+<p>间接</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>传递引用</p>
+</div>
+</section>
+<section id="pointer-scope">
+<h2>pointer scope<a class="headerlink" href="#pointer-scope" title="Permalink to this heading"></a></h2>
+<p>指针作用域</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>指针影响范围</p>
+</div>
+</section>
+<section id="dereference">
+<h2>dereference<a class="headerlink" href="#dereference" title="Permalink to this heading"></a></h2>
+<p>间接引用</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>传递引用</p>
+</div>
+</section>
+<section id="slot">
+<h2>slot<a class="headerlink" href="#slot" title="Permalink to this heading"></a></h2>
+<p>槽</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<blockquote>
+<div><p>Lisp 中结构体元素被称为“槽”， slot.</p>
+</div></blockquote>
+<p>anaphor</p>
+</div>
+<hr class="docutils" />
+<p>回指语</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Lisp 中结构体元素被称为“槽”， slot.</p>
+</div>
+</section>
+<section id="destructuring">
+<h2>destructuring<a class="headerlink" href="#destructuring" title="Permalink to this heading"></a></h2>
+<p>解构</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Lisp 中数据块解析为树结构，并且用符号命名其中部分，从而建立对该部分的引用。</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="reference.html" class="btn btn-neutral float-left" title="参考文档" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="original-code.html" class="btn btn-neutral float-right" title="源代码" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2022, oneforalone, Treyenuo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

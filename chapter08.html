@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>第八章：Lisp 和 Forth &mdash; Let Over Lambda 中文文档  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="附录" href="appendices.html" />
+    <link rel="prev" title="第七章：宏的效率" href="chapter07.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="preface.html">译者序</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter01.html">第一章：概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter02.html">第二章：闭包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter03.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter04.html">第四章：读取宏 <sup>（1）</sup></a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter05.html">第五章：Programs that program <sup>（1）</sup></a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter06.html">第六章：回指 <sup>（1）</sup> 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter07.html">第七章：宏的效率</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">第八章：Lisp 和 Forth</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#weired-by-design">8.1 奇怪的设计</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cons">8.2 cons 线程代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#duality-of-syntax-defined">8.3 语法二元性阐述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#forth">8.4 前往 forth</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#going-forther">8.5 深入 forth</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lisp">8.6 前往 Lisp</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="appendices.html">附录</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">参考文档</a></li>
+<li class="toctree-l1"><a class="reference internal" href="specification.html">术语表</a></li>
+<li class="toctree-l1"><a class="reference internal" href="original-code.html">源代码</a></li>
+<li class="toctree-l1"><a class="reference internal" href="production-code.html">生产代码</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>第八章：Lisp 和 Forth</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/chapter08.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lisp-forth">
+<span id="chapter08"></span><h1>第八章：Lisp 和 Forth<a class="headerlink" href="#lisp-forth" title="Permalink to this heading"></a></h1>
+<section id="weired-by-design">
+<span id="id1"></span><h2>8.1 奇怪的设计<a class="headerlink" href="#weired-by-design" title="Permalink to this heading"></a></h2>
+<p>本章是迄今为止我们在本书中看到的许多宏技术的高潮。 使用已开发的宏抽象，我们创建
+了我最喜欢的编程语言之一的实现：<em>forth</em> 。 虽然这个实现体现了 forth 的大部分重要思想，
+但它非常不同并且很 lisp 化。 尽管本章中的代码有一些有趣的用途，但主要目的是向 lisp 读者
+教授 forth 元编程的概念和基础知识，并成为讨论本书中心主题的平台——用宏创建和使用
+二元性语法。</p>
+<p>Forth，比除了 lisp 外所有语言都拥有丰富而迷人的历史，我很感激发现它。 出于这个
+原因，以及其他一切，这一章是献给我的父亲 Brian Hoyte
+的，他向我介绍了 forth 和计算机编程。 本章的部分灵感来自 [THREADING-LISP]
+和 Henry Baker [LINEAR-LISP][LINEAR-LISP-AND-FORTH] 的研究。</p>
+<p>forth 是第一个在没有强力的政府、学术或企业赞助的情况下创建和开发的编程语言——或者
+至少是第一个成功的此类语言。 1968 年左右，Chuck Moore 独立发明了forth，而不是
+出于大型组织的需求，以解决他自己在天文学、硬件设计等方面的计算需求。 从那时起，f
+orth 已被热情的草根用户社区分发、实现和改进[EVOLUTION-FORTH-HOPL2]。 与麻省
+理工学院（以及后来的 DARPA）对早期 lisp 和 Common Lisp、IBM 的 FORTRAN 和
+AT&amp;T 的 unix 语言 C 语言的赞助形成对比。</p>
+<p>由于这些原因，并且因计算机软件和硬件角色的普遍不同的哲学，所以 forth 是不同的。
+甚至比 lisp 还要多，forth 看起来 <em>很奇怪</em> 。 但是和 lisp 一样， forth 看起来很
+奇怪是有原因的：它的设计考虑了更多思想而不是格式。 Forth 在设计上很奇怪，而且这种
+设计与宏有关。</p>
+<p>如今，forth 常见于所谓的嵌入式平台——资源严重受限的计算机。 可以在几乎所有曾经
+创建的可编程计算机系统上完全实现该语言，这是该语言的（优秀的）设计证据。 Forth 被设计成
+尽可能容易实现和试验。 事实上，创建 forth 的克隆是如此的微不足道，以至于发明
+一两种基于堆栈的 forth 语言对于对编程语言设计感兴趣的程序员来说几乎是一种仪式。
+PostScript 和 Joy 这些基于堆栈的语言，它们可以追溯到 forth 并做出了有趣的贡献。</p>
+<p>重要的 forth 实现决策通常基于正在实现 forth 的计算机的确切资源。 Forth 程序员
+设计了一组 <em>抽象寄存器</em>  <sup>（1）</sup>  ，这些寄存器要么映射到真实寄存器，要么映射到内存位置，或者可能
+以完全不同的方式实现。 但是，如果我们在 lisp 上实现 forth，一个潜力无限且限制很少
+的环境，该怎么做呢？ 不是简单地将 forth 抽象寄存器的任意映射强加到 lisp 代码中，
+而是尝试退后一步。 如果 Chuck <sup>（2）</sup> 有一个 lisp 机器会是什么样子？ 与其适应任意机器的
+功能，无论是真实的还是虚拟的，我们探索了一组最小的抽象寄存器，在 lisp 上实现时针
+对简单性和功能进行了优化。</p>
+<blockquote>
+<div><p><sup>（1）</sup></p>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（1）
+抽象寄存器  abstract registers</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（2）
+Forth 语言的发明人）</p>
+</div>
+<p>但实际上，寻找一组最优的抽象概念是 Chuck 在创建 forth 时所做的，使用他在很多
+架构上的数十种不同的 forth 实现的（开发）经验。 这就是为什么 forth 如此伟大。 与 lisp
+一样， forth 代表了语言设计空间中的高位的局部最大值，并且与 lisp 一样，forth 与其
+说是门编程语言或标准，不如说是种构建材料和智慧的集合，关于什么有效，什么无效。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nb">defvar</span><span class="w"> </span><span class="nv">forth-registers</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="o">&#39;</span><span class="p">(</span><span class="nv">pstack</span><span class="w"> </span><span class="nv">rstack</span><span class="w"> </span><span class="nv">pc</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">    </span><span class="nv">dict</span><span class="w"> </span><span class="nv">compiling</span><span class="w"> </span><span class="nv">dtable</span><span class="p">))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>变量 <strong>forth-registers</strong> 是表示我们 forth 机器的抽象寄存器的符号列表。 当然 lisp 不考虑
+寄存器和固定数字（ fixnum ），而是变量和符号。 在这里开始我们的 forth 环境的开发（工作）看起来可能很奇怪，
+只有一个变量名列表，但实际上这始终是实现 forth 系统的第一步。 创造 forth 是个
+巧妙的引导过程，在美丽和聪明方面只有 lisp 才能超越。 以下是对该过程的适度描述。</p>
+<p>forth 的特征之一是它直接访问你的程序所使用的堆栈数据结构，既可以将参数传递给子例程，
+也可以跟踪这些子例程中的执行路径。 Forth 特别有趣，与大多数编程语言不同，
+它将堆栈数据结构的这两种用途分为两个堆栈，这两个堆栈你设置可以玩弄它 <sup>【1】</sup> 。 在典型的
+C 语言实现中，函数调用的参数及其所谓的 <em>返回地址</em> <sup>（3.1）</sup>  存储在单个、可变大小的 <em>堆栈帧</em>  <sup>（3.2）</sup> 中，用于
+每个函数调用。在 forth 中，它们是两个不同的堆栈，称为参数堆栈和返回堆栈，分别表示为
+我们的抽象寄存器 <strong>pstack</strong> 和 <strong>rstack</strong> 。 我们使用 Common Lisp 的 push 和
+pop 宏，这意味着这些堆栈是用 cons 单元链表实现的，而不是大多数 forth 实现所使用的数组数据结构。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【1】
+大多数语言根本不允许你直接操作堆栈。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（3）
+返回地址  return address ； 堆栈帧 stack frame</p>
+</div>
+<p>抽象寄存器 pc 是 <em>程序计数器</em> <sup>（4）</sup> 的缩写，一个指向当前正在执行的代码的指针。 我们将很快
+解释什么是 forth 代码以及如何指向它，以及我们的抽象寄存器编译和 dtable 。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（4）
+程序计数器   program counter</p>
+</div>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nb">defstruct</span><span class="w"> </span><span class="nv">forth-word</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="nv">name</span><span class="w"> </span><span class="nv">prev</span><span class="w"> </span><span class="nv">immediate</span><span class="w"> </span><span class="nv">thread</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>另一个构建 forth 模块是其 <em>字典</em> <sup>（5.1）</sup> 概念。  forth 字典是 forth <em>单词</em> <sup>（5.2）</sup> 的单链表，类似
+于 lisp 函数 <sup>【2】</sup> 。单词用 lisp 结构体 <sup>（5.3）</sup> 表示。 结构体是基于槽的高效数据结构，通常用向量
+实现。 符号的 name 槽被用于在字典中查找单词。 请注意，forth 字典不是按字母顺序
+存储的，而是按时间顺序存储的。 当添加新单词时，我们会将新的单词追加到字典的末尾，
+以便我们在遍历字典时首先检查最新定义的单词。 字典的最后一个元素总是存储在抽象寄存器 <strong>dict</strong> 中。 为了遍历字典，我们从 <strong>dict</strong> 开始并跟随单词结构体的 <strong>prev</strong> 指针， <strong>prev</strong> 指针指向
+先前定义的单词（ <strong>word</strong> ），如果是最后一个单词（ <strong>word</strong> ）的话， <strong>prev</strong> 指针指向 <strong>nil</strong>  <sup>【3】</sup> 。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【2】
+换句话说，它们根本不是函数，而是过程。</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【3】
+是的，有时 lisp 程序员使用链表的替代方案， cons 单元。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（5）
+字典  dictionary ；单词 words ；结构体  structure</p>
+</div>
+<p>给定 <strong>w</strong> ，一个要查找的单词， <strong>last</strong> ，要去检索的字典， <strong>forth-lookup</strong> 将要返回的是一个 forth 单词结构体还是 <strong>nil</strong> 取决于单词 <strong>w</strong> 是否在字典中被找到。 使用比较函数 <strong>eql</strong> 而不是 <strong>eq</strong>
+是因为 —— 与 lisp 不同 —— forth 允许用数字和其他非符号命名单词。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nb">defun</span><span class="w"> </span><span class="nv">forth-lookup</span><span class="w"> </span><span class="p">(</span><span class="nv">w</span><span class="w"> </span><span class="nb">last</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="nb">last</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">    </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">eql</span><span class="w"> </span><span class="p">(</span><span class="nv">forth-word-name</span><span class="w"> </span><span class="nb">last</span><span class="p">)</span><span class="w"> </span><span class="nv">w</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">4</span><span class="w">      </span><span class="nb">last</span><span class="w"></span>
+<span class="linenos">5</span><span class="w">      </span><span class="p">(</span><span class="nv">forth</span><span class="w"> </span><span class="nv">-lookup</span><span class="w"></span>
+<span class="linenos">6</span><span class="w">        </span><span class="nv">w</span><span class="w"> </span><span class="p">(</span><span class="nv">forth-word-prev</span><span class="w"> </span><span class="nb">last</span><span class="p">)))))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>forth 单词的 immediate 槽是个标志，指示该单词是否是 <em>立即的</em> <sup>（6.1）</sup> 。即时性是 forth 元编程
+概念，我们将很快深入探讨。现在这里是一个与其 lisp 对应物的粗略类比： immediate 单词就像 lisp
+宏，因为它们是在编译时而不是运行时执行的 forth 函数。什么？只有 lisp 应该有宏。
+虽然 Common Lisp 宏系统确实比任何其他宏系统（包括最佳的 forth 实现）强大得多，但 forth
+的扩展能力几乎超过了所有其他语言。与 lisp 一样，这种能力是一种设计理念的结果：如果
+它对语言实现者来说足够好，那么对于应用程序程序员来说也足够好。像 lisp 一样，forth
+并没有真正承认原语的概念。相反，它提供了一组 <em>元原语</em> <sup>（6.2）</sup> ，可以将它们组合起来以构建你（程序员）
+想要的语言。与 lisp 一样，与大多数 Blub 语言不同，通过使用宏以新颖的方式扩展语言不仅
+是可能的，而且是鼓励的。像 lisp 一样，forth 与格式无关，而与强大有关。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（6）
+立即的 immediate；元原语 meta-primitives</p>
+</div>
+</section>
+<section id="cons">
+<span id="cons-threaded-code"></span><h2>8.2 cons 线程代码<a class="headerlink" href="#cons" title="Permalink to this heading"></a></h2>
+<p>在上一节中，我们专注于抽象寄存器。 这些寄存器是重要的焦点，这就是为什么 forth 哲学认为
+它们如此基础，但这些寄存器实际上只是个更普遍的概念的组成部分：<em>抽象机器</em> <sup>（7.1）</sup> 。 不同的
+forth 系统最显着的特性可能是它们对 <em>线程代码</em> <sup>（7.2）</sup> 的实现。 forth 中线程代码的含义与抢占式调度、共享
+内存进程的传统含义非常不同 <sup>【4】</sup>。 Forth 线程与并发无关。 这是讨论代码编译和元编程的框架。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【4】
+出于安全性和可靠性的原因，本书不推荐使用这些类型的线程。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（7）
+抽象机器  abstract machines ；线程代码   threaded code</p>
+</div>
+<p>虽然 lisp 提供了对符号的树数据结构 <sup>【5】</sup> 的访问权限，但在汇编到内存之前，程序是从这些符号
+编译而来的，而 forth 不提供符号操作。 相反，forth 提供了将代码组装、串联到内存中的过程
+的访问权限。 虽然对于外人来说，最明显的特征是它的堆栈和后缀符号，但实际上是线程决定
+了它的本质。 Forth 是关于堆栈的，就像 lisp 是关于列表的一样。 它们恰好是用于解决元编程
+问题的最适用的数据结构——forth 和 lisp 的真正意义所在。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【5】
+实际上是一个有向无环图。</p>
+</div>
+<p>经典的线程风格被称为 <em>间接线程</em> <sup>（8.1）</sup> 代码，但大多数现代 forth 都是用 <em>直接线程</em> <sup>（8.2）</sup>  代码实现的。不同
+之处在于间接层次。这种间接的低层次的效率影响取决于底层处理器，我们不会在这里详细介绍。有很多关于
+forth 线程[STARTING-FORTH][MOVING-FORTH] 的好教程。在内存中，这些线程样式都由
+相邻的单元组成，这些单元是代表指针的固定数字（ fixnum ）机器字。一小段称为 <em>内部解释器</em> <sup>（8.3）</sup> 的紧凑机器代码通常
+是为正在使用的处理器量身定制的，因为它的重要工作是：跟随这些 forth 线程的指针，并在执行
+过程中解释它们的含义。遇到单元时的默认行为是将当前程序计数器位置推入返回堆栈，然后将
+程序计数器指向单元中包含的任何内容。当内部解释器到达线程的端部时，它会弹出返回堆栈，并在
+这个位置恢复执行——它停止的地方 <sup>【6】</sup> 。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【6】
+在大多数的 forth 中，线程的结束用 forth 的单词 exit 表示。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（8）
+间接线程   indirect threaded ；直接线程  direct threaded ；内部解释器 inner interpreter</p>
+</div>
+<p>可以想象，这种类型的程序存储有利于非常小的程序。 编译后的 forth 单词只是一个连续的固定数字（ fixnum ）的数组，
+其中大部分表示指向其他单词的指针。 这一直是forth的优势之一。 由于程序线程进入内存的
+透明性，forth 允许对许多编程权衡进行精细控制，包括最重要的权衡之一：执行速度与程序大小。
+线程代码让我们尽可能优化抽象问题，从而产生极快的小程序。 但正如 lisp 宏不仅仅是效率一样，
+forth 线程也是如此。 与 lisp 程序员一样，forth 程序员倾向于将自己视为实现者，而不仅仅
+是用户。 Forth 和 lisp 都是关于控制的——制定你自己的规则。</p>
+<p>forth 程技术至少有两种其他常见类型：<em>令牌</em> <sup>（9.1）</sup> 线程代码和 <em>子程序</em>  <sup>（9.2）</sup> 线程代码。在权衡速度
+与大小时，这些代表了相反的方向。有时这些线程技术与间接和直接线程代码在相同的 forth 中同时存在。令牌线程涉及
+通过使用比指针更小的固定数字（ fixnum ）来表示线程中的单词，从而添加另一层间接。另一端是子程序线程。
+这种类型的线程代码正在变得流行，最好的现代 forth 编译器部分使用子程序线程。子程序线程代码存储 <em>内联</em> 机器指令以调用单词的连续指针，而不是让内部
+解释器跟随这些指针。在子程序线程代码中，
+内部解释器消失了——它实际上是由硬件（或虚拟机）实现的。子程序线程代码通常被认为是个不透明的块，
+只有特殊的、不可编程的编译器才能操作。特别是当对代码进行各种优化时，这些不透明的块开始看起来
+不像统一的、基于单元的线程。几乎所有非 forth 编译器都只编译为子程序线程代码，并且不要想象你
+会想要做任何其他事情，导致这个特殊的定义： <sup>（10）</sup></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（9）
+令牌 token ；子程序 subroutine</p>
+</div>
+<blockquote>
+<div><p>一种只考虑子程序线程代码的语言，或者是一种只提供子程序线程代码的语言实现，都是一种 <em>Flub</em> 。</p>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（10）
+A Flub is a language that only considers subroutine threaded code or a
+language implementation that only provides subroutine threaded code.译注： flub 有失策的意思。</p>
+</div>
+<p>例如，C 语言是一种 Flub ，因为它只为程序员提供创建函数的方法——子程序线程代码的不透明块。 当然，
+我们可以在 C 语言中实现一个内部解释器来处理间接线程代码 <sup>【7】</sup> 并使用这个程序引导一种基于堆栈的语言，
+但是我们不会再在 C 语言中编程。几乎所有的 Blub 语言都是Flub失策。 如刚刚所描述的，作为抽象机器的
+forth 不是Flub失策。 正如我们将看到的，forth 为程序员/实现者提供了对其程序如何编译的大量
+控制权。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【7】
+直接线程代码是可能的，但更困难。</p>
+</div>
+<p>lisp 是 Flub 吗？ 有趣的是，lisp 可能是第一个非-Flub 的编程语言，但大部分都变成了Flub。
+尽管标准没有严格要求，但大多数 Common Lisp 编译器仅将函数编译为不透明的机器代码块，因此是 Flubs 。 但是在很早期的 lisp 版本中，函数被存储为列表——这是种奇怪的代码线程，与 forth
+线程并不完全不同。 虽然这确实允许一些非常聪明的运行时技巧，包括赋予循环代码意义，但它的效率低
+得令人绝望。 与 forth 的许多类型的线程不同——几乎在所有架构上都高效地实现了——lisp 函数的
+这种内部表示是不能容忍的，并且lisp 已经改变成允许（非常）高效的代码。 结果，对于元程序员来说，
+Common Lisp 的大多数实现都是 Flubs 。</p>
+<p>但是，无法添加到语言中的功能与我们可以通过宏添加的功能之间存在差异。使用宏，我们可以随意扩展
+语言，并且它仍然是 lisp 。 Common Lisp 缺少线程代码，就像它缺少延续和一流的宏一样：它们被
+故意从语言中省略，并留给宏编写者根据需要实现。本章及其代码最重要的结果之一是：即使它们是 Flubs ，lisp 语言也可以通过宏转换为非-Flub 语言。 Non-Blub 意味着非-Flub ，或者换句话说，
+如果你不能将一种语言变成非-Flub ，那么它必须是 Blub。然而，反过来却不一定成立。像这样的非
+Flub 语言仍然是 Blubs，将它们变成目前已知的非 Blubs 的最直接方法是用它们实现 lisp 环境
+—— 然后你就在编程 lisp。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">(</span><span class="nb">defmacro</span><span class="w"> </span><span class="nv">forth-inner-interpreter</span><span class="w"> </span><span class="p">()</span><span class="w"></span>
+<span class="linenos"> 2</span><span class="w">  </span><span class="o">`</span><span class="p">(</span><span class="nb">loop</span><span class="w"></span>
+<span class="linenos"> 3</span><span class="w">    </span><span class="nb">do</span><span class="w"> </span><span class="p">(</span><span class="nb">cond</span><span class="w"></span>
+<span class="linenos"> 4</span><span class="w">          </span><span class="p">((</span><span class="nb">functionp</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">pc</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 5</span><span class="w">            </span><span class="p">(</span><span class="nb">funcall</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">pc</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos"> 6</span><span class="w">          </span><span class="p">((</span><span class="nb">consp</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">pc</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 7</span><span class="w">            </span><span class="p">(</span><span class="nb">push</span><span class="w"> </span><span class="p">(</span><span class="nb">cdr</span><span class="w"> </span><span class="nv">pc</span><span class="p">)</span><span class="w"> </span><span class="nv">rstack</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 8</span><span class="w">            </span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="nv">pc</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">pc</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos"> 9</span><span class="w">          </span><span class="p">((</span><span class="nb">null</span><span class="w"> </span><span class="nv">pc</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">10</span><span class="w">              </span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="nv">pc</span><span class="w"> </span><span class="p">(</span><span class="nb">pop</span><span class="w"> </span><span class="nv">rstack</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">11</span><span class="w">          </span><span class="p">(</span><span class="no">t</span><span class="w"></span>
+<span class="linenos">12</span><span class="w">            </span><span class="p">(</span><span class="nb">push</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">pc</span><span class="p">)</span><span class="w"> </span><span class="nv">pstack</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">13</span><span class="w">            </span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="nv">pc</span><span class="w"> </span><span class="p">(</span><span class="nb">cdr</span><span class="w"> </span><span class="nv">pc</span><span class="p">))))</span><span class="w"></span>
+<span class="linenos">14</span><span class="w">    </span><span class="nv">until</span><span class="w"> </span><span class="p">(</span><span class="nb">and</span><span class="w"> </span><span class="p">(</span><span class="nb">null</span><span class="w"> </span><span class="nv">pc</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">null</span><span class="w"> </span><span class="nv">rstack</span><span class="p">))))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>我们的 forth 利用 lisp 的动态类型和 cons 单元列表结构，而不是使用连续的内存单元来表示间接或直接线程代码的线程。 我们称之为 cons 线程代码。 宏 <strong>forth-inner-interpreter</strong> 展开为
+能够遵循这些 <em>cons 单元链表线程</em> <sup>（11）</sup> 的代码。 在这里开始为我们的 forth 环境编写此逻辑可能看起来很奇
+怪 —— 使用一个旨在展开为一些迄今为止未知的表达式的宏 —— 但这实际上是种理想的 lisp 编程模式。
+因为宏让我们可以在任何我们想要的地方开始编程，为什么不从程序中真正有趣的驱动位开始呢？ 这些
+是对程序最终设计影响最大的部分。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（11）
+cons 单元链表线程 cons threaded</p>
+</div>
+<p><strong>forth-inner-interpreter</strong> 的定义本身就是对我们所说的 cons 线程代码的简明定义。 每个
+cons 单元的 car 指向一个函数、另一个 cons 单元或其他一些 lisp 原子（ atom ）。 函数在遇到
+他们时执行。 请注意，函数本身会更新 pc 寄存器。 如果在线程中发现另一个 cons 单元格，则假定它
+指示子例程调用——单词调用。 我们的内部解释器会将 pc 恢复位置推送到返回堆栈，然后跳转到这个
+新线程。 如果遇到其他的 lisp 原子（ atom ），它会被简单地推入参数堆栈，并在线程的下一个单元格处继续
+执行。 一旦内部解释器到达其线程的端部并且在其返回堆栈上没有其他线程可以返回，它将返回。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1">;; Prim-form: (name immediate . forms)</span><span class="w"></span>
+<span class="linenos"> 2</span><span class="p">(</span><span class="nb">defvar</span><span class="w"> </span><span class="nv">forth-prim-forms</span><span class="w"> </span><span class="no">nil</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="p">(</span><span class="nb">defmacro</span><span class="w"> </span><span class="nv">def-forth-naked-prim</span><span class="w"> </span><span class="p">(</span><span class="k">&amp;rest</span><span class="w"> </span><span class="nv">code</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 5</span><span class="w">  </span><span class="o">`</span><span class="p">(</span><span class="nb">push</span><span class="w"> </span><span class="ss">&#39;,code</span><span class="w"> </span><span class="nv">forth-prim-forms</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="p">(</span><span class="nb">defmacro</span><span class="w"> </span><span class="nv">def-forth-prim</span><span class="w"> </span><span class="p">(</span><span class="k">&amp;rest</span><span class="w"> </span><span class="nv">code</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 8</span><span class="w">  </span><span class="o">`</span><span class="p">(</span><span class="nv">def-forth-naked-prim</span><span class="w"></span>
+<span class="linenos"> 9</span><span class="w">    </span><span class="o">,@</span><span class="nv">code</span><span class="w"></span>
+<span class="linenos">10</span><span class="w">    </span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="nv">pc</span><span class="w"> </span><span class="p">(</span><span class="nb">cdr</span><span class="w"> </span><span class="nv">pc</span><span class="p">))))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>但是，当然了，函数不能更新 <strong>pc</strong> 变量，除非它们被定义在它的词法范围内 <sup>【8】</sup> ，所以我们使用了另一种宏技术：
+我们创建一个类似的接口来做一些完全不同的事情，而不是使用 <strong>defun</strong> 。 <strong>def-forth-naked-prim</strong>
+感觉类似于创建 <strong>defun</strong> 定义的函数，只是展开的代码将用户提供的结构压入到存储在 <strong>forth-prim-forms</strong> 的列表中。 我们最终的宏将使用这些结构在其词法范围内定义 forth 原语。 因为这些结构总是会展开到
+这个环境中，所以可以自由地编写代码来调用我们所有的 forth 抽象寄存器，如 <strong>pc</strong> 、 <strong>pstack</strong> 等。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【8】
+除非看见潘多拉（ pandoric ）宏</p>
+</div>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">(</span><span class="nv">def-forth-prim</span><span class="w"> </span><span class="nv">nop</span><span class="w"> </span><span class="no">nil</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="p">(</span><span class="nv">def-forth-prim</span><span class="w"> </span><span class="nb">*</span><span class="w"> </span><span class="no">nil</span><span class="w"></span>
+<span class="linenos"> 4</span><span class="w">  </span><span class="p">(</span><span class="nb">push</span><span class="w"> </span><span class="p">(</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nb">pop</span><span class="w"> </span><span class="nv">pstack</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">pop</span><span class="w"> </span><span class="nv">pstack</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 5</span><span class="w">        </span><span class="nv">pstack</span><span class="w"> </span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="p">(</span><span class="nv">def-forth-prim</span><span class="w"> </span><span class="nv">drop</span><span class="w"> </span><span class="no">nil</span><span class="w"></span>
+<span class="linenos"> 8</span><span class="w">  </span><span class="p">(</span><span class="nb">pop</span><span class="w"> </span><span class="nv">pstack</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="p">(</span><span class="nv">def-forth-prim</span><span class="w"> </span><span class="nv">dup</span><span class="w"> </span><span class="no">nil</span><span class="w"></span>
+<span class="linenos">11</span><span class="w">  </span><span class="p">(</span><span class="nb">push</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">pstack</span><span class="p">)</span><span class="w"> </span><span class="nv">pstack</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">12</span>
+<span class="linenos">13</span><span class="p">(</span><span class="nv">def-forth-prim</span><span class="w"> </span><span class="nv">swap</span><span class="w"> </span><span class="no">nil</span><span class="w"></span>
+<span class="linenos">14</span><span class="w">  </span><span class="p">(</span><span class="nb">rotatef</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">pstack</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">cadr</span><span class="w"> </span><span class="nv">pstack</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">15</span>
+<span class="linenos">16</span><span class="p">(</span><span class="nv">def-forth-prim</span><span class="w"> </span><span class="nb">print</span><span class="w"> </span><span class="no">nil</span><span class="w"></span>
+<span class="linenos">17</span><span class="w">  </span><span class="p">(</span><span class="nb">print</span><span class="w"> </span><span class="p">(</span><span class="nb">pop</span><span class="w"> </span><span class="nv">pstack</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">18</span>
+<span class="linenos">19</span><span class="p">(</span><span class="nv">def-forth-prim</span><span class="w"> </span><span class="nv">&gt;r</span><span class="w"> </span><span class="no">nil</span><span class="w"></span>
+<span class="linenos">20</span><span class="w">  </span><span class="p">(</span><span class="nb">push</span><span class="w"> </span><span class="p">(</span><span class="nb">pop</span><span class="w"> </span><span class="nv">pstack</span><span class="p">)</span><span class="w"> </span><span class="nv">rstack</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">21</span>
+<span class="linenos">22</span><span class="p">(</span><span class="nv">def-forth-prim</span><span class="w"> </span><span class="nv">r&gt;</span><span class="w"> </span><span class="no">nil</span><span class="w"></span>
+<span class="linenos">23</span><span class="w">  </span><span class="p">(</span><span class="nb">push</span><span class="w"> </span><span class="p">(</span><span class="nb">pop</span><span class="w"> </span><span class="nv">rstack</span><span class="p">)</span><span class="w"> </span><span class="nv">pstack</span><span class="p">))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>使用 <strong>def-forth-naked-prim</strong> 定义的原语不会将 <strong>pc</strong> 变量更新到线程中的下一个 cons 单元。
+对于大多数原语，应该使用 <strong>def-forth-prim</strong> 以便执行通常的更新。 这两个宏都期望第一个参数是
+用于引用原语的符号，第二个参数是指示原语是否立即的（ immediate ）布尔值。 其余参数是在执行原语时要执行的lisp 结构。</p>
+<p>现在展示的八个简单的原语——没有一个是直白的的或立即的（ immediate ）的。 <strong>nop</strong> 是个什么都不做的伪指令（“无操
+作”）。 <strong>*</strong> 原语是乘法运算符：它从参数堆栈中弹出顶部的两个值，将它们相乘，然后将结果压入栈。
+<strong>dup</strong> 是“ duplicate ”的缩写，它将参数堆栈上的顶部值再次推送到参数堆栈上，留下两个重复值。
+<strong>swap</strong> 将使用一个非常有用的 Common Lisp 宏来交换顶部的两个参数堆栈元素： <strong>rotatef</strong> 。 并非巧
+合 forth 也具有（基于堆栈的）旋转机制。 <strong>print</strong> 弹出参数堆栈并打印它。 <strong>&gt;r</strong> 将一个值从参数
+堆栈传输到返回堆栈， <strong>r&gt;</strong> 做的相反。</p>
+<p>名称 * 是否违反了第 3.5 节中的重要变量捕获规则，禁止我们重新绑定 Common Lisp 定义的函数呢？
+不，因为实际上并我们没有使用这个符号来绑定任何函数——它只是 <strong>forth-prim-forms</strong> 中的一个列表中的第一个
+元素。 我们没有做错任何事。 符号独立于它们有时用来表示的函数或宏。我们可以在任何地方使用任何符号，
+只要我们谨慎的不违反重要的变量捕获规则。 这仅在编写 lisp 时起作用； 我们正在编写 forth。</p>
+</section>
+<section id="duality-of-syntax-defined">
+<span id="id2"></span><h2>8.3 语法二元性阐述<a class="headerlink" href="#duality-of-syntax-defined" title="Permalink to this heading"></a></h2>
+<p>如果忘了本书中的其他内容，那么请记住本节的信息。 在这里，我们最终定义并解释了一个我们一直触及
+的概念：<em>语法二义性</em> 。 本节假定你至少阅读了三个介绍性章节、<a class="reference internal" href="chapter06.html#chapter06"><span class="std std-ref">第六章：回指 （1） 宏</span></a> 和前面的 forth 章
+节。</p>
+<p>对于大多数 lisp 程序员来说，lisp 编程比 Blub 编程更有效率，最终看来也更自然，这一点在经验上
+是显而易见的，但要回答为什么会出现这种情况很难。 虽然 lisp 确实从宏中获得了惊人的表达能力——
+并且我们在本书和其他地方看到了许多有趣的东西——到目前为止，所有的解释都无法令人满意。 宏的真正优势
+是什么？ 部分解释当然包括 <em>简洁</em> <sup>（13）</sup> ，使程序简短。 以下是它的定义：  <sup>（14）</sup></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（13）
+简洁 brevity</p>
+</div>
+<blockquote>
+<div><p>设 L 是一种编程语言，F 是该编程语言的特征，A 是 L 中的任意程序。如果 A 比没有 F 的 L 版本短，F 提供简洁特征。</p>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（14）
+Let L be a programming language, F a feature in that programming language,
+and A an arbitrary program in L. F provides a brevity feature if A is shorter
+than it would be in a version of L without F.</p>
+</div>
+<p>简洁特性为简洁理论提供了基础和合理性： <sup>（15）</sup></p>
+<blockquote>
+<div><p>构建程序所需的工作量与所使用的编程语言中可用的简洁特性的数量成反比。</p>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（15）
+The effort required to construct a program is inversely proportional to the
+amount of brevity features available in the programming language used.</p>
+</div>
+<p><em>简洁理论</em> 基于这样一种思想，即如果编程抽象使程序的表达非常简短，那么编写它们就会变得更容易，因为需
+要编写的代码更少。我们的 CL-PPCRE 读取宏是简洁功能的示例：将很长的 CL-PPCRE 函数名称缩短为简
+洁的 Perl 格式表达式，我们每次使用它们时都可以节省我们敲打键盘的次数。简洁理论非常适用于编写小程序，当
+我们开始时，我们就知道要去哪里 <sup>【9】</sup> 。不幸的是，大多数程序都不是这样的。大多数程序——至少是有趣的程序
+——是通过一系列交互式编写测试周期 <em>迭代</em> 创建的，这些周期考虑了沿途每一步的反馈。你的抽象可能很简短，但
+如果总是不得不将它们更改为不同（也许同样简短）的抽象，你可能不会节省太多精力。与其考虑最终程序的长
+度，也许应该考虑到达那里所需的过程长度。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【9】
+通常称为“几行 Perl ”（ Perl-one-liners ），即使不是用 Perl 编写的。</p>
+</div>
+<p>在所有语言中，程序最终看起来都与如何开始的不同。 大多数程序都是从一个简单的草图开始的，随
+着作者对问题的了解越来越多，这个草图会被填写并详细说明。 在我们回到简洁和二元性之前，本章将引导
+我们开发一个简单的程序来激发讨论：我们的 forth 环境。</p>
+<p>嗯，我们讲到哪里了？ 啊，是的，我们已经讨论了很多关于 <em>抽象寄存器</em> 、 <em>抽象机器</em> 和 <em>线程代码</em> 的内容，以及
+定义了一个名为 <strong>forward-lookup</strong> 的单词查找实用程序、一个用于我们的 cons 线程代码的内部解
+释器，以及一个在我们的 forth 系统中用于收集表示 <em>原语</em> 的列表的系统。 但是构建在 lisp 之上的 forth 会发生什么
+呢？那么，对于任何混合了行为和状态的抽象来说，最自然的结构是什么？ 当然是闭包，我们的老朋友， <strong>let</strong> 和 <strong>lambda</strong> 了。有了这个想法可能会给出以下宏：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nb">defmacro</span><span class="w"> </span><span class="nv">new-forth</span><span class="w"> </span><span class="p">()</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="o">`</span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="o">,</span><span class="nv">forth-registers</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">    </span><span class="p">(</span><span class="nv">forth-install-prims</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">4</span><span class="w">    </span><span class="p">(</span><span class="k">lambda</span><span class="w"> </span><span class="p">(</span><span class="nv">v</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">5</span><span class="w">      </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">((</span><span class="nv">word</span><span class="w"> </span><span class="p">(</span><span class="nv">forth-lookup</span><span class="w"> </span><span class="nv">v</span><span class="w"> </span><span class="nv">dict</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">6</span><span class="w">        </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="nv">word</span><span class="w"></span>
+<span class="linenos">7</span><span class="w">          </span><span class="p">(</span><span class="nv">forth-handle-found</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">8</span><span class="w">          </span><span class="p">(</span><span class="nv">forth-handle-not-found</span><span class="p">))))))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>我们的 forth 抽象寄存器列表， <strong>forth-registers</strong> ，直接拼接到展开式中，最初将所有抽象寄存器绑定到
+<strong>nil</strong> 。注意，我们在这个宏的功能里留下了很多 <em>漏洞</em> 。 我们发现不得不定义一个接受原始表单的宏
+<strong>forward-install-prims</strong> ，以及宏 <strong>forward-handle-found</strong> 和
+<strong>forward-handle-not-found</strong> 。 但从这张草图中学到的最重要的一点是，没错，就是这个闭包设计
+看起来可行。 这个想法是通过遵循默认的 lisp 设计而产生的，需要 forth 成为一个闭包，这个闭包对于我们想要给它
+的每个单词都调用一次。 我们的草图概述以下 <em>用例</em> 的实现。 在这里，我们假定创建一个新的forth环境：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nb">defvar</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"> </span><span class="p">(</span><span class="nv">new-forth</span><span class="p">))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>以下是 forth 中对 3 求平方后打印其结果的代码：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>3 dup * print
+</pre></div>
+</div>
+<p>我们可以在 forth 环境中执行它，如下所示：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="k">progn</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="p">(</span><span class="nb">funcall</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">  </span><span class="p">(</span><span class="nb">funcall</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"> </span><span class="ss">&#39;dup</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">4</span><span class="w">  </span><span class="p">(</span><span class="nb">funcall</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"> </span><span class="ss">&#39;*</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">5</span><span class="w">  </span><span class="p">(</span><span class="nb">funcall</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"> </span><span class="ss">&#39;print</span><span class="p">))</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nv">defmacro!</span><span class="w"> </span><span class="nv">go-forth</span><span class="w"> </span><span class="p">(</span><span class="nv">o!forth</span><span class="w"> </span><span class="k">&amp;rest</span><span class="w"> </span><span class="nv">words</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="o">`</span><span class="p">(</span><span class="nb">dolist</span><span class="w"> </span><span class="p">(</span><span class="nv">w</span><span class="w"> </span><span class="ss">&#39;,words</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">    </span><span class="p">(</span><span class="nb">funcall</span><span class="w"> </span><span class="o">,</span><span class="nv">g!forth</span><span class="w"> </span><span class="nv">w</span><span class="p">)))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>虽然这是个笨拙的接口，但我们是在写 lisp 程序，所以我们知道总是可以创建一个宏来隐藏这些细节，而
+这正是 <strong>go-forth</strong> 宏所做的。 注意， <strong>go-forth</strong> 使用了 <strong>defmacro!</strong> 的自动
+<strong>once-only</strong> 功能，因为 <strong>go-forth</strong> 的第一个参数是在用 <strong>dolist</strong> 定义的循环内，并且可
+能不会像宏的用户预期的那样被精确地计算一次。 有了 <strong>go-forth</strong> ，将代码输入到 forth 环境变得
+更加干净：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="mi">3</span><span class="w"> </span><span class="nv">dup</span><span class="w"> </span><span class="nb">*</span><span class="w"> </span><span class="nb">print</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>在这一点上，我们可能会想到，在创建新的forth环境时，我们最终会想要执行一些forth引导代码。 所以
+我们需要能够在创建闭包时调用它。 这可能需要更改程序的 let over lambda 设计，或者可能在
+<strong>new-forth</strong> 宏周围创建某种包装函数，该函数使用 <strong>new-forth</strong> 宏，加载到标准库中，然后返
+回结果。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nb">defvar</span><span class="w"> </span><span class="nv">forth-stdlib</span><span class="w"> </span><span class="no">nil</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">2</span><span class="p">(</span><span class="nb">defmacro</span><span class="w"> </span><span class="nv">forth-stdlib-add</span><span class="w"> </span><span class="p">(</span><span class="k">&amp;rest</span><span class="w"> </span><span class="nv">all</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">  </span><span class="o">`</span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="nv">forth-stdlib</span><span class="w"></span>
+<span class="linenos">4</span><span class="w">        </span><span class="p">(</span><span class="nb">nconc</span><span class="w"> </span><span class="nv">forth-stdlib</span><span class="w"></span>
+<span class="linenos">5</span><span class="w">                </span><span class="ss">&#39;,all</span><span class="p">)))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>由于 forth 代码只是符号和其他原子的列表，我们的标准库提供了需要的所有引导（除了一些更多的原
+语）可以被存储在一个列表中。 变量 <strong>forth-stdlib</strong> 保存了这个 forth 代码列表，当新的 forths
+被创建并且 <strong>forth-stdlib-add</strong> 宏展开为 lisp 代码时，它将把新的 forth 代码追加到
+<strong>forth-stdlib</strong> 列表中。</p>
+<p>适配 <strong>new-forth</strong> 以支持加载此 <em>标准库</em> 的最简单方法是什么？ 还记得在 <a class="reference internal" href="chapter06.html#alet-and-finite-state-machines"><span class="std std-ref">6.3 alet 和有限状态机</span></a>
+中写的 <strong>alet</strong> 宏吗？ 这个宏的目的是使用 Common Lisp 的 let 创建语法的二义性，同时将回指变量
+<strong>this</strong> 绑定在提供的代码周围。这将指向从 alet 返回的结果—— forth 闭包。</p>
+<p>所以改变我们的草图比预想的更容易。 所要做的就是将草图中的第一个 <strong>let</strong> 符号改为
+<strong>alet</strong> ，然后添加一些代码以将标准环境加载到 <strong>this</strong> ， forth 闭包 <sup>【10】</sup> 。 我们不必调整其他的代码，因为
+<strong>alet</strong> 的语法是故意与 <strong>let</strong> 保持一致的。 下面是下一次迭代的样子：</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【10】
+在安装原语后完成，以便标准库可以使用它们。</p>
+</div>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">(</span><span class="nb">defmacro</span><span class="w"> </span><span class="nv">new-forth</span><span class="w"> </span><span class="p">()</span><span class="w"></span>
+<span class="linenos"> 2</span><span class="w">  </span><span class="o">`</span><span class="p">(</span><span class="nv">alet</span><span class="w"> </span><span class="o">,</span><span class="nv">forth-registers</span><span class="w"></span>
+<span class="linenos"> 3</span><span class="w">    </span><span class="p">(</span><span class="nv">forth-install-prims</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 4</span><span class="w">    </span><span class="p">(</span><span class="nb">dolist</span><span class="w"> </span><span class="p">(</span><span class="nv">v</span><span class="w"> </span><span class="nv">forth-stdlib</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 5</span><span class="w">      </span><span class="p">(</span><span class="nb">funcall</span><span class="w"> </span><span class="nv">this</span><span class="w"> </span><span class="nv">v</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 6</span><span class="w">    </span><span class="p">(</span><span class="k">lambda</span><span class="w"> </span><span class="p">(</span><span class="nv">v</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 7</span><span class="w">      </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">((</span><span class="nv">word</span><span class="w"> </span><span class="p">(</span><span class="nv">forth-lookup</span><span class="w"> </span><span class="nv">v</span><span class="w"> </span><span class="nv">dict</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos"> 8</span><span class="w">        </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="nv">word</span><span class="w"></span>
+<span class="linenos"> 9</span><span class="w">          </span><span class="p">(</span><span class="nv">forth-handle-found</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">10</span><span class="w">          </span><span class="p">(</span><span class="nv">forth-handle-not-found</span><span class="p">))))))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>记住， <strong>alet</strong> 使用闭包引入了一个间接层，因此导致我们的 forth 环境效率稍低。 然而，正如我们不知道这
+种效率负担是否会太大，我们也不知道最终我们会不会需要这种间接。 要消除间接，就使用
+<strong>alet</strong> 之前定义的 <strong>alet%</strong> 宏。</p>
+<p>也许现在，或者以后当我们尝试构建和调试 forth 环境时，我们可能会想到能够从 forth 环境之外访问
+forth 抽象寄存器也是有用的。不幸的是，这些变量被一个 let over lambda 封闭。我们将不得不再次
+更改程序以使其可访问。当然，有很多方法可以做到这一点。可以在 forth 环境中嵌入并返回多个闭包，
+其中一些可以保存和访问抽象寄存器，或者可以重新考虑完全放弃我们的 lambda 策略。但在这样做之前，是否有
+任何二元性可以帮助我们？还记得 <a class="reference internal" href="chapter06.html#pandoric-macros"><span class="std std-ref">6.7 潘多拉宏</span></a> 中的 plambda 吗？它的目的是使用 lambda 创建一种
+二元语法，但它创建的闭包实际上是对外部环境开放的。更改我们的草图以支持这一点很简单，只需在我们作为闭
+包返回的 lambda 添加个前缀字符 p 并添加我们要导出的变量列表。我们的列表在 <strong>forth-registers</strong>  <sup>【11】</sup> 中对我们来说是便捷可用的。草图变成：</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【11】
+虽然使用不引用拼接这些变量只会在编写宏时起作用，但读取宏让我们在编写函数时也可以做类似的事情。</p>
+</div>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">(</span><span class="nb">defmacro</span><span class="w"> </span><span class="nv">new-forth</span><span class="w"> </span><span class="p">()</span><span class="w"></span>
+<span class="linenos"> 2</span><span class="w">  </span><span class="o">`</span><span class="p">(</span><span class="nv">alet</span><span class="w"> </span><span class="o">,</span><span class="nv">forth-registers</span><span class="w"></span>
+<span class="linenos"> 3</span><span class="w">    </span><span class="p">(</span><span class="nv">forth-install-prims</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 4</span><span class="w">    </span><span class="p">(</span><span class="nb">dolist</span><span class="w"> </span><span class="p">(</span><span class="nv">v</span><span class="w"> </span><span class="nv">forth-stdlib</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 5</span><span class="w">      </span><span class="p">(</span><span class="nb">funcall</span><span class="w"> </span><span class="nv">this</span><span class="w"> </span><span class="nv">v</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 6</span><span class="w">    </span><span class="p">(</span><span class="nv">plambda</span><span class="w"> </span><span class="p">(</span><span class="nv">v</span><span class="p">)</span><span class="w"> </span><span class="o">,</span><span class="nv">forth-registers</span><span class="w"></span>
+<span class="linenos"> 7</span><span class="w">        </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">((</span><span class="nv">word</span><span class="w"> </span><span class="p">(</span><span class="nv">forth-lookup</span><span class="w"> </span><span class="nv">v</span><span class="w"> </span><span class="nv">dict</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos"> 8</span><span class="w">          </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="nv">word</span><span class="w"></span>
+<span class="linenos"> 9</span><span class="w">            </span><span class="p">(</span><span class="nv">forth-handle-found</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">10</span><span class="w">            </span><span class="p">(</span><span class="nv">forth-handle-not-found</span><span class="p">))))))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>随着 forth 闭包的开启，我们可以使用以下用例。 这会将五个项压入 forth 堆栈中：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="mi">1</span><span class="w"> </span><span class="mf">2.0</span><span class="w"> </span><span class="s">&quot;three&quot;</span><span class="w"> </span><span class="ss">&#39;four</span><span class="w"> </span><span class="o">&#39;</span><span class="p">(</span><span class="nv">f</span><span class="w"> </span><span class="nv">i</span><span class="w"> </span><span class="nv">v</span><span class="w"> </span><span class="nv">e</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">3</span>
+<span class="linenos">4</span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<p>然后我们可以随意打开 <strong>my-forth</strong> 来检查其参数堆栈：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">with-pandoric</span><span class="w"> </span><span class="p">(</span><span class="nv">pstack</span><span class="p">)</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="nv">pstack</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="p">((</span><span class="nv">F</span><span class="w"> </span><span class="nv">I</span><span class="w"> </span><span class="nv">V</span><span class="w"> </span><span class="nv">E</span><span class="p">)</span><span class="w"> </span><span class="nv">FOUR</span><span class="w"> </span><span class="s">&quot;three&quot;</span><span class="w"> </span><span class="mf">2.0</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>这是为达到我们的 <strong>new-forth</strong> 宏的最终版本而执行的过程。 最终定义与上一个草图相同，除了它还将 dtable
+抽象寄存器设置为指向哈希表（很快就会解释）以外。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">(</span><span class="nb">defmacro</span><span class="w"> </span><span class="nv">new-forth</span><span class="w"> </span><span class="p">()</span><span class="w"></span>
+<span class="linenos"> 2</span><span class="w">  </span><span class="o">`</span><span class="p">(</span><span class="nv">alet</span><span class="w"> </span><span class="o">,</span><span class="nv">forth-registers</span><span class="w"></span>
+<span class="linenos"> 3</span><span class="w">    </span><span class="p">(</span><span class="k">setq</span><span class="w"> </span><span class="nv">dtable</span><span class="w"> </span><span class="p">(</span><span class="nb">make-hash-table</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 4</span><span class="w">    </span><span class="p">(</span><span class="nv">forth</span><span class="w"> </span><span class="nv">-install</span><span class="w"> </span><span class="nv">-prims</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 5</span><span class="w">    </span><span class="p">(</span><span class="nb">dolist</span><span class="w"> </span><span class="p">(</span><span class="nv">v</span><span class="w"> </span><span class="nv">forth</span><span class="w"> </span><span class="nv">-stdlib</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 6</span><span class="w">      </span><span class="p">(</span><span class="nb">funcall</span><span class="w"> </span><span class="nv">this</span><span class="w"> </span><span class="nv">v</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 7</span><span class="w">    </span><span class="p">(</span><span class="nv">plambda</span><span class="w"> </span><span class="p">(</span><span class="nv">v</span><span class="p">)</span><span class="w"> </span><span class="o">,</span><span class="nv">forth</span><span class="w"> </span><span class="nv">-registers</span><span class="w"></span>
+<span class="linenos"> 8</span><span class="w">      </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">((</span><span class="nv">word</span><span class="w"> </span><span class="p">(</span><span class="nv">forth-lookup</span><span class="w"> </span><span class="nv">v</span><span class="w"> </span><span class="nv">dict</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos"> 9</span><span class="w">        </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="nv">word</span><span class="w"></span>
+<span class="linenos">10</span><span class="w">          </span><span class="p">(</span><span class="nv">forth-handle-found</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">11</span><span class="w">          </span><span class="p">(</span><span class="nv">forth-handle-not-found</span><span class="p">))))))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>编程，至少是有趣的编程，不是写程序，而是改变它们。 就生产力而言，简洁仅能带我们到此为止。 我们
+可以将 <strong>lambda</strong> 重命名为 <strong>fn</strong> ，但是这个简洁的特性并没有节省太多，只是在各处少打几个字符 <sup>【12】</sup> 。 然而，真正省
+力的是有许多类似于 lambda 的抽象，我们可以使用它们来更改代码的含义，而无需过多地修改代码本身。 语法的二元性节省了我们的气力。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【12】
+我们中的许多人都认为 lambda 就挺好，谢谢</p>
+</div>
+<p>就像给你的特殊变量名加上 <em>耳罩</em> <sup>（16）</sup> 一样，如果你改变了关于变量应该是特殊的（变量）还是词法（变量）的想法，就会强迫你添加
+或删除星号 <sup>【13】</sup> ，不必要地分离语法和避免二义性可能会在编程过程中导致很多毫无意义的工作。另一个例子：
+尖引用（ <strong>#’</strong> ）你的 lambda 结构是个坏主意，因为这意味着当你决定一个函数真的需要成为 <strong>alambda</strong> 或者当你决
+定在列表的函数位置使用 <strong>lambda</strong> 结构时，不得不做更多的修改。广义变量还提供了一个非常重要的二义性：
+在编写宏时，相同的结构可以拼接成展开式，用于访问和修改变量。 Common Lisp 对于空列表和 false 布
+尔值的双重含义是又一个例子——除了语法的二义性之外，没有真正的理由这两者应该相同。二义性也是本书
+提倡闭包而不是其他 CLOS 特性 <sup>【14】</sup> （如 <strong>defclass</strong> 和 <strong>defmethod</strong> ）的原因。与修改使用类和对
+象的程序相比，修改使用闭包的程序时阻力通常更小，因为我们有很多很好的闭包语法二义性，而且编程宏来构建闭包是更加统一的  <sup>【15】</sup>  。考虑到这些和其他例子，终于可以对语法二元性的含义给出一个清晰的定义：  <sup>（17）</sup></p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【13】
+或者可能在代码中留下不正确的文档。</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【14】
+这里的“其他”一词指的是这样一个事实，即使使用闭包进行编程，在 COMMON LISP 中也是 CLOS 的一个特性。CLOS 是如此基础，以至于你无法逃避它（你也不想逃避）。</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【15】
+也就是说，泛型函数非常重要，因为它们引入了具有多种方法的二义性。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（16）
+耳罩 earmuffs ，译注：星号</p>
+</div>
+<blockquote>
+<div><p>设 L 是一种编程语言，F 是该编程语言中的一个特征，而 A 和 B 是 L 中的任意程序。如果将 A 变为 B ，（有 F 的 L 的版本）所需的修改变得比没有 F 的 L 的版本少，则 F 提供了语法二义性特征。</p>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（17）
+Let L be a programming language, F a feature in that programming language,
+and A and B arbitrary programs in L. F provides a duality of syntax feature
+if the modifications required to change A into B become fewer than in a
+version of L without F.</p>
+</div>
+<p>这就有了二元性理论（ theory of duality ）：  <sup>（18）</sup></p>
+<blockquote>
+<div><p>构建程序所需的工作量与在编程语言中所使用的可用的二义语法的数量成反比。</p>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（18）
+The effort required to construct a program is inversely proportional to the
+amount of dual syntax available in the programming language used.</p>
+</div>
+<p>虽然二义性语法的概念及其好处的影响都非常清楚，但如何真正地设计好的二义性却远没有那么清楚。 某种语
+言中最有用的二义性是什么？ 我们如何判断两种不同语言中的哪一种会为某些给定问题提供更好的语法二义性？</p>
+<p>因为使用 lisp，我们完全控制了编程语言，所以我们可以根据需要使用或多或少的双重语法来设计我们的语
+言。在我看来，遵循这种思路是当今编程语言研究最富有成果的领域。 使用 lisp 宏，我们所有的完全不同的程序，我们可以使其彼此相似到何种程度，从而使将它们更改为新程序变得容易得多 <sup>【16】</sup> ？</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【16】
+有时将程序更改为新程序被称为开发，尤其是当生成的程序大于原始程序的时候。</p>
+</div>
+<p>在简洁性和二义性的定义中，特征 F 是否高效取决于正在编写或更改的程序。 有时，提供简洁性或二义性
+的功能在某些情况下实际上会增加所需的工作量。 最好的方法可能是提供尽可能多的有用的简洁性和二元性
+功能，同时删除那些最终会带来更多麻烦的功能。</p>
+</section>
+<section id="forth">
+<span id="going-forth"></span><h2>8.4 前往 forth<a class="headerlink" href="#forth" title="Permalink to this heading"></a></h2>
+<p>在本节中，通过填补上一节中 <strong>new-forth</strong> 宏中留下的 <em>漏洞</em> ,我们来真正开始了 forth
+。 在验证了 forth 线程机制有效之后，我们引导了一个 forth 编程环境，并在此过程中解释了forth <em>即时性</em> <sup>（20）</sup>  是什么
+以及它与 lisp 宏的关系。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（20）
+即时性 immediacy</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>;; Prim-form: (name immediate . forms)
+<span class="linenos"> 2</span>(defmacro forth-install-prims ()
+<span class="linenos"> 3</span>  `(progn
+<span class="linenos"> 4</span>      ,@(mapcar
+<span class="linenos"> 5</span>        #`(let ((thread (lambda ()
+<span class="linenos"> 6</span>                          ,@(cddr a1))))
+<span class="linenos"> 7</span>            (setf dict
+<span class="linenos"> 8</span>                  (make-forth-word
+<span class="linenos"> 9</span>                    :name &#39;,(car a1)
+<span class="linenos">10</span>                    :prev dict
+<span class="linenos">11</span>                    :immediate ,(cadr a1)
+<span class="linenos">12</span>                    :thread thread))
+<span class="linenos">13</span>            (setf (gethash thread dtable)
+<span class="linenos">14</span>                  &#39;,(cddr a1)))
+<span class="linenos">15</span>        forth-prim-forms)))
+</pre></div>
+</div>
+<p>在 <strong>new-forth</strong> 的定义中，我们在宏中留下了个漏洞，这个漏洞将由 <strong>forth-install-prim</strong> 来填补。
+我们想不丢掉词法环境而使用一个命名抽象，所以它必须是一个宏。 该宏的目的是在创建新的forth实例时编译
+原语并将其安装到 forth 字典中。 <strong>forth-install-prims</strong> 展开为 <strong>progn</strong> 格式，其中每个子结
+构都是将原始单词附加到 dict 链表上的指令，将提供的代码封装在 lambda 中，并设置单词的 <strong>name</strong> 和 <strong>immediate</strong> 槽。 此外，由 lambda 为每个单词创建的函数，称为 <strong>thread</strong> ，被添加到我们的 <strong>dtable</strong> 哈希表中
+（很快就会解释）。 因为所有这些函数都将在最初的 <strong>new-forth</strong> 宏的作用域内创建，所以它们可以完
+全访问由我们的抽象寄存器指定的 forth 环境。 注意， <strong>thread</strong> 绑定不会从任何用户提供的代码中捕获 <strong>thread</strong> ，
+因此不需要使用 <strong>gensym</strong> 来命名它。</p>
+<p>我们已经说过，forth 提供了一个与 lisp 不完全不同的元编程系统，并且该系统基于一个称为 <em>即时性</em> 的
+概念。在传统的 forth 中，有一个称为 <strong>state</strong> 的变量，它要么为零，要么非零。 如果它为零，则认为
+forth 处于常规解释（执行）状态。 如果在这种状态下给定一个单词，该单词将被查找并执行。 但是，如
+果变量  <strong>state</strong> <sup>（19）</sup>  不为零，则称 forth 变量处于编译状态。 如果我们在这种状态下表达一个单词，被表达的单词的地址将附
+加到正在编译的当前线程——通常是字典中最近创建过的单词。 然而，有一个例外，这是关于即时性的重要一
+点。 如果我们处于编译状态并且我们得到一个立即的单词，则该单词将被执行而不是编译。 因此，与 lisp 一样，forth
+允许我们在编译时执行任意的 forth 代码。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（19）
+原文为 <strong>base</strong> ，但是通过查找 forth 语言的语法说明，作者应是笔误。参见： <a class="reference external" href="https://www.complang.tuwien.ac.at/forth/gforth/Docs-html/How-does-that-work_003f.html#How-does-that-work_003f">https://www.complang.tuwien.ac.at/forth/gforth/Docs-html/How-does-that-work_003f.html#How-does-that-work_003f</a></p>
+</div>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nv">def-forth-prim</span><span class="w"> </span><span class="nv">[</span><span class="w"> </span><span class="no">t</span><span class="w"> </span><span class="c1">; &lt;- t means immediate</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="nv">compiling</span><span class="w"> </span><span class="no">nil</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">3</span><span class="p">(</span><span class="nv">def-forth-prim</span><span class="w"> </span><span class="nv">]</span><span class="w"> </span><span class="no">nil</span><span class="w"> </span><span class="c1">; &lt;- not immediate</span><span class="w"></span>
+<span class="linenos">4</span><span class="w">  </span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="nv">compiling</span><span class="w"> </span><span class="no">t</span><span class="p">))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>因为我们在 lisp 上构建了 forth 抽象机，所以我们不必去忍受固定数字（ fixnum ）值到真假（布尔值）的任意映射。
+在 lisp 中，我们拥有一个动态类型系统，可以享受所有值到真假的任意映射。代替 forth 变量状态，我们的
+forth系统使用编译抽象寄存器将编译状态存储为 lisp <em>通用布尔值</em> 。用于控制编译状态的传统forth 单词
+是 <strong>[</strong> 和 <strong>]</strong> ，即开闭方括号。 <strong>[</strong> 为退出编译模式，因此必须是一个立即字。 <strong>]</strong> 回到编
+译模式，因此仅在处于解释模式时才执行，并且不必立即执行。这种符号的选择现在可能看起来很奇怪，但在
+高层次 forth 代码中会变得更加清晰。这些方括号允许我们指明要在编译 forth 线程的过程中执行的代码块。
+在某种意义上，这些括号就像 lisp 的反引号和消除引用操作符。以下是这些词通常在 forth 代码中的使用
+方式：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>... compiled words ...
+<span class="linenos">2</span>[ interpret these words ]
+<span class="linenos">3</span>... more compiled words ...
+</pre></div>
+</div>
+<p>与大部分的 forth 一样，这些词是透明地指定的，这允许我们以特别的方式使用它们。 例如，这些词的平
+衡与lisp 括号不同。 如果我们想要的话，可以在相反的方向使用它们：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>... interpret these words ...
+<span class="linenos">2</span>] compile these words [
+<span class="linenos">3</span>... more interpreted words ...
+</pre></div>
+</div>
+<p>我们甚至有嵌套的外观，但这并不是真正的嵌套，因为我们只有一个布尔状态：正在编译或未编译。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>... compiled words ...
+<span class="linenos">2</span>[ interpret these words
+<span class="linenos">3</span>  ] compile these words [
+<span class="linenos">4</span>  interpret these words
+<span class="linenos">5</span>]
+<span class="linenos">6</span>... more compiled words ...
+</pre></div>
+</div>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nb">defmacro</span><span class="w"> </span><span class="nv">forth-compile-in</span><span class="w"> </span><span class="p">(</span><span class="nv">v</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="o">`</span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="p">(</span><span class="nv">forth-word-thread</span><span class="w"> </span><span class="nv">dict</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">        </span><span class="p">(</span><span class="nb">nconc</span><span class="w"> </span><span class="p">(</span><span class="nv">forth-word-thread</span><span class="w"> </span><span class="nv">dict</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">4</span><span class="w">                </span><span class="p">(</span><span class="nb">list</span><span class="w"> </span><span class="o">,</span><span class="nv">v</span><span class="p">))))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>我们的 forth 使用 <strong>forth-compile-in</strong> 宏作为缩写宏。 这个宏将 forth 单词编译到当前的线
+程中，即最近创建的一个单词的线程。 因为我们的线程由 cons 单元表示，所以我们可以使用 lisp 函数
+<strong>nconc</strong> 简单地将指向目标单词线程的指针追加到当前的线程上。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro forth-handle-found ()
+<span class="linenos">2</span>  `(if (and compiling
+<span class="linenos">3</span>            (not (forth-word-immediate word)))
+<span class="linenos">4</span>    (forth-compile-in (forth-word-thread word))
+<span class="linenos">5</span>    (progn
+<span class="linenos">6</span>        (setf pc (list (forth-word-thread word)))
+<span class="linenos">7</span>        (forth-inner-interpreter))))
+</pre></div>
+</div>
+<p><strong>new-forth</strong> 宏中留下的另一个漏洞是，如 forth 能够在字典中查找提供的单词，它应该做什么。 这个漏
+洞由 <strong>forth-handle-found</strong> 修复。 该宏实现了上述的即时性。 如果我们正在编译并且查找的单词不是
+立即的，我们将它编译到当前的线程中。 否则，我们将我们的程序计数器 <strong>pc</strong> 设置为指向查找单词的线程并运行内部解
+释器来执行该单词。回想一下，这个宏将被展开成一个词法环境，其中单词词绑定到查找的 forth 单词上。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">(</span><span class="nb">defmacro</span><span class="w"> </span><span class="nv">forth-handle-not-found</span><span class="w"> </span><span class="p">()</span><span class="w"></span>
+<span class="linenos"> 2</span><span class="w">  </span><span class="o">`</span><span class="p">(</span><span class="nb">cond</span><span class="w"></span>
+<span class="linenos"> 3</span><span class="w">      </span><span class="p">((</span><span class="nb">and</span><span class="w"> </span><span class="p">(</span><span class="nb">consp</span><span class="w"> </span><span class="nv">v</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">eq</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">v</span><span class="p">)</span><span class="w"> </span><span class="ss">&#39;quote</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 4</span><span class="w">          </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="nv">compiling</span><span class="w"></span>
+<span class="linenos"> 5</span><span class="w">            </span><span class="p">(</span><span class="nv">forth-compile-in</span><span class="w"> </span><span class="p">(</span><span class="nb">cadr</span><span class="w"> </span><span class="nv">v</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 6</span><span class="w">            </span><span class="p">(</span><span class="nb">push</span><span class="w"> </span><span class="p">(</span><span class="nb">cadr</span><span class="w"> </span><span class="nv">v</span><span class="p">)</span><span class="w"> </span><span class="nv">pstack</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos"> 7</span><span class="w">  </span><span class="p">((</span><span class="nb">and</span><span class="w"> </span><span class="p">(</span><span class="nb">consp</span><span class="w"> </span><span class="nv">v</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">eq</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">v</span><span class="p">)</span><span class="w"> </span><span class="ss">&#39;postpone</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 8</span><span class="w">    </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">((</span><span class="nv">word</span><span class="w"> </span><span class="p">(</span><span class="nv">forth-lookup</span><span class="w"> </span><span class="p">(</span><span class="nb">cadr</span><span class="w"> </span><span class="nv">v</span><span class="p">)</span><span class="w"> </span><span class="nv">dict</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos"> 9</span><span class="w">      </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">not</span><span class="w"> </span><span class="nv">word</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">10</span><span class="w">        </span><span class="p">(</span><span class="nb">error</span><span class="w"> </span><span class="s">&quot;Postpone failed: ~a&quot;</span><span class="w"> </span><span class="p">(</span><span class="nb">cadr</span><span class="w"> </span><span class="nv">v</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">11</span><span class="w">      </span><span class="p">(</span><span class="nv">forth-compile-in</span><span class="w"> </span><span class="p">(</span><span class="nv">forth-word-thread</span><span class="w"> </span><span class="nv">word</span><span class="p">))))</span><span class="w"></span>
+<span class="linenos">12</span><span class="w">  </span><span class="p">((</span><span class="nb">symbolp</span><span class="w"> </span><span class="nv">v</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">13</span><span class="w">    </span><span class="p">(</span><span class="nb">error</span><span class="w"> </span><span class="s">&quot;Word ~a not found&quot;</span><span class="w"> </span><span class="nv">v</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">14</span><span class="w">  </span><span class="p">(</span><span class="no">t</span><span class="w"></span>
+<span class="linenos">15</span><span class="w">    </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="nv">compiling</span><span class="w"></span>
+<span class="linenos">16</span><span class="w">      </span><span class="p">(</span><span class="nv">forth-compile-in</span><span class="w"> </span><span class="nv">v</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">17</span><span class="w">      </span><span class="p">(</span><span class="nb">push</span><span class="w"> </span><span class="nv">v</span><span class="w"> </span><span class="nv">pstack</span><span class="p">)))))</span><span class="w"></span>
+</pre></div>
+</div>
+<p><strong>new-forth</strong> 中的最后一个漏洞是如果 forth 在其字典中没有找到单词时，它应该做什么。
+<strong>forth-handle-not-found</strong> 修复了这个漏洞并实现了一些特殊情况。回想一下，
+<strong>forth-handle-not-found</strong> 将展开为包含绑定 <strong>v</strong> 的词法环境，该绑定 <strong>v</strong> 引用传递给
+forth 的值。我们还知道，如果调用此代码， <strong>v</strong> 将不会引用字典中的任何单词。如果 <strong>v</strong> 是一个
+符号，则 <strong>forth-handle-not-found</strong> 将抛出异常。如果该值不是符号，则操作是将 <strong>v</strong> 压入参
+数堆栈，或者，如果我们正在编译，则将其编译到当前线程中。但是，检查了两种特殊情况。如果 <strong>v</strong> 是一个列表，列表第一个元素被引用（ <strong>quote</strong> ），我们将被引用的值压入参数堆栈。这样我们就可以在没有将符合解释为单词的情况下，将符号压入到参数堆栈上。第二种特殊情况是如果 <strong>v</strong> 是第一个元素为推迟的（ <strong>postpone</strong> ）的列表。推迟 （ <strong>postpone</strong> ） 是一个
+ANSI Forth 词，它结合并澄清了几个传统的 forth 词。<strong>postpone</strong> 用于始终编译一个单词，即使该单
+词是立即的。因此，如果我们处于编译模式，一个 postpone 的立即字将被编译到当前的线程中，即使它是
+立即的。下面是一个推迟 <sup>（20）</sup>  <strong>[</strong> 字的例子：</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（20）
+推迟 postpone</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>... compiling ...
+<span class="linenos">2</span>(postpone [)
+<span class="linenos">3</span>... still compiling ...
+</pre></div>
+</div>
+<p>在我们的 <strong>new-forth</strong> 宏中填补了所有漏洞之后，我们现在可以使用 <strong>new-forth</strong> 宏创建新的 forth 实
+例。之前我们用 <strong>defvar</strong> 创建了一个名为 <strong>my-forth</strong> 的特殊变量。 即使我们没有，我们也可
+以隐式地声明它是特殊的，同时使用（ REPL ） top-level 的  <strong>setq</strong>  <sup>【17】</sup> 为它分配一个值：</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【17】
+某些实现会阻止您这样做。在这种情况下，解决方案是升级到可以使用的软件（例如 CMUCL ）或使用 <strong>defparameter</strong> 而不是 <strong>setq</strong> 。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (setq my-forth (new-forth))
+<span class="linenos">2</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>现在可以用 <strong>go-forth</strong> 宏来调用 forth 了：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="nb">*</span><span class="w"> </span><span class="nb">print</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="mi">6</span><span class="w"></span>
+<span class="linenos">4</span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<p>但到目前为止，我们只定义了单词 <strong>dup</strong> 、 <strong>*</strong> 和 <strong>print</strong> 。 为了做些有用的事情，我们需要
+更多的原语。 与 lisp 一样，生产质量 forth 实现具有为方便程序员而定义的大量单词。 经过几十年
+的使用，许多常见的编程模式已经被识别出来，抽象成单词，然后被引入到常规的 forth 方言中。 像 lisp 一
+样，能够扩展定义为语言一部分的语言已经导致了许多有价值的实验。 因为我们正在研究的正是这种理念和
+过程，所以我们不会定义很多经验丰富的 Forth 程序员所依赖的词语。 相反，我们的目标是解释 forth
+的元编程系统所需的最小原语集，以便我们可以将其与 lisp 宏进行比较。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nv">def-forth-prim</span><span class="w"> </span><span class="nv">create</span><span class="w"> </span><span class="no">nil</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="nv">dict</span><span class="w"> </span><span class="p">(</span><span class="nv">make-forth-word</span><span class="w"> </span><span class="ss">:prev</span><span class="w"> </span><span class="nv">dict</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">3</span><span class="p">(</span><span class="nv">def-forth-prim</span><span class="w"> </span><span class="nv">name</span><span class="w"> </span><span class="no">nil</span><span class="w"></span>
+<span class="linenos">4</span><span class="w">  </span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="p">(</span><span class="nv">forth-word-name</span><span class="w"> </span><span class="nv">dict</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">pop</span><span class="w"> </span><span class="nv">pstack</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">5</span><span class="p">(</span><span class="nv">def-forth-prim</span><span class="w"> </span><span class="nv">immediate</span><span class="w"> </span><span class="no">nil</span><span class="w"></span>
+<span class="linenos">6</span><span class="w">  </span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="p">(</span><span class="nv">forth-word-immediate</span><span class="w"> </span><span class="nv">dict</span><span class="p">)</span><span class="w"> </span><span class="no">t</span><span class="p">))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>这里定义了另外三个原语，它们都不是直接的或裸露的： <strong>create</strong> 、 <strong>name</strong> 和 <strong>immediate</strong> 。
+<strong>create</strong> 原语将一个无名词附加到字典中。 <strong>name</strong> 从参数堆栈中弹出一个值，并将字典中最后一个
+单词的名称设置为该值。 <strong>immediate</strong> 简单地将定义的最近一个单词设置为立即单词。 默认情况下，
+单词不是立即的。</p>
+<p>回想一下，我们可以在我们的 <strong>my-forth</strong> 环境中使用 <strong>go-forth</strong> 宏执行代码。 下面，我们将数字
+3 平方并打印结果：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="mi">3</span><span class="w"> </span><span class="nv">dup</span><span class="w"> </span><span class="nb">*</span><span class="w"> </span><span class="nb">print</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="mi">9</span><span class="w"></span>
+</pre></div>
+</div>
+<p>是否已经有足够的 forth 来开始用 forth 单词本身来引导？ 虽然我们还没有真正定义单词，但由于线程代码的
+透明规范，我们可以开始使用 forth 编写 forth 单词。 例如，下面我们将使用 <strong>create</strong> 将一个新的
+空词追加到字典中：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="nv">create</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<p>现在使用 <strong>]</strong> 开始编译，在线程中添加单词 <strong>dup</strong> 和 <strong>*</strong> ，然后使用 <strong>[</strong> 退出编译模式：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="nv">]</span><span class="w"> </span><span class="nv">dup</span><span class="w"> </span><span class="nb">*</span><span class="w"> </span><span class="nv">[</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<p>现在我们的字典中有一个新单词——一个具有完整的 forth 线程的单词，当通过我们的内部解释器执行该线程时，它
+将对堆栈顶部的数字进行平方。 但是这个单词不是很有用，除非我们有办法访问它。 我们可以通过使用单词 <strong>name</strong> 来给这个单词一个名字。 我们给
+定的名字将会是用来访问新线程的值：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="ss">&#39;square</span><span class="w"> </span><span class="nv">name</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<p>注意传给 forth 的第一个值是如何被引用的。 回想一下，我们决定这种行为应该导致 forth 将符号
+<strong>square</strong> 推入参数堆栈。然后这个符号被单词 <strong>name</strong> 消耗。 现在我们的单词被命名了，我们可以像使用任
+何其他单词一样使用符号 <strong>square</strong> 来计算它：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="mi">3</span><span class="w"> </span><span class="nv">square</span><span class="w"> </span><span class="nb">print</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="mi">9</span><span class="w"> </span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<p>所以用来创建新词的通用技术是以下模式：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>create
+<span class="linenos">2</span>] ... compiled words ... [
+<span class="linenos">3</span>&#39;whatever name
+</pre></div>
+</div>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nv">forth-stdlib-add</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="nv">create</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">    </span><span class="nv">]</span><span class="w"> </span><span class="nv">create</span><span class="w"> </span><span class="nv">]</span><span class="w"> </span><span class="nv">[</span><span class="w"></span>
+<span class="linenos">4</span><span class="w">  </span><span class="ss">&#39;{</span><span class="w"> </span><span class="nv">name</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>但是我们可以使用一些 forth 元编程来改进这个接口。 新的 forth 单词 <strong>{</strong> 的定义被添加到标准库
+中。 它的线程由两个指针组成，第一个指向单词 <strong>create</strong> ，第二个指向单词 <strong>]</strong> 。 所以当这个
+词的线程被执行时，它会在字典中追加一个新词，并让我们进入编译模式。 Forth 通常为此使用 <strong>:</strong>
+单词，但这与 lisp 中 <strong>:</strong> 的使用冲突，因此我们选择使用 <strong>{</strong> 来开始单词定义。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nv">forth-stdlib-add</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="nv">{</span><span class="w"> </span><span class="p">(</span><span class="nv">postpone</span><span class="w"> </span><span class="nv">[</span><span class="p">)</span><span class="w"> </span><span class="nv">[</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">  </span><span class="ss">&#39;}</span><span class="w"> </span><span class="nv">name</span><span class="w"> </span><span class="nv">immediate</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>类似地，我们在标准库中添加了一个补充词 <strong>}</strong> （替换了传统 forth 的 <strong>:</strong> ）。 实际上没有理由
+定义这个词——它唯一的作用就是让我们脱离编译状态。 我们已经有了 <strong>[</strong> 来为我们做这件事。 尽管如
+此，定义 <strong>{</strong> 还是有用的，因为它通过创建一对单词 <strong>{</strong> 和 <strong>}</strong> 为我们提供了 <em>正常的平衡括号</em> <sup>【18】</sup> ，这使得定
+义新单词变得直观。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【18】
+与向后平衡的括号相反，forth 的方括号用于定义单词。</p>
+</div>
+<p>我们现在可以创建一个 forth 来利用这些新的标准库特性（丢弃我们之前对单词 <strong>square</strong> 的定义）：</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【19】
+在许多方面，0、1、-1 等常见数字被定义为单词，因为对单词的编译引用通常比编译文字占用更少的内存。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (go-forth my-forth
+<span class="linenos">2</span>    { 4.0 } &#39;4 name
+<span class="linenos">3</span>    4 4 * print)
+<span class="linenos">4</span>  16.0
+<span class="linenos">5</span>  NIL
+</pre></div>
+</div>
+<p>Forth 是学习如何使用指针作用域的优秀语言。 Forth 定义了两个简单的运算符，用于从内存中读取和写入值： <strong>&#64;</strong> (取出) 和 <strong>!</strong> （存储）。 因为我们的 forth 字存储在 cons 单元中而不是内存字
+中，所以使用 fetch 取消引用指针是通过获取指针的 car 来实现的。 用 store 设置它是通过使用
+<strong>setf</strong> 设置它的 car 来实现的。 Fetch 将从参数堆栈中弹出一个值，假设它是一个 cons 单元，
+获取它的 car，然后将其压入堆栈。 Store 将从参数堆栈中弹出一个值，假设它是一个 cons 单元格，
+从堆栈中弹出另一个值，并将其存储到第一个值的 car 中。 例如，以下是如何创建和打印循环列表：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">(</span><span class="nv">def-forth-prim</span><span class="w"> </span><span class="nv">@</span><span class="w"> </span><span class="no">nil</span><span class="w"></span>
+<span class="linenos"> 2</span><span class="w">  </span><span class="p">(</span><span class="nb">push</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="p">(</span><span class="nb">pop</span><span class="w"> </span><span class="nv">pstack</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 3</span><span class="w">  </span><span class="nv">pstack</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="p">(</span><span class="nv">def-forth-prim</span><span class="w"> </span><span class="nv">!</span><span class="w"> </span><span class="no">nil</span><span class="w"></span>
+<span class="linenos"> 6</span><span class="w">  </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">((</span><span class="nv">location</span><span class="w"> </span><span class="p">(</span><span class="nb">pop</span><span class="w"> </span><span class="nv">pstack</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos"> 7</span><span class="w">    </span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">location</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">pop</span><span class="w"> </span><span class="nv">pstack</span><span class="p">))))</span><span class="w"></span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="w">    </span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">((</span><span class="vg">*print-circle*</span><span class="w"> </span><span class="no">t</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">11</span><span class="w">        </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos">12</span><span class="w">          </span><span class="o">&#39;</span><span class="p">(</span><span class="no">nil</span><span class="p">)</span><span class="w"> </span><span class="nv">dup</span><span class="w"> </span><span class="nv">dup</span><span class="w"> </span><span class="nv">!</span><span class="w"> </span><span class="nb">print</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">13</span><span class="w">    </span><span class="o">#1=</span><span class="p">(</span><span class="o">#1#</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">14</span><span class="w">    </span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<p>所以现在我们正在使用线程代码在 forth 中进行编程。 还是说我们真的这样吗？ 我们离开过 lisp 吗？ 两种语言之
+间的区别是如此模糊，以至于几乎无法辨别。 本章的其余部分在进一步解释元编程时试图使这种区别更模
+糊。</p>
+</section>
+<section id="going-forther">
+<span id="id3"></span><h2>8.5 深入 forth<a class="headerlink" href="#going-forther" title="Permalink to this heading"></a></h2>
+<p>Common Lisp 有很多我们希望能够包含在我们的 forth 线程中的函数。
+<strong>forth-unary-word-definer</strong> 展开为与传递给其宏体的元素一样多的 <strong>def-forth-prim</strong> 结
+构。 假定这些元素是表示函数或宏的符号，但它们也可以是lambda 结构。 由 lambda 形式命名的原语的唯
+一限制是，要调用此类原语，你将会需要将相同的（ eq ） lambda 结构传递给 forth 环境。 下面是传递一个符号
+—— <strong>not</strong> 时的展开式：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro forth-unary-word-definer (&amp;rest words)
+<span class="linenos">2</span>      ,@(mapcar
+<span class="linenos">3</span>          #`(def-forth-prim ,a1 nil
+<span class="linenos">4</span>              (push (,a1 (pop pstack))
+<span class="linenos">5</span>                    pstack ))
+<span class="linenos">6</span>          words )))
+</pre></div>
+</div>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nb">macroexpand</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="o">&#39;</span><span class="p">(</span><span class="nv">forth-unary-word-definer</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">      </span><span class="nb">not</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">4</span><span class="p">(</span><span class="nv">PROGN</span><span class="w"></span>
+<span class="linenos">5</span><span class="w">  </span><span class="p">(</span><span class="nv">DEF-FORTH-PRIM</span><span class="w"> </span><span class="nv">NOT</span><span class="w"> </span><span class="no">NIL</span><span class="w"></span>
+<span class="linenos">6</span><span class="w">    </span><span class="p">(</span><span class="nv">PUSH</span><span class="w"> </span><span class="p">(</span><span class="nv">NOT</span><span class="w"> </span><span class="p">(</span><span class="nv">POP</span><span class="w"> </span><span class="nv">PSTACK</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">7</span><span class="w">          </span><span class="nv">PSTACK</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">8</span><span class="no">T</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro! forth-binary-word-definer (&amp;rest words)
+<span class="linenos">2</span>  `(progn
+<span class="linenos">3</span>      ,@(mapcar
+<span class="linenos">4</span>          #`(def-forth-prim ,a1 nil
+<span class="linenos">5</span>              (let ((,g!top (pop pstack)))
+<span class="linenos">6</span>                (push (,a1 (pop pstack)
+<span class="linenos">7</span>                          ,g!top)
+<span class="linenos">8</span>                      pstack )))
+<span class="linenos">9</span>          words)))
+</pre></div>
+</div>
+<p>我们可以使用接受一个参数的任何 Common Lisp 函数，然后 <strong>forth-unary-word-definer</strong> 会将
+其定义为 forth 原语，将该函数应用于 forth 参数堆栈的顶部元素。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nv">forth-unary-word-definer</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="nb">not</span><span class="w"> </span><span class="nb">car</span><span class="w"> </span><span class="nb">cdr</span><span class="w"> </span><span class="nb">cadr</span><span class="w"> </span><span class="nb">caddr</span><span class="w"> </span><span class="nb">cadddr</span><span class="w"> </span><span class="nb">oddp</span><span class="w"> </span><span class="nb">evenp</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="p">(</span><span class="nv">forth-binary-word-definer</span><span class="w"></span>
+<span class="linenos">4</span><span class="w">  </span><span class="nb">eq</span><span class="w"> </span><span class="nb">equal</span><span class="w"> </span><span class="nb">+</span><span class="w"> </span><span class="nb">-</span><span class="w"> </span><span class="nb">/</span><span class="w"> </span><span class="nb">=</span><span class="w"> </span><span class="nb">&lt;</span><span class="w"> </span><span class="nb">&gt;</span><span class="w"> </span><span class="nb">&lt;=</span><span class="w"> </span><span class="nb">&gt;=</span><span class="w"> </span><span class="nb">max</span><span class="w"> </span><span class="nb">min</span><span class="w"> </span><span class="nb">and</span><span class="w"> </span><span class="nb">or</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>这个想法的延伸是 <strong>forth-binary-word-definer</strong> ，它做同样的事情，只不过是接受两个值的运算
+符。 通过创建临时的 <strong>let</strong> 绑定来保存参数堆栈的顶部元素，启用了 forth 的约定，即将倒数第二个元素看作，二进制函数（如 <strong>-</strong> 和 <strong>/</strong> ）的第一个参数。 以下是单词 <strong>-</strong> 的展开：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nb">macroexpand</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="o">&#39;</span><span class="p">(</span><span class="nv">forth-binary-word-definer</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">      </span><span class="nb">-</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">4</span><span class="p">(</span><span class="nv">LET</span><span class="w"> </span><span class="p">()</span><span class="w"></span>
+<span class="linenos">5</span><span class="w">  </span><span class="p">(</span><span class="nv">PROGN</span><span class="w"></span>
+<span class="linenos">6</span><span class="w">    </span><span class="p">(</span><span class="nv">DEF-FORTH-PRIM</span><span class="w"> </span><span class="nb">-</span><span class="w"> </span><span class="no">NIL</span><span class="w"></span>
+<span class="linenos">7</span><span class="w">      </span><span class="p">(</span><span class="nv">LET</span><span class="w"> </span><span class="p">((</span><span class="ss">#:TOP1767</span><span class="w"> </span><span class="p">(</span><span class="nv">POP</span><span class="w"> </span><span class="nv">PSTACK</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">8</span><span class="w">  </span><span class="no">T</span><span class="w"></span>
+</pre></div>
+</div>
+<p>练习：当我们使用 <strong>four-binary-word-definer</strong> 时，我们如何能够像对待一等的值一样来对待如 <strong>and</strong> 和 <strong>or</strong> 这些宏呢？</p>
+<p>难一点的练习：为什么需要使用 <strong>gensym</strong> ( <strong>g!top</strong> ) 来避免在 <strong>forth-binary-word-definer</strong> 中的不想要的变量捕获？ 提示：我们已经在本节中讨论过它。</p>
+<p>所以这些宏让我们可以将各种 lisp 函数添加到我们的 forth 原始环境中，以便在 forth 原始环境中使用它
+们。 下面是一个使用一元原语 <strong>cadr</strong> 的示例：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="o">&#39;</span><span class="p">(</span><span class="nv">a</span><span class="w"> </span><span class="p">(</span><span class="nv">b</span><span class="p">)</span><span class="w"> </span><span class="nv">c</span><span class="p">)</span><span class="w"> </span><span class="nb">cadr</span><span class="w"> </span><span class="nb">print</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="p">(</span><span class="nv">B</span><span class="p">)</span><span class="w"> </span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<p>以及两个参数的 <strong>&lt;</strong>:</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="nb">&lt;</span><span class="w"> </span><span class="nb">print</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="no">T</span><span class="w"></span>
+<span class="linenos">4</span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<p>到目前为止，我们的 forth 线程都是 <em>有向无环图</em> ，即它们由不会在任何地方指向自身的 cons 单元结构组成（不是自
+引用的），并且最终终止于我们的原语，即树的叶子。 例如，我们可以使用 <strong>pandoric</strong> 宏来获取我们
+在上一节中定义 <strong>quartic</strong> 词时创建的线程：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (with-pandoric (dict) my-forth
+<span class="linenos">2</span>    (forth-word-thread
+<span class="linenos">3</span>      (forth-lookup &#39;quartic dict)))
+<span class="linenos">4</span>((#&lt;Interpreted Function&gt;   ;; square-&gt;|-&gt;dup
+<span class="linenos">5</span>  #&lt;Interpreted Function&gt;)  ;;         |-&gt;*
+<span class="linenos">6</span>(#&lt;Interpreted Function&gt;   ;; square-&gt;|-&gt;dup
+<span class="linenos">7</span>  #&lt;Interpreted Function&gt;)) ;;         |-&gt;*
+</pre></div>
+</div>
+<p>上面代码中的注释只是从我们在 lisp 中打印结构的角度来展示的。 从代码或注释中我们看不到的是：这个
+线程结构实际上是共享的。 要确认这一点，需要使用 <strong>eq</strong> ：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nb">eq</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nb">*</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">cadr</span><span class="w"> </span><span class="nb">*</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">2</span><span class="no">T</span><span class="w"></span>
+</pre></div>
+</div>
+<p>或者在 <strong>*print-circle*</strong> 中看起来是这样的：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (let ((*print-circle* t))
+<span class="linenos">2</span>    (print **)
+<span class="linenos">3</span>t)
+<span class="linenos">4</span>(#1=(#&lt;Interpreted Function&gt;  ;; square-&gt;|-&gt;dup
+<span class="linenos">5</span>    #&lt;Interpreted Function&gt;) ;;         |-&gt;*
+<span class="linenos">6</span>#1#)                         ;; --------|
+<span class="linenos">7</span>T
+</pre></div>
+</div>
+<p>线程代码可以允许 forth （具有）惊人的内存和大小优势。 整个 forth 系统都是编译后的代码，这些代码像这样串连在一
+起——从网络驱动程序到最高级别的用户程序。 更重要的是，请注意，我们可以干净地从 <strong>quartic</strong> 提取线
+程，而无需使用大量无关的其他线程。 例如，我们的语言中有更多的原语，如 <strong>+</strong> 和 <strong>cadddr</strong> ，
+但它们根本没有出现在上面的线程中。这几乎就像是我们用有一个标记清除垃圾收集算法，它只提取执行给定 forth 单词所需
+的线程。 在 lisp 中，这个过程称为 <em>摇树优化</em> <sup>（21）</sup> ，通常不是很高效。 然而，在 forth 中，极度高效。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（21）
+摇树优化 tree shaking</p>
+</div>
+<p>不幸的是，从 <strong>my-forth</strong> 中随意提取的 <strong>quartic</strong> 线程对我们来说并没有那么有用。 它仍然永
+久驻留在 <strong>my-forth</strong> 闭包中。 也就是说，表示 <strong>dup</strong> 和 <strong>*</strong> 原语的 lambda 表达式已经
+引用了通过我们的宏 <strong>new-forth</strong> 的展开式所捕获的 forth 抽象寄存器。 我们能否将这段代码拉回到
+lisp 宏表面以便将其嵌入到新程序中？ 我们将很快回到这一点，但首先会更深入地讨论元编程。</p>
+<p>在所有语言的某个级别——通常是对程序员隐藏的级别——能够引用自身对于代码来说是必需的。这种必要性最有说服力的例子
+是观察到代码需要能够以某种方式引用自己，以便实现循环、递归和条件表达式，如 <strong>if</strong> 语句。 <em>Flub</em>
+语言和非 Flub 语言的区别在于 Flub 阻止你直接自定义插入自引用的方式和位置。 但是，正如我们现在所
+做的那样，lisp 的非 Blub 状态意味着我们可以使其成为非 Flub。</p>
+<p>当前状态下的 forth 系统（它不能插入自引用）几乎是一个 <em>纯 Flub</em>  。 与纯函数式语言如何故意定义一种
+缺乏副作用和非静态映射的语言类似，纯 Flub 语言被定义成缺乏像循环和递归这样的自引用代码结构。
+这样做的结果是解释纯 Flub 线程将始终终止。 我们的 forth 环境不完全是纯粹的，因为我们可以——也将
+——违反这一点，但在某种意义上说是纯粹的，如果仅按照目前描述的方式使用将导致纯粹的 Flub 线程。 纯粹的（ Pure ）
+Flub 不是很有用，所以让我们破坏 forth 环境的 Flub 纯粹程度。 与其朝着 Flub 方向前进——像
+Common Lisp 这样的 Flub 语言，代码线程是不透明且不可访问的——不如让我们朝着 forth 方向前进，并使代码
+宏的这个属性可定制。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nv">def-forth-naked-prim</span><span class="w"> </span><span class="nv">branch-if</span><span class="w"> </span><span class="no">nil</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="nv">pc</span><span class="w"> </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">pop</span><span class="w"> </span><span class="nv">pstack</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">            </span><span class="p">(</span><span class="nb">cadr</span><span class="w"> </span><span class="nv">pc</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">4</span><span class="w">            </span><span class="p">(</span><span class="nb">cddr</span><span class="w"> </span><span class="nv">pc</span><span class="p">))))</span><span class="w"></span>
+</pre></div>
+</div>
+<p><strong>branch-if</strong> 原语是迄今为止提出的第一个 <em>裸原语</em> 。 回想一下，裸原语是不会自动更新程序计数器抽象
+寄存器（ <strong>pc</strong> ） 的原语。 相反，他们必须自己更新它。 <strong>branch-if</strong> 将弹出参数堆栈的值。 如果该值
+非空，则将 <strong>pc</strong> 设置为正在解释的线程中下一个单元格的内容。 如果值为 <strong>nil</strong> ，则 <strong>pc</strong> 像往常一样恢复，
+只是它跳过正在解释的线程中的下一个单元格。</p>
+<p>例如，以下创建了一个 forth 环境，因此我们可以利用新的 <strong>branch-if</strong> 原语，并定义两个单词：
+<strong>double</strong> 和 <strong>if-then-double</strong> 。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="p">(</span><span class="k">setq</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"> </span><span class="p">(</span><span class="nv">new-forth</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="nv">{</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="nb">*</span><span class="w"> </span><span class="nv">}</span><span class="w"> </span><span class="ss">&#39;double</span><span class="w"> </span><span class="nv">name</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">    </span><span class="nv">{</span><span class="w"> </span><span class="nv">branch-if</span><span class="w"> </span><span class="nv">double</span><span class="w"> </span><span class="s">&quot;Not doubling&quot;</span><span class="w"> </span><span class="nb">print</span><span class="w"> </span><span class="nv">}</span><span class="w"></span>
+<span class="linenos">4</span><span class="w">        </span><span class="ss">&#39;if-then-double</span><span class="w"> </span><span class="nv">name</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">5</span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<p><strong>double</strong> 只是将参数堆栈的顶部元素乘以 2，使其翻倍。 <strong>if-then-double</strong> 需要参数堆栈上的
+两项。 顶部元素被消耗，并且仅当顶部元素为非空时，顶部元素的第二个元素才会加倍。 注意，因为在
+<strong>branch-if</strong> 之后线程中的下一个值是指向另一个线程（ <strong>double</strong> ） 的指针，所以执行控制权转移到另
+一个线程，而不会将恢复位置推入返回堆栈。在 lisp 中，这称为 <em>尾部调用</em> （ tail-call ）。 因此，如果将 <strong>nil</strong>  <sup>【20】</sup> 传递给
+<strong>if-then-double</strong> ，那么分支执行执行时，不会发生加倍，并且会打印字符串：</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【20】
+我们需要引用 <strong>nil</strong> ，因为我们不希望它在 forth 词典中被查找。</p>
+</div>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="mi">4</span><span class="w"> </span><span class="ss">&#39;nil</span><span class="w"> </span><span class="nv">if-then-double</span><span class="w"> </span><span class="nb">print</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="s">&quot;Not doubling&quot;</span><span class="w"></span>
+<span class="linenos">4</span><span class="mi">4</span><span class="w"></span>
+<span class="linenos">5</span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<p>但是如果该值不为空，则不执行后面分支语句，执行加倍，且不打印字符串：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="mi">4</span><span class="w"> </span><span class="ss">&#39;t</span><span class="w"> </span><span class="nv">if-then-double</span><span class="w"> </span><span class="nb">print</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="mi">8</span><span class="w"></span>
+<span class="linenos">4</span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nv">forth-stdlib-add</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="nv">{</span><span class="w"> </span><span class="nv">r&gt;</span><span class="w"> </span><span class="nv">drop</span><span class="w"> </span><span class="nv">}</span><span class="w"> </span><span class="ss">&#39;exit</span><span class="w"> </span><span class="nv">name</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>尽管如此，有一种更简单的方法可以从单词中退出，这是通过一个名为 <strong>exit</strong> 的新单词来实现的。
+forth 的一个有趣属性是，被调用的单词可以决定它是否是尾部调用。 <strong>exit</strong> 是个普通的 forth 单词，
+所以像往常一样被调用： forth 把当前线程位置推到返回堆栈上，然后将程序计数器设置为指向
+<strong>exit</strong> 单词的开头。 当调用 <strong>exit</strong> 时，因为它可以使用原语 <strong>r&gt;</strong> 和 <strong>&gt;r</strong> 直接访问返回
+堆栈，所以我们可以通过简单地从返回堆栈中删除恢复位置并将其丢弃来使调用单词永远无法获得执行控制权的存
+在。 下面是个使用 <strong>exit</strong> 的示例：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="nv">{</span><span class="w"> </span><span class="s">&quot;hello&quot;</span><span class="w"> </span><span class="nb">print</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">      </span><span class="nv">exit</span><span class="w"></span>
+<span class="linenos">4</span><span class="w">      </span><span class="c1">;; Never gets here</span><span class="w"></span>
+<span class="linenos">5</span><span class="w">      </span><span class="s">&quot;world&quot;</span><span class="w"> </span><span class="nb">print</span><span class="w"> </span><span class="nv">}</span><span class="w"> </span><span class="ss">&#39;exit-test</span><span class="w"> </span><span class="nv">name</span><span class="w"></span>
+<span class="linenos">6</span><span class="nv">exit-test</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">7</span><span class="s">&quot;hello&quot;</span><span class="w"></span>
+<span class="linenos">8</span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nv">def-forth-naked-prim</span><span class="w"> </span><span class="nb">compile</span><span class="w"> </span><span class="no">nil</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="p">(</span><span class="nv">forth-word-thread</span><span class="w"> </span><span class="nv">dict</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">        </span><span class="p">(</span><span class="nb">nconc</span><span class="w"> </span><span class="p">(</span><span class="nv">forth-word-thread</span><span class="w"> </span><span class="nv">dict</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">4</span><span class="w">                </span><span class="p">(</span><span class="nb">list</span><span class="w"> </span><span class="p">(</span><span class="nb">cadr</span><span class="w"> </span><span class="nv">pc</span><span class="p">))))</span><span class="w"></span>
+<span class="linenos">5</span><span class="w">  </span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="nv">pc</span><span class="w"> </span><span class="p">(</span><span class="nb">cddr</span><span class="w"> </span><span class="nv">pc</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">6</span>
+<span class="linenos">7</span><span class="p">(</span><span class="nv">def-forth-prim</span><span class="w"> </span><span class="nv">here</span><span class="w"> </span><span class="no">nil</span><span class="w"></span>
+<span class="linenos">8</span><span class="w">  </span><span class="p">(</span><span class="nb">push</span><span class="w"> </span><span class="p">(</span><span class="nb">last</span><span class="w"> </span><span class="p">(</span><span class="nv">forth-word-thread</span><span class="w"> </span><span class="nv">dict</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">9</span><span class="w">        </span><span class="nv">pstack</span><span class="w"> </span><span class="p">))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>因此， <strong>branch-if</strong> 实现了跳转或  <strong>goto</strong> 指令，可能跳转到存储在当前正在执行的线程的后续单
+元格中的值。从你当前正在执行的线程中获取值是 forth 常见模式，并且需要裸原语。另一个原语
+<strong>compile</strong> 也使用这种模式。 <strong>compile</strong> 是一个裸原语，它将获取当前正在执行的线程中下一个单
+元格的值，然后将该值编译到添加到字典中的最近一个单词的线程中——通常是当前正在编译的单词。
+<strong>here</strong> 是个简单的原语，它将正在编译的线程的最后一个 cons 单元推入参数堆栈。这里的
+<strong>here</strong> 与这里的常规 forth 中的 <strong>here</strong> 单词略有不同。 forth 中， <strong>here</strong> 通常推入将被编译到
+的下一个位置，而不是最近编译的位置。这是因为，在传统的 forth 中，此时下一个要编译的内存位置是已知的
+——它将是下一个相邻的内存单元。使用 cons 线程代码我们无法知道这一点，因为我们还没有分配（二译者注：原文为 cons ，即创建 cons ） 该内存。</p>
+<p>有了 <strong>compile</strong> 和 <strong>here</strong> ，现在我们可以开始编写 forth 宏了。记住，当 forth 单词 <em>immediate</em>
+时，在编译时它将被执行而不是编译到定义的最近一个单词的线程中。 类似于如何编写宏来适配和扩展
+lisp ，我们可以使用即时的单词来适配和扩展 forth 。在 lisp 中，用于元编程的基本数据结构是列表。 在 forth 中，
+基本数据结构是堆栈。</p>
+<p>你可能已经注意到我们的 forth 环境甚至没有提供 <strong>if</strong> 语句。 我们有个条件分支原语，称为
+<strong>branch-if</strong> ，但到目前为止，这仅对对其他单词进行尾调用有用。 回想一下， forth 单词是由线程表
+示的，并且我们可以将任何线程的值放入由 <strong>branch-if</strong> 跳转到的单元格中。 如果我们输入一个值，它导致当前
+正在编译的线程的一部分怎么办？ 从某种意义上说，我们会对当前 forth 单词的另一部分进行尾
+部调用。 好吧，<strong>if</strong> 语句就是这样的 —— 对 <strong>if</strong> 语句末尾的条件（分支）进行尾部调用，仅在条件（分支）为空时才执行。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nv">forth-stdlib-add</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="nv">{</span><span class="w"> </span><span class="nb">compile</span><span class="w"> </span><span class="nb">not</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">    </span><span class="nb">compile</span><span class="w"> </span><span class="nv">branch</span><span class="w"> </span><span class="nv">-if</span><span class="w"></span>
+<span class="linenos">4</span><span class="w">    </span><span class="nb">compile</span><span class="w"> </span><span class="nv">nop</span><span class="w"></span>
+<span class="linenos">5</span><span class="w">    </span><span class="nv">here</span><span class="w"> </span><span class="nv">}</span><span class="w"> </span><span class="ss">&#39;if</span><span class="w"> </span><span class="nv">name</span><span class="w"> </span><span class="nv">immediate</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>因为我们现在完全在 forth 中编程，所以不需要添加新的原语。给 forth 添加 <strong>if</strong> 语句，我们只需使用
+<strong>forth-stdlib-add</strong> 宏将一些 forth 代码附加到我们的标准库中。注意， <strong>if</strong> 被定义为即时的（ immediate ）单词，这意
+味着它只能在编译时使用。但由于它是即时的，它将被执行，而不是编译。当遇到即单词字时，不会自动将任何
+内容编译到目标线程中。所以 <strong>if</strong> 本身用三个词编译到目标线程： <strong>not</strong> 、 <strong>branch-if</strong>
+和 <strong>nop</strong> 。然后它执行单词 <strong>here</strong> ，将最近编译的单词（ <strong>nop</strong> ）的地址留在堆栈上。把
+<strong>nop</strong> 留在堆栈上？一个词在编译时将 <strong>nop</strong> 留在堆栈上是一件很奇怪的事情。它放在什么堆栈
+上？从技术上讲，编译时使用的堆栈称为 <em>控制堆栈</em> 。在大多数情况下，控制堆栈（只）有一个，并且与参数堆栈相同（二译者注：参数堆栈也是只有一个）。
+由于 forth 可以实现的方式多种多样，因此（控制堆栈与参数堆栈）区分开是必要的。有时，特别是在交叉编译环境中，控制堆栈与最终的参数
+堆栈完全分开。但是在这里 —— 与大多数交互式 forth 环境一样 —— 我们使用参数堆栈作为控制堆栈。</p>
+<p>因此，如果压入与编译 <strong>nop</strong> 的位置相对应的值。 这有什么用？ <strong>nop</strong> 本身并不是很重要，而是什么在它之前发生。 在 nop 之前的单元格中，即时地编译了一个 <strong>branch-if</strong> 指令。无论将 <strong>nop</strong> 的值更
+改为什么，如果 <strong>if</strong> 条件结果为空，则都将会是我们内部解释器分支到的位置。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nv">forth-stdlib-add</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="nv">{</span><span class="w"> </span><span class="nb">compile</span><span class="w"> </span><span class="nv">nop</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">    </span><span class="nv">here</span><span class="w"> </span><span class="nv">swap</span><span class="w"> </span><span class="nv">!</span><span class="w"> </span><span class="nv">}</span><span class="w"> </span><span class="ss">&#39;then</span><span class="w"> </span><span class="nv">name</span><span class="w"> </span><span class="nv">immediate</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>但是为什么我们要放置 <strong>nop</strong> 而不是内存地址呢？ 这是因为我们还不知道内存地址。 我们需要等待程序员执行另
+一个即时的单词 ——  <strong>then</strong>  —— 这将通过 <strong>if</strong> 消耗控制堆栈上的值。  <strong>then</strong> 将编译 <strong>nop</strong> 本身并将这个
+<strong>nop</strong> 的位置写在 <strong>if</strong> 编译的 <strong>nop</strong> 上。因此，如果条件（分支）为空，则将跳过 <strong>if</strong> 和
+<strong>then</strong> 之间的所有单词。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nv">forth-stdlib-add</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="nv">{</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="nv">swap</span><span class="w"> </span><span class="nb">-</span><span class="w"> </span><span class="nv">}</span><span class="w"> </span><span class="ss">&#39;negate</span><span class="w"> </span><span class="nv">name</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">  </span><span class="nv">{</span><span class="w"> </span><span class="nv">dup</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="nb">&lt;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nv">negate</span><span class="w"> </span><span class="nv">then</span><span class="w"> </span><span class="nv">}</span><span class="w"> </span><span class="ss">&#39;abs</span><span class="w"> </span><span class="nv">name</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p><strong>abs</strong> 是一个使用 <strong>if</strong> 和 <strong>then</strong> 来计算堆栈顶部项的绝对值的单词。 它只是检查该值是否低于
+0，如果是，它调用另一个单词 <strong>negate</strong> 将负值转换为其绝对值。</p>
+<p>在此编译过程中使用控制堆栈的最重要原因是，通过使用堆栈，可以拥有像 <strong>if</strong> 语句 <em>嵌套</em> 这样的控制结
+构。 也就是说，我们可以将 <strong>if</strong> 语句包含在其他 <strong>if</strong> 语句中，只要确保所有 <strong>if</strong> 词与
+<strong>then</strong> 相匹配。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nv">forth-stdlib-add</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="nv">{</span><span class="w"> </span><span class="nb">compile</span><span class="w"> </span><span class="ss">&#39;t</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">    </span><span class="nb">compile</span><span class="w"> </span><span class="nv">branch</span><span class="w"> </span><span class="nv">-if</span><span class="w"> </span><span class="nb">compile</span><span class="w"> </span><span class="nv">nop</span><span class="w"></span>
+<span class="linenos">4</span><span class="w">    </span><span class="nv">here</span><span class="w"> </span><span class="nv">swap</span><span class="w"></span>
+<span class="linenos">5</span><span class="w">    </span><span class="nb">compile</span><span class="w"> </span><span class="nv">nop</span><span class="w"></span>
+<span class="linenos">6</span><span class="w">    </span><span class="nv">here</span><span class="w"> </span><span class="nv">swap</span><span class="w"> </span><span class="nv">!</span><span class="w"> </span><span class="nv">}</span><span class="w"> </span><span class="ss">&#39;else</span><span class="w"> </span><span class="nv">name</span><span class="w"> </span><span class="nv">immediate</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>因为 forth 语言是种非 Flub 语言，所以如何创建这些线程并将其与像 <strong>if</strong> 语句之类的控制结构一起
+线程化是 <em>透明地指定</em> 并开放给我们来（进行）适配和扩展的。 大多数语言都有个与 <strong>if</strong> 语句关联的
+<strong>else</strong> 子句； 也许我们也应该添加一个。 另一个即时的单词 <strong>else</strong> 被添加到标准库中。
+<strong>else</strong> 编译成一个无条件分支，来终止 <strong>then</strong> ，因此如果我们采用真（true）（二级或后续）分支，我们将
+跳过错误（false）（三级或交替）分支。 然后 <strong>else</strong> 使用通过 <strong>if</strong> 留在堆栈上的值将这 <strong>nop</strong> 替换为 <strong>else</strong> 子句开始的位置。 然后将自己的 <strong>nop</strong> 的位置留在堆栈上以供使用。
+因为无论控制堆栈上的位置是由 <strong>if</strong> 还是由 <strong>else</strong> 留下的，我们想要 <strong>then</strong> 执行的行为都
+是相同的，所以即使没有 <strong>else</strong> 子句， <strong>then</strong> 仍然有效。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nv">forth-stdlib-add</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="nv">{</span><span class="w"> </span><span class="nb">evenp</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="nv">else</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nv">then</span><span class="w"> </span><span class="nv">}</span><span class="w"> </span><span class="ss">&#39;mod2</span><span class="w"> </span><span class="nv">name</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>单词 <strong>mod2</strong> 使用 <strong>if</strong> 、 <strong>else</strong> 和 <strong>then</strong> 将整数减少到其模 2 的自然余数。如果堆栈
+顶部是偶数，它会压入 0，如果堆栈顶部是奇数，则压入 1。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nv">forth-stdlib-add</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="nv">{</span><span class="w"> </span><span class="nb">compile</span><span class="w"> </span><span class="nv">nop</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">    </span><span class="nv">here</span><span class="w"> </span><span class="nv">}</span><span class="w"> </span><span class="ss">&#39;begin</span><span class="w"> </span><span class="nv">name</span><span class="w"> </span><span class="nv">immediate</span><span class="w"></span>
+<span class="linenos">4</span><span class="w">  </span><span class="nv">{</span><span class="w"> </span><span class="nb">compile</span><span class="w"> </span><span class="ss">&#39;t</span><span class="w"></span>
+<span class="linenos">5</span><span class="w">    </span><span class="nb">compile</span><span class="w"> </span><span class="nv">branch</span><span class="w"> </span><span class="nv">-if</span><span class="w"></span>
+<span class="linenos">6</span><span class="w">    </span><span class="nb">compile</span><span class="w"> </span><span class="nv">nop</span><span class="w"></span>
+<span class="linenos">7</span><span class="w">    </span><span class="nv">here</span><span class="w"> </span><span class="nv">!</span><span class="w"> </span><span class="nv">}</span><span class="w"> </span><span class="ss">&#39;again</span><span class="w"> </span><span class="nv">name</span><span class="w"> </span><span class="nv">immediate</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>因为我们的条件（分支）对正在编译的线程的其他部分执行尾调用，所以我们没有理由不用完全相同的技术来创建像循环这
+样的迭代结构。最基本的 forth 循环由 <strong>begin</strong> 和 <strong>again</strong> 即时的单词定义。 这两个单词提供了一个
+简单的无限循环，并且实现起来与 <strong>if</strong> 和 <strong>then</strong> 非常相似，除了保存在看到这两个单词之间的控制堆栈上的地址，对应于应该编译成分支语句的地址，而不是编译一个地址的一个位置。下面是个简单的循环，它从堆栈
+上提供的数字倒数到 1，然后从单词中退出：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos"> 2</span><span class="w">    </span><span class="nv">{</span><span class="w"> </span><span class="nv">begin</span><span class="w"></span>
+<span class="linenos"> 3</span><span class="w">        </span><span class="nv">dup</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nb">&lt;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nv">drop</span><span class="w"> </span><span class="nv">exit</span><span class="w"> </span><span class="nv">then</span><span class="w"></span>
+<span class="linenos"> 4</span><span class="w">        </span><span class="nv">dup</span><span class="w"> </span><span class="nb">print</span><span class="w"></span>
+<span class="linenos"> 5</span><span class="w">        </span><span class="nb">1-</span><span class="w"></span>
+<span class="linenos"> 6</span><span class="w">      </span><span class="nv">again</span><span class="w"> </span><span class="nv">}</span><span class="w"> </span><span class="ss">&#39;countdown</span><span class="w"> </span><span class="nv">name</span><span class="w"></span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="w">    </span><span class="mi">5</span><span class="w"> </span><span class="nv">countdown</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 9</span><span class="mi">5</span><span class="w"></span>
+<span class="linenos">10</span><span class="mi">4</span><span class="w"></span>
+<span class="linenos">11</span><span class="mi">3</span><span class="w"></span>
+<span class="linenos">12</span><span class="mi">2</span><span class="w"></span>
+<span class="linenos">13</span><span class="mi">1</span><span class="w"></span>
+<span class="linenos">14</span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<p>注意，在上面的示例中， <strong>if</strong> 和 <strong>then</strong> 构造嵌套在 <strong>begin-again</strong> 循环内。 多亏了
+forth 的控制堆栈，嵌套任何对应堆栈的控制结构是完全可以接受的。 为了谨慎对待堆栈，控制结构应避免弹
+出未推送的值，并应避免在完成后留下任何额外的值。但是就像我们在构建 lisp 宏时经常选择违反引用透明性
+一样，在 forth 中，我们经常选择在编译时不谨慎对待堆栈。 下面的示例与前面的示例相同，除了我们不使用单词
+<strong>exit</strong> 来退出循环。 相反，我们使用单词 <strong>[</strong> 和 <strong>]</strong> 切换到编译模式，并交换通过 <strong>if</strong> 和
+<strong>begin</strong>  放置在那里的指针，以便我们可以不按顺序地使用它们的匹配 <strong>then</strong> 和 <strong>again</strong> 的单词：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos"> 2</span><span class="w">    </span><span class="nv">{</span><span class="w"> </span><span class="nv">begin</span><span class="w"></span>
+<span class="linenos"> 3</span><span class="w">      </span><span class="nv">dup</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nb">&gt;=</span><span class="w"> </span><span class="k">if</span><span class="w"></span>
+<span class="linenos"> 4</span><span class="w">              </span><span class="nv">dup</span><span class="w"> </span><span class="nb">print</span><span class="w"></span>
+<span class="linenos"> 5</span><span class="w">              </span><span class="nb">1-</span><span class="w"></span>
+<span class="linenos"> 6</span><span class="w">              </span><span class="nv">[</span><span class="w"> </span><span class="nv">swap</span><span class="w"> </span><span class="nv">]</span><span class="w"> </span><span class="nv">again</span><span class="w"></span>
+<span class="linenos"> 7</span><span class="w">            </span><span class="nv">then</span><span class="w"></span>
+<span class="linenos"> 8</span><span class="w">      </span><span class="nv">drop</span><span class="w"></span>
+<span class="linenos"> 9</span><span class="w">    </span><span class="nv">}</span><span class="w"> </span><span class="ss">&#39;countdown-for-teh-hax0rz</span><span class="w"> </span><span class="nv">name</span><span class="w"></span>
+<span class="linenos">10</span>
+<span class="linenos">11</span><span class="w">    </span><span class="mi">5</span><span class="w"> </span><span class="nv">countdown-for-teh-hax0rz</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">12</span>
+<span class="linenos">13</span><span class="mi">5</span><span class="w"></span>
+<span class="linenos">14</span><span class="mi">4</span><span class="w"></span>
+<span class="linenos">15</span><span class="mi">3</span><span class="w"></span>
+<span class="linenos">16</span><span class="mi">2</span><span class="w"></span>
+<span class="linenos">17</span><span class="mi">1</span><span class="w"></span>
+<span class="linenos">18</span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<p>上述，通过 <strong>again</strong> 编译的代码，也就是将我们带回到 <strong>begein</strong> 的代码，只在 <strong>if</strong> 语句中执行。 很少有其他语言允许你以这种方式访
+问编译器 —— 准确地说，只有非 Flub 语言。 由于这种自由，forth 程序员有时甚至比 lisp 程序员更
+习惯于宏 <em>组合</em> 。 尽管本书中的 lisp 代码经常使用宏组合技术，但大多数现有的 lisp 代码并没有充分利
+用这些技术以及它们可以启用的杠杆作用。 然而，正如本书试图说明的那样，lisp 破例非常适合宏组合。 这
+种组合技术是我认为在未来十年左右的语言研究中将在程序员生产力方面取得最大胜利的地方。</p>
+</section>
+<section id="lisp">
+<span id="going-lisp"></span><h2>8.6 前往 Lisp<a class="headerlink" href="#lisp" title="Permalink to this heading"></a></h2>
+<p>到目前为止，本章已经定义了一个极简的 forth 环境，并从 lisp 化（ lispy ）的角度展示了一些最重要的 forth
+元编程概念。希望它已经表明，当拥有正确的工具（Common Lisp）时，设计和实现 forth 语言所需的努
+力是多么的少。 我们可以编写 forth 程序来编写 forth 程序——但我们已经知道了。 这就是一切。 此
+外，由于 lisp 的宏系统，我们可以编写 lisp 程序来编写 forth 程序。 但是我们可以编写 forth
+程序来编写 lisp 程序吗？</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nb">defun</span><span class="w"> </span><span class="nv">get-forth-thread</span><span class="w"> </span><span class="p">(</span><span class="nv">forth</span><span class="w"> </span><span class="nv">word</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="p">(</span><span class="nv">with-pandoric</span><span class="w"> </span><span class="p">(</span><span class="nv">dict</span><span class="p">)</span><span class="w"> </span><span class="nv">forth</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">    </span><span class="p">(</span><span class="nv">forth-word-thread</span><span class="w"></span>
+<span class="linenos">4</span><span class="w">      </span><span class="p">(</span><span class="nv">forth-lookup</span><span class="w"> </span><span class="nv">word</span><span class="w"> </span><span class="nv">dict</span><span class="p">))))</span><span class="w"></span>
+<span class="linenos">5</span>
+<span class="linenos">6</span><span class="p">(</span><span class="nb">defun</span><span class="w"> </span><span class="nv">print-forth-thread</span><span class="w"> </span><span class="p">(</span><span class="nv">forth</span><span class="w"> </span><span class="nv">word</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">7</span><span class="w">  </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">((</span><span class="vg">*print-circle*</span><span class="w"> </span><span class="no">t</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">8</span><span class="w">    </span><span class="p">(</span><span class="nb">print</span><span class="w"> </span><span class="p">(</span><span class="nv">get-forth-thread</span><span class="w"> </span><span class="nv">forth</span><span class="w"> </span><span class="nv">word</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">9</span><span class="w">    </span><span class="no">t</span><span class="p">))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>回想一下，我们的 forth 线程是连接在一起的 cons 单元，这些树的叶子要么是函数（代表原语），要么
+是原子（代表要压入到参数堆栈的数据）。 因为我们决定让 forth 抽象寄存器可以通过
+<strong>pandoric</strong> 宏访问，所以编写实用程序来获取和打印 forth 线程很容易。
+<strong>get-forth-thread</strong> 魔性地打开传递给它的 forth 闭包，然后检索并返回
+<strong>word</strong> 中给出的单词的线程。 <strong>print-forth-thread</strong> 打印这个结果线程，其中
+<strong>*print-circle*</strong> 绑定到 <strong>t</strong> 以防它包含循环。</p>
+<p>为了演示，假设我们已经定义了两个 forth 单词： <strong>square</strong> 和 <strong>square3</strong> ：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="nv">{</span><span class="w"> </span><span class="nv">dup</span><span class="w"> </span><span class="nb">*</span><span class="w"> </span><span class="nv">}</span><span class="w"> </span><span class="ss">&#39;square</span><span class="w"> </span><span class="nv">name</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">    </span><span class="nv">{</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="nv">square</span><span class="w"> </span><span class="nb">print</span><span class="w"> </span><span class="nv">}</span><span class="w"> </span><span class="ss">&#39;square3</span><span class="w"> </span><span class="nv">name</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">4</span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<p>在编译的 forth 线程中，所有符号和其他单词信息已被删除。 我们所拥有的只是从 forth 的
+<strong>my-forth</strong> 的字典中
+提取的一个列表结构：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (print-forth-thread my-forth &#39;square3)
+<span class="linenos">2</span>(3
+<span class="linenos">3</span>(#&lt;Interpreted Function&gt;
+<span class="linenos">4</span>  #&lt;Interpreted Function&gt;)
+<span class="linenos">5</span>#&lt;Interpreted Function&gt;)
+<span class="linenos">6</span>T
+</pre></div>
+</div>
+<p>上面的代码没有循环，因此是一个纯 Flub 程序。 如前所述，几乎所有有趣的程序都包含循环。 要创建条
+件和循环，我们可以使用 forth 原语 <strong>branch-if</strong> ，它可以更改 <strong>pc</strong> 抽象寄存器以指向由正在执行的
+forth 线程中的后续单元格中的值指示的某个位置。 我们还能够使用 <strong>&gt;r</strong> 和 <strong>r&gt;</strong> 直接访问返回
+堆栈来实现尾部调用。 与大多数其他语言不同，我们可以直接自定义哪些调用是尾部调用——甚至从被调用的单词内部。</p>
+<p>但似乎我们缺少一个对 lisp 至关重要的结构：递归。 一个单词可以调用自身吗？ 我们看到了如何使用
+<strong>branch-if</strong> 跳回到一个词的起始位置 —— 尾递归。 然而，我们真正想做的是通过通用的线程机制让
+一个单词自己调用自己。 为此，它必须将其线程位置的起点存储为线程中的一个单元格，以便当前位置存储在返回
+堆栈中，然后它必须将 <strong>pc</strong> 设置为单词的起点。 然而，到目前为止，还没有一个单词能够使用 <em>完全递归</em> ，因
+为在完成编译之前我们不会命名单词 —— 当搜索字典试图编译递归调用时，我们无法访问它。 幸运的是，可以使
+用一个简单的技巧来解决这个问题。 在编译递归调用之前，我们可以简单地退出编译模式并命名正在编译的
+单词。 以下是计算阶乘的完全递归版本的示范定义：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="p">(</span><span class="k">setq</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"> </span><span class="p">(</span><span class="nv">new-forth</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="nv">{</span><span class="w"> </span><span class="nv">[</span><span class="w"> </span><span class="ss">&#39;fact</span><span class="w"> </span><span class="nv">name</span><span class="w"> </span><span class="nv">]</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">      </span><span class="nv">dup</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nb">-</span><span class="w"></span>
+<span class="linenos">4</span><span class="w">      </span><span class="nv">dup</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nb">&gt;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nv">fact</span><span class="w"> </span><span class="nv">then</span><span class="w"></span>
+<span class="linenos">5</span><span class="w">      </span><span class="nb">*</span><span class="w"> </span><span class="nv">}</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">6</span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<p>果然如此，<strong>(fact 5)</strong> 的结果是 120：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="mi">5</span><span class="w"> </span><span class="nv">fact</span><span class="w"> </span><span class="nb">print</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="mi">120</span><span class="w"></span>
+<span class="linenos">4</span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<p>练习：有些 forth 实现使用一个单词 <strong>recurse</strong> ，它只是查找当前正在编译的单词的线程并将其插入
+到正在编译的线程中。这称为 <a href="#id4"><span class="problematic" id="id5">*</span></a>匿名递归*（ anonymous recursion ）。 写一个即时的单词来代替上述实现命名的递归的技巧。</p>
+<p><strong>fact</strong> 的线程比上面的 <strong>square3</strong> 更复杂。 它包含自引用代码：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (print-forth-thread my-forth &#39;fact)
+<span class="linenos"> 2</span>#1=(#2=#&lt;Interpreted Function&gt;
+<span class="linenos"> 3</span>    1 #&lt;Interpreted Function&gt; #2# 1
+<span class="linenos"> 4</span>    #&lt;Interpreted Function&gt;
+<span class="linenos"> 5</span>    #&lt;Interpreted Function&gt;
+<span class="linenos"> 6</span>    #&lt;Interpreted Function&gt;
+<span class="linenos"> 7</span>    #4=(#&lt;Interpreted Function&gt;
+<span class="linenos"> 8</span>        #&lt;Interpreted Function&gt;)
+<span class="linenos"> 9</span>    #1# . #4#)
+<span class="linenos">10</span>T
+</pre></div>
+</div>
+<p>在上面， <strong>#2#</strong> 指向的是 <strong>dup</strong> 原语并被编译了两次。 <strong>#1#</strong> 指向的是 <strong>fact</strong> 线程本
+身，实现了递归。</p>
+<p>这些结构看起来很像用来编写 lisp 程序的 lisp 列表结构，不是吗？ 因为我们了解将执行这些线程的抽
+象机器，所以我们可以在简要说明一些限制的情况下将这些线程编译回 lisp 列表结构，该结构可以通过宏插入
+到表达式中并使用我们的 lisp 编译器进行编译。 这个过程被称为 <em>混沌化</em> （ flubifying ）代码，因为我们将编译的程序从统
+一的、可编程的数据结构（线程）转换为不透明、不可访问的代码块（编译的 Common Lisp 函数）。</p>
+<p>当然，我们可以计算或插入宏的 forth 线程和 lisp 列表结构之间存在重大差异。 首先，forth 原语是
+指向函数的简单指针（此处显示为 <strong>#&lt;Interpreted Function&gt;</strong> ），但需要创建这些函数的 lisp
+列表结构。 现在终于到了解释创建的 <strong>dtable</strong> 抽象寄存器的时候了。 <strong>dtable</strong> 是一个哈希表，
+它提供了从这些函数到创建它们的列表结构的映射，在创建 forth 时增添数据。</p>
+<p>forth 线程和 lisp 程序之间的一个很大区别是 forth 线程假设它们可以使用返回堆栈——这个概念在
+像 Common Lisp 这样的 Flub 中并不存在。 我们希望消除对我们的 <strong>inner-interpreter</strong> 代码的需求，而是让 lisp 编
+译器使用常规的 lisp 控制结构（如函数调用和 <strong>tagbody</strong> / <strong>go</strong> 结构）来处理这个问题。</p>
+<p>本章中其余代码的呈现方式与本书中其他大部分代码的不同之处在于，它的实现没有详细描述，而是从高层次
+的角度描述的。这是因为实现的机制比较复杂和混乱的，老实说，并不那么有趣。 我只想说我怀疑大多数
+lisp 程序员会以类似的方式实现它。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">(</span><span class="nb">defmacro</span><span class="w"> </span><span class="nv">flubify-aux</span><span class="w"> </span><span class="p">()</span><span class="w"></span>
+<span class="linenos"> 2</span><span class="w">  </span><span class="o">`</span><span class="p">(</span><span class="nv">alambda</span><span class="w"> </span><span class="p">(</span><span class="nv">c</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 3</span><span class="w">      </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="nv">c</span><span class="w"></span>
+<span class="linenos"> 4</span><span class="w">        </span><span class="p">(</span><span class="nb">cond</span><span class="w"></span>
+<span class="linenos"> 5</span><span class="w">          </span><span class="p">((</span><span class="nb">gethash</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">c</span><span class="p">)</span><span class="w"> </span><span class="nv">prim-ht</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 6</span><span class="w">            </span><span class="p">(</span><span class="nv">assemble-flub</span><span class="w"></span>
+<span class="linenos"> 7</span><span class="w">              </span><span class="o">`</span><span class="p">(</span><span class="nb">funcall</span><span class="w"></span>
+<span class="linenos"> 8</span><span class="w">                  </span><span class="o">,</span><span class="p">(</span><span class="nb">gethash</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">c</span><span class="p">)</span><span class="w"> </span><span class="nv">prim-ht</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 9</span><span class="w">                </span><span class="p">(</span><span class="nv">self</span><span class="w"> </span><span class="p">(</span><span class="nb">cdr</span><span class="w"> </span><span class="nv">c</span><span class="p">))))</span><span class="w"></span>
+<span class="linenos">10</span><span class="w">          </span><span class="p">((</span><span class="nb">gethash</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">c</span><span class="p">)</span><span class="w"> </span><span class="nv">thread-ht</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">11</span><span class="w">              </span><span class="p">(</span><span class="nv">assemble-flub</span><span class="w"></span>
+<span class="linenos">12</span><span class="w">                </span><span class="o">`</span><span class="p">(</span><span class="nb">funcall</span><span class="w"> </span><span class="nf">#&#39;</span><span class="o">,</span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="p">(</span><span class="nb">gethash</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">c</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">13</span><span class="w">                                    </span><span class="nv">thread-ht</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">14</span><span class="w">                </span><span class="p">(</span><span class="nv">self</span><span class="w"> </span><span class="p">(</span><span class="nb">cdr</span><span class="w"> </span><span class="nv">c</span><span class="p">))))</span><span class="w"></span>
+<span class="linenos">15</span><span class="w">              </span><span class="p">((</span><span class="nb">eq</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">c</span><span class="p">)</span><span class="w"> </span><span class="nv">branch-if</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">16</span><span class="w">                </span><span class="p">(</span><span class="nv">assemble-flub</span><span class="w"></span>
+<span class="linenos">17</span><span class="w">                  </span><span class="o">`</span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">pop</span><span class="w"> </span><span class="nv">pstack</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">18</span><span class="w">                    </span><span class="p">(</span><span class="k">go</span><span class="w"> </span><span class="o">,</span><span class="p">(</span><span class="nb">gethash</span><span class="w"> </span><span class="p">(</span><span class="nb">cadr</span><span class="w"> </span><span class="nv">c</span><span class="p">)</span><span class="w"> </span><span class="nv">go-ht</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">19</span><span class="w">                  </span><span class="p">(</span><span class="nv">self</span><span class="w"> </span><span class="p">(</span><span class="nb">cddr</span><span class="w"> </span><span class="nv">c</span><span class="p">))))</span><span class="w"></span>
+<span class="linenos">20</span><span class="w">              </span><span class="p">((</span><span class="nb">consp</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">c</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">21</span><span class="w">                </span><span class="p">(</span><span class="nv">flubify</span><span class="w"> </span><span class="nv">forth</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">c</span><span class="p">)</span><span class="w"> </span><span class="nv">prim-ht</span><span class="w"></span>
+<span class="linenos">22</span><span class="w">                        </span><span class="nv">thread-ht</span><span class="w"> </span><span class="nv">branch-if</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">23</span><span class="w">                </span><span class="p">(</span><span class="nv">self</span><span class="w"> </span><span class="nv">c</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">24</span><span class="w">              </span><span class="p">(</span><span class="no">t</span><span class="w"></span>
+<span class="linenos">25</span><span class="w">                </span><span class="p">(</span><span class="nv">assemble-flub</span><span class="w"></span>
+<span class="linenos">26</span><span class="w">                  </span><span class="o">`</span><span class="p">(</span><span class="nb">push</span><span class="w"> </span><span class="ss">&#39;,</span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">c</span><span class="p">)</span><span class="w"> </span><span class="nv">pstack</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">27</span><span class="w">                  </span><span class="p">(</span><span class="nv">self</span><span class="w"> </span><span class="p">(</span><span class="nb">cdr</span><span class="w"> </span><span class="nv">c</span><span class="p">))))))))</span><span class="w"></span>
+</pre></div>
+</div>
+<p><strong>flubify-aux</strong> 是个宏，它展开为一个函数，该函数采用 forth 线程并将其转换为一段 lisp 代
+码，利用每个非原语单词都被 <strong>tagbody</strong> 包围的事实，因此 <strong>gensyms</strong> 可以用作 <strong>goto</strong> 的
+标签。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">(</span><span class="nb">defmacro</span><span class="w"> </span><span class="nv">assemble-flub</span><span class="w"> </span><span class="p">(</span><span class="nv">form</span><span class="w"> </span><span class="nb">rest</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">  </span><span class="o">`</span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">gethash</span><span class="w"> </span><span class="nv">c</span><span class="w"> </span><span class="nv">go-ht</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">      </span><span class="p">(</span><span class="nb">list*</span><span class="w"> </span><span class="p">(</span><span class="nb">gethash</span><span class="w"> </span><span class="nv">c</span><span class="w"> </span><span class="nv">go-ht</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">4</span><span class="w">              </span><span class="o">,</span><span class="nv">form</span><span class="w"></span>
+<span class="linenos">5</span><span class="w">              </span><span class="o">,</span><span class="nb">rest</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">6</span><span class="w">      </span><span class="p">(</span><span class="nb">list*</span><span class="w">  </span><span class="o">,</span><span class="nv">form</span><span class="w"></span>
+<span class="linenos">7</span><span class="w">              </span><span class="o">,</span><span class="nb">rest</span><span class="p">)))</span><span class="w"></span>
+</pre></div>
+</div>
+<p><strong>assemble-flub</strong> 在 <strong>flubify-aux</strong> 中被大量使用作为缩写，它检查哈希表 <strong>go-ht</strong> 以查
+看在之前的传递中是否找到任何引用当前正在编译的位置的 <strong>go</strong> 。 如果是，它会将之前为其选择的
+<strong>gensym</strong> 标签添加到 <strong>tagbody</strong> 结构中。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">(</span><span class="nb">defun</span><span class="w"> </span><span class="nv">flubify</span><span class="w"> </span><span class="p">(</span><span class="nv">forth</span><span class="w"> </span><span class="nv">thread</span><span class="w"> </span><span class="nv">prim-ht</span><span class="w"></span>
+<span class="linenos"> 2</span><span class="w">                </span><span class="nv">thread-ht</span><span class="w"> </span><span class="nv">branch-if</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 3</span><span class="w">  </span><span class="p">(</span><span class="nb">unless</span><span class="w"> </span><span class="o">#1=</span><span class="p">(</span><span class="nb">gethash</span><span class="w"> </span><span class="nv">thread</span><span class="w"> </span><span class="nv">thread-ht</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 4</span><span class="w">    </span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="o">#1#</span><span class="w"> </span><span class="p">(</span><span class="nb">list</span><span class="w"> </span><span class="p">(</span><span class="nb">gensym</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos"> 5</span><span class="w">    </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">((</span><span class="nv">go-ht</span><span class="w"> </span><span class="p">(</span><span class="nb">make-hash-table</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos"> 6</span><span class="w">      </span><span class="p">(</span><span class="nb">funcall</span><span class="w"></span>
+<span class="linenos"> 7</span><span class="w">        </span><span class="p">(</span><span class="nv">alambda</span><span class="w"> </span><span class="p">(</span><span class="nv">c</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 8</span><span class="w">          </span><span class="p">(</span><span class="nb">when</span><span class="w"> </span><span class="nv">c</span><span class="w"></span>
+<span class="linenos"> 9</span><span class="w">            </span><span class="p">(</span><span class="nb">cond</span><span class="w"></span>
+<span class="linenos">10</span><span class="w">              </span><span class="p">((</span><span class="nb">eq</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">c</span><span class="p">)</span><span class="w"> </span><span class="nv">branch-if</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">11</span><span class="w">                </span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="p">(</span><span class="nb">gethash</span><span class="w"> </span><span class="p">(</span><span class="nb">cadr</span><span class="w"> </span><span class="nv">c</span><span class="p">)</span><span class="w"> </span><span class="nv">go-ht</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">12</span><span class="w">                  </span><span class="p">(</span><span class="nb">gensym</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">13</span><span class="w">                </span><span class="p">(</span><span class="nv">self</span><span class="w"> </span><span class="p">(</span><span class="nb">cddr</span><span class="w"> </span><span class="nv">c</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">14</span><span class="w">              </span><span class="p">((</span><span class="nb">consp</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">c</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">15</span><span class="w">                </span><span class="p">(</span><span class="nv">flubify</span><span class="w"> </span><span class="nv">forth</span><span class="w"> </span><span class="nv">thread</span><span class="w"> </span><span class="nv">prim-ht</span><span class="w"></span>
+<span class="linenos">16</span><span class="w">                        </span><span class="nv">thread-ht</span><span class="w"> </span><span class="nv">branch-if</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">17</span><span class="w">          </span><span class="p">(</span><span class="nv">self</span><span class="w"> </span><span class="p">(</span><span class="nb">cdr</span><span class="w"> </span><span class="nv">c</span><span class="p">))))</span><span class="w"></span>
+<span class="linenos">18</span><span class="w">      </span><span class="nv">thread</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">19</span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="o">#1#</span><span class="w"> </span><span class="p">(</span><span class="nb">nconc</span><span class="w"> </span><span class="o">#1#</span><span class="w"> </span><span class="p">(</span><span class="nb">funcall</span><span class="w"></span>
+<span class="linenos">20</span><span class="w">                      </span><span class="p">(</span><span class="nv">flubify-aux</span><span class="p">)</span><span class="w"> </span><span class="nv">thread</span><span class="w"> </span><span class="p">))))))</span><span class="w"></span>
+</pre></div>
+</div>
+<p><strong>flubify</strong> 是使用 <strong>flubify-aux</strong> 的函数。 第一遍执行时，检查分支 <strong>branch-if</strong> 指令并建立
+<strong>go-ht</strong> 哈希表。 它还递归地 flub 所有连接到当前线程的线程。 事实上， <strong>flubify</strong> 实际上可以
+是 <em>双重递归的</em> （ doubly recursive ）——只是你在展开 <strong>flubify-aux</strong> 的使用之前看不到它。 你看不到它，但 lisp 可以。
+如果参照透明度是一块透明的玻璃板，那么我们在这里看到的是一座镜子屋。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">(</span><span class="nb">defun</span><span class="w"> </span><span class="nv">compile-flubified</span><span class="w"> </span><span class="p">(</span><span class="nv">thread</span><span class="w"> </span><span class="nv">thread</span><span class="w"> </span><span class="nv">-ht</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 2</span><span class="w">  </span><span class="o">`</span><span class="p">(</span><span class="k">labels</span><span class="w"> </span><span class="p">(</span><span class="o">,@</span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">(</span><span class="nv">collect</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 3</span><span class="w">                </span><span class="p">(</span><span class="nb">maphash</span><span class="w"></span>
+<span class="linenos"> 4</span><span class="w">                  </span><span class="p">(</span><span class="k">lambda</span><span class="w"> </span><span class="p">(</span><span class="nv">k</span><span class="w"> </span><span class="nv">v</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 5</span><span class="w">                    </span><span class="p">(</span><span class="k">declare</span><span class="w"> </span><span class="p">(</span><span class="k">ignore</span><span class="w"> </span><span class="nv">k</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 6</span><span class="w">                    </span><span class="p">(</span><span class="nb">push</span><span class="w"></span>
+<span class="linenos"> 7</span><span class="w">                      </span><span class="o">`</span><span class="p">(</span><span class="o">,</span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">v</span><span class="p">)</span><span class="w"> </span><span class="p">()</span><span class="w"></span>
+<span class="linenos"> 8</span><span class="w">                        </span><span class="p">(</span><span class="k">tagbody</span><span class="w"> </span><span class="o">,@</span><span class="p">(</span><span class="nb">cdr</span><span class="w"> </span><span class="nv">v</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos"> 9</span><span class="w">                      </span><span class="nv">collect</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">10</span><span class="w">                  </span><span class="nv">thread-ht</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">11</span><span class="w">                </span><span class="p">(</span><span class="nb">nreverse</span><span class="w"> </span><span class="nv">collect</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">12</span><span class="p">(</span><span class="nb">funcall</span><span class="w"> </span><span class="nf">#&#39;</span><span class="o">,</span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="p">(</span><span class="nb">gethash</span><span class="w"> </span><span class="nv">thread</span><span class="w"> </span><span class="nv">thread-ht</span><span class="p">)))))</span><span class="w"></span>
+</pre></div>
+</div>
+<p><strong>compile-flubified</strong> 采用由 <strong>flubify</strong> 构建的哈希表并将其转换为一个结构，该结构使用 <strong>labels</strong>
+将这些 flub 过的线程中的每一个绑定到由 <strong>gensym</strong> 在函数命名空间中命名的函数中。 在这个范围
+内，它的展开式然后调用原始线程（它也被 flub 过了）。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">(</span><span class="nb">defun</span><span class="w"> </span><span class="nv">flubify-thread-shaker</span><span class="w"></span>
+<span class="linenos"> 2</span><span class="w">      </span><span class="p">(</span><span class="nv">forth</span><span class="w"> </span><span class="nv">thread</span><span class="w"> </span><span class="nv">ht</span><span class="w"> </span><span class="nv">tmp-ht</span><span class="w"> </span><span class="nv">branch-if</span><span class="w"> </span><span class="nb">compile</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 3</span><span class="w">  </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">gethash</span><span class="w"> </span><span class="nv">thread</span><span class="w"> </span><span class="nv">tmp-ht</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 4</span><span class="w">    </span><span class="p">(</span><span class="k">return-from</span><span class="w"> </span><span class="nv">flubify-thread-shaker</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 5</span><span class="w">    </span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="p">(</span><span class="nb">gethash</span><span class="w"> </span><span class="nv">thread</span><span class="w"> </span><span class="nv">tmp-ht</span><span class="p">)</span><span class="w"> </span><span class="no">t</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 6</span><span class="w">  </span><span class="p">(</span><span class="nb">cond</span><span class="w"></span>
+<span class="linenos"> 7</span><span class="w">    </span><span class="p">((</span><span class="nb">and</span><span class="w"> </span><span class="p">(</span><span class="nb">consp</span><span class="w"> </span><span class="nv">thread</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">eq</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">thread</span><span class="p">)</span><span class="w"> </span><span class="nv">branch-if</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 8</span><span class="w">      </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">cddr</span><span class="w"> </span><span class="nv">thread</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 9</span><span class="w">        </span><span class="p">(</span><span class="nv">flubify-thread-shaker</span><span class="w"></span>
+<span class="linenos">10</span><span class="w">          </span><span class="nv">forth</span><span class="w"> </span><span class="p">(</span><span class="nb">cddr</span><span class="w"> </span><span class="nv">thread</span><span class="p">)</span><span class="w"> </span><span class="nv">ht</span><span class="w"></span>
+<span class="linenos">11</span><span class="w">          </span><span class="nv">tmp-ht</span><span class="w"> </span><span class="nv">branch-if</span><span class="w"> </span><span class="nb">compile</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">12</span><span class="w">    </span><span class="p">((</span><span class="nb">and</span><span class="w"> </span><span class="p">(</span><span class="nb">consp</span><span class="w"> </span><span class="nv">thread</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">eq</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">thread</span><span class="p">)</span><span class="w"> </span><span class="nb">compile</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">13</span><span class="w">      </span><span class="p">(</span><span class="nb">error</span><span class="w"> </span><span class="s">&quot;Can&#39;t convert compiling word to lisp&quot;</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">14</span><span class="w">    </span><span class="p">((</span><span class="nb">consp</span><span class="w"> </span><span class="nv">thread</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">15</span><span class="w">      </span><span class="p">(</span><span class="nv">flubify-thread-shaker</span><span class="w"></span>
+<span class="linenos">16</span><span class="w">        </span><span class="nv">forth</span><span class="w"> </span><span class="p">(</span><span class="nb">car</span><span class="w"> </span><span class="nv">thread</span><span class="p">)</span><span class="w"> </span><span class="nv">ht</span><span class="w"> </span><span class="nv">tmp-ht</span><span class="w"> </span><span class="nv">branch-if</span><span class="w"> </span><span class="nb">compile</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">17</span><span class="w">      </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">cdr</span><span class="w"> </span><span class="nv">thread</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">18</span><span class="w">        </span><span class="p">(</span><span class="nv">flubify-thread-shaker</span><span class="w"></span>
+<span class="linenos">19</span><span class="w">          </span><span class="nv">forth</span><span class="w"> </span><span class="p">(</span><span class="nb">cdr</span><span class="w"> </span><span class="nv">thread</span><span class="p">)</span><span class="w"> </span><span class="nv">ht</span><span class="w"></span>
+<span class="linenos">20</span><span class="w">          </span><span class="nv">tmp-ht</span><span class="w"> </span><span class="nv">branch-if</span><span class="w"> </span><span class="nb">compile</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">21</span><span class="w">    </span><span class="p">((</span><span class="nb">not</span><span class="w"> </span><span class="p">(</span><span class="nb">gethash</span><span class="w"> </span><span class="nv">thread</span><span class="w"> </span><span class="nv">ht</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">22</span><span class="w">      </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">functionp</span><span class="w"> </span><span class="nv">thread</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">23</span><span class="w">        </span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="p">(</span><span class="nb">gethash</span><span class="w"> </span><span class="nv">thread</span><span class="w"> </span><span class="nv">ht</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">24</span><span class="w">          </span><span class="p">(</span><span class="nv">with-pandoric</span><span class="w"> </span><span class="p">(</span><span class="nv">dtable</span><span class="p">)</span><span class="w"> </span><span class="nv">forth</span><span class="w"></span>
+<span class="linenos">25</span><span class="w">            </span><span class="p">(</span><span class="nb">gethash</span><span class="w"> </span><span class="nv">thread</span><span class="w"> </span><span class="nv">dtable</span><span class="p">)))))))</span><span class="w"></span>
+</pre></div>
+</div>
+<p><strong>flubify-thread-shaker</strong> 是实际遍历 forth 线程的函数。 它递归地摇晃（ shake ）所有连接的
+forth 线程。这意味着它只隔离了使用 <strong>get-forth-thread</strong> 实用程序执行给定线程所需的相关
+forth 线程结构，然后将每个函数转换为相应的 lisp 代码，跳过 <strong>if-branches</strong> 并在看到 <strong>compile</strong> 时出错。</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">(</span><span class="nb">defun</span><span class="w"> </span><span class="nv">forth-to-lisp</span><span class="w"> </span><span class="p">(</span><span class="nv">forth</span><span class="w"> </span><span class="nv">word</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 2</span><span class="w">  </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">((</span><span class="nv">thread</span><span class="w"> </span><span class="p">(</span><span class="nv">get-forth-thread</span><span class="w"> </span><span class="nv">forth</span><span class="w"> </span><span class="nv">word</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 3</span><span class="w">        </span><span class="p">(</span><span class="nv">shaker-ht</span><span class="w"> </span><span class="p">(</span><span class="nb">make-hash-table</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 4</span><span class="w">        </span><span class="p">(</span><span class="nv">prim-ht</span><span class="w"> </span><span class="p">(</span><span class="nb">make-hash-table</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 5</span><span class="w">        </span><span class="p">(</span><span class="nv">thread-ht</span><span class="w"> </span><span class="p">(</span><span class="nb">make-hash-table</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 6</span><span class="w">        </span><span class="p">(</span><span class="nv">branch-if</span><span class="w"> </span><span class="p">(</span><span class="nv">get-forth-thread</span><span class="w"> </span><span class="nv">forth</span><span class="w"> </span><span class="ss">&#39;branch-if</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 7</span><span class="w">        </span><span class="p">(</span><span class="nb">compile</span><span class="w"> </span><span class="p">(</span><span class="nv">get-forth-thread</span><span class="w"> </span><span class="nv">forth</span><span class="w"> </span><span class="ss">&#39;compile</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos"> 8</span><span class="w">  </span><span class="p">(</span><span class="nv">flubify-thread-shaker</span><span class="w"></span>
+<span class="linenos"> 9</span><span class="w">    </span><span class="nv">forth</span><span class="w"> </span><span class="nv">thread</span><span class="w"> </span><span class="nv">shaker-ht</span><span class="w"></span>
+<span class="linenos">10</span><span class="w">    </span><span class="p">(</span><span class="nb">make-hash-table</span><span class="p">)</span><span class="w"> </span><span class="nv">branch-if</span><span class="w"> </span><span class="nb">compile</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">11</span><span class="w">  </span><span class="p">(</span><span class="nb">maphash</span><span class="w"> </span><span class="p">(</span><span class="k">lambda</span><span class="w"> </span><span class="p">(</span><span class="nv">k</span><span class="w"> </span><span class="nv">v</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">12</span><span class="w">            </span><span class="p">(</span><span class="k">declare</span><span class="w"> </span><span class="p">(</span><span class="k">ignore</span><span class="w"> </span><span class="nv">v</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">13</span><span class="w">            </span><span class="p">(</span><span class="nb">setf</span><span class="w"> </span><span class="p">(</span><span class="nb">gethash</span><span class="w"> </span><span class="nv">k</span><span class="w"> </span><span class="nv">prim-ht</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">gensym</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">14</span><span class="w">          </span><span class="nv">shaker</span><span class="w"> </span><span class="nv">-ht</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">15</span><span class="w">  </span><span class="p">(</span><span class="nv">flubify</span><span class="w"> </span><span class="nv">forth</span><span class="w"> </span><span class="nv">thread</span><span class="w"> </span><span class="nv">prim-ht</span><span class="w"> </span><span class="nv">thread-ht</span><span class="w"> </span><span class="nv">branch-if</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">16</span><span class="w">  </span><span class="o">`</span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">(</span><span class="nv">pstack</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">17</span><span class="w">    </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">(</span><span class="o">,@</span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">(</span><span class="nv">collect</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">18</span><span class="w">                </span><span class="p">(</span><span class="nb">maphash</span><span class="w"></span>
+<span class="linenos">19</span><span class="w">                  </span><span class="p">(</span><span class="k">lambda</span><span class="w"> </span><span class="p">(</span><span class="nv">k</span><span class="w"> </span><span class="nv">v</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">20</span><span class="w">                    </span><span class="p">(</span><span class="nb">push</span><span class="w"> </span><span class="o">`</span><span class="p">(</span><span class="o">,</span><span class="p">(</span><span class="nb">gethash</span><span class="w"> </span><span class="nv">k</span><span class="w"> </span><span class="nv">prim-ht</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">21</span><span class="w">                            </span><span class="p">(</span><span class="k">lambda</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">,@</span><span class="p">(</span><span class="nb">butlast</span><span class="w"> </span><span class="nv">v</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">22</span><span class="w">                            </span><span class="nv">collect</span><span class="w"> </span><span class="p">))</span><span class="w"></span>
+<span class="linenos">23</span><span class="w">                    </span><span class="nv">shaker-ht</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">24</span><span class="w">                  </span><span class="p">(</span><span class="nb">nreverse</span><span class="w"> </span><span class="nv">collect</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">25</span><span class="w">        </span><span class="o">,</span><span class="p">(</span><span class="nv">compile-flubified</span><span class="w"></span>
+<span class="linenos">26</span><span class="w">            </span><span class="nv">thread</span><span class="w"> </span><span class="nv">thread-ht</span><span class="p">)))))</span><span class="w"></span>
+</pre></div>
+</div>
+<p><strong>forth-to-lisp</strong> 是本章前面的宏和函数所促进的最终函数。 它采用 <strong>new-forth</strong> 创建的
+forth 环境，查找作为 word 传递的符号所指示的线程，然后返回相应的 lisp 代码来执行该线程。 它首先
+摇晃（ shake ）线程（递归地摇晃（ shake ）所有连接的线程），然后应用进行 Flub 化的（ Flubification ）过程。 最后，它包装了少
+量的 lisp 代码，这些代码用常规的 lisp 控制结构实现了内部解释器。</p>
+<p>为了演示，回想之前我们定义过的 forth 单词 <strong>square</strong> 和 <strong>square3</strong> 。 同样，下面是它们在
+<strong>my-forth</strong> 环境中的定义方式：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="nv">{</span><span class="w"> </span><span class="nv">dup</span><span class="w"> </span><span class="nb">*</span><span class="w"> </span><span class="nv">}</span><span class="w"> </span><span class="ss">&#39;square</span><span class="w"> </span><span class="nv">name</span><span class="w"></span>
+<span class="linenos">3</span><span class="w">    </span><span class="nv">{</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="nv">square</span><span class="w"> </span><span class="nb">print</span><span class="w"> </span><span class="nv">}</span><span class="w"> </span><span class="ss">&#39;square3</span><span class="w"> </span><span class="nv">name</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">4</span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<p>下面我们将 <strong>square3</strong> 线程转换成 lisp 代码：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">forth-to-lisp</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"> </span><span class="ss">&#39;square3</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="p">(</span><span class="nv">LET</span><span class="w"> </span><span class="p">(</span><span class="nv">PSTACK</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 4</span><span class="w">  </span><span class="p">(</span><span class="nv">LET</span><span class="w"> </span><span class="p">((</span><span class="ss">#:G1814</span><span class="w"> </span><span class="p">(</span><span class="nv">LAMBDA</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="c1">; dup</span><span class="w"></span>
+<span class="linenos"> 5</span><span class="w">                  </span><span class="p">(</span><span class="nv">PUSH</span><span class="w"> </span><span class="p">(</span><span class="nv">CAR</span><span class="w"> </span><span class="nv">PSTACK</span><span class="p">)</span><span class="w"> </span><span class="nv">PSTACK</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos"> 6</span><span class="w">        </span><span class="p">(</span><span class="ss">#:G1815</span><span class="w"> </span><span class="p">(</span><span class="nv">LAMBDA</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="c1">; *</span><span class="w"></span>
+<span class="linenos"> 7</span><span class="w">                  </span><span class="p">(</span><span class="nv">PUSH</span><span class="w"> </span><span class="p">(</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">POP</span><span class="w"> </span><span class="nv">PSTACK</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 8</span><span class="w">                            </span><span class="p">(</span><span class="nv">POP</span><span class="w"> </span><span class="nv">PSTACK</span><span class="p">))</span><span class="w"></span>
+<span class="linenos"> 9</span><span class="w">                        </span><span class="nv">PSTACK</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">10</span><span class="w">        </span><span class="p">(</span><span class="ss">#:G1816</span><span class="w"> </span><span class="p">(</span><span class="nv">LAMBDA</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="c1">; print</span><span class="w"></span>
+<span class="linenos">11</span><span class="w">                  </span><span class="p">(</span><span class="nv">PRINT</span><span class="w"> </span><span class="p">(</span><span class="nv">POP</span><span class="w"> </span><span class="nv">PSTACK</span><span class="p">)))))</span><span class="w"></span>
+<span class="linenos">12</span><span class="w">    </span><span class="p">(</span><span class="nv">LABELS</span><span class="w"> </span><span class="p">((</span><span class="ss">#:G1817</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="c1">; square3</span><span class="w"></span>
+<span class="linenos">13</span><span class="w">              </span><span class="p">(</span><span class="nv">TAGBODY</span><span class="w"></span>
+<span class="linenos">14</span><span class="w">                </span><span class="p">(</span><span class="nv">PUSH</span><span class="w"> </span><span class="ss">&#39;3</span><span class="w"> </span><span class="nv">PSTACK</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">15</span><span class="w">                </span><span class="p">(</span><span class="nv">FUNCALL</span><span class="w"> </span><span class="nf">#&#39;</span><span class="ss">#:G1818</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">16</span><span class="w">                </span><span class="p">(</span><span class="nv">FUNCALL</span><span class="w"> </span><span class="ss">#:G1816</span><span class="p">)))</span><span class="w"></span>
+<span class="linenos">17</span><span class="w">            </span><span class="p">(</span><span class="ss">#:G1818</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="c1">; square</span><span class="w"></span>
+<span class="linenos">18</span><span class="w">              </span><span class="p">(</span><span class="nv">TAGBODY</span><span class="w"></span>
+<span class="linenos">19</span><span class="w">                </span><span class="p">(</span><span class="nv">FUNCALL</span><span class="w"> </span><span class="ss">#:G1814</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">20</span><span class="w">                </span><span class="p">(</span><span class="nv">FUNCALL</span><span class="w"> </span><span class="ss">#:G1815</span><span class="p">))))</span><span class="w"></span>
+<span class="linenos">21</span><span class="w">      </span><span class="p">(</span><span class="nv">FUNCALL</span><span class="w"> </span><span class="nf">#&#39;</span><span class="ss">#:G1817</span><span class="p">))))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>果然如此，上面是可执行的 lisp 代码。 如果我们想，我们可以使用宏在某个地方编译它。 或者我们可以仅仅 <strong>eval</strong>
+它：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nb">eval</span><span class="w"> </span><span class="nb">*</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">2</span><span class="mi">9</span><span class="w"></span>
+<span class="linenos">3</span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<p>为了展示一个带有分支和递归的 forth 线程是如何被混淆（ flubbed ）的，下面是来自 forth 单词 <strong>fact</strong> 编译
+成 lisp 代码的一部分：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">forth-to-lisp</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"> </span><span class="ss">&#39;fact</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 2</span><span class="w">    </span><span class="o">...</span><span class="w"></span>
+<span class="linenos"> 3</span><span class="w">    </span><span class="p">(</span><span class="nv">LABELS</span><span class="w"> </span><span class="p">((</span><span class="ss">#:G1803</span><span class="w"> </span><span class="p">()</span><span class="w">                                                    </span><span class="c1">; fact</span><span class="w"></span>
+<span class="linenos"> 4</span><span class="w">              </span><span class="p">(</span><span class="nv">TAGBODY</span><span class="w"></span>
+<span class="linenos"> 5</span><span class="w">                </span><span class="p">(</span><span class="nv">FUNCALL</span><span class="w"> </span><span class="ss">#:G1797</span><span class="p">)</span><span class="w">           </span><span class="c1">; dup</span><span class="w"></span>
+<span class="linenos"> 6</span><span class="w">                </span><span class="p">(</span><span class="nv">PUSH</span><span class="w"> </span><span class="ss">&#39;1</span><span class="w"> </span><span class="nv">PSTACK</span><span class="p">)</span><span class="w"></span>
+<span class="linenos"> 7</span><span class="w">                </span><span class="p">(</span><span class="nv">FUNCALL</span><span class="w"> </span><span class="ss">#:G1798</span><span class="p">)</span><span class="w">           </span><span class="c1">; -</span><span class="w"></span>
+<span class="linenos"> 8</span><span class="w">                </span><span class="p">(</span><span class="nv">FUNCALL</span><span class="w"> </span><span class="ss">#:G1797</span><span class="p">)</span><span class="w">           </span><span class="c1">; dup</span><span class="w"></span>
+<span class="linenos"> 9</span><span class="w">                </span><span class="p">(</span><span class="nv">PUSH</span><span class="w"> </span><span class="ss">&#39;1</span><span class="w"> </span><span class="nv">PSTACK</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">10</span><span class="w">                </span><span class="p">(</span><span class="nv">FUNCALL</span><span class="w"> </span><span class="ss">#:G1799</span><span class="p">)</span><span class="w">           </span><span class="c1">; &gt;</span><span class="w"></span>
+<span class="linenos">11</span><span class="w">                </span><span class="p">(</span><span class="nv">FUNCALL</span><span class="w"> </span><span class="ss">#:G1800</span><span class="p">)</span><span class="w">           </span><span class="c1">; not</span><span class="w"></span>
+<span class="linenos">12</span><span class="w">                </span><span class="p">(</span><span class="nv">IF</span><span class="w"> </span><span class="p">(</span><span class="nv">POP</span><span class="w"> </span><span class="nv">PSTACK</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nv">GO</span><span class="w"> </span><span class="ss">#:G1804</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">13</span><span class="w">                </span><span class="p">(</span><span class="nv">FUNCALL</span><span class="w"> </span><span class="nf">#&#39;</span><span class="ss">#:G1803</span><span class="p">)</span><span class="w">  </span><span class="c1">; fact</span><span class="w"></span>
+<span class="linenos">14</span><span class="w">                </span><span class="ss">#:G1804</span><span class="w"></span>
+<span class="linenos">15</span><span class="w">                </span><span class="p">(</span><span class="nv">FUNCALL</span><span class="w"> </span><span class="ss">#:G1801</span><span class="p">)</span><span class="w">    </span><span class="c1">; nop</span><span class="w"></span>
+<span class="linenos">16</span><span class="w">                </span><span class="p">(</span><span class="nv">FUNCALL</span><span class="w"> </span><span class="ss">#:G1802</span><span class="p">))))</span><span class="w"> </span><span class="c1">; *</span><span class="w"></span>
+<span class="linenos">17</span><span class="w">      </span><span class="p">(</span><span class="nv">FUNCALL</span><span class="w"> </span><span class="nf">#&#39;</span><span class="ss">#:G1803</span><span class="p">))</span><span class="w"> </span><span class="c1">; fact</span><span class="w"></span>
+<span class="linenos">18</span><span class="w">    </span><span class="o">...</span><span class="w"></span>
+</pre></div>
+</div>
+<p>所以我们用forth编写了这个程序，但它现在是lisp。 我们使用了 forth 即时的单词 <strong>if</strong> 和
+<strong>then</strong> 来编译一个控制递归是否发生的条件控制结构。 代替返回堆栈，lisp 将使用其通用函数调用基
+础结构为我们实现此递归。</p>
+<p>当使用 eval 进行测试时，请记住单词 <strong>fact</strong> 假定堆栈上有一个值，但我们从一个新堆栈开始。
+为了测试这个词，我们应该创建一个将值添加到堆栈的封装（ wrapper ）单词。 例如：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nv">go-forth</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"></span>
+<span class="linenos">2</span><span class="w">    </span><span class="nv">{</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="nv">fact</span><span class="w"> </span><span class="nb">print</span><span class="w"> </span><span class="nv">}</span><span class="w"> </span><span class="ss">&#39;fact5</span><span class="w"> </span><span class="nv">name</span><span class="p">)</span><span class="w"></span>
+<span class="linenos">3</span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<p>然后我们可以执行：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">*</span><span class="w"> </span><span class="p">(</span><span class="nb">eval</span><span class="w"> </span><span class="p">(</span><span class="nv">forth-to-lisp</span><span class="w"> </span><span class="nv">my-forth</span><span class="w"> </span><span class="ss">&#39;fact5</span><span class="p">))</span><span class="w"></span>
+<span class="linenos">2</span><span class="mi">120</span><span class="w"></span>
+<span class="linenos">3</span><span class="no">NIL</span><span class="w"></span>
+</pre></div>
+</div>
+<p>如前所述，由于 lisp 和 forth 之间的差异，我们的 <strong>forth-to-lisp</strong> 编译器有一定的局限性。
+例如，我们不再提供对返回堆栈的访问，因此任何使用 <strong>r&gt;</strong> 或 <strong>&gt;r</strong> 的单词都被禁止。 这包括 <strong>exit</strong> ，因此之前的单词 <strong>countdown</strong> 将不起作用。 但是，因为它不使用 <strong>exit</strong> ， <strong>countdown-for-teh-hax0rz</strong>
+可以正常工作。 因为 lisp 程序无法访问它们的返回堆栈，所以并非所有 forth 的控制结构都可以用像 Common
+Lisp 这样的 Flub 语言来实现。 练习：添加 <strong>exit</strong> 作为一个特殊情况的单词，它使用 lisp 块从一
+个单词返回。</p>
+<p>另一个限制是 lisp 代码无法编译非 Flub 代码，因此我们无法翻译出 forth 中使用 <strong>compile</strong> 的单词，
+例如 <strong>if</strong> 、 <strong>then</strong> 、 <strong>begin</strong> 和 <strong>again</strong> 。 当然，请注意，用这些词创建的 forth 线程
+仍然可以用于编译单词，如上与事实一样。 最后一个限制是，在 forth 中， <strong>branch-if</strong> 可以跳转到
+任何线程，即使它是在与我们当前执行的单词不同的单词中创建的。 在 lisp 中，只能 <strong>go</strong> 到我们的 <strong>tagbody</strong> 中
+的其他位置。 Forth 允许非局部分支，但一般的非局部分支不能在像 Common Lisp 这样的 Flubs 中
+完成。</p>
+<p>等一等。 当我们之前在 forth 环境中进行编程时，我们不是只避免了所有这些 Flub 限制吗？是的。 宏
+允许我们将程序与 lisp 相互转换。 多亏了宏，任何东西都可以用 lisp 编程。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="chapter07.html" class="btn btn-neutral float-left" title="第七章：宏的效率" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="appendices.html" class="btn btn-neutral float-right" title="附录" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2022, oneforalone, Treyenuo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

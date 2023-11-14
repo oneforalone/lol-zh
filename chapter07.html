@@ -1,0 +1,2365 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>第七章：宏的效率 &mdash; Let Over Lambda 中文文档  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="第八章：Lisp 和 Forth" href="chapter08.html" />
+    <link rel="prev" title="第六章：回指 （1） 宏" href="chapter06.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="preface.html">译者序</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter01.html">第一章：概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter02.html">第二章：闭包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter03.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter04.html">第四章：读取宏 <sup>（1）</sup></a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter05.html">第五章：Programs that program <sup>（1）</sup></a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter06.html">第六章：回指 <sup>（1）</sup> 宏</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">第七章：宏的效率</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#lisp-is-fast">7.1 Lisp Is Fast</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lisp">7.2 宏让 Lisp 很迅捷</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-to-know-your-disassembler">7.3 了解你的反汇编器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pointer-scope">7.4 指针作用域</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tlist-cons">7.5 Tlist 和 cons 池</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sorting-networks">7.6 排序网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#writing-and-benchmarking-compilers">7.7 编写编译器并做基准测试 <sup>（1）</sup></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="chapter08.html">第八章：Lisp 和 Forth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendices.html">附录</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">参考文档</a></li>
+<li class="toctree-l1"><a class="reference internal" href="specification.html">术语表</a></li>
+<li class="toctree-l1"><a class="reference internal" href="original-code.html">源代码</a></li>
+<li class="toctree-l1"><a class="reference internal" href="production-code.html">生产代码</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>第七章：宏的效率</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/chapter07.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="chapter07">
+<span id="id1"></span><h1>第七章：宏的效率<a class="headerlink" href="#chapter07" title="Permalink to this heading"></a></h1>
+<section id="lisp-is-fast">
+<span id="id2"></span><h2>7.1 Lisp Is Fast<a class="headerlink" href="#lisp-is-fast" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>如果用指甲盖大小的瓷砖来铺地面的话，就不会有太多的浪费。 —— Paul Graham
+</pre></div>
+</div>
+<p>有人觉得 lisp 很慢。对于一些早期的 lisp 实现来说，可能确实是这样的，但多年来这种看法
+已经被证明是错误的。事实上，像 COMMON LISP 这样的现代Lisp 已经设计成用宏来
+提高 Lisp 的速度。非常快。如果你相信低级语言比 lisp 更高效的 <em>性能神话</em>  <sup>（1）</sup>  ，那么本章的目
+标可能会让你感到惊讶。本章旨在说明 lisp 可以比其他编程语言更快，而像 C 这样的低
+层次编程语言实际上在性能上比 lisp 更差，因为它们缺少宏。Lisp 能编写比其他语言更高效
+的代码。特别是大型和复杂的程序，宏能构建比 Blub 语言更具绝对性能优势的代码。有时，
+我们的语言设计成具有高效的实现，但更多时候，它们的设计目的是为程序员提供最大的表达能力。
+当选择效率时，lisp 很快，非常得快。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（1）
+性能神话 performance myth</p>
+</div>
+<p>当其他语言提供小的、正方形的瓦片时，lisp 可以选择随意大小、形状的瓦片。在 C 语言中，
+程序员总是使用一种与花哨的 fixnum 加法器功能直接相关的语言。除了过程和结构，在 C
+语言中几乎不可能进行抽象。相反，lisp 根本不是围绕机器的能力和限制而设计的。</p>
+<p>但可以肯定的是，其他语言能用更低效率、更方便的方式来编写。毕竟，Perl 让程序员使用
+单个密集表达式创造奇迹，但也为更快的代码提供了许多升级路径。那么，当我们说 lisp
+允许我们控制抽象的效率时，而不像其他语言那样，这意味着什么呢？现在你可能已经猜到了，
+答案就是书中的主题：宏。</p>
+<p>与其询问什么让程序运行得快，不如问问是什么让程序运行得慢。这是编程中最常被研究的
+话题之一。根本原因可以大致分为三大类：糟糕的算法、差劲的数据结构和通用代码。</p>
+<p>所有的语言实现都需要好算法。算法大概是对如何执行编程任务进行了充分研究的过程描述。
+因为发明算法所需的投资远远大于实现算法，所以算法在整个计算机科学中无处不在。有人
+已经知道了算法如何、为什么以及多快地工作；要使用算法，所要做的就是把它的 <em>伪代码</em>  <sup>（2）</sup> 转换
+成系统能够理解的东西。因为 COMMON LISP 实现通常都是由聪明的人实现的，并且在过去
+的几十年里不断改进，他们通常使用一些最好和最快的算法来完成大多数常见的任务。例如，
+CMUCL 使用调优的堆排序实现对列表和向量的排序，使用 Mersenne Twister 19937 算法
+及大周期 <sup>【1】</sup> 来生成随机数 <sup>【2】</sup> 。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【1】
+(1- (expt 2 19937))</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【2】
+MT19937 序列由线性递归生成，其本身不适用于密码学。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（2）
+伪代码 pseudo-code</p>
+</div>
+<p>好的数据结构对优秀的编程语言来说也是必要的。数据结构很重要，忽略它们将导致任何语言
+实现爬行缓慢。数据结构的优化本质上归结为一个叫做 <em>局部性</em> <sup>（3.1）</sup> 的概念。解释这个概念很容易 ——
+访问最频繁的数据应该是访问速度最快的。数据结构和局部性是如此重要，以至于几乎所有
+需要提高性能的计算级别上都能清楚地看到它们：大量的CPU寄存器、内存缓存、数据库和
+缓存网络代理是其中的一些亮点。Lisp 提供了一组巨大的标准数据结构，它们也都实现得很好。
+哈希表、链表（显然）、带填充指针的向量、带 <em>内化</em> <sup>（3.2）</sup> 符号的包，以及更多的都是特定、可用
+的，对于 Common Lisp 程序员采纳的优势都很好地实现了。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（3）
+局部性 locality；内化 internable</p>
+</div>
+<p>如果 lisp 提供了如此好的算法和数据结构，那 lisp 代码怎么可能比其他语言的慢呢？这个解释
+是基于 lisp 最重要的设计决策：<em>通用代码</em> ，一个与我们熟悉的语法二义性相似的概念。在编写 lisp
+代码时，我们尽可能多地使用二元性。语言本身的结构鼓励我们这样做。lisp 程序通常比 Blub
+程序短得多的部分原因是，任何给定的 lisp 代码段的用途都比相应的 Blub 代码段大得多，因此
+可以更频繁地重用它。从 Blub 语言的角度来看，必须 <em>多写才能得到更少</em> 可能会让人觉得不寻常，但这是
+我们一直在讨论的 lisp 的重要设计决策 —— 语法的二元性。每个表达式附加的二元性越多，
+程序似乎就越短。那么，这是否意味着为了达到或超过 C 语言的性能，我们需要使 lisp 程序与相应的
+C 语言程序一样长且危险呢？不，Lisp 有宏。</p>
+</section>
+<section id="lisp">
+<span id="macros-make-lisp-fast"></span><h2>7.2 宏让 Lisp 很迅捷<a class="headerlink" href="#lisp" title="Permalink to this heading"></a></h2>
+<p>本节展示了用三种类型的宏来协助创建高效程序的示例：常规宏、读取宏和这里介绍的
+新类型宏 —— <em>编译宏</em>。</p>
+<p>宏可以用来控制算法、数据结构、类型检查、安全检查、代码或部分代码的优化级别等等。
+我们可以在一个程序（甚至函数）中让安全和通用代码共存，就像迅捷
+而危险的代码。简而言之，没有任何一种语言提供了像 lisp 这样的开放接口来控制编译器，
+这都要归功于宏（不然还能是什么呢？）。大概浏览下 ANSI 标准会发现标准里看起来是说：
+宏和声明（与编译器沟通的最直接方式）不能很好地协同工作: 宏结构不能展开成 <em>声明</em> ；
+声明表达式必须以它们所引用结构的实际子表达式的形式出现。</p>
+<p>ANSI 的意思是，下面的宏不会按预期工作:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro go-fast () ; Broken!
+<span class="linenos">2</span>  &#39;(declare (optimize (speed 3) (safety 0))))
+</pre></div>
+</div>
+<p>我们不能把宏调用放在需要声明的地方。这个问题的另一种思考角度是，在检查声明之前，
+系统的代码遍历程序不需要展开在特殊结构主体中的宏。想要执行得快是件很常见的事情，
+所以也许我们可以做得比上面有问题的 <strong>go-fast</strong> 宏更好。当我们想要尽可能多地压缩含义时，
+通常我们需要一个 <em>读取宏</em> 。读取宏也适合展开成声明，因为它们在代码遍历程序尝试遍历代码之前
+就展开了。它们是以实际的子表达式读入的。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(set-dispatch-macro-character #\# #\f
+<span class="linenos">2</span>  (lambda (stream sub-char numarg)
+<span class="linenos">3</span>    (declare (ignore stream sub-char))
+<span class="linenos">4</span>    (setq numarg (or numarg 3))
+<span class="linenos">5</span>    (unless (&lt;= numarg 3)
+<span class="linenos">6</span>      (error &quot;Bad value for #f: ~a&quot; numarg))
+<span class="linenos">7</span>    `(declare (optimize (speed ,numarg)
+<span class="linenos">8</span>                        (safety ,(- 3 numarg))))))
+</pre></div>
+</div>
+<p><strong>#f</strong> （ sharp-f ）是个读取宏，可被用于控制 COMMON LISP 程序最重要的性能权衡：声明的速度和安全之间
+的平衡。例如， <strong>#f</strong> 本身读取的是我们希望 <strong>go-fast</strong> 扩展的内容:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* &#39;#f
+<span class="linenos">2</span>(DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0)))
+</pre></div>
+</div>
+<p>但是，我们可以改变这一点，并将一个小于 3 的数作为读取器数字（ reader number ）参数来声明安全
+高于速度。所有的调度读取宏都可以接受这样一个数字参数，它作为第三个参数（通常称为
+<strong>numarg</strong> ）传递给读取宏函数。下面是一个体现我们重视安全而不是速度的例子，将
+SPEED 的参数设为 0:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* &#39;#0f
+<span class="linenos">2</span>(DECLARE (OPTIMIZE (SPEED 0) (SAFETY 3)))
+</pre></div>
+</div>
+<p>也可以设置为 1 和 2，从而产生以下声明。这些不同的声明设置的优点非常依赖于编译器，
+所以你几乎不会使用它们:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* &#39;(#1f #2F)
+<span class="linenos">2</span>((DECLARE (OPTIMIZE (SPEED 1) (SAFETY 2)))
+<span class="linenos">3</span>(DECLARE (OPTIMIZE (SPEED 2) (SAFETY 1))))
+</pre></div>
+</div>
+<p>尽管宏不能直接展开成声明，但我们仍然可以使用常规宏来控制声明。因为代码遍历程序在
+展开宏之前不能遍历宏结构来搜索声明，所以无法判断该声明是编写结构的实际子表达式，
+还是宏在展开时添加了声明。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro fast-progn (&amp;rest body)
+<span class="linenos">2</span>  `(locally #f ,@body))
+<span class="linenos">3</span>
+<span class="linenos">4</span>(defmacro safe-progn (&amp;rest body)
+<span class="linenos">5</span>  `(locally #0f ,@body))
+</pre></div>
+</div>
+<p><strong>fast-progn</strong> 和 <strong>safe-progn</strong> 是宏展开成包含声明的结构的简单例子。请注意，这里
+使用的是 <strong>locally</strong> 的隐式 progn 而不是 <strong>progn</strong> 本身，因为 <strong>progn</strong> 无法接受声明 <sup>【3】</sup> 。
+这两个宏使用之前定义的 <strong>#f</strong> 读取宏。我们可以使用这些结构作为 <strong>progn</strong> 的一个版本，其中
+内部封装的表达式对执行速度进行了优化(但很危险)，另一个版本确保内部表达式是安全的(可能很慢)：</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【3】
+因为它没有建立绑定。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (macroexpand
+<span class="linenos">2</span>    &#39;(fast-progn
+<span class="linenos">3</span>      (+ 1 2)))
+<span class="linenos">4</span>(LOCALLY
+<span class="linenos">5</span>  (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0)))
+<span class="linenos">6</span>(+ 1 2)) T
+</pre></div>
+</div>
+<p>我们还可以在宏参数中提供其他声明，因为它们的位置不是也不能在宏展开之前验证：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (macroexpand
+<span class="linenos">2</span>    &#39;(fast-progn
+<span class="linenos">3</span>      (declare (type fixnum a))
+<span class="linenos">4</span>      (the fixnum (+ a 1))))
+<span class="linenos">5</span>(LOCALLY
+<span class="linenos">6</span>  (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0)))
+<span class="linenos">7</span>  (DECLARE (TYPE FIXNUM A))
+<span class="linenos">8</span>  (THE FIXNUM (+ A 1)))
+<span class="linenos">9</span>T
+</pre></div>
+</div>
+<p>在尝试宏扩展时，有时我们会想看看在将宏扩展嵌入不同的词法上下文时会发生什么。
+将 <a class="reference internal" href="chapter04.html#runtime-at-readtime"><span class="std std-ref">4.1 读取时执行  （2）</span></a> 中的读取时计算宏与 <strong>*</strong> 变量
+（保持最后三个REPL结果可用）结合起来，可以看到我们的代码的计算结果如预期
+的那样:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (let ((a 0))
+<span class="linenos">2</span>    #.*)
+<span class="linenos">3</span>1
+</pre></div>
+</div>
+<p>但是请注意，尽管上面的求解是正确的，但是声明有时只对编译后的代码进行充分
+考虑。例如，由于上面的求解解释了代码 <sup>【4】</sup> ，它可能会忽略安全声明，并继续将溢出
+结果提升为大数（ <em>bignum</em> ）。来看看这里是否会发生这种情况:</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【4】
+在大多数的（ lisp ）实现中。（译注： lisp 实现就是其他编程语言中的开发环境，是英文直译，意为实现了编程语言的编译器/解释器）</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (let ((a most-positive-fixnum))
+<span class="linenos">2</span>    #.**)
+<span class="linenos">3</span>536870912
+</pre></div>
+</div>
+<p>确实如此，CMUCL忽略了解释代码的声明。我们想在 <strong>***</strong>
+中继续摆弄我们的表达式，但由于不确定下次是否能得到它，让我们把它带回给 * ，这样
+就不会丢失表达式:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* ***
+<span class="linenos">2</span>(LOCALLY
+<span class="linenos">3</span>  (DECLARE (OPTIMIZE (SPEED 3) (SAFETY 0)))
+<span class="linenos">4</span>  (DECLARE (TYPE FIXNUM A))
+<span class="linenos">5</span>  (THE FIXNUM (+ A 1)))
+</pre></div>
+</div>
+<p>就是这样。所以现在有不止三次机会让它工作。试试编译它，看下会不会得到个 <em>fixnum</em> 的封装：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (funcall
+<span class="linenos">2</span>    (compile nil
+<span class="linenos">3</span>      `(lambda ()
+<span class="linenos">4</span>        (let ((a most-positive-fixnum))
+<span class="linenos">5</span>,*))))
+<span class="linenos">6</span>; Warning: This is not a (VALUES FIXNUM &amp;REST T):
+<span class="linenos">7</span>;   536870912
+<span class="linenos">8</span>536870912
+</pre></div>
+</div>
+<p>嗯？到底发生了呢？我们不是告诉 lisp 不要检查吗？原因在于像 <em>常量折叠</em> 这样的编译时优化
+让声明的推导更复杂。当 lisp 编译代码时，它能够在编译时执行加法，因为我们添加的
+是常量，因此它知道结果也将是常量，所以就没必要在运行时计算它。当 lisp 这样做的
+时候，它看到我们对一个 fixnum 的声明肯定是错误的。这个警告是用 lisp 的方式告诉
+我们“你这个笨蛋，我无视你的声明，因为你不可信。”如果稍微改变一下表达式，让
+lisp 无法折叠任何常量，最终可以看到 <em>fixnum</em> 封装的效果:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (funcall
+<span class="linenos">2</span>    (compile nil
+<span class="linenos">3</span>`(lambda (a)
+<span class="linenos">4</span>7.2. MACROS MAKE LISP FAST 215
+<span class="linenos">5</span>        ,**))
+<span class="linenos">6</span>    most-positive-fixnum)
+<span class="linenos">7</span>-536870912
+</pre></div>
+</div>
+<p>声明的另一个重要属性是，它们可以像词法变量可以 <em>遮蔽</em> 其他词法变量一样遮蔽其他
+声明。例如，我们可能希望编写个宏来执行安全检查，即便是被嵌入到声明为不安全
+的代码中:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro error-checker ()
+<span class="linenos">2</span>  `(safe-progn
+<span class="linenos">3</span>    (declare (type integer var))
+<span class="linenos">4</span>    do-whatever-other-error-checking))
+</pre></div>
+</div>
+<p>再封装一层，我们可以用这些宏来添加错误检查代码，这些代码需要执行的比较快速而不
+是比较安全，通过嵌套这些宏的其他用法来实现： <strong>fast-progn</strong> ：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defun wrapped-operation ()
+<span class="linenos">2</span>  (safe-progn
+<span class="linenos">3</span>    do-whatever-error-checking
+<span class="linenos">4</span>    (fast-progn
+<span class="linenos">5</span>      but-this-needs-to-go-fast)))
+</pre></div>
+</div>
+<p>在高性能lisp代码中，使用围绕某些功能的快速实现的错误检查区域，安全地验证参数是
+一种常见模式。特别是对于数组遍历这样的迭代过程，可以通过在操作开始前进行类型
+和边界检查等错误检查，然后在执行时尽可能地忽略它们，从而显著提高运行时性能。</p>
+<p>COMMON LISP 是第一个和一流的、为强大的编程能力而设计的（编程语言）；效率是个较远的次要问题。然而，
+这些功能、功率和效率并不一定代表一种权衡。通过宏，我们可以应用 lisp 的强大来
+解决效率问题。除了常规宏和读取宏（它们本身已经提供了相当强大的功能）之外，
+COMMON LISP还提供了 <em>编译宏</em> 。编译宏是与其他类型宏相同意义上的宏：它们是会编程
+的程序。大多数lisp教程都没有很好地描述编译器宏，这表明性能对于程序员来说是多么
+重要（几乎从来没有）。然而，编译宏是某些效率问题的优雅解决方案，值得成为每个 lisp 专业人员的工具包。</p>
+<p>编译宏定义了 lisp 编译器将应用于（已命名的）函数调用的转换。这意味着可以使用 <strong>defun</strong>
+创建的函数，并告诉 lisp 不要编译对该函数的调用，而是应该编译编译宏指示的一些任意代码。
+为什么要将函数与编译宏结合使用，而不是一开始就用这个名字编写宏呢？第一个不太重
+要的原因是，这让我们能够更多地控制何时减轻编译开销。特别的是，COMMON LISP
+并没有指定何时或者多长时间一次扩展一个宏。在解释代码中，很可能宏每次被调用都会被展
+开 <sup>【5】</sup> 。在进行编译时优化时，我们希望在运行函数之前执行一个（可能很长且昂贵的）计算，
+以减少函数本身必须执行的计算量。编译宏为我们提供了一种方法，当我们编译代码时，
+只执行一次冗长的编译计算 —— 它本该是这样的。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【5】
+换句话说，在解释时不能保证缓存宏的展开式。</p>
+</div>
+<p>但比只在正确的时间执行一次编译计算更重要的是，编译宏很有用，因为它们将 <em>语法
+二义性</em> 引入语言。编译宏允许我们为任何表示（已命名的）函数调用的代码结构添加双重含义。
+除了常规意义外，编译器宏还添加了编译意义。强烈建议确保编译后的含义实现与常规含义
+任务相同，但可以随意改变它的执行方式（这是重点）。使用双重语法的好处是，我们不修改代码就能改变
+代码的效率。我们可以使用一个现有的代码根基 —— 可能使用大量函数调用 —— 并通过引入双重语法来改变代码的编译方式。我们所要做的就是
+找到代价很高的函数调用，然后实现编译器宏，将它们转换为代价低的展开式。</p>
+<p>哪种类型的函数调用开销高呢？作为第一个例子，回想一下 <a class="reference internal" href="chapter04.html#reader-security"><span class="std std-ref">4.6 读取器的安全</span></a> 中，
+函数可以执行 <em>lambda 解构</em> ，而且这是更通用的 <em>defmacro 解构</em> 的子集 <sup>【6】</sup> 。当函数接受关键字
+参数时，我们将它们作为分组的由关键字符号及其对应的值构成的组合对进行传递。关键字参数非常有用，
+但遗憾的是，使用关键字参数的函数比不使用关键字参数的函数调用开销更大。解构不是
+免费的。编译器需要将代码编译到函数中，该函数扫描必要的可变长度参数列表，以正确
+的顺序获取值(包括插入默认值)，然后实际执行函数。一般来说， lisp 编译这些关键字参数
+的代码非常快，所以我们几乎从不注意（或关心）这种低效率。然而，在某些情况下，
+我们确实会关心这个问题，特别是当我们在性能关键的循环中调用这样的函数时。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【6】
+Lambda 解构不能解构作为参数传递的列表，并且缺少一些 defmacro 功能，比如 whole 。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defun fast-keywords-strip (args)
+<span class="linenos"> 2</span>  (if args
+<span class="linenos"> 3</span>    (cond
+<span class="linenos"> 4</span>      ((eq (car args) &#39;&amp;key)
+<span class="linenos"> 5</span>        (fast-keywords-strip (cdr args)))
+<span class="linenos"> 6</span>      ((consp (car args))
+<span class="linenos"> 7</span>        (cons (caar args)
+<span class="linenos"> 8</span>              #1=(fast-keywords-strip
+<span class="linenos"> 9</span>                  (cdr args))))
+<span class="linenos">10</span>      (t
+<span class="linenos">11</span>        (cons (car args) #1#)))))
+</pre></div>
+</div>
+<p><strong>fast-keys-strip</strong> 是个实用程序，它接受由常规参数和关键字参数组成的 lambda 解构
+列表，并返回用于引用这些参数的符号列表。换句话说，当传递 <strong>(a b c)</strong> 或
+<strong>(a &amp;key b (c 0))</strong> 时，程序返回 <strong>(a b c)</strong> ，但是传给程序 <strong>(a &amp;optional b c)</strong>
+是不行的。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defmacro! defun-with-fast-keywords
+<span class="linenos"> 2</span>          (name args &amp;rest body)
+<span class="linenos"> 3</span>  `(progn
+<span class="linenos"> 4</span>      (defun ,name ,args ,@body)
+<span class="linenos"> 5</span>      (defun ,g!fast-fun
+<span class="linenos"> 6</span>            ,(fast-keywords-strip args)
+<span class="linenos"> 7</span>            ,@body)
+<span class="linenos"> 8</span>      (compile &#39;,g!fast-fun)
+<span class="linenos"> 9</span>      (define-compiler-macro ,name (&amp;rest ,g!rest)
+<span class="linenos">10</span>        (destructuring -bind ,args ,g!rest
+<span class="linenos">11</span>          (list &#39;,g!fast -fun ,@(fast-keywords-strip args))))))
+</pre></div>
+</div>
+<p><strong>defun-with-fast-keywords</strong> 用法与 <strong>defun</strong> 相同。与 <strong>defun</strong> 类似，
+<strong>defaun-with-fast-keywords</strong> 的第一个参数是命名函数的符号，第二个参数是
+参数列表，其余被定义为要执行的函数的形式。然而，与 <strong>defun</strong> 不同的是，
+<strong>defun-with-fast-keywords</strong> 结构只能给予常规参数和关键字参数（不能是可选参数，
+剩余参数等）。练习：扩展 <strong>fast-keywords-strip</strong> 来处理所有的 lambda 解构列表 <sup>【7】</sup> 。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【7】
+但请记住 Norvig 的 lisp 黄金法则：永远不要混合关键字和可选参数。</p>
+</div>
+<p><strong>defun-with-fast-keywords</strong> 的展开非常复杂。它展开成三种结构 <sup>【8】</sup> 。第一种展开式定义函数就像
+我们使用常规的 <strong>defun</strong> 一样。第二种展开式将函数定义了一个名为
+<strong>g!fast-fun</strong> 的自动 gensym 化的函数。这个函数类似于第一个函数，除了对每个参数（关键字参数或非关键字参数）
+接受一个非关键字参数。接下来定义一个编译器宏来将对第一个函数的调用转换为对
+第二个函数的调用。因此，我们不是让第一个函数执行关键字解构，而是利用编译时对调用函数
+的结构的了解这一优势，并使用解构绑定将关键字按正确的顺序放在一起。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【8】
+它们都被视为顶层对待，因为顶层 progn 形式都被特殊对待——一种有价值的 COMMON LISP的特性。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defun
+<span class="linenos">2</span>  slow-keywords-test (a b &amp;key (c 0) (d 0))
+<span class="linenos">3</span>  (+ a b c d))
+<span class="linenos">4</span>
+<span class="linenos">5</span>(compile &#39;slow-keywords-test)
+<span class="linenos">6</span>
+<span class="linenos">7</span>(defun-with-fast-keywords
+<span class="linenos">8</span>  fast-keywords-test (a b &amp;key (c 0) (d 0))
+<span class="linenos">9</span>  (+ a b c d))
+</pre></div>
+</div>
+<p>现在基于 <strong>defun</strong> ，我们有了一个（几乎）双重语法。带有关键字参数的函数的常规定义看起来像
+<strong>slow-keyword-test</strong> 。编译它是为了下面的基准测试。 <strong>fast-keywords-test</strong> 与
+<strong>slow-keywords-test</strong> 的写法相同，只是用的是 <strong>defun-with-fast-keywords</strong>
+而不是 <strong>defun</strong> 。事实证明，我们不需要编译这个函数，因为
+<strong>defun-with-fast-keywords</strong> 展开为一个调用，只对其中一个需要它的定义进行编译
+—— 这个被自动的 gensym  <strong>g!fast-fun</strong> 命名。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defun keywords-benchmark (n)
+<span class="linenos"> 2</span>  (format t &quot;Slow keys: ~%&quot;)
+<span class="linenos"> 3</span>  (time
+<span class="linenos"> 4</span>    (loop for i from 1 to n do
+<span class="linenos"> 5</span>      (slow-keywords-test 1 2 :d 3 :c n)))
+<span class="linenos"> 6</span>  (format t &quot;Fast keys: ~%&quot;)
+<span class="linenos"> 7</span>  (time
+<span class="linenos"> 8</span>    (loop for i from 1 to n do
+<span class="linenos"> 9</span>      (fast-keywords-test 1 2 :d 3 :c n))))
+<span class="linenos">10</span>
+<span class="linenos">11</span>(compile &#39;keywords-benchmark)
+</pre></div>
+</div>
+<p><strong>keywords-benchamrk</strong> 是个简单的函数，其中使用了 <strong>time</strong> 宏来告诉我们对这两个
+函数进行等价的一系列调用需要多长时间。注意，我们还编译了 <strong>keywords-benchmark</strong> 。
+关于基准测试的更多内容将在 <a class="reference internal" href="#writing-and-benchmarking-compilers"><span class="std std-ref">7.7 编写编译器并做基准测试 （1）</span></a> 中介绍。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (keywords-benchmark 100000000)
+<span class="linenos">2</span>Slow keys:
+<span class="linenos">3</span>; Evaluation took:
+<span class="linenos">4</span>;   17.68 seconds of real time
+<span class="linenos">5</span>Fast keys:
+<span class="linenos">6</span>; Evaluation took:
+<span class="linenos">7</span>;   10.03 seconds of real time
+</pre></div>
+</div>
+<p>调用这个函数1亿次足以让我们看到，即使两个函数都被编译了，使用
+<strong>defun-with-fast-keywords</strong> 定义的函数运行速度也比它的编译宏快了 40% 左右。
+还要注意的是，编译宏的性能并不依赖于关键字参数是在编译时已知的常量。注意，
+我们传递了 <strong>n</strong> ，一种不同的 lisp 结构，作为 <strong>:c</strong> 关键字的参数。因此，编译宏将
+快速版本展开为与慢版本相同的版本，除了没有关键字的解构开销。</p>
+<p>那么，为什么 COMMON LISP 不为每个接受关键字的函数都这样做，并总是避免
+开销呢？编译宏只在编译时应用，但我们希望在运行时保留对参数进行解构的能力。
+下面是关于编译宏的要点：编译宏是对函数调用的优化，而不是对函数本身的优化。
+在关键字的情况下，编译宏允许我们消除对函数的编译调用的开销，同时仍然让
+原始函数（及其关键字解构代码）在运行时可用。编译宏为我们提供了两种不同
+操作的双重语法，这两种操作只能通过上下文来区分。另一种避免关键字开销的
+方法，请参阅 Norvig’s PAIP (PAIP-P323)。</p>
+<p>还有哪些函数调用可以从编译宏中受益？我们不仅可以减少解构开销，而且通常
+还可以通过预处理常量参数来减少函数本身的开销。编译宏可以在编译时执行一
+些准备工作，因此不必在运行时执行。其中最明显的例子是 <strong>format</strong> 函数。
+想想 <strong>format</strong> （或者，在 C 语言中， <strong>printf</strong> ）是如何工作的。它是个在运行
+时将控制字符串传递给它的函数。然后 <strong>format</strong> 处理控制字符串并将格式化后
+的输出打印到流中（或将其作为字符串返回）。实际上，在你使用 <strong>format</strong> 时，
+使用控制字符串作为程序对格式字符串解释器进行函数调用。使用编译宏，我们可以
+消除函数调用，预处理控制字符串，并将函数调用更改为与调用点相连接的
+专门代码，编译器可以在其中进行进一步优化。听起来很难，不是吗？我们
+必须知道如何将格式控制字符串转换成等价的 lisp 代码。幸运的是，与许多
+其他事情一样，COMMON LISP 已经考虑过这个问题。COMMON LISP 正确地处理了
+格式化。这是它为创建格式化输出而指定的特定于领域的语言，
+可以将自己宏编译为 lisp 代码。这是 lisp 哲学的一部分 —— 所有的东西都
+应该编译成 lisp。将控制字符串编译为 lisp 的宏是 <strong>formatter</strong> 。当把控制
+字符串提供给 <strong>formatter</strong> 时，它将展开为执行所需格式化的 lambda 结构。
+例如，下面是个简单控制字符串的展开 <sup>【9】</sup> ：</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【9】
+Terpri 将换行符打印到流中。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (macroexpand &#39;(formatter &quot;Hello ~a~%&quot;))
+<span class="linenos"> 2</span>#&#39;(LAMBDA (STREAM &amp;OPTIONAL
+<span class="linenos"> 3</span>                  (#:FORMAT-ARG-1783
+<span class="linenos"> 4</span>                    (ERROR &quot;Missing arg&quot;))
+<span class="linenos"> 5</span>                  &amp;REST FORMAT::ARGS)
+<span class="linenos"> 6</span>    (BLOCK NIL
+<span class="linenos"> 7</span>      (WRITE-STRING &quot;Hello &quot; STREAM)
+<span class="linenos"> 8</span>      (PRINC #:FORMAT-ARG-1783 STREAM)
+<span class="linenos"> 9</span>      (TERPRI STREAM))
+<span class="linenos">10</span>    FORMAT::ARGS)
+<span class="linenos">11</span>T
+</pre></div>
+</div>
+<p>所以说 <strong>formatter</strong> 展开成了个 lambda 结构 <sup>【10】</sup> 。它已经将控制字符串编译成 lisp
+结构代码，适合于求值或将宏嵌入到其他 lisp 代码中，在那里它将成为一个
+已编译的函数或会被内联到调用点的编译代码中。但是请注意， <strong>formatter</strong> 的展开
+式必须要传入一个流，不能像 <strong>format</strong> 那样可以接受 <strong>nil</strong> 。这是因为
+<strong>formatter</strong> 展开的函数（如 <strong>write-string</strong> 和 <strong>terpri</strong> ）需要流。
+可以用 <strong>with-output-to-string</strong> 宏来解决这个问题。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【10】
+确切地说，是一个尖引用（ #’ ）的 lambda 形式。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defun fformat (&amp;rest all)
+<span class="linenos"> 2</span>  (apply #&#39;format all))
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span>(compile &#39;fformat)
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span>(define-compiler-macro fformat
+<span class="linenos"> 7</span>                      (&amp; whole form
+<span class="linenos"> 8</span>                        stream fmt &amp;rest args)
+<span class="linenos"> 9</span>  (if (constantp fmt)
+<span class="linenos">10</span>    (if stream
+<span class="linenos">11</span>      `(funcall (formatter ,fmt)
+<span class="linenos">12</span>        ,stream ,@args)
+<span class="linenos">13</span>      (let ((g!stream (gensym &quot;stream&quot;)))
+<span class="linenos">14</span>        `(with-output-to-string (,g!stream)
+<span class="linenos">15</span>          (funcall (formatter ,fmt)
+<span class="linenos">16</span>            ,g!stream ,@args))))
+<span class="linenos">17</span>    form ))
+</pre></div>
+</div>
+<p><strong>fformat</strong> 是个完全透明的 <strong>format</strong> 封装器。由于它的存在，我们可以定义一个编译宏来进行格式化。我们需要一个新的函数名，因为在 COMMON
+LISP 指定的函数上定义编译宏是禁止的。我们的编译宏利用了 defmacro 的
+解构特性： &amp;whole 。我们使用它将 <strong>format</strong> 绑定到宏调用的实际列表结构。
+这样做是为了利用编译宏的一个特性：编译宏可以选择根本不展开。如果我们
+返回 <strong>form</strong> ， lisp 会发现我们只是返回传入的形式（用 <strong>eq</strong> 检查），同时
+lisp 也将要求编译宏不对形式进一步展开 —— 即便是我们正打算展开成带有编译宏的函数的使用。在编译时，我们选择使用形式的其他含义。这是编译宏
+和常规宏之间的根本区别。编译宏可以与函数共享精确的双重语法，但常规宏
+不能。在 <strong>fformat</strong> 中，当它的控制字符串参数不是常量时，编译宏不展开为
+更有效的含义。在 <strong>fformat</strong> 中，我们仍然希望对非字符串控制字符串（比如
+返回字符串的函数调用）调用 <strong>fformat</strong> 来工作。换句话说，我们仍然希望
+能够在运行时生成控制字符串。这样的调用显然不能对控制字符串使用编译时
+优化。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defun fformat-benchmark (n)
+<span class="linenos"> 2</span>  (format t &quot;Format:~%&quot;)
+<span class="linenos"> 3</span>  (time
+<span class="linenos"> 4</span>    (loop for i from 1 to n do
+<span class="linenos"> 5</span>      (format nil &quot;Hello ~a ~a~%&quot; &#39;world n)))
+<span class="linenos"> 6</span>  (format t &quot;Fformat:~%&quot;)
+<span class="linenos"> 7</span>  (time
+<span class="linenos"> 8</span>    (loop for i from 1 to n do
+<span class="linenos"> 9</span>      (fformat nil &quot;Hello ~a ~a~%&quot; &#39;world n))))
+<span class="linenos">10</span>(compile &#39;fformat -benchmark)
+</pre></div>
+</div>
+<p><strong>format-benchmark</strong> 与前面介绍的 <strong>keywords-benchmark</strong> 函数几乎相同。
+它使用 <strong>time</strong> 来比较使用常规 <strong>format</strong> 和新的 <strong>fformat</strong> 执行大量格式操作
+所需的时间。以下是 100 万次迭代的结果：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (fformat-benchmark 1000000)
+<span class="linenos"> 2</span>Format:
+<span class="linenos"> 3</span>; Evaluation took:
+<span class="linenos"> 4</span>;   37.74 seconds of real time
+<span class="linenos"> 5</span>;   [Run times include 4.08 seconds GC run time]
+<span class="linenos"> 6</span>;   1,672,008,896 bytes consed.
+<span class="linenos"> 7</span>Fformat:
+<span class="linenos"> 8</span>; Evaluation took:
+<span class="linenos"> 9</span>; ; ;
+<span class="linenos">10</span>26.79 seconds of real time
+<span class="linenos">11</span>[Run times include 3.47 seconds GC run time]
+<span class="linenos">12</span>1,408,007,552 bytes consed.
+</pre></div>
+</div>
+<p>大概提升了 30%。编译宏不仅减少了执行格式化所需的时间，而且还减少了 cons 点对（的使用）
+（这反过来又减少了垃圾回收的时间）。编译宏已经避免了在运行时解释格式字符串，
+反而在函数被编译时只执行一次大部分的计算 —— 这是它本该做的。不幸的是，
+基准测试常常模糊或删除重要的细节。虽然用 <strong>fformat</strong> 预编译格式字符串可以
+消除解释开销，但这样做的代价是编译一个更大的程序。即使主存充足，较大的
+代码也会因为指令缓存性能的降低而运行得更慢。</p>
+<p>在本节中，我们考虑了使用常规宏、读取宏和专为这个任务设计的一种特殊类型
+的宏 —— 编译宏来定制代码性能的方法。希望本节和本章的其余部分能说服你，
+如果想编写真正有效的代码，就需要 COMMON LISP。因为宏，你需要
+COMMON LISP。</p>
+<p>练习1：下载 Edi Weitz 的 CL-PPCRE（在 <a class="reference internal" href="chapter04.html#cl-ppcre"><span class="std std-ref">4.4 CL-PPCRE</span></a> 中），
+看看 <strong>api.lisp</strong> 怎么使用编译宏。访问 Edi 的网站并下载一些他的 lisp 包，
+这些包看起来很有趣。</p>
+<p>练习2：当我们为 <strong>fformat</strong> 编写编译宏时，我们被迫显式地使用 <strong>gensym</strong> ，
+因为没有 <strong>define-compiler-macro!</strong> 宏。解决这个问题。
+较难的练习：定义 <strong>define-compiler-macro!</strong> 这样就能使用了 <strong>defmacro!</strong>
+的功能而不用调用 <strong>gensym</strong> 。提示：跳出思维定势。</p>
+</section>
+<section id="getting-to-know-your-disassembler">
+<span id="id3"></span><h2>7.3 了解你的反汇编器<a class="headerlink" href="#getting-to-know-your-disassembler" title="Permalink to this heading"></a></h2>
+<p>如果不检查你的处理器为不同的 lisp 结构执行的原始指令，就很难真正了解在 lisp 中那些代码
+的开销的昂贵。就像在编写宏时，查看它们的展开通常很有帮助，有时查看lisp 程序 <em>编译后
+的展开式</em> （通常是汇编指令）也很有用。因为 lisp 编译器可以是并且经常被认为是宏展开器，
+它们生成的机器码，从某种奇怪的意义上说，本身就是 lisp 代码。因为 lisp 与其说是一
+种语言，不如说是一种创建语言的构建材料和结构，lisp 是用来定义和编译一种恰好与
+处理器指令集相同的语言。</p>
+<p>COMMON LISP 提供了一个名为 <strong>disassemble</strong> 的函数来查看已编译的展开式。
+<strong>disassemble</strong> 类似于 [USEFUL-LISP-ALGOS2](<a class="reference external" href="https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.55.9152">https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.55.9152</a>)
+中描述的CMUCL宏扩展 <strong>macroexpand-all</strong> 的模拟。通过给 <strong>disassembler</strong> 传入函数或存在
+<strong>symbol-function</strong> 绑定的符号，我们可以查看在调用函数时将要被执行的原始机器码指令。</p>
+<p>问题是这些原始的机器代码指令看起来一点也不像 lisp。这些指令通常是奇怪的、微小的对于某些非常随意
+的机器步骤，而不是 lisp 舒缓的嵌套括号。查看编译后
+的 lisp 代码展开式就像用放大镜阅读海报一样。可以看到喜欢的任何部分的细节，但
+仅凭这一点来解释 <em>整体情况</em> 是困难的，甚至是不可能的。更糟糕的是，当查看这种
+细节级别的代码时，有时不可能查看任何一段机器码并确定编译器为什么把它放在
+那里。</p>
+<p>不幸的是，没人真正知道如何最好地实现 lisp 以往的 <strong>compile</strong> 函数。毫无疑问，对代码还有有很多宏
+展开要去做，那是肯定的，它可能可以标准化就是其中确定的事，但最好的
+使用硬件资源（如 CPU 周期和内存）的方法仍然是（可能一直都是）个非常热门的
+研究课题。比编译器设计的改进更难跟踪的是硬件的不断改进。初始有意义的优化可
+能变得不相关甚至完全不正确。我们不需要找太多的例子来说明不断变化的世界是如
+何影响效率假设的。</p>
+<p>科学家们 <sup>【11】</sup> 过去避免在需要良好表现的代码中使用浮点计算，而是选择基于机器字的定点
+计算。这是因为计算机没有专门的浮点硬件，所以被迫使用处理器的整数指令来模拟它。
+因为处理器并没有为此进行真正的优化，浮点运算总是比定点运算慢得多。然而，随着
+时间的推移，硬件开始出现专门的浮点协同处理器，这些处理器被设计来以光速般的
+速度执行这些浮点运算。几乎在一夜之间，科学家们从假设固定点运算总是比浮点运算
+快得多，到不得不在做出决定之前对他们的硬件进行调查和基准测试。硬件的发展改变
+了浮点数的性能现实。不久之后，计算机开始配备 2 个、4 个或更多的浮点协同处理器，
+科学家们发现，如果他们能够让浮点指令的 <em>流水线</em> 充满，浮点运算通常甚至可以比定点运算
+表现得更好。许多出于性能原因而选择固定点的程序 —— 在大约 10 年的时间框架内
+—— 从选择 <em>正确</em> 的实现到选择 <em>错误</em> 的实现。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【11】
+极少数需要高效代码的计算机用户统计数据之一。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defmacro dis (args &amp;rest body)
+<span class="linenos"> 2</span>  `(disassemble
+<span class="linenos"> 3</span>    (compile nil
+<span class="linenos"> 4</span>      (lambda ,(mapcar (lambda (a)
+<span class="linenos"> 5</span>                          (if (consp a)
+<span class="linenos"> 6</span>                            (cadr a)
+<span class="linenos"> 7</span>                            a))
+<span class="linenos"> 8</span>                        args)
+<span class="linenos"> 9</span>          (declare
+<span class="linenos">10</span>            ,@(mapcar
+<span class="linenos">11</span>                #`(type ,(car a1) ,(cadr a1))
+<span class="linenos">12</span>                (remove-if-not #&#39;consp args)))
+<span class="linenos">13</span>          ,@body))))
+</pre></div>
+</div>
+<p>正如在开发宏时，查看 <strong>macroexpand</strong> 和 <strong>macroexpand-all</strong> 的输出是有用的，查看 <strong>disassembler</strong> 的输出也是有帮助的，不仅了解你的实现功能如何，而且确保给 lisp 所需的所有
+信息来生成有效的展开式。 <strong>dis</strong> 是个令在部分 lisp 代码的反汇编输出中做检查变得很容易的
+宏。它的第一个参数是一个符号列表或一个类型和符号列表。想知道 <strong>dis</strong> 是怎么工作 <sup>（3）</sup>
+的，直接展开。这里是 <strong>dis</strong> 展开为一个简单的二进制加法:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（3）
+作者原文为“ how dis words ”，应为作者笔误，即“ how dis works ”</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (macroexpand
+<span class="linenos">2</span>    &#39;(dis (a b) (+ a b)))
+<span class="linenos">3</span>(DISASSEMBLE
+<span class="linenos">4</span>  (COMPILE NIL
+<span class="linenos">5</span>    (LAMBDA (A B)
+<span class="linenos">6</span>      (DECLARE)
+<span class="linenos">7</span>      (+ A B))))
+<span class="linenos">8</span>T
+</pre></div>
+</div>
+<p>为什么其中会有个空的 <strong>declare</strong> 结构呢？它是一个占位符， <strong>dis</strong> 可以插入类型声明，
+当像下面那样在参数中指定它们:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (macroexpand
+<span class="linenos"> 2</span>    &#39;(dis ((fixnum a) (integer b))
+<span class="linenos"> 3</span>(+ a b)))
+<span class="linenos"> 4</span>(DISASSEMBLE
+<span class="linenos"> 5</span>  (COMPILE NIL
+<span class="linenos"> 6</span>    (LAMBDA (A B)
+<span class="linenos"> 7</span>      (DECLARE (TYPE FIXNUM A)
+<span class="linenos"> 8</span>              (TYPE INTEGER B))
+<span class="linenos"> 9</span>      (+ A B))))
+<span class="linenos">10</span>T
+</pre></div>
+</div>
+<p>因为 <strong>dis</strong> 展开成一个（封装的）lambda 结构，所以它工作起来很像是一个 lambda 。
+只要你想的话，可以添加额外的声明，并且返回值很重要（因为 lambda 结构提供了一个
+隐式的 progn ）。加载了本书的代码后，试着在你的 lisp 环境中输入下面的代码：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(dis (a b)
+<span class="linenos">2</span>  (+ a b))
+</pre></div>
+</div>
+<p>机器码应该相当短，但这是因为预编译函数的调用隐藏了大部分复杂性 —— 这个函数足够的智能，提供
+所有花哨的 lisp 数字特性，如类型感染、有理数简化等等。
+这被称为 <em>间接</em> <sup>（4）</sup> ，在反汇编器的输出中可能相当明显:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（4）
+间接 indirection</p>
+</div>
+<p>CALL #x1000148 ; GENERIC-+</p>
+<p>用三个参数试试看：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(dis (a b c)
+<span class="linenos">2</span>  (+ a b c))
+</pre></div>
+</div>
+<p>练习：通用加法函数你看到多少间接？ <strong>(&lt;= 0 N)</strong> 中的参数 N 呢?</p>
+<p>现在尝试锁定其中一个变量的类型。将其与前面没有声明类型的示例进行比较：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(dis ((fixnum a) b)
+<span class="linenos">2</span>  (+ a b))
+</pre></div>
+</div>
+<p>某些 <strong>OBJECT-NOT-FIXNUM-ERROR</strong> 现在应该很明显了。 Lisp 编译了一些
+额外的代码来做这种类型检查，同时间接控制泛型的加法函数，因为 <strong>b</strong> 的
+类型在编译时是未知的，因此可能需要 lisp 的所有花哨的数值行为，就像传染病。</p>
+<p>这不是获得高效代码的方法。事实上，这段代码的效率甚至可能比前一段
+代码略低。为了编写高效代码，需要用到一个称为 <em>内联</em> <sup>（5）</sup> 的
+进程。对于一些特殊的操作，当有足够的类型信息时，lisp 编译器知道如何
+避免间接或直接向正在编译的函数中添加机器代码来执行所需的操作。
+下面的通用加法函数中不应该有间接：</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（5）
+内联 inlining</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(dis ((fixnum a) (fixnum b))
+<span class="linenos">2</span>  (+ a b))
+</pre></div>
+</div>
+<p>这种内联过程可能会导致比使用间接方法的机器代码更多的机器代码。
+这是因为泛型加法函数中实现的一些（但不是全部）功能被复制到了
+我们编译的函数中。虽然它看起来更长，但在某些情况下，由于更少的间接，
+该代码将执行效率更高。</p>
+<p>但是这种混乱的机器码仍比 C 实现的效率低得多。还是有各种
+参数计数、类型和溢出检查，如此之多以至于加法的实际开销与它的开销相比，仍然很低。如果我们在循环中使用这个函数，这种开销可能
+就无法接受。</p>
+<p>对于像 C 这样的语言，可以在任何地方指定类型，而在任何地方都不
+强制执行安全性，所以代码总是高效的，但也不安全，编写起来总是
+很麻烦。在大多数动态 Blub 语言中，不需要指定类型，并在任何地方
+都强制执行安全性，因此代码总是安全的，不烦人，但也不会高效。
+对于大多数强大的静态 Blub 语言，可以在任何地方指定类型，并在
+任何地方强制执行安全性，因此代码总是高效和安全的，但很烦人。
+Lisp 给了你选择。因为 lisp 默认为安全模式，lisp 程序通常看起来比
+C 程序慢一些，但几乎总是更安全。因为 lisp 为程序员提供了一个优秀
+的类型声明系统和具有很优秀的编译器的实现，并且，所以 lisp 程序几乎总
+是和动态 Blub 程序一样安全，而且通常要快得多。最重要的是，lisp
+有宏，所以如果有什么烦人的东西，好吧，改变它！</p>
+<p>让我们继续，并让 lisp 让我们的加法更高效。回想一下， <strong>#f</strong> 是高速、
+低安全声明读取宏的缩写。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(dis ((fixnum a) (fixnum b))
+<span class="linenos">2</span>  #f
+<span class="linenos">3</span>  (+ a b))
+</pre></div>
+</div>
+<p>这次机器指令码应该比之前的短一点。类型检查和参数计数检查应该删除了。
+但这仍然不是单一指令，我们寻找的是混乱、危险的固定数字（ fixnum ）加法。为了深入
+了解正在发生的事情，我们应该检查编译器 <em>注释</em> 。注释是编译器所做的观察，
+它本质上是说：“你看起来像是在尝试做一些高效的事情，而且你已经快完
+成了，但我需要澄清一下你的意图。这里是让它更清晰的小窍门……”</p>
+<p>编译注释是无价的信息来源。当试图创建高效的 lisp 代码时，你应该仔细地阅读
+和考虑它们。Lisp 编译器使用 <em>类型推断</em> 系统来发现代码的复杂属性，即使是你，
+程序员，也可能没有考虑到这些属性。在上面的例子中，编译器应该会给我们
+这样的提示:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>; Note: Doing signed word to integer coercion
+<span class="linenos">2</span>;       (cost 20) to &quot;&lt;return value&gt;&quot;.
+</pre></div>
+</div>
+<p>Lisp 不会做任何愚蠢的事情，比如忽略固定数字（ fixnum ）溢出，除非明确要求它这样做 <sup>【12】</sup> 。
+因此，为了让 lisp 把谨慎抛诸脑后，并且给我们书写一个真正劲爆但可能不安全的函数，我们需要避免有符号
+的单词（固定数字（ fixnum ））到整数（大数字（  bignum  ））的检查和强制。我们需要告诉 lisp ，
+溢出是可以接受的，是的，我们真的想安静地返回一个固定数字（ fixnum ）：</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【12】
+在 C 语言程序中，固定数字（ fixnum ）溢出是一种安全漏洞类，经常被攻击者瞄准和利用。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(dis ((fixnum a) (fixnum b))
+<span class="linenos">2</span>  #f
+<span class="linenos">3</span>  (the fixnum (+ a b)))
+</pre></div>
+</div>
+<p>现在已经燃起来了。这大致相当于一个 C 语言的固定数字（ fixnum ）加法函数：一些机器指令
+将两个寄存器相加，然后将控制权返回给调用者。虽然反汇编程序可以为 lisp
+效率的所有领域提供许多见解，但它会教你两项主要的技能。第一个技巧在
+本节中主要介绍：如何使用声明来获得有效的数值行为，特别是在循环内部。
+第二个问题是如何有效地使用数组/向量数据结构。这将在  <a class="reference internal" href="#pointer-scope"><span class="std std-ref">7.4 指针作用域</span></a>
+中讨论。</p>
+<p>就像技术进步将浮点运算的效率现实从应该避免的东西变成了应该利用的
+东西一样，lisp 编译器技术的进步 —— 结合 COMMON LISP 的 <em>正确</em> 类型
+和安全声明系统 —— 正在改变我们对效率的看法 <sup>【13】</sup> 。有了这些工具，以及软件
+系统日益增长的复杂性需求，问题就从如何使 lisp 像低级语言一样高效变成
+了如何使其他语言像 lisp 一样高效。当然，答案是在 lisp 中用宏实现它们。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【13】
+当使用宏技术来提高大型复杂应用程序的性能时，Lisp 的优化潜力真的会大放异彩。</p>
+</div>
+</section>
+<section id="pointer-scope">
+<span id="id4"></span><h2>7.4 指针作用域<a class="headerlink" href="#pointer-scope" title="Permalink to this heading"></a></h2>
+<p>从一种语言中删除指针是否会降低该语言的威力？特别是，lisp 缺乏显式的 <em>指针作用域</em>
+是否妨碍我们有效地实现指针算法中指定的算法？事实证明不是这样的，在 lisp 中缺乏
+对指针的直接支持在理论上和实践上都不构成挑战。在像 C 这样的语言中，任何可以用
+指针实现的算法或数据结构都可以在 lisp 中实现，甚至更好。</p>
+<p>但是，事实上，什么是指针作用域，我们为什么可能想要使用它？指针作用域涉及将计算机的内存(或
+虚拟内存)视为一个巨大的、可索引的数组，它可以加载和存储固定数字（ fixnum ）的值。这听起来
+危险吗？当然，因为它是许多复杂错误的根源，也是当今几种最大的软件安全问题的直接
+原因。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defmacro! pointer -&amp; (obj)
+<span class="linenos"> 2</span>  `(lambda (&amp;optional (,g!set &#39;,g!temp))
+<span class="linenos"> 3</span>    (if (eq ,g!set &#39;,g!temp)
+<span class="linenos"> 4</span>      ,obj
+<span class="linenos"> 5</span>      (setf ,obj ,g!set))))
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span>(defun pointer -* (addr)
+<span class="linenos"> 8</span>  (funcall addr))
+<span class="linenos"> 9</span>
+<span class="linenos">10</span>(defsetf pointer -* (addr) (val)
+<span class="linenos">11</span>  `(funcall ,addr ,val))
+<span class="linenos">12</span>
+<span class="linenos">13</span>(defsetf pointer -&amp; (addr) (val)
+<span class="linenos">14</span>  `(setf (pointer -* ,addr) ,val))
+</pre></div>
+</div>
+<p>指针作用域实际上是指定间接的一种方法，也就是跨环境访问，恰好也
+与固定数字（ fixnum ）运算绑定。我们通常如何跨环境编程？我们使用 COMMON LISP 提供的词法
+或动态作用域，这两种作用域的双重组合，或者由宏创建的新类型的作用域。
+<strong>pointer-&amp;</strong> 宏和 <strong>pointer-*</strong> 函数是为我们描绘指针作用域错觉的例子，表明当你
+认为你需要一个指针时，你真正的需要可能是个闭包。我所听到的关于指针和闭包之间的
+类比的第一个也是唯一的例子是 Oleg Kiselyov 在 <strong>comp.lang.scheme</strong> 新闻组上发表
+的一篇文章 [pointer-as-closures](<a class="reference external" href="https://okmij.org/ftp/Scheme/pointer-as-closure.txt">https://okmij.org/ftp/Scheme/pointer-as-closure.txt</a>) 。
+他建议使用闭包来模拟指针，并为 Scheme 提供了一个实现 <sup>【14】</sup> 。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【14】
+Oleg 的网站包含许多这样的见解，强烈推荐阅读。</p>
+</div>
+<p><strong>pointer-&amp;</strong> 和 <strong>pointer-*</strong> 展示了一种通过闭包模拟指针间接指向的可能。当我们使用
+<strong>pointer-&amp;</strong> 宏时，它会展开成 lambda 结构，其中有一些智能，以确定您是否想要获取
+或设置值，并相应地执行。 <strong>pointer-&amp;</strong> 使用 <em>gensyms</em> 来做到这一点。不是使用它们
+作为绑定的名字以避免在编译时不想要的变量捕获， <strong>pointer-&amp;</strong> 使用它们以确保没有</p>
+<blockquote>
+<div><p><em>运行时的异常捕获</em> ，这里阻止将闭包的值设为个确定值，因为它与我们的实现冲突。例如，</p>
+</div></blockquote>
+<p>我们可能已经为这个选择了 lisp 默认值 <strong>nil</strong> ，通常这可以运行，除非我们将 <strong>nil</strong> 作为
+参数传参。<em>gensym</em> 在运行时使用很方便，因为我们知道永远不会有另一个值等价（ <strong>eq</strong> ）于 <em>gensym</em>。这就是他们存在的理由。</p>
+<p><strong>pointer-*</strong> 及其 <strong>defsetf</strong> 是通过泛型变量访问这些间接值的框架。 <strong>pointer-&amp;</strong>
+中的 <strong>defsetf</strong> 的存在，因此 <strong>pointer-&amp;</strong> 的展开式将知道如何设置嵌套的间接。一个简单的例子，
+我们可以创建个闭包，通过在 let 环境中创建对绑定的引用来模拟 C 中常见的 <em>指向指针的指针</em> <sup>（6）</sup> 模式：</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（6）
+pointer to a pointer</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (let ((x 0))
+<span class="linenos">2</span>    (pointer-&amp; (pointer-&amp; x)))
+<span class="linenos">3</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>让我们通过闭包从 <strong>*</strong> 特殊变量中转移出来，从而将这个闭包保存起来，以便后续使用，（让我们保持所有这些星号的简单明了）：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (defvar temp-pointer *)
+<span class="linenos">2</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>现在可以 <em>间接引用</em> <sup>（7）</sup> 这个闭包了：</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（7）
+间接引用 dereference</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (pointer-* temp-pointer)
+<span class="linenos">2</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>看起来我们又有另一个闭包了。我们只间接引用了指针链的其中一个步骤。使用 <strong>*</strong> 特殊变量来引用前面的结果，让我们进一步间接引用：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (pointer-* *)
+<span class="linenos">2</span>0
+</pre></div>
+</div>
+<p>0 是我们指向的原始对象。我们也可以使用这种间接引用语法 —— 当然这是闭包的错觉 ——
+通过指针链来设置这个对象的值：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (setf (pointer-* (pointer-* temp-pointer)) 5)
+<span class="linenos">2</span>5
+</pre></div>
+</div>
+<p>当然，这改变了指向的原有的 let 环境，因此有了个新值 —— 5：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (pointer-* (pointer-* temp-pointer))
+<span class="linenos">2</span>5
+</pre></div>
+</div>
+<p>如果我们想的话，也可以添加另一层间接：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (pointer-&amp; temp-pointer)
+<span class="linenos">2</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>现在需要三层间接引用：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (pointer-* (pointer-* (pointer-* *)))
+<span class="linenos">2</span>5
+</pre></div>
+</div>
+<p>并且其自身也可以像泛型变量那样访问：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (setf (pointer-* (pointer-* (pointer-* **))) 9)
+<span class="linenos">2</span>9
+</pre></div>
+</div>
+<p>即使它们可能处于不同的间接层，这个间接引用链中的所有闭包仍然指向最初的 let 环境：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (pointer-* (pointer-* temp-pointer))
+<span class="linenos">2</span>9
+</pre></div>
+</div>
+<p>但这可能不是我们所说的指针作用域。因为大多数计算机处理器认为内存是一个很大的
+固定数字（ fixnum ）数组，而且由于 C 语言是围绕现有处理器的能力设计的，所以 C 语言的指针作用域永久
+性地与固定数字算法绑定在一起。在 C 语言中，当对指针间接引用时，你总是知道发
+生了什么：编译器在代码中编译到带有固定数字（ fixnum ）的内存索引，并检索或设置一个固定数
+值。C 语言的指针作用域和上面的闭包间接引用技术的最大区别在于，虽然 C 语言允许我们通过添
+加或减去固定值（ fixnum ）来改变指针指向的位置，但由 <strong>pointer-&amp;</strong> 编译并使用 <strong>pointer-*</strong>
+访问的闭包是固定的。用于访问和设置它们的代码 —— 不管是什么 —— 都会在编译时
+添加到间接环境中。即使在我们上面的简单示例中，我们至少使用了两种不同类型的闭包，
+由于泛型变量的存在，这两种闭包都可以通过统一的间接引用语法进行访问。我们最初
+所指的 <strong>x</strong> 是一个词法变量，而我们所指的 <strong>temp-pointer</strong> <em>隧道</em>  <sup>（8）</sup> 变量是动态变量。
+正如 <a class="reference internal" href="chapter06.html#pandoric-macros"><span class="std std-ref">6.7 潘多拉宏</span></a> 中，我们可以随意定制闭包，因此也可以随意定制
+间接闭包。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（8）
+隧道 tunnel</p>
+</div>
+<p>所以闭包实际上比 C 风格的指针更灵活、更安全。当你认为你需要一个指针时，你可能
+需要一个闭包。闭包是编译后用于在任何环境中检索和设置任何类型数据的代码，而不仅仅是一个可以用作地址的固定数字（ fixnum ）。尽管对于大多数任务来说，闭包是实现间接的最佳构造，
+但有时我们希望利用处理器的固定数目（ fixnum ）寻址功能来实现非常高效的代码。C 语言让我们做它，
+COMMON LISP 让我们做它做得更好。</p>
+<p>在 lisp 中使用 C 语言风格的指针实际上非常简单，不需要偏离通常的 lisp 技术。我们简单地提供
+一个固定数值（ fixnum ）数组，然后使用数字索引到这个数组 —— 就像 C 语言中那样。然后，用声明让 lisp 去掉
+类型和安全检查，所以编译也和 C 语言一样。最后，用宏使整个过程方便和安全。</p>
+<p>通常，为数组建立索引是一个复杂而缓慢的过程。编译器需要检查索引是否为数字，你正在
+尝试索引数组，并且确保索引在数组的范围内。此外，不同类型的数组有不同的代码来访问元素。
+加载了这本书的代码后，试着求解下面代码（ <strong>dis</strong> 详见 <a class="reference internal" href="#getting-to-know-your-disassembler"><span class="std std-ref">7.3 了解你的反汇编器</span></a>）：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(dis (arr ind)
+<span class="linenos">2</span>  (aref arr ind))
+</pre></div>
+</div>
+<p>因为 <strong>aref</strong> 在不知道类型的情况下可以表示很多可能的事物，所以你的编译器可能不会内联数组访问代码。在上面的反汇编输出中，应该看到对类似 CMUCL 的 <strong>data-vector-ref</strong> 函数调用。</p>
+<p>练习：获取 lisp 环境的源代码并检查这个函数。在 CMUCL 中，它位于 <strong>array.lisp</strong> 文件
+中。还要检查该文件中的其他函数，包括 <strong>data-vector-set</strong> （数据向量集）。如果你的 lisp 环境没有提供完整的源代码
+，或者不能对所你拥有的源代码做任何想做的事情，请尽快升级COMMON LISP 环境。</p>
+<p>就像 COMMON LISP 在有足够的类型信息时可以内联函数 <strong>+</strong> 一样，它也可以内联 <strong>aref</strong> 。
+试试下面的代码：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(dis (((simple-array fixnum) arr)
+<span class="linenos">2</span>      (fixnum ind))
+<span class="linenos">3</span>  (aref arr ind))
+</pre></div>
+</div>
+<p>上述操作应该已经删除了对通用数组引用函数的间接。简单数组是一维数组，其中的元素
+在内存中相邻，就像 C 语言风格的内存。在上面我们指定了固定数值（ fixnum ）作为数组元素，但是
+COMMON LISP 环境可能还提供了不同大小固定数字（ fixnum ）的类型，字节、无符号字节、浮点数、双浮点数等等。虽然上面没有包含间接，但是它仍然有很多代码实现了在 lisp 编程时通常依赖
+的类型和安全检查。然而，正如我们可以使用 <a class="reference internal" href="#macros-make-lisp-fast"><span class="std std-ref">7.2 宏让 Lisp 很迅捷</span></a> 中的
+<strong>#f</strong> 读取宏 告诉 lisp 使算术更快，同样也可以用于数组引用：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(dis (((simple-array fixnum) arr)
+<span class="linenos">2</span>  (fixnum ind))
+<span class="linenos">3</span>#f
+<span class="linenos">4</span>(aref arr ind))
+</pre></div>
+</div>
+<p>与之前的 <strong>aref</strong> 不同，这段代码的性能将不会被类型和安全检查所控制。这是应该在性能
+关键循环中使用的代码。请注意，因为我们已经从这段代码中删除了几乎所有的安全特性，
+所以它与 C 语言中的同类代码一样危险。特别是，它可能会遇到 <em>缓冲区溢出</em> 问题 <sup>【15】</sup> 。使用 C 语言在任何地方都是这样编程的。使用 lisp，你可以安全地在任何地方编程，除了性能问题，
+调优代码的热点（ <em>hot-spots</em> ），使整个程序运行得更快。由于使用宏，这些 <em>热点</em> <sup>（9）</sup> 可以
+任意小。不需要编译，比如说，在快速/危险模式下的整个函数。宏允许我们优化表达式中
+细小的、特定的部分。高效代码可以透明地与安全代码和宏共存，这放弃了最小的安全必需，以实现所需的性能。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【15】
+“缓冲区溢出”是 C 语言（有时甚至是 lisp ）程序可能存在的各种安全问题的总称。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（9）
+热点 hot-spots</p>
+</div>
+<p>因为如果你已经在本书中读到这里，你应该已经对宏的编写和声明有了很好的了解，关于
+指针作用域没有更多需要说明的了。简而言之，C 语言提供了一种非常特定作用域的语言，
+用于控制基于固定数量（ fixnum ）算法的 CPU，但你可以使用宏编写更好的语言。高效的指针作用
+域（我们现在可以承认这实际上意味着数组访问 —— 尽管有闭包示例）主要是了解宏
+如何工作，声明如何工作，以及如何阅读反汇编程序的问题。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defmacro! with-fast-stack
+<span class="linenos"> 2</span>          ((sym &amp;key (type &#39;fixnum) (size 1000)
+<span class="linenos"> 3</span>                      (safe -zone 100))
+<span class="linenos"> 4</span>            &amp;rest body)
+<span class="linenos"> 5</span>  `(let ((,g!index ,safe-zone)
+<span class="linenos"> 6</span>        (,g!mem (make-array ,(+ size (* 2 safe-zone))
+<span class="linenos"> 7</span>                            :element-type &#39;,type)))
+<span class="linenos"> 8</span>    (declare (type (simple -array ,type) ,g!mem)
+<span class="linenos"> 9</span>            (type fixnum ,g!index))
+<span class="linenos">10</span>    (macrolet
+<span class="linenos">11</span>      ((,(symb &#39;fast-push- sym) (val)
+<span class="linenos">12</span>          `(locally #f
+<span class="linenos">13</span>              (setf (aref ,&#39;,g!mem ,&#39;,g!index) ,val)
+<span class="linenos">14</span>              (incf ,&#39;,g!index)))
+<span class="linenos">15</span>        (,(symb &#39;fast-pop- sym) ()
+<span class="linenos">16</span>            `(locally #f
+<span class="linenos">17</span>                (decf ,&#39;,g!index)
+<span class="linenos">18</span>                (aref ,&#39;,g!mem ,&#39;,g!index)))
+<span class="linenos">19</span>        (,(symb &#39;check-stack- sym) ()
+<span class="linenos">20</span>          `(progn
+<span class="linenos">21</span>              (if (&lt;= ,&#39;,g!index ,,safe-zone)
+<span class="linenos">22</span>                (error &quot;Stack underflow: ~a&quot;
+<span class="linenos">23</span>                      &#39;,&#39;,sym))
+<span class="linenos">24</span>              (if (&lt;= ,,(- size safe -zone)
+<span class="linenos">25</span>                      ,&#39;,g!index)
+<span class="linenos">26</span>                (error &quot;Stack overflow: ~a&quot;
+<span class="linenos">27</span>        ,@body)))
+</pre></div>
+</div>
+<p>高效访问数组的宏示例是 <strong>with-fast-stack</strong> 。选择这个宏是为了提供机会讨论 <em>摊销</em> <sup>（10）</sup> 。
+<strong>with-fast-stack</strong> 实现了一个名为 <strong>sym</strong> 的堆栈数据结构。不同于 COMMON LISP <strong>push</strong>
+和 <strong>pop</strong> 使用 cons 单元存储任何类型的栈的元素， <strong>with-fast-stack</strong> 中用简单的数组存储可
+以用 <strong>:type</strong> 关键字来指定类型的固定类型。数组的大小也是固定的，但是这个大小可以通过 <strong>:size</strong>
+关键字来设置。通过使用一些由 macrolet 定义的局部宏来访问堆栈。如果堆栈名是 <strong>input</strong> ，则宏绑定将是
+<strong>fast-push-input</strong> 、 <strong>fast-pop-input</strong> 和 <strong>check-stacks-input</strong> 。用 <strong>dis</strong> 检
+查编译后的展开式：</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（10）
+摊销 amortisation</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (dis ((fixnum a))
+<span class="linenos">2</span>    (with-fast-stack (input :size 2000)
+<span class="linenos">3</span>      (loop for i from 1 to 1000000 do
+<span class="linenos">4</span>        (fast-push-input a))))
+</pre></div>
+</div>
+<p><strong>fast-push-input</strong> 操作编译成非常紧凑（且非常不安全）的机器代码:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>;;; [8] (FAST-PUSH-INPUT A)
+<span class="linenos">2</span>MOV     ECX, [EBP-20]
+<span class="linenos">3</span>MOV     EDX, [EBP-16]
+<span class="linenos">4</span>MOV     EAX, [EBP-12]
+<span class="linenos">5</span>MOV     [ECX+EDX+1], EAX
+<span class="linenos">6</span>MOV     EAX, [EBP-16]
+<span class="linenos">7</span>ADD     EAX, 4
+<span class="linenos">8</span>MOV     [EBP-16], EAX
+</pre></div>
+</div>
+<p>但是循环像往常一样安全地编译，实现了错误检查和间接算术函数，即使是在
+<strong>with-fast-stack</strong> 宏中。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>;;; [7] (LOOP FOR I FROM 1...)
+<span class="linenos">2</span>...
+<span class="linenos">3</span>CALL    #x100001D0  ; #x100001D0: GENERIC-+
+<span class="linenos">4</span>...
+<span class="linenos">5</span>CALL    #x10000468  ; #x10000468: GENERIC-&gt;
+</pre></div>
+</div>
+<p>明显，这个循环不会像预期的那样快。它的性能将由循环开销决定，而不是堆栈
+操作。如果我们需要速度，可以将 <strong>i</strong> 声明为固定值（ fixnum ），并向循环中添加速度声明，就像
+之前看到的那样。安全代码可以与高效代码共存。当然，刚刚反汇编的代码非常危险。
+它从不检查堆栈的高度来缠看是否上溢或下溢出边界。这是我们为了效率而（故意）尽量避免的。
+<strong>with-fast-stack</strong> 提供的解决方案是受到 <em>forth</em> 编程语言中 <strong>stack</strong> 一词的启发。
+通过 <strong>check-stacks-input</strong> 本地宏，我们的代码可以验证堆栈是在边界内，
+否则会抛出异常。由于 <em>forth</em> 被设计为在最有限的硬件平台上性能也很好，因此 <em>forth</em></p>
+<blockquote>
+<div><p><em>分摊</em> 了执行边界检查的成本。与默认情况下 lisp 在每个操作之后执行不同，它只在每</p>
+</div></blockquote>
+<p>N 个操作之后执行。在 <em>forth</em> 中，这个词通常只在对 REPL 中的结构求值之后才会被
+调用（关于 <em>forth</em>，我们将在 <a class="reference internal" href="chapter08.html#chapter08"><span class="std std-ref">第八章：Lisp 和 Forth</span></a> 中介绍）。
+因此，我们可以每 10 个操作检查一次边界，而不是每次操作都检查边界，也许可以减少 90%
+的边界检查成本 <sup>【16】</sup> 。当我们检查堆栈时，我们知道，最坏情况下，有 10 个超出边界的元素。或许在你的代码中有一些方便的、非关键性能的地方可以检查一下是否可以使用宏（进一步优化）。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【16】
+尽管计算我们当前正在进行的操作也可能意味着开销。</p>
+</div>
+<p><strong>with-fast-stack</strong> 另一个特性是其创建有 <em>安全区域</em> 的数组。也就是说，如果你搞砸了，
+它会在堆栈的任意一侧分配额外的内存作为 <em>紧急通道</em> 。这并不意味着跑到这些安全区域
+是好主意（特别是下溢时），但它比跑到未分配的内存要好。</p>
+<p>正如提到的，我们刚刚组装的代码非常危险，它会将固定数值（ fixnum ）写入未分配的内存中。
+永远不要这样做。</p>
+<p>练习：试试这个，以下是我执行的结果:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (compile nil
+<span class="linenos">2</span>    &#39;(lambda (a)
+<span class="linenos">3</span>      (declare (type fixnum a))
+<span class="linenos">4</span>      (with-fast-stack (input :size 2000)
+<span class="linenos">5</span>        (loop for i from 1 to 1000000 do
+<span class="linenos">6</span>          (fast-push-input a)))))
+<span class="linenos">7</span>#&lt;Function&gt;
+<span class="linenos">8</span>NIL
+<span class="linenos">9</span>NIL
+</pre></div>
+</div>
+<p>危险的代码编译得很好。让我们试试运行它:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (funcall * 31337)
+<span class="linenos">2</span>NIL
+</pre></div>
+</div>
+<p>好吧，这不是我们所担心的灾难。有什么不好的事情发生吗?</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (compile nil &#39;(lambda () t))
+<span class="linenos">2</span>; Compilation unit aborted.
+</pre></div>
+</div>
+<p>Hm，这个结果看起来不妙。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (gc)
+<span class="linenos">2</span>Help! 12 nested errors.
+<span class="linenos">3</span>KERNEL:*MAXIMUM-ERROR-DEPTH* exceeded.
+<span class="linenos">4</span>** Closed the Terminal
+<span class="linenos">5</span>NIL
+</pre></div>
+</div>
+<p>这个结果肯定不好。因为 lisp 是运行在 unix 上的进程，所以它也可能接收到信号，
+指明你已经在分配的虚拟内存之外编写了代码（称为 <em>段错误</em>  <sup>（11）</sup> ）。CMUCL 将
+这些作为可恢复状况（尽管你应该总是重新加载 lisp 镜像）：</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（11）
+段错误  seg-fault</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>Error in function UNIX::SIGSEGV-HANDLER:
+<span class="linenos">2</span>  Segmentation Violation at #x58AB5061.
+<span class="linenos">3</span>  [Condition of type SIMPLE-ERROR]
+</pre></div>
+</div>
+<p>在这些状态下，lisp 镜像称之为  <em>被摆了一道</em>  <sup>（12）</sup> 。那些有可能被像这样被摆了一道
+的项目都是即将发生的安全灾难。C 语言和 lisp 之间的区别是，C 语言几乎在所有地方都有
+这种潜质，而 lisp 几乎没有。如果需要承担基于数组的指针作用域的风险，lisp 宏是
+最不显眼和最安全的方法。当然，你几乎永远不想面对这些风险 —— 坚持使用闭包。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（12）
+原文为 be hosed。“hose”的动词含义就是“用软管冲洗“，由名词的”软管“引申出动词的”以软管冲洗“，这种用法在各种语言中都很常见。那”be hosed“又如何解释呢？在韦氏词典中发现了这条解释：slang : to deprive of something due or expected : TRICK, CHEAT。“be hosed“是一种俚语用法，有”被他人摆了一道，进而失去财物“的意思(如同被人用水管冲透)。</p>
+</div>
+</section>
+<section id="tlist-cons">
+<span id="tlists-and-cons-pools"></span><h2>7.5 Tlist 和 cons 池<a class="headerlink" href="#tlist-cons" title="Permalink to this heading"></a></h2>
+<p>本节是关于内存管理的，但可能并不是你所想象的那样。 我甚至都不想介绍它，因为我
+害怕延续一个关于 lisp 的错误传言，即 consing 很慢的错误观念。 不好意思，
+但这个传言是错的； consing 其实很快。 当然，最小化无限范围存储的算法通常是
+理想的，但大多数算法可以通过 consing 更容易和直接地编写。 当要用到内存时，
+不要害怕使用 cons。 实际上，有时可以在 lisp 中进行的出色优化是将算法调整为
+可以用 cons 单元实现的形式，以便从经过调整的 lisp 垃圾收集器中受益。 就像
+编写自己的哈希表实现可能是个坏主意一样，设计自己的内存分配程序可能同样愚蠢。
+也就是说，本节解释了一些做到它的方法。 惊讶吧，我们用宏来进行内存管理。</p>
+<p>在讲内存分配之前，我们先绕一下相关的弯路。 尽管 Common Lisp 是专业 lisp
+程序员的首选，但很多好的 lisp 入门教科书都是关于 Scheme 的。 通常最受推崇的
+是 Hal Abelson、Jerry Sussman 和 Julie Sussman 的《 Structure and Interpretation of Computer Programs 》 <sup>（13）</sup> （SICP）
+。 SICP  <sup>【17】</sup> 几十年来一直被麻省理工学院的新生崇拜或者忍受，它最初是在麻省理工学院首次引入的。
+Scheme 对学术界的吸引力是深刻而普遍的。 大多数宏专家从 Scheme 开始他们的 lisp
+体验——只有当他们准备好开始编写严肃的宏时，他们才会迁移到宏黑客的语言：Common Lisp。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【17】
+发音为 sick-pea [sɪk piː]</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（13）
+中文版为《计算机程序结构和解释》</p>
+</div>
+<p>但是，当迁移时，总是会携带一些东西。 你无法避免你的经历 —— 你的根。 如果你
+根与 Scheme 同在并且你已经阅读过 SICP，那么你可能还记得 <em>队列</em>  <sup>（14）</sup> （另请参阅 [USEFUL-LISP-ALGOS1-CHAPTER3]）。
+对它们的另一种描述，我们在这里使用的描述，来自另一本优秀的 Scheme 书，
+Schematics of Computation，被称为 tlist。 tlist 是一种以它的发明者命名
+的数据结构，一个名叫 Warren Teitelman 的 Interlisp 黑客。 尽管 tlists
+在《 Schematics of Computation 》中作为 Scheme 代码提供，但我们在这里将它们
+作为 Common Lisp 的一个端口呈现。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（14）
+队列 queues</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(declaim (inline make-tlist tlist-left
+<span class="linenos">2</span>                tlist-right tlist-empty-p))
+<span class="linenos">3</span>
+<span class="linenos">4</span>(defun make-tlist () (cons nil nil))
+<span class="linenos">5</span>(defun tlist-left (tl) (caar tl))
+<span class="linenos">6</span>(defun tlist-right (tl) (cadr tl))
+<span class="linenos">7</span>(defun tlist-empty-p (tl) (null (car tl)))
+</pre></div>
+</div>
+<p>正如我们在构造函数 <strong>make-tlist</strong> 中看到的那样， <strong>tlist</strong> 只是个 <strong>cons</strong> 单元格。
+但是， <strong>tlist</strong> 使用 <strong>car</strong> 指向实际列表中的第一个 <strong>cons</strong> ， <strong>cdr</strong> 指向最后一个,而不是像常规列表那样使用 <strong>car</strong> 作为元素，将 <strong>cdr</strong> 作为下一个 <strong>cons</strong> 。 如果
+<strong>tlist</strong> 的 <strong>car</strong> 为 <strong>nil</strong> ，则认为该 <strong>tlist</strong> 为 <em>空</em>  <sup>（15）</sup> 。 与常规列表不同，空
+<strong>tlist</strong> 是不同的（不相同 eq ）。 对于 <strong>tlist</strong> ， <strong>cons</strong> 单元的
+<strong>car</strong> 作为一个 <strong>tlist</strong> ，指向一个包含 <strong>tlist</strong> <em>左侧</em> 元素的 <strong>cons</strong> 单元。 <strong>cdr</strong> 指向包含 <em>右边</em> 的一个 <strong>cons</strong> 。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（15）
+空 empty</p>
+</div>
+<p>函数 <strong>tlist-left</strong> 和 <strong>tlist-right</strong> 返回 tlist 的左右元素而不修改 tlist。 如果
+tlist 为空，则这些函数返回 nil 。 如果只使用这些功能，你将无法在 tlist 中存储 nil 。
+幸运的是，可以在将 tlist 与 <strong>tlist-empty-p</strong> 谓词一起使用之前检查它是否为空，因此
+可以存储 nil。</p>
+<p>因为这样做很容易，我们决定告诉编译器所有这些函数都可以 <em>内联</em> <sup>【18】</sup> 。 这将让 lisp 编译器为
+tlist 函数生成更有效的展开式。 在一些不太提供编译器控制的语言（如 C 语言）中，使用原始宏系统来确保像 tlist 实用程序这样的函数是内联的。 在 lisp 中，可以完全控制编译器，
+不需要为此使用宏。 本章中的宏不仅仅是内联。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【18】
+Declaim 是 declare 的全球版本。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(declaim (inline tlist-add-left
+<span class="linenos"> 2</span>                tlist-add-right))
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span>(defun tlist-add-left (tl it)
+<span class="linenos"> 5</span>  (let ((x (cons it (car tl))))
+<span class="linenos"> 6</span>    (if (tlist-empty-p tl)
+<span class="linenos"> 7</span>      (setf (cdr tl) x))
+<span class="linenos"> 8</span>    (setf (car tl) x)))
+<span class="linenos"> 9</span>
+<span class="linenos">10</span>(defun tlist-add-right (tl it)
+<span class="linenos">11</span>  (let ((x (cons it nil)))
+<span class="linenos">12</span>    (if (tlist-empty-p tl)
+<span class="linenos">13</span>      (setf (car tl) x)
+<span class="linenos">14</span>      (setf (cddr tl) x))
+<span class="linenos">15</span>    (setf (cdr tl) x)))
+</pre></div>
+</div>
+<p>我们可以使用 <strong>tlist-add-left</strong> 函数将元素添加到 tlist 的左侧，使用
+<strong>tlist-add-right</strong> 将元素添加到右侧。 因为维护了指向列表端部的指针，所以将元素添加到
+tlist 的任一端是关于tlist 的长度的 <em>恒定时间</em> 操作。 但是，一般来说，添加到 tlist 并不是一个恒定的时间操作，因为 consing 有内存分配开销。 使用 cons 意味着添加 tlist 通常会带来垃圾收集的总开销。</p>
+<p>给定函数仅支持从 tlist 左侧删除项目。 因为我们只保留指向 tlist 的第一个和最后一个元素
+的指针，所以找到倒数第二个元素的唯一方法是从 tlist 的左侧开始遍历整个列表。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(declaim (inline tlist-rem-left))
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span>(defun tlist-rem-left (tl)
+<span class="linenos"> 4</span>  (if (tlist-empty-p tl)
+<span class="linenos"> 5</span>    (error &quot;Remove from empty tlist&quot;)
+<span class="linenos"> 6</span>    (let ((x (car tl)))
+<span class="linenos"> 7</span>      (setf (car tl) (cdar tl))
+<span class="linenos"> 8</span>      (if (tlist-empty-p tl)
+<span class="linenos"> 9</span>        (setf (cdr tl) nil)) ;; For gc
+<span class="linenos">10</span>      (car x))))
+</pre></div>
+</div>
+<p>tlist 是建立在 cons 单元格之上的队列抽象，这个特别有用，因为它是一种 <em>透明的</em> 数据结构。 虽然一些实现 tlist 功能的数据结构（如队列）只提供数据结构的有限接口，但 tlist 被直接指定为 cons 单元格。 Teitelman 没有发明一些 API 来有希望地满足每个人的需求，而是决定将 tlist 的规范直接绑定到 lisp 的 cons 单元格。 这个设计决策将 tlist 与其他队列实现区分开来。在使用透明规范进行编程时，不是编制特殊的 API 函数来做事，代码就是 API。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(declaim (inline tlist-update))
+<span class="linenos">2</span>
+<span class="linenos">3</span>(defun tlist-update (tl)
+<span class="linenos">4</span>  (setf (cdr tl) (last (car tl))))
+</pre></div>
+</div>
+<p>如果我们决定要访问 tlist 的 car 并修改其内容，需要确保 tlist 保持一致。 假设在我们操作后，所需
+的列表存储在 tlist 的 car 中，我们可以使用 <strong>tlist-update</strong> 来适当地设置 cdr  <sup>【19】</sup> 。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【19】
+通常有一种更有效的方法将列表的最后一个 cons 元素存储到 tlist 的 cdr 中。这样做可以避免线性长度 <strong>tlist-update</strong> 操作。由于 tlist 规范是透明的，因此两种方式都是正确的。</p>
+</div>
+<p>因此，tlist 最主要的好处是尽可能地模拟常规的 lisp 列表，同时能够（支持）在恒定时间内将元素添加到端部的操作。 因为 tlist 像常规列表一样使用 cons ，所以这两者的内存开销是一样的。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defvar number-of-conses 0)
+<span class="linenos">2</span>
+<span class="linenos">3</span>(declaim (inline counting-cons))
+<span class="linenos">4</span>
+<span class="linenos">5</span>(defun counting-cons (a b)
+<span class="linenos">6</span>  (incf number-of-conses)
+<span class="linenos">7</span>  (cons a b))
+</pre></div>
+</div>
+<p>Common Lisp 没有为监听或控制内存分配指定太多功能。 所以让我们编写一些。 首先，回顾 <a class="reference internal" href="chapter03.html#unwanted-capture"><span class="std std-ref">3.5 不想要的捕获</span></a>，
+我们不被允许重新定义或重新绑定 Common Lisp 指定的函数。 我们不能直接拦截对 cons 的调
+用，所以改为使用 <em>封装器</em> <sup>（16）</sup> 。 <strong>counting-cons</strong> 与 cons 相同，只是每次调用它时都会增加
+<strong>number-of-conses</strong> 。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（16）
+封装器 wrapper</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro! with-conses-counted (&amp;rest body)
+<span class="linenos">2</span>  `(let ((,g!orig number-of-conses))
+<span class="linenos">3</span>    ,@body
+<span class="linenos">4</span>    (- number-of-conses ,g!orig)))
+</pre></div>
+</div>
+<p><strong>with-conses-counted</strong> 是我们检查  <strong>number-of-conses</strong> 值的主要接口。 它的展开式会记录它的
+初始值，执行宏体中提供的操作，然后返回 <strong>counting-cons</strong> 被调用的次数。</p>
+<p>将 cons 重命名为 <strong>counting-cons</strong> 策略的不幸结果是，我们想要检查内存性能的任何例程都需要重写
+以使用 <strong>counting-cons</strong> ，就像在 <strong>counting-push</strong> 中一样。 这里我们可以看到，每次调用
+<strong>counting-push</strong> 时，只调用了 <strong>counting-cons</strong> 一次：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (let (stack)
+<span class="linenos">2</span>    (with-conses-counted
+<span class="linenos">3</span>      (loop for i from 1 to 100 do
+<span class="linenos">4</span>        (counting-push nil stack)
+<span class="linenos">5</span>        (pop stack))))
+<span class="linenos">6</span>100
+</pre></div>
+</div>
+<p>上面的 <strong>pop</strong> 操作符从堆栈中删除元素以及用于存储该元素的 cons 单元格。这些 cons 单元格会发生什么呢？它们会变成垃圾。通常 lisp 会随处吐出这些垃圾而没有人关心，因为 Common Lisp 环境
+具有出色的回收程序，称为 <em>垃圾收集器</em>  <sup>（17.1）</sup> ，可以回收这些存储。然而，收集垃圾并不是免费的——垃圾的捡起、
+运送到其他地方、再加工成适合使用的东西必须消耗一定的资源。如果我们可以就地创建小型回收程序
+会怎样？比如上面的循环调用了 <strong>counting-cons</strong> 100次，产生了100个需要回收的垃圾。但是，快速
+浏览一下代码会发现堆栈上一次不会超过一个项目。如果我们回收了这个 cons 单元格，让它可以再次
+用于 <strong>count-push</strong> ，我们可能会避免调用 <strong>counting-cons</strong> 来获取另一个 cons 单元格。这个概念被
+称为 <em>cons 池</em>  <sup>（17.2）</sup> 。除了减少垃圾收集器的压力之外，cons 池还可以帮助改善经常分配内存的数据结构的 <em>局部性</em>  <sup>（17.3）</sup> 。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（17）
+垃圾收集器 garbage collectors ；cons 池 cons pool；局部性 locality</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defmacro counting -push (obj stack)
+<span class="linenos"> 2</span>  `(setq ,stack (counting-cons ,obj ,stack)))
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span>(defmacro with-cons-pool (&amp;rest body)
+<span class="linenos"> 6</span>  `(let ((cons-pool)
+<span class="linenos"> 7</span>        (cons-pool-count 0)
+<span class="linenos"> 8</span>        (cons-pool-limit 100))
+<span class="linenos"> 9</span>      (declare (ignorable cons-pool
+<span class="linenos">10</span>                          cons-pool-count
+<span class="linenos">11</span>                          cons-pool-limit))
+<span class="linenos">12</span>      ,@body))
+<span class="linenos">13</span>
+<span class="linenos">14</span>(defmacro! cons-pool-cons (o!car o!cdr)
+<span class="linenos">15</span>  `(if (= cons-pool-count 0)
+<span class="linenos">16</span>      (counting-cons ,g!car ,g!cdr)
+<span class="linenos">17</span>      (let ((,g!cell cons-pool))
+<span class="linenos">18</span>        (decf cons-pool-count)
+<span class="linenos">19</span>        (setf cons-pool (cdr cons-pool))
+<span class="linenos">20</span>        (setf (car ,g!cell) ,g!car
+<span class="linenos">21</span>              (cdr ,g!cell) ,g!cdr)
+<span class="linenos">22</span>        ,g!cell)))
+</pre></div>
+</div>
+<p><strong>with-cons-pool</strong> 是我们创建 cons 池的一种方式。 请注意，此宏展开成 let 形式，为
+<strong>cons-pool</strong> 、 <strong>cons-pool-count</strong> 和 <strong>cons-pool-limit</strong> 创建绑定。 这些变量用来保存
+可回收的 cons 单元格。 因为无形引入了变量，所以 <strong>with-cons-pool</strong> 是一个 <em>回指宏</em> 。
+还要注意，因为 Common Lisp 为词法和动态变量提供了 <em>双重语法</em> ，所以这个宏的展开式创建的回指绑定
+可能是动态的或词法的，这取决于在宏使用的地方是否将回指声明为特殊的。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro! cons-pool-free (o!cell)
+<span class="linenos">2</span>  `(when (&lt;= cons-pool-count
+<span class="linenos">3</span>            (- cons-pool-limit 1))
+<span class="linenos">4</span>    (incf cons-pool-count)
+<span class="linenos">5</span>    (setf (car ,g!cell) nil)
+<span class="linenos">6</span>    (push ,g!cell cons-pool)))
+</pre></div>
+</div>
+<p><strong>cons-pool-cons</strong> 展开成一些从 cons 池中分配 cons 单元的代码。 它假定自己在
+<strong>with-cons-pool</strong> 的词法范围内，或者，如果回指被声明为特殊的，那么当前存在它们
+的动态绑定。 <strong>cons-pool-cons</strong> 仅在其池为空时调用 <strong>counting-cons</strong> 。 它永远
+不会在池中保存超过 <strong>cons-pool-limit</strong> 的数量 。</p>
+<p>如果我们确定不再需要一个 cons 单元，我们可以通过用 <strong>cons-pool-free</strong> 释放将其移动到 cons 池中。
+在这完成后，代码必须保证不再访问它刚刚释放的 cons 单元格。 <strong>cons-pool-free</strong> 展开成的
+代码会将释放的 cons 单元压入 <strong>cons-pool</strong> 并增加 <strong>cons-pool-count</strong> 的值， 除非
+<strong>cons-pool-count</strong> 大于 <strong>cons-pool-limit</strong> 。 在这种情况下单元将留给垃圾收集器进行收集。
+请注意，当确定不再需要它们时，不需要对 cons 单元进行 <strong>cons-pool-free</strong> ，因为垃圾
+收集器仍然能够确定何时不再需要它们。 如果我们知道一些 lisp 不知道的额外信息，释放它们
+只是我们可以做的一种效率优化。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defmacro make-cons-pool-stack ()
+<span class="linenos"> 2</span>  `(let (stack)
+<span class="linenos"> 3</span>    (dlambda
+<span class="linenos"> 4</span>        (:push (elem)
+<span class="linenos"> 5</span>          (setf stack
+<span class="linenos"> 6</span>                (cons-pool-cons elem stack)))
+<span class="linenos"> 7</span>        (:pop ()
+<span class="linenos"> 8</span>          (if (null stack)
+<span class="linenos"> 9</span>            (error &quot;Tried to pop an empty stack&quot;))
+<span class="linenos">10</span>          (let ((cell stack)
+<span class="linenos">11</span>                (elem (car stack)))
+<span class="linenos">12</span>            (setf stack (cdr stack))
+<span class="linenos">13</span>            (cons -pool -free cell)
+<span class="linenos">14</span>            elem )))))
+</pre></div>
+</div>
+<p>所以 cons 池的设计由两个宏组成，一个创建回指，隐式地引入词汇或特殊绑定，另一个隐式
+地消耗这些回指。 通常，另一个宏用于 <em>组合</em> 这些宏。 <strong>make-cons-pool-stack</strong> 就是这样
+一个例子。 它创建了个类似于 Common Lisp 堆栈的数据结构，当然，实际上只是个使用
+<strong>push</strong> 和 <strong>pop</strong> 宏更新的列表。 但是，我们的数据结构与 <strong>push</strong> 和 <strong>pop</strong> 不同，
+因为它不是透明指定的。 这些堆栈的实现细节与它们的实际使用方式是分开的。 这很重要，
+因为我们不想要求我们堆栈的用户使用他们自己的方法来压入和弹出数据，而是希望他们使用
+我们的内存优化版本。 <strong>make-cons-pool-stack</strong> 使用 <a class="reference internal" href="chapter05.html#dlambda"><span class="std std-ref">5.7 Dlambda</span></a> 中的
+<strong>dlambda</strong> 。 以下的示例中，我们创建了一个包含新堆栈数据结构的词法 cons 池，
+然后推送和弹出一个条目 100 次：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (with-cons-pool
+<span class="linenos">2</span>    (let ((stack (make-cons-pool-stack)))
+<span class="linenos">3</span>      (with-conses-counted
+<span class="linenos">4</span>        (loop for i from 1 to 100 do
+<span class="linenos">5</span>          (funcall stack :push nil)
+<span class="linenos">6</span>          (funcall stack :pop)))))
+<span class="linenos">7</span>1
+</pre></div>
+</div>
+<p>请注意， <strong>counting-cons</strong> —— 这是唯一使用的内存分配函数 —— 仅被调用一次。 曾经需要的一个
+cons 单元被再利用而不是被收集。 如果这个循环发生在编译的代码中，并且循环迭代了足够多的次数，
+那么可以预期 cons pool 版本执行得更快，这仅仅是因为不会调用垃圾收集器。 通常更重要的是，
+当垃圾收集器运行时，我们的循环不会有意外的执行暂停。 当然，我们几乎从来没有注意到这些停顿，
+因为 lisp 足够聪明，不会立即进行完整的垃圾回收，而是使用一种称为 <em>增量回收</em> <sup>（18.1）</sup> 的技术来 <em>摊销</em> 操作。
+垃圾收集器还实现了一种称为 <em>分代收集</em> <sup>（18.2）</sup> 的优化，其中最近分配的内存比旧内存更频繁地收集。 令人惊讶
+的是，这竟然是一种引用计数[UNIFIED-THEORY-OF-GC]。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（18）
+增量回收 incremental collection；分代收集 generational collection</p>
+</div>
+<p>但是使用 cons 池，可以减少（或根本不） cons，从而减少（或消除）垃圾收集执行时间的不确定性。
+大多数 lisp 系统还有一种方法可以暂时禁用垃圾收集器，这样你就可以在不暂停的情况下执行某些操作，
+而在不关心此类暂停的某个时间点暂停更长的时间。 在 CMUCL 中，你可以使用 <strong>gc-on</strong> 和
+<strong>gc-off</strong> 函数。 另请参阅 signal.lisp 中的代码。 练习：禁用垃圾收集器，然后在循环中 cons 一
+堆垃圾。使用 unix <strong>top</strong> 程序来监控的内存使用情况。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(with-cons-pool
+<span class="linenos">2</span>  (defun make-shared-cons-pool-stack ()
+<span class="linenos">3</span>    (make-cons-pool-stack)))
+</pre></div>
+</div>
+<p>虽然上面的栈实现需要你在同一个词法上下文中使用 <strong>with-cons-pool</strong> 来表明想要共享一个 cons 池
+的栈，但是由于这些宏的透明设计，我们可以将它们与闭包结合起来，用来表明我们仍然喜欢这个邻域空间。 <strong>make-shared-cons-pool-stack</strong> 的工作方式与 <strong>make-cons-pool-stack</strong> 相同，除了它不需要你用 <strong>with-cons-pool</strong> 封装它们以外。 这些变量已经被捕获。 因此所有使用
+<strong>make-shared-cons-pool-stack</strong> 创建的栈都将共享同一个 cons 池。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro with-dynamic-cons-pools (&amp;rest body)
+<span class="linenos">2</span>  `(locally (declare (special cons-pool
+<span class="linenos">3</span>                              cons-pool-count
+<span class="linenos">4</span>                              cons-pool-limit))
+<span class="linenos">5</span>  ,@body))
+</pre></div>
+</div>
+<p>由于词法变量和特殊变量之间语法的双重性，我们可以选择使用动态环境来保存 cons 池。
+<strong>with-dynamic-cons-pools</strong> 宏使任何在其词法范围内的 cons 池引用都指向回指的动态绑定。
+一种策略是使用 <strong>with-dynamic-cons-pools</strong> 包装所有使用 cons 池的代码，然后，当你真正地执行你的程
+序时，为 cons 池创建动态绑定。 因为你可以使用新的动态绑定来覆盖动态绑定，所以你可以保留任何动态粒度的邻域空间。要创建动态绑定的话，只需将 <strong>with-dynamic-cons-pools</strong> 封装在
+<strong>with-cons-pool</strong> 周围。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro fill-cons-pool ()
+<span class="linenos">2</span>  `(let (tp)
+<span class="linenos">3</span>    (loop for i from cons-pool-count
+<span class="linenos">4</span>                to cons-pool-limit
+<span class="linenos">5</span>          do (push
+<span class="linenos">6</span>              (cons-pool-cons nil nil)
+<span class="linenos">7</span>              tp))
+<span class="linenos">8</span>    (loop while tp
+<span class="linenos">9</span>          do (cons-pool-free (pop tp)))))
+</pre></div>
+</div>
+<p>特别是在试图减少垃圾收集执行时间的不确定性时，可能有必要确保 cons 池在其池中具有可用的单元格，
+以便程序根本不会 cons（假设我们没有耗尽池）。 要做到这一点，最初只需简单地 cons 所需的单元格
+—— 当对于 cons 是可以接受的时候 —— 然后使用 <strong>fill-cons-pool</strong> 将它们添加到池中，将 cons 池填充到它的限值（ <strong>cons-pool-limit</strong> ）。</p>
+<p>内存是个非常复杂的话题，它的效率影响取决于你的硬件、你的lisp 解释器以及不可避免的技术进步。 除非你真正
+知道你正在做什么，否则尝试改进系统的内存例程可能会带来比它值得（面对）的更多麻烦。 只要有系统，系统程序员就
+一直在调整内存。他们肯定会这样做一段时间。 内存管理很难 —— 唯一可以肯定的是宏是用来做这个的最好工具。</p>
+</section>
+<section id="sorting-networks">
+<span id="id5"></span><h2>7.6 排序网络<a class="headerlink" href="#sorting-networks" title="Permalink to this heading"></a></h2>
+<p>没有比 lisp 更好的工具来试验效率或真正地实现高效程序了。 Lisp 是独一无二的，因为它不仅让我们能
+够专注于智能算法和设计，还让我们使用顶级的机器码编译器来利用这些算法和设计来最大化（激活）效率潜能。 本
+节从 lisp 的角度描述了已被广泛研究但仍远未穷尽的计算机科学的一个角落：排序。 大多数人认为排序是一个已经解决了的问题，因此可能会惊讶地获悉仍然有许多重要的悬而未决的问题。</p>
+<p>我们知道许多优秀的多用途的排序算法。像快速排序这样的算法是最常见的，因为它们可以有效地对大量数据进行
+排序。但是，相反，如果我们希望对许多小批量数据进行排序，那么像 <em>快速排序</em> 这样的多功能排序算法可能会过犹不及。本节是关于这个问题的解决方案，许多人几十年来一直痴迷于这个问题，但它仍然是研究的沃土。对我们
+来说最重要的是，这个解决方案提供了一个展示高级优化技术的机会，这些技术在 lisp 中很简单，但在大多
+数其他语言中却是如此重要的任务，以至于它们几乎不值得（去解决）。在本节和下一节中，我们将重新实现 Graham 在
+<em>On Lisp</em> 中描述的宏 <strong>sortf</strong> 。Graham 的 <strong>sortf</strong> 旨在说明如何使用广义变量编写宏，而我们
+的 <strong>sortf</strong> 旨在提高速度。在某些情况下，我们的 <strong>sortf</strong> 将达到相较于系统经过一定调整的排序函数、数量级的改进。</p>
+<p>本节献给我的老师和朋友 Alan Paeth ，他教会了我，在许多事情中，甚至连排序也是很有趣的。 我也非常感
+谢 John Gamble 和他出色的 Perl 程序 Algorithm-Networksort[ALGORITHM-NETWORKSORT]。
+该程序用于试验不同的算法并生成本节中出现的 ASCII 艺术网络。</p>
+<p>排序网络是一种算法，用于 <em>不经意地</em> 对特定固定大小的数据集进行排序。 也就是说，与大多数算法（如快速
+排序）不同，排序网络的操作不依赖于它用于排序的特定数据集。 排序的每一步都是在设计网络时决定的。 排序
+网络是数据集合中索引组合的简单列表。 每一个这些对应于索引的组应该被用于比对交换操作。 在按序列执行所有这些比较交换操作后，元素将按会被按序排列。</p>
+<p>像快速排序这样非常适合大型数据集的算法对于某些类别的排序问题可能会产生无法接受的开销。 首先，快
+速排序实现通常允许你选择自定义比较运算符，以使排序代码更通用。 这意味着每次比较都需要对比较函数进
+行函数调用，而不是作为内联机器代码实现。 其次，由于快速排序实现如此通用，当我们知道我们的数据集
+具有特别小的固定大小时，它们通常无法利用我们可以进行的优化。 第三，我们通常不想对数据集进行完全排
+序，而是只对决定某元素（也许是中间元素）（的排序）足够用就好。 不查找完整排序的排序网络有时称为 <em>选择网络</em> <sup>（19）</sup> 。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（19）
+选择网络 selection networks</p>
+</div>
+<p>为了阐明排序网络的概念，并说明该主题可能有多么微妙和违反直觉，我们考虑一些最简单的网络：对三个元
+素进行排序的网络。 大多数程序员都知道，通过三个比较可以轻松地对三个元素进行排序，并且当恰好有三
+个元素时，通常不会花费精力使用快速排序。 很容易说服自己，这些比较交换操作可以按任何顺序执行，结果都是一
+样的。 但是，有些排序本质上比其他排序效率低，这并不是很明显。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defvar bad-3-sn
+<span class="linenos">2</span>  &#39;((0 1) (0 2) (1 2)))
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>o--^--^-----o
+<span class="linenos">2</span>  |  |
+<span class="linenos">3</span>o--v--|--^--o
+<span class="linenos">4</span>      |  |
+<span class="linenos">5</span>o-----v--v--o
+</pre></div>
+</div>
+<p>网络 <strong>bad-3-sn</strong> 可能是最明显的三元网络实现，但正如其名称所暗示的那样，它并不是最佳的。
+ASCII 艺术图片有助于可视化 <strong>bad-3-sn</strong> 中基于列表的网络描述所描述的算法。 该算法表示要比较
+数据集索引 0 和 1 处的元素，如果它们无序，则将它们交换为正确的顺序。 对索引对 (0 2) 执行相同
+的操作，最后对 (1 2) 执行相同的操作。在这个过程之后，元素将被排序。 如果我们将这个排序网络实现
+为代码来对长度为 3 的数组进行排序，称之为 <strong>a</strong> ，那么看起来可能是像这样 <sup>【20】</sup> ：</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【20】
+Rotatef 是一个通用的 lisp 交换运算符。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(progn
+<span class="linenos">2</span>  (if (&gt; (aref a 0) (aref a 1))
+<span class="linenos">3</span>    (rotatef (aref a 0) (aref a 1)))
+<span class="linenos">4</span>  (if (&gt; (aref a 0) (aref a 2))
+<span class="linenos">5</span>    (rotatef (aref a 0) (aref a 2)))
+<span class="linenos">6</span>  (if (&gt; (aref a 1) (aref a 2))
+<span class="linenos">7</span>    (rotatef (aref a 1) (aref a 2))))
+</pre></div>
+</div>
+<p><strong>bad-3-sn</strong> 结果是正确的，但与 <strong>good-3-sn</strong> 相比效率低下。通过交换前两个比较交换操作的顺
+序，我们实现了更高效的网络。平均而言，该网络执行的交换操作比 <strong>bad-3-sn</strong> 少。描述这一点的最
+好方法是使用 <em>条件概率</em> <sup>（20）</sup> ，但因为这是一本关于 lisp 的书，而不是排序网络，所以我们会回避这一点。相
+反，我们通过枚举所有排列然后测量当我们用两个网络解释它们时发生的交换次数来证明 <strong>good-3-sn</strong>
+优于 <strong>bad-3-sn</strong> 。现在这里有一个直观的解释：如果首先执行网络中的长链接，那么在第一次操作之
+后，最小或最大元素中的至少一个将处于其正确的最终位置。因此，至少有一个后续的比较交换操作不会执行
+交换。但是，如果先执行短链接，则这些元素可能都不在其最终位置，并且都需要将来交换。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（20）
+条件概率  conditional probability</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defvar good-3-sn
+<span class="linenos">2</span>  &#39;((0 2) (0 1) (1 2)))
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>o--^--^-----o
+<span class="linenos">2</span>  |  |
+<span class="linenos">3</span>o--|--v--^--o
+<span class="linenos">4</span>  |     |
+<span class="linenos">5</span>o--v-----v--o
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defvar tracing-interpret-sn nil)
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span>(defun interpret-sn (data sn)
+<span class="linenos"> 4</span>  (let ((step 0) (swaps 0))
+<span class="linenos"> 5</span>    (dolist (i sn)
+<span class="linenos"> 6</span>      (if tracing -interpret -sn
+<span class="linenos"> 7</span>        (format t &quot;Step ~a: ~a~%&quot; step data))
+<span class="linenos"> 8</span>      (if (&gt; #1=(nth (car i) data)
+<span class="linenos"> 9</span>            #2=(nth (cadr i) data))
+<span class="linenos">10</span>        (progn
+<span class="linenos">11</span>          (rotatef #1# #2#)
+<span class="linenos">12</span>          (incf swaps)))
+<span class="linenos">13</span>      (incf step))
+<span class="linenos">14</span>    (values swaps data)))
+</pre></div>
+</div>
+<p>为了探索这种现象，我们实现了一个用于排序网络的解释器， <strong>interpret-sn</strong> 。 此解释器将排序网络
+<strong>sn</strong> 应用于由列表表示的数据集。 它将返回执行的交换次数作为第一个值，并将生成的排序数据集作为
+第二个值。 注意这里用 <strong>#=</strong> 和 <strong>##</strong> 自引用读取宏来避免重新键入访问器表单。 如果我们想查看
+分步排序过程，还要注意我们可以绑定到非空值的跟踪变量的使用。 首先，假设一个已经排序的数据集，
+显然 <strong>bad-3-sn</strong> 和 <strong>good-3-sn</strong> 都不执行交换：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (let ((tracing-interpret-sn t))
+<span class="linenos"> 2</span>    (interpret-sn &#39;(1 2 3) bad-3-sn))
+<span class="linenos"> 3</span>Step 0: (1 2 3)
+<span class="linenos"> 4</span>Step 1: (1 2 3)
+<span class="linenos"> 5</span>Step 2: (1 2 3)
+<span class="linenos"> 6</span>0
+<span class="linenos"> 7</span>(1 2 3)
+<span class="linenos"> 8</span>* (let ((tracing-interpret-sn t))
+<span class="linenos"> 9</span>    (interpret-sn &#39;(1 2 3) good-3-sn))
+<span class="linenos">10</span>Step 0: (1 2 3)
+<span class="linenos">11</span>Step 1: (1 2 3)
+<span class="linenos">12</span>Step 2: (1 2 3)
+<span class="linenos">13</span>0
+<span class="linenos">14</span>(1 2 3)
+</pre></div>
+</div>
+<p>接下来，考虑每个元素都乱序的情况。 同样，两个排序网络执行相同的操作，执行必要的两次交换：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (let ((tracing-interpret-sn t))
+<span class="linenos"> 2</span>    (interpret-sn &#39;(3 1 2) bad-3-sn))
+<span class="linenos"> 3</span>Step 0: (3 1 2)
+<span class="linenos"> 4</span>Step 1: (1 3 2)
+<span class="linenos"> 5</span>Step 2: (1 3 2)
+<span class="linenos"> 6</span>2
+<span class="linenos"> 7</span>(1 2 3)
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span>* (let ((tracing-interpret-sn t))
+<span class="linenos">10</span>    (interpret-sn &#39;(3 1 2) good-3-sn))
+<span class="linenos">11</span>Step 0: (3 1 2)
+<span class="linenos">12</span>Step 1: (2 1 3)
+<span class="linenos">13</span>Step 2: (1 2 3)
+<span class="linenos">14</span>2
+<span class="linenos">15</span>(1 2 3)
+</pre></div>
+</div>
+<p>但是，在这种情况下， <strong>bad-3-sn</strong> 会导致最坏情况——交换三次：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (let ((tracing-interpret-sn t))
+<span class="linenos"> 2</span>    (interpret-sn &#39;(3 2 1) bad-3-sn))
+<span class="linenos"> 3</span>Step 0: (3 2 1)
+<span class="linenos"> 4</span>Step 1: (2 3 1)
+<span class="linenos"> 5</span>Step 2: (1 3 2)
+<span class="linenos"> 6</span>3
+<span class="linenos"> 7</span>(1 2 3)
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span>* (let ((tracing-interpret-sn t))
+<span class="linenos">10</span>    (interpret-sn &#39;(3 2 1) good-3-sn))
+<span class="linenos">11</span>Step 0: (3 2 1)
+<span class="linenos">12</span>Step 1: (1 2 3)
+<span class="linenos">13</span>Step 2: (1 2 3)
+<span class="linenos">14</span>1
+<span class="linenos">15</span>(1 2 3)
+</pre></div>
+</div>
+<p>在上面， <strong>bad-3-sn</strong> 执行了 3 次交换，而最优的 <strong>good-3-sn</strong> 只执行了一次。 不应该存在
+<strong>good-3-sn</strong> 表现不佳的对称情况吗？ 事实证明，不， <strong>good-3-sn</strong> 真的更好。 如果你仍然不相
+信这一点，自行查阅 <em>蒙蒂霍尔问题</em> <sup>（21）</sup> ，以了解这类问题可能有多么违反直觉。 因此，似乎合理的排序总
+是尽快将元素交换到正确的位置，以便发生最少的交换。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（21）
+蒙蒂霍尔问题  Monty Hall problem</p>
+</div>
+<p>为了量化 <strong>good-3-sn</strong> 比 <strong>bad-3-sn</strong> 具体要好多少，我们写了一个实用程序
+<strong>all-sn-perms</strong> ，它生成从 1 到 n 的数字的所有排列。 <strong>all-sn-perms</strong> 体现了很多 lisp
+的特性，包括递归地 cons 出连接的网络，临时列表，以及使用 Graham 回指宏 alambda 。 在这里，我们生
+成数字 1 到 3 的所有 6 个（3 的阶乘）排列：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (all-sn-perms 3)
+<span class="linenos">2</span>
+<span class="linenos">3</span>((1 2 3) (2 1 3) (1 3 2)
+<span class="linenos">4</span>(3 1 2) (2 3 1) (3 2 1))
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defun all-sn-perms (n)
+<span class="linenos"> 2</span>  (let (perms curr)
+<span class="linenos"> 3</span>    (funcall
+<span class="linenos"> 4</span>      (alambda (left)
+<span class="linenos"> 5</span>        (if left
+<span class="linenos"> 6</span>          (loop for i from 0 to (1- (length left)) do
+<span class="linenos"> 7</span>            (push (nth i left) curr)
+<span class="linenos"> 8</span>            (self (append (subseq left 0 i)
+<span class="linenos"> 9</span>                          (subseq left (1+ i))))
+<span class="linenos">10</span>            (pop curr))
+<span class="linenos">11</span>          (push curr perms)))
+<span class="linenos">12</span>        (loop for i from 1 to n collect i))
+<span class="linenos">13</span>      perms))
+</pre></div>
+</div>
+<p>注意，由于 <strong>all-sn-perms</strong> 的编写方式，上述列表彼此共享结构，因此在使用它们来解释排序网络
+（一种破坏性操作）时，我们应该始终确保对它们的副本进行排序，如 <strong>average-swaps-calc</strong> 。 对
+于可以以这种方式构造的结果的问题，像这样的共享结构通常是一种很好的编程技术，因为它可以减少数据结构所需的总内存 <sup>【21】</sup> 。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【21】
+虽然这里只是因为它似乎是最简单的编码方式。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defun average-swaps-calc (n sn)
+<span class="linenos">2</span>  (/ (loop for i in (all-sn-perms n) sum
+<span class="linenos">3</span>        (interpret-sn (copy-list i) sn))
+<span class="linenos">4</span>    (fact n)))
+</pre></div>
+</div>
+<p>使用 <strong>interpret-sn</strong> 排序网络解释器，我们可以使用交换的实际数字，它用 <strong>average-swaps-calc</strong> 为每个可能的排列作记录。这个函数简单地遍历每个排列，将解释器应用于给定的排序网络，对发生的
+交换求和，然后返回这个和除以可能的排列的数量。如果我们假设每一种排列都是等可能的，那么这个计算就代表了每
+一种排序发生的平均交换次数。 下面，可以看到 <strong>bad-3-sn</strong> 平均每次排序发生了 1.5 次交换：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (average-swaps-calc 3 bad-3-sn)
+<span class="linenos">2</span>3/2
+</pre></div>
+</div>
+<p>平均而言， <strong>good-3-sn</strong> 只有 1.166 次交换：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (average-swaps-calc 3 good-3-sn)
+<span class="linenos">2</span>7/6
+</pre></div>
+</div>
+<p>目前为止，我们的排序网络只能对大小为 3 的数据集进行排序。 是否有生成任意大小的排序网络的算法？
+有的，这些算法已经公布有一段时间了。 1968 年，Ken Batcher 将他的巧妙算法
+[SN-APPLICATIONS] 描述为由 Donald Knuth 命名的合并交换排序或来自 [TAOCP-VOL3-P111] 的
+算法 5.2.2M。 Batcher 的算法是 <em>希尔排序</em> <sup>（22.1）</sup> 和 <em>归并排序</em> <sup>（22.2）</sup> 的一种组合，除了给定一个已知的输入大小，
+它将进行的比较交换操作将会作出完全独立于数据本身确的决定——这正是我们对网络排序所需要的。因此，为了创建一个
+排序网络，我们运行 Batcher 的算法并记录进行了哪些比较交换操作。 稍后我们可以将这些操作内联
+到这个特定输入大小的函数中。 这个过程与 <em>循环展开</em> <sup>（22.3）</sup> 并不完全不同，除非 lisp 允许我们更进一步。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（22）
+希尔排序  shell sort ； 归并排序 merge sort ；循环展开 loop unrolling</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defun build-batcher-sn (n)
+<span class="linenos"> 2</span>  (let* (network
+<span class="linenos"> 3</span>        (tee (ceiling (log n 2)))
+<span class="linenos"> 4</span>        (p (ash 1 (- tee 1))))
+<span class="linenos"> 5</span>    (loop while (&gt; p 0) do
+<span class="linenos"> 6</span>      (let ((q (ash 1 (- tee 1)))
+<span class="linenos"> 7</span>            (r 0)
+<span class="linenos"> 8</span>            (d p))
+<span class="linenos"> 9</span>        (loop while (&gt; d 0) do
+<span class="linenos">10</span>          (loop for i from 0 to (- n d 1) do
+<span class="linenos">11</span>            (if (= (logand i p) r)
+<span class="linenos">12</span>              (push (list i (+ i d))
+<span class="linenos">13</span>                    network)))
+<span class="linenos">14</span>        (setf d (- q p)
+<span class="linenos">15</span>              q (ash q -1)
+<span class="linenos">16</span>              r p)))
+<span class="linenos">17</span>    (setf p (ash p -1)))
+<span class="linenos">18</span>(nreverse network)))
+</pre></div>
+</div>
+<p><strong>build-batcher-sn</strong> 是 Batcher 算法的 lisp 实现，直接转录自 Knuth 的描述。 由于 lisp
+对按位整数运算的任意精度支持，此实现在 n 上不会受到任何人为的大小限制，例如 32 或 64。我们可以使用
+<strong>build-batcher-sn</strong> 轻松构建任意大小的高效排序网络 . 这是一个大小为 3 的网络的构造——与上面
+的 <strong>good-3-sn</strong> 相同：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (build-batcher-sn 3)
+<span class="linenos">2</span>((0 2) (0 1) (1 2))
+</pre></div>
+</div>
+<p>下面是大小为 7 的网络结构：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (build-batcher-sn 7)
+<span class="linenos">2</span>((0 4) (1 5) (2 6) (0 2) (1 3) (4 6) (2 4)
+<span class="linenos">3</span>(3 5) (0 1) (2 3) (4 5) (1 4) (3 6) (1 2)
+<span class="linenos">4</span>(3 4) (5 6))
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>o--^--------^-----^-----------------o
+<span class="linenos"> 2</span>  |        |     |
+<span class="linenos"> 3</span>o--|--^-----|--^--v--------^--^-----o
+<span class="linenos"> 4</span>  |  |     |  |           |  |
+<span class="linenos"> 5</span>o--|--|--^--v--|--^-----^--|--v-----o
+<span class="linenos"> 6</span>  |  |  |     |  |     |  |
+<span class="linenos"> 7</span>o--|--|--|-----v--|--^--v--|--^--^--o
+<span class="linenos"> 8</span>  |  |  |        |  |     |  |  |
+<span class="linenos"> 9</span>o--v--|--|--^-----v--|--^--v--|--v--o
+<span class="linenos">10</span>      |  |  |        |  |     |
+<span class="linenos">11</span>o-----v--|--|--------v--v-----|--^--o
+<span class="linenos">12</span>        |  |                 |  |
+<span class="linenos">13</span>o--------v--v-----------------v--v--o
+</pre></div>
+</div>
+<p>Batcher 的网络很好，但众所周知，对于大多数网络规模来说有点差强人意。 虽然已经发现了许多
+特定规模的更好的网络，但如何找到这些更好的网络，以及它们是否是最优的，这是个重要的未解决问题。
+这一研究领域已经通过使用新的人工智能技术有效搜索排序网络问题的超指数空间的 <em>进化算法</em> <sup>（23）</sup> 取得了重要进
+展。 例如，目前已知的大小为 13 的最佳网络是由 <em>Evolving Non-Determinism</em> 算法 [END] 发现的。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（23）
+进化算法  evolutionary algorithms</p>
+</div>
+<p>此处显示的排序网络的 ASCII 艺术表示是由 John Gamble 出色的 Algorithm-Networksort Perl
+程序创建的。注意，图表将一些可以并行执行的链接放在同一垂直列中。 这表明排序网络是至少在专用硬件
+中可以从比较交换操作中的并行性中受益的算法。 发现如何创建良好的并行排序网络，以及我们可以使它们
+如何并行，仍然很重要，也是未解决的问题。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defun prune-sn-for-median (elems network)
+<span class="linenos"> 2</span>  (let ((mid (floor elems 2)))
+<span class="linenos"> 3</span>    (nreverse
+<span class="linenos"> 4</span>      (if (evenp elems)
+<span class="linenos"> 5</span>        (prune-sn-for-median-aux
+<span class="linenos"> 6</span>          (reverse network)
+<span class="linenos"> 7</span>          (list (1- mid) mid))
+<span class="linenos"> 8</span>        (prune-sn-for-median-aux
+<span class="linenos"> 9</span>          (reverse network) (list mid))))))
+<span class="linenos">10</span>
+<span class="linenos">11</span>(defun prune-sn-for-median-aux (network contam)
+<span class="linenos">12</span>  (if network
+<span class="linenos">13</span>    (if (intersection (car network) contam)
+<span class="linenos">14</span>      (cons (car network)
+<span class="linenos">15</span>            (prune-sn-for-median-aux
+<span class="linenos">16</span>              (cdr network)
+<span class="linenos">17</span>              (remove -duplicates
+<span class="linenos">18</span>                (append (car network) contam))))
+<span class="linenos">19</span>      (prune-sn-for-median-aux
+<span class="linenos">20</span>        (cdr network) contam))))
+</pre></div>
+</div>
+<p>上面我们提到了通用排序函数的一个缺点是它们被硬编码为执行整个排序操作。 如果我们愿意，我们可以对
+数据集进行排序，使其仅仅足以确定一个元素位于其最终位置。 通常，我们感兴趣的元素是 中间元素或 <em>中值</em> 元
+素。 函数 <strong>prune-sn-for-median</strong> 和 <strong>prune-sn-for-median-aux</strong> 采用了一种适度的、明
+显的算法，我发现它可以消除许多不必要的比较交换操作，从而构建任意选择网络。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>o--^--------^-----^-----------------o
+<span class="linenos"> 2</span>  |        |     |
+<span class="linenos"> 3</span>o--|--^-----|--^--v--------^--------o
+<span class="linenos"> 4</span>  |  |     |  |           |
+<span class="linenos"> 5</span>o--|--|--^--v--|--^-----^--|--------o
+<span class="linenos"> 6</span>  |  |  |     |  |     |  |
+<span class="linenos"> 7</span>o--|--|--|-----v--|--^--v--|--^--^--o
+<span class="linenos"> 8</span>  |  |  |        |  |     |  |  |
+<span class="linenos"> 9</span>o--v--|--|--^-----v--|--^--v--|--v--o
+<span class="linenos">10</span>      |  |  |        |  |     |
+<span class="linenos">11</span>o-----v--|--|--------v--v-----|-----o
+<span class="linenos">12</span>        |  |                 |
+<span class="linenos">13</span>o--------v--v-----------------v-----o
+</pre></div>
+</div>
+<p>该算法从 Batcher 网络开始，然后向后工作，跟踪 <em>受污染的</em> 元素 - 不能删除任何现有链接的元素，因为
+这样做会改变该元素的网络结果。 可以删除连接未受污染元素的任何链接，而不会改变受污染元素的结
+果。 将受污染的元件连接到未受污染的链接的每个链接都会污染未受污染的元件。 当我们只污染中间元素
+（或在输入大小相同的情况下污染两个中间元素）时，我们创建了一个中值选择网络。</p>
+<p>（这里）显示了大小为 7 的算法输出，这是一个修改后的 Batcher 网络，其中两个链接被删除。 运行此网络后，
+中值元素将位于正确位置，但不保证其他元素排序。 作为一个示例，这里我们对列表进行排序，刚好能够发现 4 是中
+间元素就行：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (interpret-sn
+<span class="linenos">2</span>    &#39;(4 2 3 7 6 1 5)
+<span class="linenos">3</span>    (prune-sn-for-median
+<span class="linenos">4</span>      7 (build-batcher-sn 7)))
+<span class="linenos">5</span>6
+<span class="linenos">6</span>(1 3 2 4 5 7 6)
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defun prune-sn-for-median-calc (n)
+<span class="linenos">2</span>  (loop for i from 2 to n collect
+<span class="linenos">3</span>    (let* ((sn (build -batcher -sn i))
+<span class="linenos">4</span>          (snp (prune-sn-for-median i sn)))
+<span class="linenos">5</span>      (list i
+<span class="linenos">6</span>        (length sn)
+<span class="linenos">7</span>        (length snp)))))
+</pre></div>
+</div>
+<p>对于大小为 7 的网络，我们修改后的中值 Batcher 网络执行 12 次比较交换操作，而常规 Batcher 网
+络执行 14 次操作。 <strong>prune-sn-for-median-calc</strong> 为我们提供了针对不同大小排序网络的此类网
+络的数据。 它计算大小最大为 n 的 Batcher 网络，并按大小分组，此大小即是通过我们的算法创建的关联中值网络的大小它们的大小与我们的算法创建的相关中值网络的
+大小。</p>
+<p>计算的网络大小最多为 49。 请注意，在最小尺寸下，保存的操作很少（如果有的话）。 但是对于稍微大一
+点的数字，我们开始节省大约 20% 的比较交换操作。 当我们只关心中位数时，这些网络是不错的选择。
+然而，最优中值排序网络的构建也是一个开放的研究领域。 本章开发的修改后的 Batcher 网络很不错，但
+仍远未达到最佳状态。 Paeth[GRAPHICS-GEMS-P171-175]发现了目前已知的 9 和 25 尺寸（3x3
+和 5x5 内核镜像尺寸）的最佳中值选择网络在此处介绍，并且包含在本书的代码中。以下是 Paeth 的中
+值网络的长度：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (length paeth-9-median-sn)
+<span class="linenos">2</span>20
+<span class="linenos">3</span>* (length paeth-25-median-sn)
+<span class="linenos">4</span>99
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (prune-sn-for-median-calc 49)
+<span class="linenos"> 2</span>((2 1 1) (3 3 3) (4 5 5) (5 9 8) (6 12 12)
+<span class="linenos"> 3</span>(7 16 14) (8 19 17) (9 26 22) (10 31 29)
+<span class="linenos"> 4</span>(11 37 31) (12 41 35) (13 48 40) (14 53 47)
+<span class="linenos"> 5</span>(15 59 49) (16 63 53) (17 74 61) (18 82 72)
+<span class="linenos"> 6</span>(19 91 75) (20 97 81) (21 107 88) (22 114 98)
+<span class="linenos"> 7</span>(23 122 100) (24 127 105) (25 138 113) (26 146 124)
+<span class="linenos"> 8</span>(27 155 127) (28 161 133) (29 171 140) (30 178 150)
+<span class="linenos"> 9</span>(31 186 152) (32 191 157) (33 207 169) (34 219 185)
+<span class="linenos">10</span>(35 232 190) (36 241 199) (37 255 209) (38 265 223)
+<span class="linenos">11</span>(39 276 226) (40 283 233) (41 298 244) (42 309 259)
+<span class="linenos">12</span>(43 321 263) (44 329 271) (45 342 280) (46 351 293)
+<span class="linenos">13</span>(47 361 295) (48 367 301) (49 383 313))
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defvar paeth-9-median-sn
+<span class="linenos">2</span>  &#39;((0 3) (1 4) (2 5) (0 1) (0 2) (4 5) (3 5) (1 2)
+<span class="linenos">3</span>    (3 4) (1 3) (1 6) (4 6) (2 6) (2 3) (4 7) (2 4)
+<span class="linenos">4</span>    (3 7) (4 8) (3 8) (3 4)))
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defvar paeth-25-median-sn
+<span class="linenos"> 2</span>  &#39;((0 1) (3 4) (2 4) (2 3) (6 7) (5 7) (5 6) (9 10)
+<span class="linenos"> 3</span>    (8 10) (8 9) (12 13) (11 13) (11 12) (15 16)
+<span class="linenos"> 4</span>    (14 16) (14 15) (18 19) (17 19) (17 18) (21 22)
+<span class="linenos"> 5</span>    (20 22) (20 21) (23 24) (2 5) (3 6) (0 6) (0 3)
+<span class="linenos"> 6</span>    (4 7) (1 7) (1 4) (11 14) (8 14) (8 11) (12 15)
+<span class="linenos"> 7</span>    (9 15) (9 12) (13 16) (10 16) (10 13) (20 23)
+<span class="linenos"> 8</span>    (17 23) (17 20) (21 24) (18 24) (18 21) (19 22)
+<span class="linenos"> 9</span>    (8 17) (9 18) (0 18) (0 9) (10 19) (1 19) (1 10)
+<span class="linenos">10</span>    (11 20) (2 20) (2 11) (12 21) (3 21) (3 12)
+<span class="linenos">11</span>    (13 22) (4 22) (4 13) (14 23) (5 23) (5 14)
+<span class="linenos">12</span>    (15 24) (6 24) (6 15) (7 16) (7 19) (13 21)
+<span class="linenos">13</span>    (15 23) (7 13) (7 15) (1 9) (3 11) (5 17) (11 17)
+<span class="linenos">14</span>    (9 17) (4 10) (6 12) (7 14) (4 6) (4 7) (12 14)
+<span class="linenos">15</span>    (10 14) (6 7) (10 12) (6 10) (6 17) (12 17)
+<span class="linenos">16</span>    (7 17) (7 10) (12 18) (7 12) (10 18) (12 20)
+<span class="linenos">17</span>    (10 20) (10 12)))
+</pre></div>
+</div>
+<p>对于大小为 9 的网络，Batcher 的完整排序网络执行 26 次操作。 目前最著名的是弗洛伊德（ Floyd ）发现的，是
+执行了 25 次操作。我们修剪后的 Batcher 网络的中值版本为 22，Paeth 的中值网络为 20。对于大小
+为 25 的网络，Batcher：138，修剪：113，Paeth：99。所以我们的中值网络似乎与 Paeth 的网络相
+差 10%，这是目前最知名的 这些大小的中值网络。 正如预期的那样，我们不能修剪 Paeth 网络的任何额
+外操作：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (length (prune-sn-for-median
+<span class="linenos">2</span>            9 paeth-9-median-sn))
+<span class="linenos">3</span>20
+<span class="linenos">4</span>* (length (prune-sn-for-median
+<span class="linenos">5</span>            25 paeth-25-median-sn))
+<span class="linenos">6</span>99
+</pre></div>
+</div>
+<p>从理论上讲，这一切都非常有趣。 但在实践中，理论是相当无聊的。 我们开发了所有这些基于列表的排序
+网络，其中一些使用 Batcher 算法执行完整排序，还有一些使用 Batcher 算法的污染优化来查找中
+值。 然后，我们为这些网络开发了一个玩具解释器，与真正的分类程序相比，它无疑会表现得非常糟糕。
+这与效率有什么关系？ 我们的实验只是产生了理论结果而不是有用的代码吗 <sup>【22】</sup> ？ 在大多数语言中，这些实验
+的结果——我们的排序网络——会表现为某种高级数据结构，并且没有多大用处。 但是在 lisp 中，这些网络已
+经是非常高效的排序程序。 我们只是还没有为它们编写编译器。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【22】
+理论上的结果并没有什么必然错误。世界上一些最重要的发明是为了理论而开发的——甚至 lisp 本身。</p>
+</div>
+<p>练习：调整剪枝算法（及其污染方法），使其产生四分位数选择网络。 这些网络不仅确定了中位数，而且还确
+定了有序元素的高半部分和低半部分的中值元素。</p>
+</section>
+<section id="writing-and-benchmarking-compilers">
+<span id="id6"></span><h2>7.7 编写编译器并做基准测试 <sup>（1）</sup><a class="headerlink" href="#writing-and-benchmarking-compilers" title="Permalink to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（1）
+writing-and-benchmarking-compilers</p>
+</div>
+<p><em>编译器</em> 对大多数程序员来说是一个可怕的概念，因为大多数语言都不适合编写编译器。下面是个类比：解析一
+个复杂的日志文件对于只知道 C 或汇编的程序员来说可能是一个令人生畏的、容易出错的愿景，但由于
+Perl 和正则表达式，这对我们懂多种语言的程序员来说不是问题。同样，如果我们不了解 lisp，那么设计一种功
+能强大、富有表现力的编程语言，然后创建一个编译器将这种语言的程序转换为高效的机器代码将是项令人生
+畏的任务。在编写编译器方面，Lisp 的优势不仅使它比其他语言好一点——实际上让表达式上了一个新台
+阶。一般来说，这个优势是能与不能的区别。 Lisp 程序员在任何地方都使用编译器，且有时以非 lisp
+程序员难以置信的方式和任务使用。有多少 C 程序员考虑过 <a class="reference internal" href="#macros-make-lisp-fast"><span class="std std-ref">7.2 宏让 Lisp 很迅捷</span></a> 中
+描述（并克服）的 printf 函数的解释开销？有多少人会尝试为 printf 编写编译器？而这在 lisp 的
+课程中却是标准。一切都应该编译成 lisp。</p>
+<p>什么是编译器？如果你来自 Blub 语言，答案可能隐藏在解释解析、语法定向翻译、上下文无关语法等的一大堆书
+籍中。但别担心，这是 lisp，编译器很容易。它是如此简单，以至于如果你曾认真的做过 lisp 编程相关
+的编程，那么你已经编写了它们，甚至可能没有意识到。编译器的另一个名称是“宏”。宏将程序从一种语言
+编译成另一种语言。 Lisp 实际上就是编写这些编译器的一切——其他一切都是次要的。在 lisp 中，编译器设计
+唯一重要的方面是如何保持目标程序的正确性，同时为它找到高效的展开式。换句话说，这才是编译问题的本
+质。到目前为止，我们已经看到了如何使用宏来创建完全适合手头任务的自定义语言，以及如何通过使用声明
+来消除对偶性和安全检查来提高 lisp 代码的效率。高效的编译器编写只是将这两种技能结合起来。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defun sn-to-lambda-form% (sn)
+<span class="linenos"> 2</span>  `(lambda (arr)
+<span class="linenos"> 3</span>    #f
+<span class="linenos"> 4</span>    (declare (type (simple -array fixnum) arr))
+<span class="linenos"> 5</span>    ,@(mapcar
+<span class="linenos"> 6</span>        #`(if (&gt; #1=(aref arr ,(car a1))
+<span class="linenos"> 7</span>                #2=(aref arr ,(cadr a1)))
+<span class="linenos"> 8</span>            (rotatef #1# #2#))
+<span class="linenos"> 9</span>        sn)
+<span class="linenos">10</span>    arr))
+</pre></div>
+</div>
+<p>当在 <a class="reference internal" href="#macros-make-lisp-fast"><span class="std std-ref">7.2 宏让 Lisp 很迅捷</span></a> 中创建编译器宏来处理格式时，格式化程序编译器展开成什么？
+它是一个 lambda 结构 <sup>【23】</sup> 。 编译为 lambda 结构有时是有意义的，因为我们可以使用 compile 函数直接将
+它们转换为机器代码。回到上一章的排序网络， <strong>sn-to-lambda-form%</strong> 是一个返回 lambda 结构的函数。
+这种 lambda 结构将对于基于列表的排序网络中的每个比较交换操作都有一个指令。 每条指令都会（不安全
+地）索引到一个固定数字（ <strong>fixnum</strong> ）数组，比较并可能使用 <strong>rotatef</strong> 来交换元素。固定数字（ <strong>fixnum</strong> ）数组
+将作为参数（ <strong>arr</strong> ） 传递给由此 lambda 结构创建的函数。 这就是一个像样的机器代码编译器的
+全部内容。与所有 lambda结构一样，由于 lambda 宏，我们能够计算它们以获取函数：</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【23】
+实际上是尖引用（ Sharp-quoted ） lambda 结构。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (eval
+<span class="linenos">2</span>    (sn-to-lambda-form%
+<span class="linenos">3</span>      (build-batcher-sn 3)))
+<span class="linenos">4</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>只需在它们上调用 <strong>compile</strong> 即可成为编译函数：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (compile nil *)
+<span class="linenos">2</span>#&lt;Function&gt;
+</pre></div>
+</div>
+<p>让我们看一下反汇编输出（编译后的展开式）：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (disassemble *)
+<span class="linenos"> 2</span>...
+<span class="linenos"> 3</span>;;; (&gt; (AREF ARR 0) (AREF ARR 2))
+<span class="linenos"> 4</span>9E:       MOV
+<span class="linenos"> 5</span>A1:       MOV
+<span class="linenos"> 6</span>A4:       CMP
+<span class="linenos"> 7</span>A6:       JLE
+<span class="linenos"> 8</span>EAX, [EDX+1]
+<span class="linenos"> 9</span>ECX, [EDX+9]
+<span class="linenos">10</span>EAX, ECX
+<span class="linenos">11</span>L0
+<span class="linenos">12</span>;;; (ROTATEF (AREF ARR 0) (AREF ARR 2))
+<span class="linenos">13</span>A8:       MOV
+<span class="linenos">14</span>AB:       MOV
+<span class="linenos">15</span>AE:       MOV
+<span class="linenos">16</span>B1:       MOV
+<span class="linenos">17</span>EAX, [EDX+9]
+<span class="linenos">18</span>ECX, [EDX+1]
+<span class="linenos">19</span>[EDX+1], EAX
+<span class="linenos">20</span>[EDX+9], ECX
+<span class="linenos">21</span>;;; (&gt; (AREF ARR 0) (AREF ARR 1))
+<span class="linenos">22</span>B4: L0:   MOV
+<span class="linenos">23</span>B7:       MOV
+<span class="linenos">24</span>BA:       CMP
+<span class="linenos">25</span>BC:       JLE
+<span class="linenos">26</span>EAX, [EDX+1]
+<span class="linenos">27</span>ECX, [EDX+5]
+<span class="linenos">28</span>EAX, ECX
+<span class="linenos">29</span>L1
+<span class="linenos">30</span>;;; (ROTATEF (AREF ARR 0) (AREF ARR 1))
+<span class="linenos">31</span>      BE:       MOV     EAX, [EDX+5]
+<span class="linenos">32</span>C1:       MOV
+<span class="linenos">33</span>C4:       MOV
+<span class="linenos">34</span>C7:       MOV
+<span class="linenos">35</span>ECX, [EDX+1]
+<span class="linenos">36</span>[EDX+1], EAX
+<span class="linenos">37</span>[EDX+5], ECX
+<span class="linenos">38</span>;;; (&gt; (AREF ARR 1) (AREF ARR 2))
+<span class="linenos">39</span>CA: L1:   MOV
+<span class="linenos">40</span>CD:       MOV
+<span class="linenos">41</span>D0:       CMP
+<span class="linenos">42</span>D2:       JLE
+<span class="linenos">43</span>EAX, [EDX+5]
+<span class="linenos">44</span>ECX, [EDX+9]
+<span class="linenos">45</span>EAX, ECX
+<span class="linenos">46</span>L2
+<span class="linenos">47</span>;;; (ROTATEF (AREF ARR 1) (AREF ARR 2))
+<span class="linenos">48</span>D4:       MOV           EAX, [EDX+9]
+<span class="linenos">49</span>D7:       MOV           ECX, [EDX+5]
+<span class="linenos">50</span>DA:       MOV           [EDX+5], EAX
+<span class="linenos">51</span>DD:       MOV           [EDX+9], ECX
+<span class="linenos">52</span>E0: L2:   ...
+</pre></div>
+</div>
+<p>上面的机器代码很快，但还可以更快。 Lisp 编译器很聪明——最聪明的编译器 —— 但它们总是可以更
+聪明。 在我们关心性能的极少数情况下，检查编译的展开式是至关重要的，因为很难知道你的 lisp 编译器有多
+聪明。 在上面的汇编中，如果仔细看，就会发现它每次执行交换时实际上都在执行不必要的读取操作。 问
+题是 <strong>rotatef</strong> 展开为冗余访问。 一个 <em>足够聪明的编译器</em> 可能会发现在寄存器中已经有这个值，并且
+可以避免数组访问。 但是我的没有，所以我重新构建了代码，从而实现了更高效的展开式。</p>
+<p><strong>sn-to-lambda-form</strong> 是 <strong>sn-to-lambda-form%</strong> 的改进版本。 它为读入的变量创建临时绑
+定，因此不会为交换操作重新执行数组读取指令。 下面是高级编译展开式：</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defun sn-to-lambda-form (sn)
+<span class="linenos"> 2</span>  `(lambda (arr)
+<span class="linenos"> 3</span>    #f
+<span class="linenos"> 4</span>    (declare (type (simple-array fixnum) arr))
+<span class="linenos"> 5</span>    ,@(mapcar
+<span class="linenos"> 6</span>  #`(let ((a #1=( aref arr ,(car a1)))
+<span class="linenos"> 7</span>    (b #2=( aref arr ,(cadr a1))))
+<span class="linenos"> 8</span>      (if (&gt; a b)
+<span class="linenos"> 9</span>    (setf #1# b
+<span class="linenos">10</span>          #2# a)))
+<span class="linenos">11</span>  sn)
+<span class="linenos">12</span>    arr))
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (disassemble
+<span class="linenos"> 2</span>    (compile nil
+<span class="linenos"> 3</span>      (sn-to-lambda-form%
+<span class="linenos"> 4</span>        (build-batcher-sn 3))))
+<span class="linenos"> 5</span>...
+<span class="linenos"> 6</span>;;; (LET ((A (AREF ARR 0)) (B (AREF ARR 2))) ...)
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span>2E:       MOV
+<span class="linenos">14</span>31:       MOV
+<span class="linenos">15</span>34:       CMP
+<span class="linenos">16</span>36:       JLE
+<span class="linenos">17</span>
+<span class="linenos">18</span>EAX, [EDX+1]
+<span class="linenos">19</span>ECX, [EDX+9]
+<span class="linenos">20</span>EAX, ECX
+<span class="linenos">21</span>L0
+<span class="linenos">22</span>
+<span class="linenos">23</span>;;; (SETF (AREF ARR 0) B (AREF ARR 2) A)
+<span class="linenos">24</span>      38:       MOV     [EDX+1], ECX
+<span class="linenos">25</span>      3B:       MOV     [EDX+9], EAX
+<span class="linenos">26</span>;;; (LET ((A (AREF ARR 0)) (B (AREF ARR 1))) ...)
+<span class="linenos">27</span>3E: L0:   MOV
+<span class="linenos">28</span>41:       MOV
+<span class="linenos">29</span>44:       CMP
+<span class="linenos">30</span>46:       JLE
+<span class="linenos">31</span>
+<span class="linenos">32</span>EAX, [EDX+1]
+<span class="linenos">33</span>ECX, [EDX+5]
+<span class="linenos">34</span>EAX, ECX
+<span class="linenos">35</span>L1
+<span class="linenos">36</span>
+<span class="linenos">37</span>;;; (SETF (AREF ARR 0) B (AREF ARR 1) A)
+<span class="linenos">38</span>      48:       MOV     [EDX+1], ECX
+<span class="linenos">39</span>      4B:       MOV     [EDX+5], EAX
+<span class="linenos">40</span>;;; (LET ((A (AREF ARR 1)) (B (AREF ARR 2))) ...)
+<span class="linenos">41</span>4E: L1:   MOV
+<span class="linenos">42</span>51:       MOV
+<span class="linenos">43</span>54:       CMP
+<span class="linenos">44</span>56:       JLE
+<span class="linenos">45</span>
+<span class="linenos">46</span>EAX, [EDX+5]
+<span class="linenos">47</span>ECX, [EDX+9]
+<span class="linenos">48</span>EAX, ECX
+<span class="linenos">49</span>L2
+<span class="linenos">50</span>
+<span class="linenos">51</span>;;; (SETF (AREF ARR 1) B (AREF ARR 2) A)
+<span class="linenos">52</span>      58:       MOV     [EDX+5], ECX
+<span class="linenos">53</span>      5B:       MOV     [EDX+9], EAX
+<span class="linenos">54</span>      5E: L2: ...
+</pre></div>
+</div>
+<p>熟悉你的 lisp 编译器以便了解你的宏展开式的效率对编写高效的 lisp 非常重要。 反汇编 lisp 系统的源代码，
+使用像 <strong>time</strong> 宏这样的基准测试工具，以及大量的耐心，不幸的是，这是真正获得如何编写快速 lisp
+代码的直觉的唯一方法。</p>
+<p>如果你来自 Blub 语言，那么像 <strong>sn-to-lambda-form</strong> 宏那样展开为 lambda 结构可能是实现编
+译器的最明显方式。 lambda 结构编译到反汇编循环的源代码感觉很像 Blub 语言的编辑、编译、反汇编循环。
+你把源代码放进去，然后把机器代码拿出来。 但是，这种方法可能更笨拙。 在 lisp 中，我们通常将编译器创建
+为不可见的 —— 直接合并到其他 lisp 程序中。理想情况下，除非我们想让东西快速运行，否则永远不会调
+用 <strong>compile</strong> 函数。 宏不应该一直编译到机器代码，而只是足以创建一个良好的展开式，以便编译器无论在何时
+运行时，都将有足够的信息来使整个程序高效。</p>
+<p>我们特别不想在运行时调用 <strong>compile</strong> 。 编译（ <strong>compile</strong> ）是一项昂贵的操作，因为需要展开许多层次的宏来编译某
+些东西。不要在运行时调用 <strong>compile</strong> ，记住 lisp 已经在编译函数中编译了所有的 lambda 结
+构。 由于这种在运行时构造已编译代码的闭包的能力，很容易确保在编译时完成尽可能多的计算的同时，仍然（可以）在运行时创建任意函数（闭包）。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defmacro! sortf (comparator &amp;rest places)
+<span class="linenos"> 2</span>  (if places
+<span class="linenos"> 3</span>    `(tagbody
+<span class="linenos"> 4</span>      ,@(mapcar
+<span class="linenos"> 5</span>        #`(let ((,g!a #1=,(nth (car a1) places))
+<span class="linenos"> 6</span>                (,g!b #2=,(nth (cadr a1) places)))
+<span class="linenos"> 7</span>              (if (,comparator ,g!b ,g!a)
+<span class="linenos"> 8</span>                (setf #1# ,g!b
+<span class="linenos"> 9</span>                      #2# ,g!a)))
+<span class="linenos">10</span>        (build-batcher-sn (length places))))))
+</pre></div>
+</div>
+<p><strong>sortf</strong> 是本书中我最喜欢的宏。 它不仅简洁、优雅，并且很好地展示了迄今为止描述的许多宏技术，
+而且它还是一段有用的生产代码，能够执行极快的排序操作。 最棒的是，这个宏与 lisp 程序完美融合，
+使用起来毫不费力。 我们不必费尽心思就能从这种先进的 lisp 优化中受益。 任何我们需要对小的、固定
+大小的数据集进行排序的时候，这个宏很容易合并，有时甚至比排序函数更容易。 <strong>sortf</strong> 不是展开为
+lambda 结构，而是展开为 tagbody 结构，因为 tagbody 是返回 nil 的标准 <strong>progn</strong> 。 以下
+是 <strong>sortf</strong> 的展开式：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (macroexpand
+<span class="linenos"> 2</span>    &#39;(sortf &lt; a b c))
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span>(LET ()
+<span class="linenos"> 5</span>  (TAGBODY
+<span class="linenos"> 6</span>    (LET ((#:A1824 A) (#:B1823 C))
+<span class="linenos"> 7</span>      (IF (&lt; #:B1823 #:A1824)
+<span class="linenos"> 8</span>        (SETF A #:B1823 C #:A1824)))
+<span class="linenos"> 9</span>    (LET ((#:A1824 A) (#:B1823 B))
+<span class="linenos">10</span>      (IF (&lt; #:B1823 #:A1824)
+<span class="linenos">11</span>        (SETF A #:B1823 B #:A1824)))
+<span class="linenos">12</span>    (LET ((#:A1824 B) (#:B1823 C))
+<span class="linenos">13</span>      (IF (&lt; #:B1823 #:A1824)
+<span class="linenos">14</span>      (SETF B #:B1823 C #:A1824)))))
+<span class="linenos">15</span>  T
+</pre></div>
+</div>
+<p><strong>sortf</strong> 的接口设计来自于 On Lisp，但它是如此自然，以至于几乎每个 lisp 程序员都会这样实
+现。第一个参数通常是表示比较运算符的符号 —— 通常类似于 <strong>&lt;</strong> 。 这通常表示一个函数，但正如
+Graham 指出的那样，它也可以表示一个宏或特殊结构，因为它直接拼接到列表的函数位置。 我们甚至可以
+传递一个 lambda 结构，因为它们也允许在列表的函数位置 <sup>【24】</sup> ：</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【24】
+请注意，我们不能传递一个尖引用（ sharp-quoted ）的 lambda 形式。不要尖引用（ sharp-quoted ）你的 lambda 形式。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (let ((a -3) (b 2))
+<span class="linenos">2</span>    (sortf (lambda (a b) (&lt; (abs a) (abs b)))
+<span class="linenos">3</span>      a b)
+<span class="linenos">4</span>    (list a b))
+<span class="linenos">5</span>(2 -3)
+</pre></div>
+</div>
+<p>和 Graham 的宏一样，要排序的参数是广义变量。 这意味着可以用 <strong>sortf</strong> 对任何类型的变量进行排
+序，不仅是那些由符号表示的变量，还包括任何可以 <strong>setf</strong> 的变量。 以下是个示例：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (let ((a 2) (b &#39;(4)) (c #(3 1)))
+<span class="linenos">2</span>    (sortf &lt; a (car b) (aref c 0) (aref c 1))
+<span class="linenos">3</span>    (format t &quot;a=~a b=~a c=~a~%&quot; a b c))
+<span class="linenos">4</span>
+<span class="linenos">5</span>a=1 b=(2) c=#(3 4)
+<span class="linenos">6</span>NIL
+</pre></div>
+</div>
+<p>虽然 Graham 的 <strong>sortf</strong> 和我们的 <strong>sortf</strong> 编译相同的源语言，但它们的展开式却大有不同。
+Graham 的宏可以说比我们的更正确，因为它只会执行一次访问这些位置的代码。使用 Graham 的
+<strong>sortf</strong> ，我们可以传入具有副作用的变量，并且只对它们进行一次计算，正如预期的那样。例如，
+Graham 的 <strong>sortf</strong> 在给定位置时只会增加 <strong>i</strong> 一次 <strong>(aref arr (incf i))</strong> 。Graham
+的 <strong>sortf</strong> 的工作原理是将每个要排序的变量复制到临时绑定中，使用冒泡排序对这些临时绑定进行排
+序，然后使用 <strong>setf</strong> 表达式 <sup>【25】</sup> 将临时变量写回原来的位置，现在按排序顺序。相反，我们的
+<strong>sortf</strong> 将在整个排序过程中多词计算每个位置格式，因此建议不要使用有副作用的位置。这种设计的另
+一个结果是，如果追求效率，请确保访问器是高效的。特别是不要使用像 <strong>caddr</strong> 这样的长列表访问
+器，因为它们最终会多次遍历列表。通过我们的实现，我们 <em>就地</em> 对参数进行排序，即没有任何临时绑定。代替
+具有 (O (expt N 2))    <sup>【26】</sup> 的 <em>Big-O</em> 复杂度的冒泡排序，我们使用 Batcher 更好的合并交换排序及其(O
+(* N (expt (log N) 2)))。有一些方法可以构建(O (* N (log N))) 的排序网络，与快速排序相
+同 - 但大多数对小型网络使用的操作比 Batcher 的要多。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【25】
+有关这方面的血腥细节的精彩描述，请参阅 On Lisp 。</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【26】
+我们不喜欢中缀表达方式。</p>
+</div>
+<p>你可能希望在调用 <strong>sortf</strong> 的地方添加一个 <strong>sharp-f</strong> 快速声明，因为它自身不会添加它。 如果想
+要真正快速的排序，请确保编译器知道要排序的所有广义变量的类型。 如果确实指定了类型，请始终确保将
+所有通用变量声明为相同类型。这是必需的，因为任何元素最终可能出现在任何地方。</p>
+<p>但是我们怎么知道这个宏是否真的给到我们任何优于排序函数的性能优势呢？ 我们需要对其进行 <em>基准测试</em> 。
+基准测试已经讨论过很多了，因为，特别是对程序员来说， <em>胡说八道的</em> 永恒爱好是如此令人愉快。 不幸的
+是，几乎所有的基准测试结果都是无用的。甚至建议你对本书中的基准测试结果持保留态度。 也就是说，在同
+一台机器上运行在同一个 lisp 映像上运行的代码版本略有不同的精心设计、受控的实验对于理解和修复性
+能瓶颈有时是无价的。 这种计量很有用，因为我们不仅可以判断哪些技术更有效，而且我们还可以判断它们
+的效率有多高。 因为他们为我们编写代码，所以宏是设置这些实验的最佳工具。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defmacro sort-benchmark-time ()
+<span class="linenos"> 2</span>  `(progn
+<span class="linenos"> 3</span>    (setq sorter (compile nil sorter))
+<span class="linenos"> 4</span>    (let ((arr (make-array
+<span class="linenos"> 5</span>                n :element-type &#39;fixnum)))
+<span class="linenos"> 6</span>        (time
+<span class="linenos"> 7</span>          (loop for i from 1 to iters do
+<span class="linenos"> 8</span>            (loop for j from 0 to (1- n) do
+<span class="linenos"> 9</span>              (setf (aref arr j) (random n)))
+<span class="linenos">10</span>            (funcall sorter arr))))))
+</pre></div>
+</div>
+<p><strong>sort-benchmark-time</strong> 宏是我们实验中的一个组件。 它展开为假定是 lambda 结构或函数绑定到
+<strong>sorter</strong> 的代码，并且该函数将对大小为 <strong>n</strong> 的 <strong>fixnum</strong> 数组进行排序。 然后将它编译成
+一个函数并使用它对随机生成的数组进行排序迭代。 <strong>time</strong> 宏用于收集有关排序过程所需时间。</p>
+<p><strong>do-sort-benchmark</strong> 是执行基准测试的实际接口。 给定数据集大小 <strong>n</strong> 和迭代数
+<strong>iters</strong> ，它将同时测试 Common Lisp 排序函数和我们的 <strong>sortf</strong> 宏。 其保留随机数生成器的
+状态，并在执行排序测量之后但在运行 <strong>sortf</strong> 之前将其重置，以便要排序的随机数组相同。 运行时 <strong>do-sort-benchmark</strong> 已被编译，这点非常重要，这样我们的测试中可能会出现最少的噪声（ noise ）。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defun do-sort-benchmark (n iters)
+<span class="linenos"> 2</span>  (let ((rs (make-random-state *random-state*)))
+<span class="linenos"> 3</span>    (format t &quot;CL sort:~%&quot;)
+<span class="linenos"> 4</span>    (let ((sorter
+<span class="linenos"> 5</span>            &#39;(lambda (arr)
+<span class="linenos"> 6</span>                #f
+<span class="linenos"> 7</span>                (declare (type (simple-array fixnum)
+<span class="linenos"> 8</span>                                arr))
+<span class="linenos"> 9</span>                (sort arr #&#39;&lt;))))
+<span class="linenos">10</span>      (sort-benchmark-time))
+<span class="linenos">11</span>
+<span class="linenos">12</span>    (setf *random -state* rs)
+<span class="linenos">13</span>    (format t &quot;sortf:~%&quot;)
+<span class="linenos">14</span>    (let ((sorter
+<span class="linenos">15</span>            `(lambda (arr)
+<span class="linenos">16</span>            #f
+<span class="linenos">17</span>            (declare (type (simple-array fixnum)
+<span class="linenos">18</span>                            arr))
+<span class="linenos">19</span>            (sortf &lt;
+<span class="linenos">20</span>                  ,@(loop for i from 0 to (1- n)
+<span class="linenos">21</span>                          collect `(aref arr ,i)))
+<span class="linenos">22</span>            arr)))
+<span class="linenos">23</span>        (sort-benchmark-time))))
+<span class="linenos">24</span>
+<span class="linenos">25</span>(compile &#39;do-sort-benchmark)
+</pre></div>
+</div>
+<p>在运行时， <strong>do-sort-benchmark</strong> 不仅告诉我们 <strong>sortf</strong> 是高效的，而且就小型固定大小数据集的
+性能而言，通用排序算法甚至与排序网络不在同一个级别。 我们还注意到 <strong>sortf</strong> 没有 cons ，这反
+过来会减少垃圾收集运行时间，从而提高性能。 以下是大小为 2、3、6、9、25、49 的数据集的结果：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (do-sort-benchmark 2 1000000)
+<span class="linenos"> 2</span>CL sort:
+<span class="linenos"> 3</span>; Evaluation took:
+<span class="linenos"> 4</span>;   1.65 seconds of real time
+<span class="linenos"> 5</span>;   8,000,064 bytes consed.
+<span class="linenos"> 6</span>sortf:
+<span class="linenos"> 7</span>; Evaluation took:
+<span class="linenos"> 8</span>;   0.36 seconds of real time
+<span class="linenos"> 9</span>;   0 bytes consed.
+<span class="linenos">10</span>* (do-sort-benchmark 3 1000000)
+<span class="linenos">11</span>CL sort:
+<span class="linenos">12</span>; Evaluation took:
+<span class="linenos">13</span>;   3.65 seconds of real time
+<span class="linenos">14</span>;   24,000,128 bytes consed.
+<span class="linenos">15</span>sortf:
+<span class="linenos">16</span>; Evaluation took:
+<span class="linenos">17</span>;   0.46 seconds of real time
+<span class="linenos">18</span>;   0 bytes consed.
+<span class="linenos">19</span>* (do-sort-benchmark 6 1000000)
+<span class="linenos">20</span>CL sort:
+<span class="linenos">21</span>; Evaluation took:
+<span class="linenos">22</span>;   10.37 seconds of real time
+<span class="linenos">23</span>;   124,186,832 bytes consed.
+<span class="linenos">24</span>sortf:
+<span class="linenos">25</span>; Evaluation took:
+<span class="linenos">26</span>;   0.8 seconds of real time
+<span class="linenos">27</span>;   0 bytes consed.
+<span class="linenos">28</span>* (do-sort-benchmark 9 1000000)
+<span class="linenos">29</span>CL sort:
+<span class="linenos">30</span>; Evaluation took:
+<span class="linenos">31</span>;   19.45 seconds of real time
+<span class="linenos">32</span>;   265,748,544 bytes consed.
+<span class="linenos">33</span>sortf:
+<span class="linenos">34</span>; Evaluation took:
+<span class="linenos">35</span>;   1.17 seconds of real time
+<span class="linenos">36</span>;   0 bytes consed.
+<span class="linenos">37</span>* (do-sort-benchmark 25 1000000)
+<span class="linenos">38</span>CL sort:
+<span class="linenos">39</span>; Evaluation took:
+<span class="linenos">40</span>;   79.53 seconds of real time
+<span class="linenos">41</span>;   1,279,755,832 bytes consed.
+<span class="linenos">42</span>sortf:
+<span class="linenos">43</span>; Evaluation took:
+<span class="linenos">44</span>;   3.41 seconds of real time
+<span class="linenos">45</span>;   0 bytes consed.
+<span class="linenos">46</span>* (do-sort-benchmark 49 1000000)
+<span class="linenos">47</span>CL sort:
+<span class="linenos">48</span>; Evaluation took:
+<span class="linenos">49</span>;   183.16 seconds of real time
+<span class="linenos">50</span>;   3,245,024,984 bytes consed.
+<span class="linenos">51</span>sortf:
+<span class="linenos">52</span>; Evaluation took:
+<span class="linenos">53</span>;   8.11 seconds of real time
+<span class="linenos">54</span>;   0 bytes consed.
+</pre></div>
+</div>
+<p>因此，对于某些任务，使用排序网络可以对我们的系统排序例程进行数量级或更好的改进。 这些测量并不是为了
+让我们的排序实现看起来很糟糕（它实际上是一个出色的排序例程），而是为了展示一个现实的例子，说明使
+用宏进行智能编程可以带来显著的效率提升。 Lisp 宏让我们可以轻松、便携地进行智能编程。 Blub 语
+言在智能编程方面付出了巨大的努力，以至于 Blub 语言程序员几乎总是满足于愚蠢地编程。 在 lisp 中，所
+有内容都编译为 lisp ，因此可以优化的内容永远不会有任何障碍。如果有什么东西慢得让人无法接受，那就
+改变它并让它变得更快。 我们几乎从不需要东西快速运行，但是当我们这样做时，lisp 就是解决方案。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defun medianf-get-best-sn (n)
+<span class="linenos"> 2</span>  (case n
+<span class="linenos"> 3</span>    ((0) (error &quot;Need more places for medianf&quot;))
+<span class="linenos"> 4</span>    ((9)  paeth -9-median -sn)
+<span class="linenos"> 5</span>    ((25) paeth -25-median -sn)
+<span class="linenos"> 6</span>    (t    (prune-sn-for-median n
+<span class="linenos"> 7</span>            (build -batcher -sn n)))))
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span>(defmacro! medianf (&amp;rest places)
+<span class="linenos">10</span>  `(progn
+<span class="linenos">11</span>      ,@(mapcar
+<span class="linenos">12</span>          #`(let ((,g!a #1=,(nth (car a1) places))
+<span class="linenos">13</span>                  (,g!b #2=,(nth (cadr a1) places)))
+<span class="linenos">14</span>              (if (&lt; ,g!b ,g!a)
+<span class="linenos">15</span>                (setf #1# ,g!b #2# ,g!a)))
+<span class="linenos">16</span>          (medianf-get-best-sn (length places)))
+<span class="linenos">17</span>      ,(nth (floor (1- (length places)) 2) ; lower
+<span class="linenos">18</span>            places)))
+</pre></div>
+</div>
+<p>另一个与 <strong>sortf</strong> 相似的宏是 <strong>medianf</strong> ，它使用修剪的中值选择网络或 Paeth 手工制作的中值
+网络对位置进行排序，以确保中值元素处于正确位置。 在网络大小均匀的情况下，下中位数和上中位数都将
+在正确的位置。 与总是返回 <strong>nil</strong> 的 <strong>sortf</strong> 不同， <strong>medianf</strong> 将返回下中位数的值（与奇
+数网络大小的上中位数相同）。</p>
+<p>正如之前所说， <strong>sortf</strong> 和 <strong>medianf</strong> 对可以设置的任何类型的位置进行排序。 对于存储在寄存
+器中的变量，这使 lisp 有机会生成甚至不访问内存的排序代码。 例如，这里是在三个固定位置上为
+<strong>medianf</strong> 编译的展开式：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (dis ((fixnum a) (fixnum b) (fixnum c))
+<span class="linenos"> 2</span>    #f
+<span class="linenos"> 3</span>    (medianf a b c))
+<span class="linenos"> 4</span>...
+<span class="linenos"> 5</span>;;; (MEDIANF A B C)
+<span class="linenos"> 6</span>      34:       MOV         EBX, EAX
+<span class="linenos"> 7</span>      36:       CMP         EDX, EAX
+<span class="linenos"> 8</span>      38:       JL          L4
+<span class="linenos"> 9</span>      3A: L0:   MOV         EBX, EAX
+<span class="linenos">10</span>      3C:       CMP         ECX, EAX
+<span class="linenos">11</span>      3E:       JL          L3
+<span class="linenos">12</span>      40: L1:   MOV         EAX, ECX
+<span class="linenos">13</span>      42:       CMP         EDX, ECX
+<span class="linenos">14</span>      44:       JNL         L2
+<span class="linenos">15</span>      46:       MOV         ECX, EDX
+<span class="linenos">16</span>      48:       MOV         EDX, EAX
+<span class="linenos">17</span>      4A: L2:
+<span class="linenos">18</span>...
+<span class="linenos">19</span>      5B: L3:   MOV         EAX, ECX
+<span class="linenos">20</span>      5D:       MOV         ECX, EBX
+<span class="linenos">21</span>      5F:       JMP         L1
+<span class="linenos">22</span>      61: L4:   MOV         EAX, EDX
+<span class="linenos">23</span>      63:       MOV         EDX, EBX
+<span class="linenos">24</span>      65:       JMP         L0
+</pre></div>
+</div>
+<p>Lisp 比任何其他语言都更有潜力编写高效的代码，这一切都归功于宏。 因为它们非常擅长创建受控计量实
+验，所以宏也是确定哪些技术产生更有效结果的解决方案。 编译器是编写程序的程序，并且宏是这样做的最好的方法。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="chapter06.html" class="btn btn-neutral float-left" title="第六章：回指 （1） 宏" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="chapter08.html" class="btn btn-neutral float-right" title="第八章：Lisp 和 Forth" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2022, oneforalone, Treyenuo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

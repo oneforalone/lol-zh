@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>第一章：概述 &mdash; Let Over Lambda 中文文档  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="第二章：闭包" href="chapter02.html" />
+    <link rel="prev" title="译者序" href="preface.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="preface.html">译者序</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">第一章：概述</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#macros">1.1 宏</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#u">1.2 U 语言</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lisp">1.3 Lisp 实用程序</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#license">1.4 许可证</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#thanks">1.5 致谢</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="chapter02.html">第二章：闭包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter03.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter04.html">第四章：读取宏 <sup>（1）</sup></a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter05.html">第五章：Programs that program <sup>（1）</sup></a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter06.html">第六章：回指 <sup>（1）</sup> 宏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter07.html">第七章：宏的效率</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter08.html">第八章：Lisp 和 Forth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendices.html">附录</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">参考文档</a></li>
+<li class="toctree-l1"><a class="reference internal" href="specification.html">术语表</a></li>
+<li class="toctree-l1"><a class="reference internal" href="original-code.html">源代码</a></li>
+<li class="toctree-l1"><a class="reference internal" href="production-code.html">生产代码</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>第一章：概述</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/chapter01.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="chapter01">
+<span id="id1"></span><h1>第一章：概述<a class="headerlink" href="#chapter01" title="Permalink to this heading"></a></h1>
+<section id="macros">
+<span id="id2"></span><h2>1.1 宏<a class="headerlink" href="#macros" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Lisp 的核心在编程领域中的某些方面具有一定的优势。 ——lisp 创始人谦逊之词
+</pre></div>
+</div>
+<p>本书是介绍 lisp 的 <em>宏</em> 编程。与大部分编程书不同的是，本书不是只给个大概的介绍，而是
+通过一系列的教程和实例，让你尽可能快速高效地掌握复杂的宏编程。掌握宏是从中级 lisp
+程序员变成专业 lisp 程序员的最后一步。</p>
+<p>宏是 lisp 作为编程语言的唯一最大优势，同时也是凌驾所有编程语言的最大优势。通过宏，你可以实
+现其他语言着实无法实现的功能。这是因为宏可以将 lisp 转化为其他的编程语言，然后又转
+变回来，有经验的宏程序员会发现其他的语言都只是 lisp 的皮毛。这点 <em>很重要</em> 。lisp 的
+特别之处在于它实际上是在一个更高级别编程。大多数语言都创建并严格遵守句法和语义规
+则，而 lisp 就比较通用，且可塑性强。在 lisp 中，你可以制定规则。</p>
+<p>lisp 比其他的编程语言具有更丰富而深厚的历史。在该领域中，曾有一些顶尖的计算机科学家为之
+奋斗，让 lisp 成为了最强大和通用的编程语言。lisp 也享有一系列的简
+明标准、多个出色的开源方言编译器实现以及比其他语言更方便的宏。
+本文只使用 COMMON LISP （符合 ANSI-CL 和 CLTL2 标准），但大部分思路都轻易地可移植于其他的 lisp 方言，
+如 Scheme[R5RS]。也就是说，如果想要编写宏，使用 COMMON LISP 作为 lisp 方言的本书，有望确保你达成这点。
+虽然不同的 lisp 方言各有其优势，COMMON
+LISP 是宏专业人员当之无愧的首选。</p>
+<p>在 <em>妥当地</em> 设计编程语言方面， COMMON LISP 的设计者们做了出色的工作。特别是在考虑到实现
+的质量上，毫无疑问，COMMON LISP 是现代程序员迄今为止最好的编译环境。作为一
+个程序员，你永远可以指望 COMMON LISP 按照其该有的方式运行。即便是设计者和实施者都
+做到了这一点，有些人还是觉得他们没有向我们描述清楚它们能够正确运行的原因。对大部分
+外行人来说，COMMON LISP 看起来就像个有一大堆奇怪特性的集合，因此被拒之门外，
+他们转而使用一种更容易满足的语言，这注定无法体验到宏的强大之处。虽然这不是本
+书的主要目的，但本书可以作为 COMMON Lisp 这门神奇语言中许多优秀特性的导览。
+大部分语言都设计的易于实现；而 COMMON LISP 则设计成编程时很强大。我真诚地
+希望COMMON LISP的创造者能够欣赏这本书，因为它是对该语言高级宏功能的最完整
+和最容易理解的论述之一，同时本书也是宏这一主题的海洋中愉快的一滴水。</p>
+<p>宏在1963年由 Timothy Hart[MACRO-DEFINITIONS]发明，其历史几乎与 lisp 本身一样，这并非偶然。
+然而，大多数lisp程序员仍然没有习惯于最大限度地使用宏，甚至其他程序员根本就没有使用过宏。
+这对于高级 lisper 们来说一直是个未解之谜。既然宏是这么好，为什么不是每个人都一直使
+用它们呢？虽然最聪明、最坚
+定的程序员确实总是以 lisp 宏为终点，但很少有人从宏开始他们的编程生涯。要理解宏为
+什么这么美妙，就需要理解哪些是 lisp 具有而其他语言没有
+的。这需要对一些不怎么强大的语言
+有所了解。可悲的是，大多数程序员在掌握了一些其他语言后，就失去了学习的意愿，也从来
+没有去接近并了解什么是宏，或者如何利用宏。但任何语言的顶尖程序员总是被迫学习某种编程
+的方法：对于宏来说，因为 lisp 是编写宏的最佳语言，所以聪明、有决心且好奇的程序员最终都会选择使用它。</p>
+<p>虽然优秀的程序员必然是少数，但随着整个编程人口的增长，优秀的程序员的数量也在增
+加。编程界很少有程序员意识到宏的强大，了解的也很少，但这种情况正在改变。因为宏
+能让生产力的倍增，无论世界是否准备好， <em>宏的时代</em> 正在到来。本书旨在为不可避免的未
+来做一个基础准备：一个宏的世界。请做好准备。</p>
+<p>萦绕着宏的传统智慧是，只有在必要时才使用它们，因为它们可能难以理解，同时包含极其
+微妙的错误。并且，如果你把一切都看成是函数，这些错误会以某些诧异的方式限制你。
+这些并不是 lisp 宏系统本身的缺陷，而是普遍的宏编程的特质。和所有的技术一样，工具越
+强大，滥用它的方法就越多。而且，就编程结构而言， lisp 的宏是最强大的工具。</p>
+<p>一个有趣的类比就是，在 lisp 中学习宏和在 C 语言中学习指针。大多数 C 语言初学者都能
+迅速掌握大多数语言。这些有才智的、有经验的初学者们，可能从小学数学到简单的编程实验都有
+经历过相似的特性：函数、类型、变量、算术表达式。但是大多数 C 程序员新手在学习指针时都
+会碰壁。</p>
+<p>指针是经验丰富的 C 程序员的第二天性，他们中的大多数人认为，要全面理解 C 语言，必须能
+够合理运用指针。因为指针是如此的基础，不管是出于文体上的或是学习的目的，大部分
+老练的 C 程序员不会建议限制指针的使用。尽管如此，许多 C 语言新手觉得指针是种不必要的、
+使编程更复杂化的技术，并避免使用它们，这导致在 <em>FORTRAN</em> 中、 <em>在其他任何语言中的通症</em> ，
+即语言中有价值的特性被忽视。这种病症是对语言特性的无知，而不是糟糕的编程风格。一
+旦充分理解了这些特性，正确的风格就会显而易见。一个适用于任何编程语言的，一个本书
+的次要主题，就是在编程中，编程风格不是直接追求。只有在理解缺失的情况下，风格才是必要的！ <sup>【1】</sup></p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【1】
+一个推论是：有时有效使用你不理解的东西的唯一方法，是复制在别处观察到的样式。</p>
+</div>
+<p>与 C 语言的指针一样，宏作为 lisp 的一个特征，是人们经常缺乏理解的。合理运用宏的智慧非常分散和
+理想化。如果在考虑宏的时候，你发现自己依靠风格化的谚语，比如：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>宏改变了 lisp 代码的语法。
+宏作用于你程序的解析树上。
+只有在函数无法完成的情况下才使用宏。
+</pre></div>
+</div>
+<p>（那么）当涉及到宏编程时，你就可能不理解全局。而这正是本书希望解决的问题。</p>
+<p>有关宏的构建，好的参考资料或教程较少。 Paul Graham 的 <a class="reference external" href="http://www.paulgraham.com/onlisp.html">OnLisp</a>  [ON-LISP]是一个例外。对任何
+对宏感兴趣的人来说， <a class="reference external" href="http://www.paulgraham.com/onlisp.html">OnLisp</a> 中的每一个字都是必读的。 <a class="reference external" href="http://www.paulgraham.com/onlisp.html">OnLisp</a> 和 Graham 的其他著作都是本书创作的重要灵感。
+归功于 Paul Graham 和其他 lisp 作家的
+努力，宏给予程序员的力量被广泛讨论。然而不幸的是，它仍然广泛被误解。尽管从
+<a class="reference external" href="http://www.paulgraham.com/onlisp.html">OnLisp</a> 中可以得到有关宏编程的智慧，但很少有程序员将宏与他们现实生活中的编程问题
+联系起来。相比于 <a class="reference external" href="http://www.paulgraham.com/onlisp.html">OnLisp</a> 向您展示不同类型的宏，本书将会教您如何使用它们。</p>
+<p>宏的编写是个反思和迭代的过程。所有复杂的宏都来自于简单的宏，通常要经过一系列漫长的改进——测试周期。
+更重要的是，识别在何处应用宏是种通过直接编写宏才能习得的后天技能。当你写程序
+时，作为一个清醒的人，无论你是否意识到，都在遵循某个系统和过程。每位程序员都有关于编程
+工具如何工作的概念模型，而代码的创建则是这个概念模型的直接逻辑结果。一旦聪明的程序员
+开始把编程行为视为一个逻辑程序，合乎逻辑的下一步就是让这个过程从自动化本身中受益。
+毕竟，程序员接受的培训正是为了实现这一目标：使程序自动化。</p>
+<p>第一步理解宏的关键是认识到：如果没有仔细的计划和大量的努力，任何程序的大部分，都
+会遍布乱七八糟的冗余模式和不灵活抽象。这几乎在所有的大型软件项目中都可以看到，重
+复的代码或者是没必要复杂化的代码，这是因为作者无法获得正确的抽象。有效使用宏
+需要识别这些模式和抽象，然后创建 <em>帮助你编程序的代码</em> 。了解如何编写宏是不够的；
+专业的 lisp 程序员需要知道为什么要编写宏。</p>
+<p>作为 lisp 新手 的 C 语言程序员经常会犯这样的错误：认为宏的主要目的是提高代码在运行时 <sup>【2】</sup>
+的效率。虽然宏在这个任务上往往非常有用，但到目前为止，宏最常见的用途是使编写所需应用程序的工作更容
+易。由于大多数程序中的大部分模式都是重复复制的，且其抽象的通用性没有得到充分的利用，
+恰当设计的宏可以使（程序员）能够真正地在表达式的新层面上编程。其他语言是僵化和具体的，而 lisp 是流动和通用的。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【2】
+C 语言程序员犯这个错误是因为他们习惯了一个对其他没什么好处的“宏系统”。</p>
+</div>
+<p>本书不是 lisp 的入门介绍。本书的主题和材料，是针对那些对宏的效用感到好奇的、非 lisp 语言的专业程序员，
+以及那些准备真正去学习 lisp 独到之处的中级 lisp 学员。假定这些 lisp 学员拥有 lisp 编程的基础和中级知识，但对闭包和宏缺乏深入理解。</p>
+<p>本书也不是关于理论的。所有的例子都涉及可用和可运行的代码，能够帮助改善你的编程
+能力，立竿见影。本书是利用高级编程技术来帮助你更好地编程。与其他许多刻意使用
+简单编程风格，以提高可读性的编程书籍相比，本书认为教授编程的最佳方法是充分利用语言。
+尽管提供的许多代码样例使用了 COMMON LISP 深奥的特性，这些潜在的、不熟悉的特性在使用
+时就被描述了。对于自检，如果你已经阅读并理解 <sup>【3】</sup> 了 <a class="reference internal" href="chapter02.html"><span class="doc">第二章：闭包</span></a> 和 <a class="reference internal" href="chapter03.html"><span class="doc">第三章：宏基础</span></a> 中的所有内容，那么你可以认为自己已经通过了领悟 lisp 的中间阶段，这也是本书的目标。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【3】
+当然，不一定要认同。</p>
+</div>
+<p>lisp 的部分内容要靠你自己去发掘，本书不会剥夺你探索的权力。注意，本书的进度比大多数书要快，
+比你之前阅读的要快。想要理解本书中的一些代码，你可能需要查阅其他 COMMON LISP 教程或参考资
+料。在介绍完基础知识后，我们将直接进入解释一些迄今为止最先进的宏研究，其中大部分
+内容都是在一个巨大的、未被开发的灰色区域的知识领域中。就像所有的高级宏编程一样，
+本书在很大程度上关注宏的 <em>组合</em> 。这个话题有个可怕的名声，很少有程序员能很好地理解它。
+宏的组合代表了当今编程语言中最广阔、最肥沃的研究领域。学术界已经从类型、对象和
+<em>prolog</em> <sup>（1）</sup> 式逻辑中得出了大部分有趣的结果，但宏编程仍然遗留一个巨大的、有缺口的黑洞。
+没有人真正知道后面是什么。我们所知道的是，是的，它很复杂，很可怕，目前看来潜力无
+穷。与其他太多的编程理念不同，宏既不是用来发表无用理论文章的学术概念，也不是空洞
+的企业软件流行语。宏是黑客的最好朋友。宏让你的编程更聪明，而不是更难。大多数程序
+员在了解了宏之后，都不再想在没有宏的情况下进行编程。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（1）
+<strong>prolog</strong> 是一种逻辑编程语言。它创建在逻辑学的理论基础之上， 诞生于 1972 年，
+最初被运用于自然语言等研究领域，具体介绍请参考：<a class="reference external" href="https://en.wikipedia.org/wiki/Prolog">Prolog</a></p>
+</div>
+<p>虽然大多数 lisp 书籍都是为了让 lisp 更受欢迎而写的，但我完全不关心 lisp 的公众吸引力。 lisp 并没有消失。如果能够在余下的编程生涯中继续使用 lisp 作为 <em>秘密武器</em> ，我将会非常高兴。
+如果这本书只有一个目的，那就是激励人们对宏的学习和研究，就像我在 <a class="reference external" href="http://www.paulgraham.com/onlisp.html">OnLisp</a> 中受到的启发
+一样。我希望本书的读者也能受到这样的启发，以至于有一天我可能会享受到更好的 lisp 宏工具和
+更有趣的 lisp 宏书籍。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>仍然对 lisp 的力量感到敬畏。
+你们谦卑的作者。
+Doug Hoyte
+</pre></div>
+</div>
+</section>
+<section id="u">
+<span id="u-language"></span><h2>1.2 U 语言<a class="headerlink" href="#u" title="Permalink to this heading"></a></h2>
+<p>由于讨论宏涉及到讨论本身，所以需要明确本书采用的格式约定。正如你正在阅读和领会到
+的所传达给你的那样，我现在所写的本身就是个值得规范化和分析的表达式系统。</p>
+<p>没有人比 Haskell Curry <a class="footnote-reference brackets" href="#id4" id="id3">1</a> 更了解这一点。这是因为 Curry 不仅想将思想形式化，
+甚至还有思想的表达也形式化。他认为把作者与读者之间交流的语言中的概念抽象出来是有必要的，并
+把它称为 U 语言。</p>
+<dl class="footnote brackets">
+<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id3">1</a></span></dt>
+<dd><p>Haskell Curry, <a class="reference external" href="https://www.amazon.com/Foundations-Mathematical-Logic-Dover-Mathematics/dp/0486634620">Foundations Of Mathematical Logic</a> 的作者</p>
+</dd>
+</dl>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>每一项研究,包括当前的研究都必须通过语言的方式从一个人传达给另一个人。在我们研究
+之初，关注这个明显的事实是可取的，即可以命名正在使用的语言，并明确说明它的几个
+特点。我们将把正在使用的语言称为 “ U 语言”。如果不是因为此语言比其
+他大多数人的语言，和我们的工作更密切相关的事实，那么引起人们对它的关注是没有意义的。
+</pre></div>
+</div>
+<p>贯穿全书，我们将使用 <em>斜体</em> 来表示一些关键的概念和要点。用 <strong>粗体</strong> 来表示程序中的特殊结构、函数、宏和其他的标识符，不论它们有没有出现过。注意有些词有多种含义，例如 <strong>lambda</strong>
+是 COMMON LISP 的宏，而 <em>lambda</em> 是概念； <strong>let</strong> 是特殊操作符，而 <em>let</em> 是作为形式体的列表。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defun example-program-listing()
+<span class="linenos">2</span>  &#39;(this is
+<span class="linenos">3</span>    (a (program
+<span class="linenos">4</span>      (listing)))))
+</pre></div>
+</div>
+<p>在本书中，新出现的程序代码都会单独的显示在 <em>代码框</em> 中。正如 <strong>example-program-listing</strong>
+函数的定义一样，代码是为重复使用而设计，或者为恰当地实现范例而设计的。但有时我们仅希
+望展示一点代码的使用，或者只是想去讨论一些与书面文本 <sup>【4】</sup> 不脱离太多的表达式的特性。在这些情况下，代码或代码的使用示例将像这样出现</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【4】
+这是一种脚注，与主体相关但更简洁偏离主题。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(this is
+<span class="linenos">2</span>  (demonstration code))
+</pre></div>
+</div>
+<p>许多教学编程的文章都使用大量孤立的、设计好的例子来说明问题，但却忘了将其与现实相结合。
+本书试图用尽量少而直接的例子来说明宏观的编程思想。有些文章试图在例子中使用可爱、古怪的标识符名称或肤浅的类比来掩盖其无趣。但我们的例子只是为了说明观点。也就是说，这本书首先试图不使自己（或任何东西）太严肃。不同的是，其中的幽默需要你自己去发现。
+由于 lisp 的交互性质，其计算一个简单表达式的结果往往比等量的 U 语言表达地要多。在这种情况下，我们将这样显示 COMMON LISP Read Evaluate Print Loop（称为 <em>REPL</em> ）的输出：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (this is
+<span class="linenos">2</span>    (the expression
+<span class="linenos">3</span>      (to evaluate)))
+<span class="linenos">4</span>
+<span class="linenos">5</span>THIS-IS-THE-RESULT
+</pre></div>
+</div>
+<p>注意输入的文本是小写的，但 lisp 返回的文本是大写的。能简便地区分 REPL 的输入输出是 COMMON LISP 的一个特点。更确切地说，这个特点能使我们立即知道 LISP 文件以及任何屏幕内容是否已被 lisp 阅读器处理。星号（*）代表一个提示。星号（*）是一个理想的符号，因为它不会与输入字符相混淆，并且它的高像素数使它在REPL输出时更加突出。</p>
+<p>编写复杂的 lisp 宏是一个迭代的过程。没有人会用其在他语言程序中常见的轻率风格来写出一
+个长达几页的宏。一部分原因是 lisp 代码每页包含的信息比大多数其他语言多得多。另外部分原
+因是 lisp 技术鼓励程序员发展他们的程序：根据应用的需要，通过一系列的指定的增强来完善它们。</p>
+<p>本书将 lisp 的类型，如 COMMON LISP， Scheme ，同更抽象的 lisp 组成要素进行了区分。还介绍了 lisp 编程语言和非 lisp 编程语言之间的区别。当需要谈论非 lisp 语言时，会避免直接指明语言名字以减少树敌。为了做到这一点，我们采用了下面这个不寻常的定义。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>没有 lisp 宏的语言就是 *Blub*。
+</pre></div>
+</div>
+<p>U 语言中的 Blub 一词来自 Paul Graham 的一篇文章 <a class="reference external" href="http://www.paulgraham.com/avg.html">Beating the Averages</a>，
+Blub 是一种隐喻，用来强调 lisp 与其他语言不同的事实。 Blub 的特征有中缀语法、烦人的类型
+系统和残缺的对象系统，但不同 blub 的唯一统一的特征是没有 lisp 宏。 Blub 术语很有用，
+因为有时理解一个高级宏的最简单方法就是考虑为什么这个技术在 Blub 中不可能实现。 Blub
+术语的目的不是为了取笑非 lisp 语言 <sup>【5】</sup> 。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【5】
+是有一点诙谐。</p>
+</div>
+<p>为了说明写宏的迭代过程，本书采用了这样的惯例：在定义不完整或尚未以其他方式改进的函数
+和宏的名称后面加上百分数（%）字符。在确定最终版本之前，多次修订可能会导致一个名称的末
+尾出现多个 % 字符。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defun example-function% () ;first try
+<span class="linenos">2</span>  t)
+<span class="linenos">3</span>(defun example-function%% () ; second try
+<span class="linenos">4</span>  t)
+<span class="linenos">5</span>(defun example-function () : got it!
+<span class="linenos">6</span>  t)
+</pre></div>
+</div>
+<p>Curry 将宏描述为 <em>元编程</em> <sup>（2）</sup> 。元编程的唯一目的是使程序员能够更好地编写软件。尽管元编程在所有的编程语言都被不同程度地采用，但没有一种语言像 lisp 那
+样彻底地采用了它。其他语言中的程序员写代码没有如此便捷的元编程技术可用。这就是为什么 lisp 程序在非 lisp 程序员看来 <em>很奇怪</em> ： lisp 代码如何表达直接源于其元编程需求。正如本书试图描述的那样， lisp 的这一设计决定–在 lisp 本身中编写元程序，使得
+lisp 具有惊人的生产力优势。然而，由于我们在 lisp 中创建元程序，我们必须牢记元编程与 U 语言规范不同。我们可以从不同的角度讨论元语言包括其他的元语言，但只有一种 U 语言。 Curry 为他的 U 语言明确了这一点</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>我们可以形成具有任何数量级别的语言层次结构。然而，无论有多少个层次，U语言都将是
+最高的层次：如果有两个层次，它将是元语言；如果有三个层次，它将是元-元语言；以此
+ 类推。因此，U语言和元语言这两个术语必须保持区别。
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（2）
+元编程 metaprogramming</p>
+</div>
+<p>当然，这是本关于 lisp 的书，而 lisp 的逻辑系统与 Curry 描述的非常不同，所以我们将少
+量采用他作品中的其他约定。但 Curry 对逻辑和元编程的贡献至今仍激励着我们。这不仅是因为他对符号引文的洞见，而且还因为他的 U 语言措辞优美，执行高效。</p>
+</section>
+<section id="lisp">
+<span id="lisp-utility"></span><h2>1.3 Lisp 实用程序<a class="headerlink" href="#lisp" title="Permalink to this heading"></a></h2>
+<p><a class="reference external" href="http://www.paulgraham.com/onlisp.html">OnLisp</a> 是本你要么理解，要么不理解的书。你要么崇拜它，要么害怕它。从它贴切的书名
+开始， <a class="reference external" href="http://www.paulgraham.com/onlisp.html">OnLisp</a> 是关于创建编程抽象的，这些抽象是 <em>Lisp 之上</em> 的层次。在创建了这些
+抽象之后，就可以基于这些早期抽象自由地延展创建更多的编程抽象。</p>
+<p>在几乎所有值得使用的语言中，语言的大部分功能都是用语言本身实现的； Blub 语言通常
+有大量用 Blub 编写的标准库。当连程序员都不想用目标语言编程时，你可能也不会想这样做。</p>
+<p>但即使考虑了其他语言的标准库， lisp 也是不同的。从其他语言是由原语 <sup>（3.1）</sup> 组成
+的意义上来讲， lisp 是由元原语 <sup>（3.2）</sup> 组成的。一旦宏像在 COMMON LISP 中那样被
+标准化，语言的其他部分就可以从根本上被 <em>自举</em> <sup>（3.3）</sup> 起来了。大多数语言只是试图提供一套
+足够灵活的这些原语，而 lisp 提供了一个允许任何和所有种类的原语的元编程系统。另一种
+思考方式是， lisp 完全摒弃了原语的概念。在 lisp 中，元编程系统并没有停止在任何所谓的
+原语上。这些用于构建语言的宏编程技术有可能，事实上也是人们所希望的，它可以一直
+延续到用户应用程序中。即使是由最高级别的用户编写的应用程序，也是 lisp 洋葱外的宏层，
+通过迭代而不断增长。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（3）
+原语 primitive ；
+元原语 meta-primitive ；
+自举 boot-strapped</p>
+</div>
+<p>从这个角度来看，语言中存在原语根本是一个问题。只要有原语，系统的设计就会有障碍和非正
+交性。当然，有时这是必要的。大多数程序员都能把单个机器码指令当作原语，让他们的
+C 语言或 lisp 编译器来处理。但是 lisp 用户要求对其他几乎所有的一切进行控制。就给予程序员
+的控制权而言，没有其他语言能像 lisp 那样彻底。</p>
+<p>听从 <a class="reference external" href="http://www.paulgraham.com/onlisp.html">OnLisp</a> 的建议，本书是作为洋葱外的另一层设计的。就像程序在其他程序上分层
+一样，本书也是 <a class="reference external" href="http://www.paulgraham.com/onlisp.html">OnLisp</a> 外的又一层。 Graham 的书的中心主题是：当设计良好的 <em>实用工具</em>  <sup>（4）</sup> 结合
+在一起时，可以发挥出大于各部分之和的生产力优势。本节介绍了一系列来自 <a class="reference external" href="http://www.paulgraham.com/onlisp.html">OnLisp</a>
+和其他资料的实用工具。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（4）
+实用工具 utilities</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defun mkstr (&amp;rest args)
+<span class="linenos">2</span>  (with-output-to-string (s)
+<span class="linenos">3</span>    (dolist (a args) (princ a s))))
+<span class="linenos">4</span>
+<span class="linenos">5</span>(defun symb (&amp;rest args)
+<span class="linenos">6</span>  (values (intern (apply #&#39;mkstr args))))
+</pre></div>
+</div>
+<p><strong>symb</strong> 是创建符号的通用方法，在 <strong>mkstr</strong> 之上（构建）。由于符号可以被任何任意的字符串引用，而且以编程方式创建符号是非常有用的，因此 <strong>symb</strong> 是宏编程的一个基本工具，在本书中被大量使用。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defun group (source n)
+<span class="linenos"> 2</span>  (if (zerop n) (error &quot;zero length&quot;))
+<span class="linenos"> 3</span>  (labels ((rec (source acc)
+<span class="linenos"> 4</span>            (let ((rest (nthcdr n source)))
+<span class="linenos"> 5</span>              (if (consp rest)
+<span class="linenos"> 6</span>                  (rec rest (cons
+<span class="linenos"> 7</span>                              (subseq source 0 n)
+<span class="linenos"> 8</span>                                acc))
+<span class="linenos"> 9</span>                  (nreverse
+<span class="linenos">10</span>                    (cons source acc))))))
+<span class="linenos">11</span>    (if source (rec source nil) nil)))
+</pre></div>
+</div>
+<p><strong>group</strong> 是另一个在编写宏时经常出现的工具。原因一是需要镜像运算符，如 COMMON LISP
+的 <strong>setf</strong> 和 <strong>psetf</strong> ，它们已经对形参进行了分组。原因二是分组通常是结构化相关数据的
+最佳方式。由于我们经常使用这种功能，所以尽可能通用地创建其抽象很有意义。 Graham 的
+分组将按由参数 <strong>n</strong> 指定的分组量进行分组。在 <strong>setf</strong> 这样的情况下，参数被分组成对，
+<strong>n</strong> 是 2。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defun flatten (x)
+<span class="linenos">2</span>  (labels ((rec (x acc)
+<span class="linenos">3</span>          (cond ((null x) acc)
+<span class="linenos">4</span>                ((atom x) (cons x acc))
+<span class="linenos">5</span>                (t (rec
+<span class="linenos">6</span>                      (car x)
+<span class="linenos">7</span>                      (rec (cdr x) acc))))))
+<span class="linenos">8</span>  (rec x nil)))
+</pre></div>
+</div>
+<p><strong>flatten</strong> 是 <a class="reference external" href="http://www.paulgraham.com/onlisp.html">OnLisp</a> 中最重要的实用工具之一。给定一个任意嵌套的列表结构， <strong>flatten</strong>
+将返回一个新的包含所有可以通过该列表结构到达的原子的列表。如果我们把列表结构看成是
+一棵树，那么 <strong>flatten</strong> 将返回该树中所有叶子的列表。如果这棵树代表 lisp 代码，通过检查
+表达式中某些对象的存在， <strong>flatten</strong> 完成了一种 <em>代码遍历</em> <sup>（5）</sup> ，这是本书中反复出现的主题。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（5）
+代码遍历 code-walking</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defun fact (x)
+<span class="linenos">2</span>  (if (= x 0)
+<span class="linenos">3</span>    1
+<span class="linenos">4</span>    (* x (fact (- x 1)))))
+<span class="linenos">5</span>
+<span class="linenos">6</span>(defun choose (n r)
+<span class="linenos">7</span>  (/ (fact n)
+<span class="linenos">8</span>    (fact (- n r))
+<span class="linenos">9</span>    (fact r)))
+</pre></div>
+</div>
+<p><strong>fact</strong> 和 <strong>choose</strong> 明显是阶乘和二项式系数函数的实现。</p>
+</section>
+<section id="license">
+<span id="id5"></span><h2>1.4 许可证<a class="headerlink" href="#license" title="Permalink to this heading"></a></h2>
+<p>因为我相信藏在本书代码背后的概念就像物理观察或数学证明一样基础，所以即使我想，
+我也不相信我可以拥有它们的所有权。因此，你基本可以自由地使用本书的代码。下面是
+随代码分发的非常自由的许可证：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>;; This is the source code for the book
+;; _Let_Over_Lambda_ by Doug Hoyte.
+;; This code is (C) 2002-2008, Doug Hoyte.
+;;
+;; You are free to use, modify, and re-distribute
+;; this code however you want, except that any
+;; modifications must be clearly indicated before
+;; re-distribution. There is no warranty,
+;; expressed nor implied.
+;;
+;; Attribution of this code to me, Doug Hoyte, is
+;; appreciated but not necessary. If you find the
+;; code useful, or would like documentation,
+;; Please consider buying the book!
+</pre></div>
+</div>
+<p>The text of this book is (C) 2008 Doug Hoyte. All rights reserved.</p>
+</section>
+<section id="thanks">
+<span id="id6"></span><h2>1.5 致谢<a class="headerlink" href="#thanks" title="Permalink to this heading"></a></h2>
+<p>感谢 Brian Hoyte , Nancy Holmes , Rosalie Holmes , Ian ,
+Alex , 所有我的家人; syke , madness , fyodor ,
+cyb0rg/asm , theclone , blackheart , d00tz , rt , magma ,
+nummish , zhivago , defrost ; Mike Conroy , Sylvia Russell ,
+Alan Paeth , Rob McArthur , Sylvie Desjardins , John
+McCarthy , Paul Graham , Donald Knuth , Leo Brodie , Bruce
+Schneier , Richard Stallman , Edi Weitz , Peter Norvig ,
+Peter Seibel , Christian Queinnec , Keith Bostic , John
+Gamble ; COMMON LISP 的设计者们和创造者们,特别是 Guy Steele ,
+Richard Gabriel , and Kent Pitman , CMUCL/SBCL , CLISP ,
+OpenBSD , GNU/Linux 的开发者们和维护者们.</p>
+<p>特别感谢 Ian Hoyte 为本书设计封面及 Leo Brodie 设计背面.</p>
+<p>本书献给所有爱编程的人。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="preface.html" class="btn btn-neutral float-left" title="译者序" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="chapter02.html" class="btn btn-neutral float-right" title="第二章：闭包" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2022, oneforalone, Treyenuo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

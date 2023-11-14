@@ -1,0 +1,1779 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>第六章：回指 （1） 宏 &mdash; Let Over Lambda 中文文档  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="第七章：宏的效率" href="chapter07.html" />
+    <link rel="prev" title="第五章：Programs that program （1）" href="chapter05.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Let Over Lambda 中文文档
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="preface.html">译者序</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter01.html">第一章：概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter02.html">第二章：闭包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter03.html">第三章：宏基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter04.html">第四章：读取宏 <sup>（1）</sup></a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter05.html">第五章：Programs that program <sup>（1）</sup></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">第六章：回指 <sup>（1）</sup> 宏</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#more-phors">6.1 更多的回指语？ <sup>（2）</sup></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sharp-backquote">6.2 尖反引号 <sup>（7）</sup></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#alet">6.3 <strong>alet</strong> 和有限状态机</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#indirection-chains">6.4 间接链</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hotpatching-closures">6.5 热修复闭包</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sub-lexical-scope">6.6 子词法作用域</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pandoric-macros">6.7 潘多拉宏</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="chapter07.html">第七章：宏的效率</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter08.html">第八章：Lisp 和 Forth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendices.html">附录</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">参考文档</a></li>
+<li class="toctree-l1"><a class="reference internal" href="specification.html">术语表</a></li>
+<li class="toctree-l1"><a class="reference internal" href="original-code.html">源代码</a></li>
+<li class="toctree-l1"><a class="reference internal" href="production-code.html">生产代码</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Let Over Lambda 中文文档</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>第六章：回指 <sup>（1）</sup> 宏</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/chapter06.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="chapter06">
+<span id="id1"></span><h1>第六章：回指 <sup>（1）</sup> 宏<a class="headerlink" href="#chapter06" title="Permalink to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（1）
+回指  Anaphoric</p>
+</div>
+<section id="more-phors">
+<span id="id2"></span><h2>6.1 更多的回指语？ <sup>（2）</sup><a class="headerlink" href="#more-phors" title="Permalink to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（2）
+More Phors?</p>
+</div>
+<p>Paul Graham 的 <a class="reference external" href="http://www.paulgraham.com/onlisp.html">OnLisp</a> 中一些最有趣的宏是 <em>回指宏</em> <sup>（3）</sup>  。回指宏是特意从
+提供给宏的结构中捕捉变量的宏。多亏了它们的明显的具体说明，这些特意捕获的变量给出我们控制宏展开
+的窗口。通过这些窗口，我们可以通过 <em>组合</em> 来控制宏展开。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（3）
+回指宏  anaphoric macros</p>
+</div>
+<p>经典的回指像那些在 <a class="reference external" href="http://www.paulgraham.com/onlisp.html">OnLisp</a> 中被命名为字面上的单词 <sup>【1】</sup> <em>anaphor</em> 和它的复数形式 <em>anaphora</em> 。回指
+的意思是捕获 <em>U 语言的一个空闲单词</em> ，然后将这个单词用在之后的 U 语言中。在编程术语中，
+实现典型的回指意味着在你的代码中——或者你即将编写的代码中——找到能够受益于之前相关的表达式的结果的位置。
+Graham 的回指和相关代码值得深究。特别是宏 <strong>defanaph</strong> ，它支持一些有趣的 <em>自动回指</em> <sup>（4）</sup>
+编程的类型。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【1】
+一种U语言引语</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（4）
+自动回指   automatic anaphor</p>
+</div>
+<p>经过一段时间的使用， <strong>alambda</strong> 被发现是 <a class="reference external" href="http://www.paulgraham.com/onlisp.html">OnLisp</a> 中最好用的回指宏。它也是一个最简单和
+最优雅的回指宏及特意捕捉变量的展示。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>;; Graham &#39;s alambda
+<span class="linenos">2</span>(defmacro alambda (parms &amp;body body)
+<span class="linenos">3</span>  `(labels ((self ,parms ,@body))
+<span class="linenos">4</span>      #&#39;self))
+</pre></div>
+</div>
+<p>通过 <strong>alambda</strong> ，我们捕捉到 <strong>self</strong> 这个变量名，所以我们就可以使用它来引用到我们构建的非常匿名的函数。换句话说，递归就像调用 <strong>self</strong> 一样简单。例如，下面的函数返回从 <strong>n</strong> 到 1 的一个数字列
+表 <sup>【2】</sup> ：</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【2】
+如果条件为假，则 if 形式体上的缺席的第三个子句返回 nil ，它是一个列表。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(alambda (n)
+<span class="linenos">2</span>  (if (&gt; n 0)
+<span class="linenos">3</span>    (cons
+<span class="linenos">4</span>      n
+<span class="linenos">5</span>      (self (- n 1)))))
+</pre></div>
+</div>
+<p><strong>alambda</strong> 让我们的代码更直观、更易读，并允许我们会改变关于是否一个匿名函数应该能够像添加一个字母那样轻松地调用自身的思维 <sup>【3】</sup> 。因为 <strong>alambda</strong> 对 <strong>self</strong> 绑定的明显的具体说明，而且使用 <strong>alambda</strong> 的唯
+一原因就是利用这个绑定，不想要的变量捕获不再是一个问题。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【3】
+这是没有尖引号 lambda 形式的另一个原因。将一个带引号的 lambda 形式改变为 alambda 形式也需要删除两个字符。</p>
+</div>
+<p>OnLisp* 中的另一个方便的回指宏是 <strong>aif</strong> ，这个宏将测试子句的结果绑定到 <strong>it</strong> ，以便
+true 子句(次要的子句或随之而来的子句)使用 <sup>【4】</sup> 。 <strong>aif</strong> 用了一个 COMMON LISP 很重要的特性： <em>广义布尔值</em> <sup>（5.1）</sup> 。在 COMMON LISP 中，任何非 nil 值都是一个布尔值真，所以 COMMON LISP 程序员通常会在真值中嵌入有趣的信息。保留了真值和假值的语言(尤其是 Scheme )使用 <em>显式布尔值</em> <sup>（5.2）</sup> ，
+这有时会强制你抛出额外的信息来满足冗余的类型约束。 Scheme 实际上添加了一个 <em>蹩脚产品</em> <sup>（5.3）</sup> ，以支持 <strong>if</strong> 、 <strong>cond</strong> 、 <strong>and</strong> 、 <strong>or</strong> 和 <strong>do</strong> 来接受非布尔值 <sup>【5】</sup> 。当然，COMMON LISP 的设计
+才是 <em>对</em> 的 —— 一切都是布尔值。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【4】
+练习：为什么 false （第三或交替）子句永远不会使使用这个回指？</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【5】
+根据 Scheme 的 boolean？ 谓词。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（5）
+广义布尔值  generalised booleans ； 显式布尔值 explicit booleans；蹩脚产品  kludge</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>;; Graham &#39;s aif
+<span class="linenos">2</span>(defmacro aif (test then &amp;optional else)
+<span class="linenos">3</span>  `(let ((it ,test))
+<span class="linenos">4</span>    (if it ,then ,else)))
+</pre></div>
+</div>
+<p>还必须指出， <strong>aif</strong> 和 <strong>alambda</strong> ，就像所有的回指宏一样，违反了 <em>词法透明</em>  <sup>（6.1）</sup> 。用现在流行的话来
+说，它们是 <em>不清洁的</em>  <sup>（6.2）</sup> 宏。也就是说，像本书中的许多宏一样，回指宏无形地引入了词法绑
+定，因此不能用严格执行清洁的宏系统创建。即使是绝大多数 Scheme 系统，这个在清洁方面试验最多的
+平台，也有不清洁的 defmacro 风格的宏 —— 大概是因为就连 Scheme 的实现者也没有非常认真地对待清洁吧。
+就像自行车上的辅助轮一样，清洁系统多半是玩具，甚至在获得了些许层次的技能之后，应该被丢弃。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（6）
+词法透明  lexical transparency；不清洁的 unhygienic</p>
+</div>
+<p>是的，还有很多关于特定变量捕获的有趣的事我们可以做。还有很多（回指语） phors 。本书和 Graham 的 <a class="reference external" href="http://www.paulgraham.com/onlisp.html">OnLisp</a>
+只描述了这种技术内在潜力的一小部分。更多不可思议的创造将会出现在回指宏的智能应用中。</p>
+<p>在通过读取宏穿插简短地介绍了下回指宏后，本章的剩余部分将介绍些许的、具体的回指宏应用，
+一个与本书的中心主旨相关的：词汇闭包 —— <em>let over lambda</em> 。本章的大部分内容将介绍一些用于
+定制、调整和扩展闭包的有趣的回指宏。虽然这些主题在实际代码中的应用非常实用，但它们的
+主要目的是作为一个平台来讨论回指宏的属性和多样性。用宏来扩展闭包的概念是当前的一个热点
+研究课题。</p>
+</section>
+<section id="sharp-backquote">
+<span id="id3"></span><h2>6.2 尖反引号 <sup>（7）</sup><a class="headerlink" href="#sharp-backquote" title="Permalink to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（7）
+Sharp-Backquote，即：#`</p>
+</div>
+<p>尽管大多数回指由常规宏引入，但读取宏也具有潜力引入代码，为我们无形地创建绑定。当读取宏这样做时，它们被称为 <em>读取回指</em> <sup>（8）</sup> 。本节介绍了一个这样的读取宏，虽然
+它本身很不太大，但它却是本书中最有用的宏之一，连我自己都感到惊讶。我已经尽可能快地引入
+了这个宏，以便它可以用于其余的代码。已经有几个宏使用了它</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（8）
+读取回指  read anaphora</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defun |#`-reader| (stream sub-char numarg)
+<span class="linenos"> 2</span>  (declare (ignore sub-char))
+<span class="linenos"> 3</span>  (unless numarg (setq numarg 1))
+<span class="linenos"> 4</span>  `(lambda ,(loop for i from 1 to numarg
+<span class="linenos"> 5</span>                  collect (symb &#39;a i))
+<span class="linenos"> 6</span>      ,(funcall
+<span class="linenos"> 7</span>        (get-macro-character #\`) stream nil)))
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span>  (set-dispatch-macro-character
+<span class="linenos">10</span>    #\# #\` #&#39;|#`-reader|)
+</pre></div>
+</div>
+<p>尖反引号就是个读取宏，作为 lambda 结构读入。默认情况下，这个 lambda 结构只接收一个
+参数： <strong>a1</strong> 。然后这个读取宏递归地调用所提供的流的 <strong>read</strong> 函数。下面是一个停止求值(通过
+引用)的例子，这样我们就可以观察“读取回指宏” <sup>【6】</sup> 的透明的介绍：</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【6】
+捕获符号的前缀，“ a ”，当然代表回指语。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* &#39;#`((,a1))
+<span class="linenos">2</span>
+<span class="linenos">3</span>(LAMBDA (A1)
+<span class="linenos">4</span>  `((,A1)))
+</pre></div>
+</div>
+<p>该读取宏抽象出一个通用宏模式。例如，如果我们有一个（多）变量的列表，并且要创建一个 let 绑定的列表 <sup>（9）</sup> ，将每个变量绑定到一个符号（假设为 <strong>empty</strong>），就可以像这样使用 <strong>mapcar</strong> ：</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（9）
+译者注：也就是 let 操作符使用的格式内容，如 let 用法：</p>
+<blockquote>
+<div><dl class="simple">
+<dt>(let ((a 1)</dt><dd><p>(b 2)))
+这里就是指创建出 let 后面的那部分内容，即：
+((a 1)
+(b 2))</p>
+</dd>
+</dl>
+</div></blockquote>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (mapcar (lambda (a)
+<span class="linenos">2</span>            (list a &#39;&#39;empty))
+<span class="linenos">3</span>    &#39;(var-a var-b var-c))
+<span class="linenos">4</span>
+<span class="linenos">5</span>((VAR-A &#39;EMPTY)
+<span class="linenos">6</span>(VAR-B &#39;EMPTY)
+<span class="linenos">7</span>(VAR-C &#39;EMPTY))
+</pre></div>
+</div>
+<p>但特别是对复杂的列表结构，这样写就显得有点乱，所以 lisp 程序员喜欢用反引号将其引用提高
+一层：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (mapcar (lambda (a)
+<span class="linenos">2</span>            `(,a &#39;empty))
+<span class="linenos">3</span>    &#39;(var-a var-b var-c))
+<span class="linenos">4</span>
+<span class="linenos">5</span>((VAR-A &#39;EMPTY)
+<span class="linenos">6</span>(VAR-B &#39;EMPTY)
+<span class="linenos">7</span>(VAR-C &#39;EMPTY))
+</pre></div>
+</div>
+<p>我们新的回指-引进读取宏隐藏了 lambda 结构：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (mapcar #`(,a1 &#39;empty)
+<span class="linenos">2</span>    &#39;(var-a var-b var-c))
+<span class="linenos">3</span>
+<span class="linenos">4</span>((VAR-A &#39;EMPTY)
+<span class="linenos">5</span>(VAR-B &#39;EMPTY)
+<span class="linenos">6</span>(VAR-C &#39;EMPTY))
+</pre></div>
+</div>
+<p>上述代码中在符号 <strong>a1</strong> 中的字符是 <strong>1</strong> 的原因是，读取宏的使用者可以依赖于提供给 <strong>numarg</strong> 参数的数
+字来引入读取宏的一个变量回指数字：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* &#39;#2`(,a1 ,a2)
+<span class="linenos">2</span>
+<span class="linenos">3</span>(LAMBDA (A1 A2)
+<span class="linenos">4</span>  `(,A1 ,A2))
+</pre></div>
+</div>
+<p>所以我们可以同时在不止一个列表中映射（ <strong>mapcar</strong> ）尖反引号表达式：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (let ((vars &#39;(var-a var-b var-c)))
+<span class="linenos"> 2</span>    (mapcar #2`(,a1 &#39;,a2)
+<span class="linenos"> 3</span>      vars
+<span class="linenos"> 4</span>      (loop for v in vars
+<span class="linenos"> 5</span>            collect (gensym
+<span class="linenos"> 6</span>                      (symbol-name v)))))
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span>((VAR-A &#39;#:VAR-A1731)
+<span class="linenos"> 9</span>(VAR-B &#39;#:VAR-B1732)
+<span class="linenos">10</span>(VAR-C &#39;#:VAR-C1733))
+</pre></div>
+</div>
+<p>另一种考虑尖反引号的方法是，它像 <strong>format</strong> 函数是字串插值一样的列表插值  <sup>（10.1）</sup> 。就像 <strong>format</strong> 让我们使用带有槽  <sup>（10.2）</sup> 的模板，槽是用单独的参数的值填充
+一样，尖反引号让我们将列表插值的结构与想要拼接的值分开。由于前面描述的列表的函数位置的 lambda 结构和使用 <strong>lambda</strong> 宏展开成函数的 lambda 结构之间的 <em>语法二义性</em> ，还可以
+使用尖反引号作为函数调用中的第一个元素：</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（10）
+插值 interpolation ； 槽  slot</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (#3`(((,a1)) ,@a2 (,a3))
+<span class="linenos">2</span>      (gensym)
+<span class="linenos">3</span>      &#39;(a b c)
+<span class="linenos">4</span>      &#39;hello)
+<span class="linenos">5</span>
+<span class="linenos">6</span>(((#:G1734)) A B C (HELLO))
+</pre></div>
+</div>
+<p>与 <strong>format</strong> 不同的是，尖反引号不使用顺序定位，相反，它使用我们的回指绑定上面的数字。因此，顺序可以
+打乱，甚至可以在绑定中多次拼接：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (#3`(((,@a2)) ,a3 (,a1 ,a1))
+<span class="linenos">2</span>      (gensym)
+<span class="linenos">3</span>      &#39;(a b c)
+<span class="linenos">4</span>      &#39;hello)
+<span class="linenos">5</span>
+<span class="linenos">6</span>(((A B C)) HELLO (#:G1735 #:G1735))
+</pre></div>
+</div>
+<p>练习： <strong>gensym</strong> 符号 <strong>#:G1735</strong> 的引用看起来是指向同一个符号，但是，当然，你永远无法通过查看
+它们的打印名称来真正地分辨出 <strong>gensym</strong> 。这些符号相同（ <strong>eq</strong> ）吗？相同或不相
+同的原因是什么？</p>
+</section>
+<section id="alet">
+<span id="alet-and-finite-state-machines"></span><h2>6.3 <strong>alet</strong> 和有限状态机<a class="headerlink" href="#alet" title="Permalink to this heading"></a></h2>
+<p>使用 <em>lambda</em> 和 <em>if</em> ，这里只有一个有用的回指配置，但却是最有趣的回指宏类型，该宏是以
+不可预见的方式使用展开式。本节 —— 甚至本章的大部分内容 —— 是基于这样一个宏： <strong>alet</strong> 。
+有哪些额外的绑定对 let 结构主体中的结构可能有用呢？ <strong>let</strong> 真正的目的就是创建这样的绑定，因此捕捉给到已经完成的 let 形式的变量引入。但是， <strong>let</strong> 宏的增强可以完全访问所有给到它的结构，甚至是打算用新绑定来求解的表达式的主体。那么主体中最有用的部位是什么呢？在大多数情况
+下，主体中最有用的部分就是主体中的最后一个结构，因为该结构的结果将从 let 语句本身
+返回 <sup>【7】</sup> 。我们已经看到，当返回一个引用由 <strong>let</strong> 创建的绑定的 lambda 表达式时，结果是一个
+词法闭包 —— 一个通常存储并用于以后访问 let 语句中的变量的对象。因此，扩展我们的
+闭包对象模拟， <strong>alet%</strong> 宏的行为与 <strong>let</strong> 特殊结构完全相似，除了 <strong>alet%</strong> 从主体中捕获
+符号 <strong>this</strong> 并将其绑定到该结构主体中的最后一个表达式 —— 来作为闭包被返回 <sup>【8】</sup>。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【7】
+因为 let 提供了一个隐含的 progn 。</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【8】
+使用 Setq 以便绑定到 this 的形式体在通过 letargs 给出的其他参数的词法范围内定义。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro alet% (letargs &amp;rest body)
+<span class="linenos">2</span>  `(let ((this) ,@letargs)
+<span class="linenos">3</span>    (setq this ,@(last body))
+<span class="linenos">4</span>    ,@(butlast body)
+<span class="linenos">5</span>    this))
+</pre></div>
+</div>
+<p>当我们在 lambda 结构中有初始化的代码，且不想重复初始化时， <strong>alet%</strong> 就很有用。因为
+<strong>this</strong> 绑定到要返回的 lambda 结构，所以我们可以在 let 封装返回它之前执行它。
+下面是一个闭包，它的构造展示了一个简单的 <strong>alet%</strong> 用例，避免了重复它的重置和
+初始化代码：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (alet% ((sum) (mul) (expt))
+<span class="linenos"> 2</span>    (funcall this :reset)
+<span class="linenos"> 3</span>    (dlambda
+<span class="linenos"> 4</span>      (:reset ()
+<span class="linenos"> 5</span>        (psetq sum 0
+<span class="linenos"> 6</span>              mul 1
+<span class="linenos"> 7</span>              expt 2))
+<span class="linenos"> 8</span>      (t (n)
+<span class="linenos"> 9</span>        (psetq sum (+ sum n)
+<span class="linenos">10</span>              mul (* mul n)
+<span class="linenos">11</span>              expt (expt expt n))
+<span class="linenos">12</span>        (list sum mul expt))))
+<span class="linenos">13</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>我们可以依次调用它来改变 <strong>sum</strong> 、 <strong>mul</strong> 和 <strong>expt</strong> 的值:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (loop for i from 1 to 5 collect (funcall * 2))
+<span class="linenos">2</span>
+<span class="linenos">3</span>((2 2 4)
+<span class="linenos">4</span>(4 4 16)
+<span class="linenos">5</span>(6 8 256)
+<span class="linenos">6</span>(8 16 65536)
+<span class="linenos">7</span>(10 32 4294967296))
+</pre></div>
+</div>
+<p>我们现在也可以调用 <strong>:reset</strong> 方法来重置这个闭包。注意多亏了 <strong>alet%</strong> ，我们只需要在一个
+位置写重置的基本情况（将 <strong>sum</strong> 置为 0 ， <strong>mul</strong> 置为 1 ， <strong>expt</strong> 置为 2 ）：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (funcall ** :reset)
+<span class="linenos">2</span>
+<span class="linenos">3</span>NIL
+</pre></div>
+</div>
+<p>现在，该闭包中的变量都被重置了，从一开始我们就可以看到一个新的序列了：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (loop for i from 1 to 5 collect (funcall *** 0.5))
+<span class="linenos">2</span>
+<span class="linenos">3</span>((0.5 0.5 1.4142135)
+<span class="linenos">4</span>(1.0 0.25 1.1892071)
+<span class="linenos">5</span>(1.5 0.125 1.0905077)
+<span class="linenos">6</span>(2.0 0.0625 1.0442737)
+<span class="linenos">7</span>(2.5 0.03125 1.0218971))
+</pre></div>
+</div>
+<p>值得一提的是 <strong>alet%</strong> 改变了 let 主体中结构的求解顺序。如果你去看一下这个的展开式的话，
+你就会发现主体中最后一个结构实际上是第一个执行的，随后该结果在其他结构执行前会绑定
+到词法变量 <strong>this</strong> 上。但是，一旦最后一个参数是常量，这个重新排序不会产生差异。记住，
+lambda 表达式 <sup>【9】</sup> 是个常量值，因此特别适合用在 <strong>alet%</strong> 中。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【9】
+Dlambda 展开为 lambda 形式。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro alet (letargs &amp;rest body)
+<span class="linenos">2</span>  `(let ((this) ,@letargs)
+<span class="linenos">3</span>    (setq this ,@(last body))
+<span class="linenos">4</span>    ,@(butlast body)
+<span class="linenos">5</span>    (lambda (&amp;rest params)
+<span class="linenos">6</span>      (apply this params))))
+</pre></div>
+</div>
+<p>与许多宏增强一样，因为有许多可用的自由度，对该宏的改进是反常的。虽然这里有许多
+可能性，但本节将考虑一种这类具体的改进。可以让 <strong>alet%</strong> 不返回其主体的最后一个
+结构（我们预期是 lambda 结构)，而是一个在 let 结构词法作用域内查找另一个函数的
+函数，然后调用该函数。这有时又被称为 <em>间接调用</em> <sup>（11）</sup> ，我们返回的是一个
+使用指针间接引用查找函数的函数，然后使用该函数，而不是返回一个函数来执行某些操作。
+出于好的缘由，间接在编程语言中是一个普遍存在的概念。它允许我们在运行时改变在编译已被确定的没有间接的（部分）。 Lisp 让我们用比许多其他编程语言更简洁、更有效的方式使用间接。 <strong>alet</strong>
+是 <strong>alet%</strong> 加入了间接的版本，允许我们作为闭包返回的函数现在被 alet 主体内部的代码
+访问或替换，或者，如果我们使用 <strong>dlambda</strong> 的话（很快就会介绍），甚至是 alet 主体
+外部。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（11）
+间接调用   indirection</p>
+</div>
+<p>既然我们可以用 <strong>alet</strong> 宏更改在调用闭包时执行的函数，我们可以使用名为 alet over
+alambda 的模式创建一对相互引用的函数。只要所有的状态都变回原来的状态 ——
+而不是相互转换 ——封装在 lambda 之外的 alet （ alet over alambda ） 是指定无名状态机的一种便捷的方法。</p>
+<p>下面就是个典型的计数器闭包，接收参数 <strong>n</strong> ，当传递符号 <strong>invert</strong> 作为参数而不是
+数字时，它的方向可以在递增和递减之间通过 <strong>n</strong> 切换：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (alet ((acc 0))
+<span class="linenos"> 2</span>    (alambda (n)
+<span class="linenos"> 3</span>      (if (eq n &#39;invert)
+<span class="linenos"> 4</span>        (setq this
+<span class="linenos"> 5</span>              (lambda (n)
+<span class="linenos"> 6</span>                (if (eq n &#39;invert)
+<span class="linenos"> 7</span>                  (setq this #&#39;self)
+<span class="linenos"> 8</span>                  (decf acc n))))
+<span class="linenos"> 9</span>        (incf acc n))))
+<span class="linenos">10</span>
+<span class="linenos">11</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>让我们把这个闭包保存起来，以便我们随时可以使用：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (setf (symbol-function &#39;alet-test) *)
+<span class="linenos">2</span>
+<span class="linenos">3</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>开始时，是增加的：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (alet-test 10)
+<span class="linenos">2</span>
+<span class="linenos">3</span>10
+</pre></div>
+</div>
+<p>但是，我们可以通过将符号  <strong>invert</strong> 传递给闭包来改变要调用内部 lambda 表达式的实际函数：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (alet-test &#39;invert)
+<span class="linenos">2</span>
+<span class="linenos">3</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>现在就变成递减了：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (alert-test 3)
+<span class="linenos">2</span>
+<span class="linenos">3</span>7
+</pre></div>
+</div>
+<p>最后，多亏了 <strong>alambda</strong> 的 <strong>self</strong> 绑定，我们可以用 <strong>invert</strong> 参数再次修改函数：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (alert-test &#39;invert)
+<span class="linenos">2</span>
+<span class="linenos">3</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>又回到了刚开始时的状态，递增：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (alert-test 5)
+<span class="linenos">2</span>
+<span class="linenos">3</span>12
+</pre></div>
+</div>
+<p>这个闭包被绑定到函数命名空间中的符号 <strong>alet-test</strong> 上了。但和常规的闭包略有不同。虽然这个
+闭包和常规闭包都是（指向）单个环境的指针，这个环境可以有任意数量的引用，这个闭包
+使用间接来改变它在被调用时运行哪些代码段。尽管可以安装任何一段代码，但只有 <strong>alet</strong>
+的词法范围内的、 <strong>this</strong> 回指符可用的代码才能访问它的词法绑定。但是，仍然
+不能阻止我们安装一个新的闭包，它有自己的词法绑定，可能还会通过 <strong>alet</strong> 安装的
+间接环境改变行为。本章剩下的大部分内容是我们通过 <strong>alet</strong> 创建的 <em>间接环境</em> 可以做的有用
+的事情。</p>
+<p>一种常见的宏技术被非正式地称为 <em>将宏由内打开</em>  <sup>（12）</sup> 。
+当你打开一个宏时，你可以选择一个典型的结构，该结构使用与你想要创建的宏类似的宏，
+并将其展开。然后使用该展开式作为所需宏的模板。例如，我们希望有一种比前面介绍
+的封装在 lambda 外围的 alet（  alet over alambda ）计数器更通用的方法来创建具有多个状态的闭包。下面是上面
+由内而外展开的可逆计数器 alambda 用例:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（12）
+turning a macro inside out</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (macroexpand
+<span class="linenos"> 2</span>  &#39;(alambda (n)
+<span class="linenos"> 3</span>      (if (eq n &#39;invert)
+<span class="linenos"> 4</span>        (setq this
+<span class="linenos"> 5</span>              (lambda (n)
+<span class="linenos"> 6</span>                (if (eq n &#39;invert)
+<span class="linenos"> 7</span>                  (setq this #&#39;self)
+<span class="linenos"> 8</span>                  (decf acc n))))
+<span class="linenos"> 9</span>        (incf acc n))))
+<span class="linenos">10</span>
+<span class="linenos">11</span>(LABELS ((SELF (N)
+<span class="linenos">12</span>          (IF (EQ N &#39;INVERT)
+<span class="linenos">13</span>            (SETQ THIS
+<span class="linenos">14</span>                  (LAMBDA (N)
+<span class="linenos">15</span>                    (IF (EQ N &#39;INVERT)
+<span class="linenos">16</span>                      (SETQ THIS #&#39;SELF)
+<span class="linenos">17</span>                      (DECF ACC N))))
+<span class="linenos">18</span>            (INCF ACC N))))
+<span class="linenos">19</span>  #&#39;SELF)
+</pre></div>
+</div>
+<p>如果我们稍微重构上面的展开式，来利用 labels 允许我们来创建多个函数绑定的事实的优势 <sup>【10】</sup> ，将会得到以下结果：</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【10】
+因此有多个 labels</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(alet ((acc 0))
+<span class="linenos"> 2</span>  (labels ((going-up (n)
+<span class="linenos"> 3</span>            (if (eq n &#39;invert)
+<span class="linenos"> 4</span>              (setq this #&#39;going-down)
+<span class="linenos"> 5</span>              (incf acc n)))
+<span class="linenos"> 6</span>          (going-down (n)
+<span class="linenos"> 7</span>            (if (eq n &#39;invert)
+<span class="linenos"> 8</span>            (setq this #&#39;going-up)
+<span class="linenos"> 9</span>            (incf acc (- n)))))
+<span class="linenos">10</span>  #&#39;going-up))
+</pre></div>
+</div>
+<p>通过这个例子，我们注意到 <strong>alambda</strong> 能使用 <strong>labels</strong> 这个特殊的结构让其所有绑定
+对它的函数主体都可用。而且，我们现在有一个针对我们最终宏的已经很完整的模版了。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro alet-fsm (&amp;rest states)
+<span class="linenos">2</span>  `(macrolet ((state (s)
+<span class="linenos">3</span>                `(setq this #&#39;,s)))
+<span class="linenos">4</span>      (labels (,@states) #&#39;,(caar states))))
+</pre></div>
+</div>
+<p><strong>alet-fsm</strong> 提供了一种便捷的语法，该语法可以用来表达我们的闭包存在的多种可能状态。
+就像是在 <strong>labels</strong> 上的宏包裹了一层薄薄的糖衣，结合 <em>代码遍历</em> <strong>macrolet</strong>
+转换，允许我们假装像是有了一个 <strong>state</strong> 函数，来改变闭包的当前状态，该函数通过
+<strong>alet</strong> 提供的 <strong>this</strong> 回指来访问。下面是可逆计数器的更简洁的版本的例子：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(alet ((acc 0))
+<span class="linenos"> 2</span>  (alet-fsm
+<span class="linenos"> 3</span>    (going-up (n)
+<span class="linenos"> 4</span>      (if (eq n &#39;invert)
+<span class="linenos"> 5</span>        (state going-down)
+<span class="linenos"> 6</span>        (incf acc n)))
+<span class="linenos"> 7</span>    (going-down (n)
+<span class="linenos"> 8</span>      (if (eq n &#39;invert)
+<span class="linenos"> 9</span>        (state going-up)
+<span class="linenos">10</span>        (decf acc n)))))
+</pre></div>
+</div>
+<p><strong>alet-fsm</strong> 是一项我们之前没有见过的技术的实例：<em>回指注入</em>  <sup>（13.1）</sup> 。使用这种回指语在很多方面违反了词法透明性，以至于它实际上在某种程度上是 <em>词法不可见的</em>  <sup>（13.2）</sup> 。 <strong>alet</strong> 不仅无形地绑定了 <strong>this</strong> ，而且 <strong>alet-fsm</strong> 宏对
+<strong>this</strong> 的使用也是同样隐形的。 <strong>Alet-fsm</strong> 将一个自由变量注入到我们词法上下文中，
+让我们在词汇上下文中一点也不会看到它。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（13）
+回指注入  anaphor injection ；词法不可见的 lexically invisible</p>
+</div>
+<p>这其中的格式问题是不确定的 <sup>【11】</sup> ，当然，宏编程与格式无关。这关乎性能。有时，插入
+自由变量可以在两个宏之间创建共生关系 —— 与两个孤立的扩展相比，一个可以更好地以编程方式构建扩展。由于这种宏编程非常复杂，因此可以再次与 C 语言指针进行类比。
+就像学习 C 语言指针会产生可疑的文体建议一样，自由变量注入也是如此。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【11】
+本质上，所有风格问题都是如此。一旦某事被完全理解，风格就变得无关紧要了。自由变量注入尚未完全理解</p>
+</div>
+<p>对于自由变量注入难以理解的原因，最合理的假设是它的 <em>故障安全</em> 行为 <sup>【12】</sup> 。有了回指，
+如果提供的用户代码没有使用绑定，那么代码很可能会继续运行，不管你是否希望它这样做。
+它可能已经悄无声息地失败了，因此不安全。然而，当你注入一个自由变量，并且
+没有捕获它的环境时，你的整个表达式就开始变得释放了。当这种情况发生时，你需要在你能够求解表达式
+之前决定要做什么。因为它有故障安全。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【12】
+安全，从某种意义上说，与现实世界相反，尽可能快速和尽可能大声的失败是最安全的。</p>
+</div>
+<p>除了格式之外，当我们想要两个相关的宏来回通信时，自由变量注入有时正是我们需要的。注入和
+回指的操作其实是一样的，只是方向相反。因为你正在你的宏之间打开了一个新的沟通信道，
+复杂性问题的扩展速度甚至更快。想象一下坐在一个满是易碎玻璃的房子里。你可以
+安全地向房子外面的人扔东西，即使他们不用费心去抓这些东西，但你最好确保你能
+抓住扔向你的任何东西。</p>
+</section>
+<section id="indirection-chains">
+<span id="id4"></span><h2>6.4 间接链<a class="headerlink" href="#indirection-chains" title="Permalink to this heading"></a></h2>
+<p>我们有很多方法来利用 <strong>alet</strong> 提供的 <strong>this</strong> 回指语的优点。由于环境是通过虚拟闭包来访问的，它将所有
+调用转发给 <strong>this</strong> 所指向的真实闭包，我们可以到处传递虚拟闭包引用，根据需要经常复制它。
+这样的 <em>间接</em> 很有用，因为我们可以改变调用这个虚拟闭包时发生的事情，而不必改变对虚拟
+闭包的引用。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro! ichain -before (&amp;rest body)
+<span class="linenos">2</span>  `(let ((,g!indir-env this))
+<span class="linenos">3</span>    (setq this
+<span class="linenos">4</span>      (lambda (&amp;rest ,g!temp-args)
+<span class="linenos">5</span>        ,@body
+<span class="linenos">6</span>        (apply ,g!indir -env
+<span class="linenos">7</span>              ,g!temp-args)))))
+</pre></div>
+</div>
+<p><strong>ichain-before</strong> 旨在被展开成 <strong>alet</strong> 结构。它添加了一个新的代码体，以便在调用主闭包之前执行。
+回到计数器例子， <strong>ichain-before</strong> 让我们添加了一个新的闭包，在关闭变量 <strong>acc</strong> 继续之前，打印它先前的值并增加它：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (alet ((acc 0))
+<span class="linenos">2</span>    (ichain-before
+<span class="linenos">3</span>      (format t &quot;Changing from ~a~%&quot; acc))
+<span class="linenos">4</span>    (lambda (n)
+<span class="linenos">5</span>      (incf acc n)))
+<span class="linenos">6</span>
+<span class="linenos">7</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>和设想的一样：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (funcall * 2)
+<span class="linenos">2</span>Changing from 0
+<span class="linenos">3</span>2
+<span class="linenos">4</span>* (funcall ** 2)
+<span class="linenos">5</span>Changing from 2
+<span class="linenos">6</span>4
+</pre></div>
+</div>
+<p>不过，我们把 chain 放在 <strong>ichain-before</strong> 这个名字中是有原因的。我们可以根据需要，让尽可能多的闭包来执行：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (alet ((acc 0))
+<span class="linenos"> 2</span>    (ichain-before
+<span class="linenos"> 3</span>      (format t &quot;A~%&quot;))
+<span class="linenos"> 4</span>    (ichain-before
+<span class="linenos"> 5</span>      (format t &quot;B~%&quot;))
+<span class="linenos"> 6</span>    (ichain-before
+<span class="linenos"> 7</span>      (format t &quot;C~%&quot;))
+<span class="linenos"> 8</span>    (lambda (n)
+<span class="linenos"> 9</span>      (incf acc n)))
+<span class="linenos">10</span>
+<span class="linenos">11</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>在链中每添加一个新链接都会将该链接添加到链的头部，导致访问链接的顺序与添加链接的顺序
+相反：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (funcall * 2)
+<span class="linenos">2</span>C
+<span class="linenos">3</span>B
+<span class="linenos">4</span>A
+<span class="linenos">5</span>2
+</pre></div>
+</div>
+<p>在更改宏以避免通过添加新的周围代码来重新构造宏时，静态添加间接链有时很用的。但在我们动态
+添加它们时，间接链的最有趣的可能性就会出现。因为我们可以在运行时创建新的闭包，还因为我们可以通过回指语访
+问闭包的内部，所以我们可以重写函数在运行时的工作方式。下面是一个简单的例子，每个闭包调用
+都会添加另一段代码，在运行时输出 “Hello world”：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (alet ((acc 0))
+<span class="linenos">2</span>    (lambda (n)
+<span class="linenos">3</span>      (ichain-before
+<span class="linenos">4</span>        (format t &quot;Hello world~%&quot;))
+<span class="linenos">5</span>      (incf acc n)))
+<span class="linenos">6</span>
+<span class="linenos">7</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>每次调用都会向间接链添加一个新的闭包：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (loop for i from 1 to 4
+<span class="linenos"> 2</span>    do
+<span class="linenos"> 3</span>      (format t &quot;~:r invocation:~%&quot; i)
+<span class="linenos"> 4</span>      (funcall * i))
+<span class="linenos"> 5</span>first invocation:
+<span class="linenos"> 6</span>second invocation:
+<span class="linenos"> 7</span>Hello world
+<span class="linenos"> 8</span>third invocation:
+<span class="linenos"> 9</span>Hello world
+<span class="linenos">10</span>Hello world
+<span class="linenos">11</span>fourth invocation:
+<span class="linenos">12</span>Hello world
+<span class="linenos">13</span>Hello world
+<span class="linenos">14</span>Hello world
+</pre></div>
+</div>
+<p><strong>ichain-after</strong> 宏与 <strong>ichain-before</strong> 宏相似，不同之处是 <strong>ichain-after</strong> 将闭包
+添加到执行链的另一端：在主闭包被调用之后。 <strong>ichain-after</strong> 用了 <strong>prog1</strong> ， <strong>prog1</strong>
+连续执行提供的形式体，然后返回第一个形式体的求值结果。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro! ichain -after (&amp;rest body)
+<span class="linenos">2</span>  `(let ((,g!indir-env this))
+<span class="linenos">3</span>      (setq this
+<span class="linenos">4</span>        (lambda (&amp;rest ,g!temp-args)
+<span class="linenos">5</span>          (prog1
+<span class="linenos">6</span>            (apply ,g!indir -env
+<span class="linenos">7</span>                  ,g!temp-args)
+<span class="linenos">8</span>            ,@body)))))
+</pre></div>
+</div>
+<p><strong>ichain-before</strong> 和 <strong>ichain-after</strong> 可以组合在一起，这样， before 结构在主闭包计算之前执行，after 结构在主闭包计算之后执行:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (alet ((acc 0))
+<span class="linenos"> 2</span>    (ichain-before
+<span class="linenos"> 3</span>      (format t &quot;Changing from ~a~%&quot; acc))
+<span class="linenos"> 4</span>    (ichain-after
+<span class="linenos"> 5</span>      (format t &quot;Changed to ~a~%&quot; acc))
+<span class="linenos"> 6</span>    (lambda (n)
+<span class="linenos"> 7</span>      (incf acc n)))
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span>#&lt;Interpreted Function&gt;
+<span class="linenos">10</span>* (funcall * 7)
+<span class="linenos">11</span>Changing from 0
+<span class="linenos">12</span>Changed to 7
+<span class="linenos">13</span>7
+</pre></div>
+</div>
+<p><strong>ichain-before</strong> 和 <strong>ichain-after</strong> 是将自由变量注入其展开式的宏。这两个宏注入了符号
+<strong>this</strong> ，我们依赖的它会被 <strong>alet</strong> 宏的展开式捕获。这种类型的符号注入可能看起来格式
+不好或容易出错，但实际上是一种常见的宏技术。事实上，几乎所有的宏都向展开式中注入了符号。例如，随着 <strong>this</strong> 一起，宏 <strong>ichain-before</strong> 还会注入像 <strong>let</strong> 、 <strong>setq</strong> 和 <strong>lambda</strong> 这样的
+符号，来拼接到宏被展开的任何位置。符号（如 <strong>this</strong> ）和 预定义的符号（如 <strong>setq</strong> ）之间的区别在于，
+<strong>lambda</strong> 总是指向一个单独的易于理解的 ANSI 宏，而像 <strong>this</strong> 这样的符号可以取决于它们被展开的环境而指向不同的东西。</p>
+<p>在执行原始闭包表达式之前或之后运行闭包（这样)的代码进行标记时， <strong>ichain-before</strong> 和 <strong>ichain-after</strong> 是很
+有用的，但这绝不是 <strong>this</strong> 回指语唯一能做的。另一个常见的任务是在调用闭包之后检查闭包数据的有效性。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro! ichain -intercept% (&amp;rest body)
+<span class="linenos">2</span>  `(let ((,g!indir-env this))
+<span class="linenos">3</span>    (setq this
+<span class="linenos">4</span>        (lambda (&amp;rest ,g!temp-args)
+<span class="linenos">5</span>          (block intercept
+<span class="linenos">6</span>            (prog1
+<span class="linenos">7</span>              (apply ,g!indir -env
+<span class="linenos">8</span>                    ,g!temp-args)
+<span class="linenos">9</span>              ,@body))))))
+</pre></div>
+</div>
+<p><strong>ichain-intercept%</strong> 是另一个用在 <strong>alet</strong> 中的宏。其设想是，我们希望能够拦截闭包的调用，并验
+证它们执行的操作没有导致闭包中的某种不一致状态。所以我们可以像这样在常规的计数器闭包中添加一个拦截：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (alet ((acc 0))
+<span class="linenos"> 2</span>    (ichain-intercept%
+<span class="linenos"> 3</span>      (when (&lt; acc 0)
+<span class="linenos"> 4</span>        (format t &quot;Acc went negative~%&quot;)
+<span class="linenos"> 5</span>        (setq acc 0)
+<span class="linenos"> 6</span>        (return-from intercept acc)))
+<span class="linenos"> 7</span>    (lambda (n)
+<span class="linenos"> 8</span>      (incf acc n)))
+<span class="linenos"> 9</span>
+<span class="linenos">10</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>当计数器低于 0 时， <strong>ichain-intercept%</strong> 插入的代码将给我们告警：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (funcall * -8)
+<span class="linenos">2</span>Acc went negative
+<span class="linenos">3</span>0
+</pre></div>
+</div>
+<p>计数器被重置为 0 ：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (funcall ** 3)
+<span class="linenos">2</span>
+<span class="linenos">3</span>3
+</pre></div>
+</div>
+<p><strong>ichain-intercept%</strong> 最有趣的地方是，引入了名为 <strong>intercept</strong> 的 <em>块回指</em>  <sup>（14）</sup> 。
+我们用 <strong>return-from</strong> 来调用这个回指。代码块将从闭包调用中返回这个值，拦截原始值。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（14）
+块回指  block anaphor</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defmacro! ichain-intercept (&amp;rest body)
+<span class="linenos"> 2</span>  `(let ((,g!indir-env this))
+<span class="linenos"> 3</span>    (setq this
+<span class="linenos"> 4</span>        (lambda (&amp;rest ,g!temp-args)
+<span class="linenos"> 5</span>          (block ,g!intercept
+<span class="linenos"> 6</span>            (macrolet ((intercept (v)
+<span class="linenos"> 7</span>                      `(return-from
+<span class="linenos"> 8</span>                      ,&#39;,g!intercept
+<span class="linenos"> 9</span>                      ,v)))
+<span class="linenos">10</span>              (prog1
+<span class="linenos">11</span>                (apply ,g!indir-env
+<span class="linenos">12</span>                      ,g!temp-args)
+<span class="linenos">13</span>                ,@body )))))))
+</pre></div>
+</div>
+<p>不是捕获块回指语 <strong>intercept</strong> , <strong>ichain-intercept</strong> 创建一个局部宏，该宏允许 <strong>ichain-intercept</strong> 中的代码使用
+<strong>intercept</strong> 来展开成一个由 gensym 指定的 <strong>return-from</strong> 。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (alet ((acc 0))
+<span class="linenos"> 2</span>    (ichain-intercept
+<span class="linenos"> 3</span>      (when (&lt; acc 0)
+<span class="linenos"> 4</span>        (format t &quot;Acc went negative~%&quot;)
+<span class="linenos"> 5</span>      (setq acc 0)
+<span class="linenos"> 6</span>      (intercept acc)))
+<span class="linenos"> 7</span>    (lambda (n)
+<span class="linenos"> 8</span>      (incf acc n)))
+<span class="linenos"> 9</span>
+<span class="linenos">10</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>这和 <strong>ichain-intercept%</strong> 工作原理一样：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (funcall * -8)
+<span class="linenos">2</span>Acc went negative
+<span class="linenos">3</span>0
+<span class="linenos">4</span>* (funcall ** 3)
+<span class="linenos">5</span>3
+</pre></div>
+</div>
+<p>当然，将所有这些闭包透明地引入操作会影响运行时性能。幸运的是，现代 lisp 编译器擅长优化闭包。
+如果你的应用程序可以忍受几个间接引用指针（通常是可以的），那么间接链就可能是构建它的最佳方式。关于
+间接链的另一个有趣的思考方式，请参阅 <a class="reference internal" href="chapter07.html#pointer-scope"><span class="std std-ref">7.4 指针作用域</span></a> 。还可以查看 CLOS 的
+<strong>before</strong> 、 <strong>after</strong> 和 <strong>around</strong> 函数。</p>
+</section>
+<section id="hotpatching-closures">
+<span id="id5"></span><h2>6.5 热修复闭包<a class="headerlink" href="#hotpatching-closures" title="Permalink to this heading"></a></h2>
+<p>重要的本章节的目的有三个。首先，描述 <strong>alet</strong> 中 <strong>this</strong> 回指的另一个有趣的用法。其次，讨论
+<em>alet over dlambda</em> 模式。最后，介绍了一种很有用的宏技术，称为 <em>回指语闭合</em>  <sup>（15）</sup> 。
+为了清楚地说明回指语闭合，我们将不用 <strong>alet</strong> 宏，而是使用一个由内而外的展开式。 <strong>alet-hotpatch%</strong>
+是提供了一个特殊的 lambda 结构的 <strong>alet</strong> 的展开式。该 <strong>lambda</strong> 结构检查第一个参数 <sup>【13】</sup> 是否为关
+键字符号 <strong>:hotpatch</strong> ，如果是，则用另一个提供的参数替换间接闭包。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【13】
+用指针比较</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（15）
+回指语闭合  anaphor closing</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro alet-hotpatch% (letargs &amp;rest body)
+<span class="linenos">2</span>  `(let ((this) ,@letargs)
+<span class="linenos">3</span>      (setq this ,@(last body))
+<span class="linenos">4</span>      ,@(butlast body)
+<span class="linenos">5</span>      (lambda (&amp;rest args)
+<span class="linenos">6</span>        (if (eq (car args) &#39;:hotpatch)
+<span class="linenos">7</span>          (setq this (cadr args))
+<span class="linenos">8</span>          (apply this args)))))
+</pre></div>
+</div>
+<p>能够在运行时更改另一个转发闭包中使用的闭包称为 <em>热补丁</em>  <sup>（16）</sup> 。例如，这里我们创建
+了一个热补丁闭包，并将其存储在符号 <strong>hotpatch-test</strong> 的 <strong>symbol-function</strong> 单元格中，以便
+之后使用：</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（16）
+热补丁  hotpatching</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (setf (symbol-function &#39;hotpatch-test)
+<span class="linenos">2</span>    (alet-hotpatch% ((acc 0))
+<span class="linenos">3</span>      (lambda (n)
+<span class="linenos">4</span>        (incf acc n))))
+<span class="linenos">5</span>
+<span class="linenos">6</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>现在可以像这样使用:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (hotpatch-test 3)
+<span class="linenos">2</span>
+<span class="linenos">3</span>3
+<span class="linenos">4</span>* (hotpatch-test 4)
+<span class="linenos">5</span>
+<span class="linenos">6</span>7
+</pre></div>
+</div>
+<p>我们可以通过调用这个闭包的符号 <strong>:hotpatch</strong> 和替换函数或闭包来替换 lambda 结构及其相关的环境:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (hotpatch-test
+<span class="linenos">2</span>    :hotpatch
+<span class="linenos">3</span>    (let ((acc 0))
+<span class="linenos">4</span>      (lambda (n)
+<span class="linenos">5</span>        (incf acc (* 2 n)))))
+<span class="linenos">6</span>
+<span class="linenos">7</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>现在闭包将具有新的、热补丁的行为：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (hotpatch-test 2)
+<span class="linenos">2</span>
+<span class="linenos">3</span>4
+<span class="linenos">4</span>* (hotpatch-test 5)
+<span class="linenos">5</span>
+<span class="linenos">6</span>14
+</pre></div>
+</div>
+<p>注意计数器的值是怎么重置为 0 的，因为我们还用计数器的累加器 <strong>acc</strong> 的一个新值热补丁了闭包的环境。
+我们之前见过这种关键字符号的*运行时解构*  <sup>（17.1）</sup>  吗？没错，实际上我们在 <a class="reference internal" href="chapter05.html#dlambda"><span class="std std-ref">5.7 Dlambda</span></a> 中编写了个宏来完成这个操
+作。 <strong>alet-hotpatch</strong> 是 <strong>alet-hotpatch%</strong> 的吸纳了 <strong>dlambda</strong> 优点的版本。有时甚至在没有意识到
+的情况下，通过在新的宏定义中使用之前定义过的宏，我们实现了 <em>宏组合</em>  <sup>（17.2）</sup>  。使用精心设
+计的宏可以完全理解展开式，尽管它可能在许多方面违背词汇透明性，但不会有组合问题出现，因为所有组件都能有
+意义地组合在一起。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（17）
+运行时解构  run-time destructuring；宏组合 macro combination</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro! alet-hotpatch (letargs &amp;rest body) ;;; 译者注：原文为 defmacro 。
+<span class="linenos">2</span>  `(let ((,g!this) ,@letargs)
+<span class="linenos">3</span>    (setq ,g!this ,@(last body))
+<span class="linenos">4</span>    ,@(butlast body)
+<span class="linenos">5</span>    (dlambda
+<span class="linenos">6</span>        (:hotpatch (closure)
+<span class="linenos">7</span>          (setq ,g!this closure))
+<span class="linenos">8</span>        (t (&amp;rest args)
+<span class="linenos">9</span>          (apply ,g!this args)))))
+</pre></div>
+</div>
+<p><strong>alet-hotpatch</strong> 创建了一个可热补丁的闭包，但在概念上有一个小缺陷。因为使用
+<strong>alet-hotpatch</strong> 的唯一真正原因是创建这种可热补丁的闭包，我们可能忘记，它还将 <strong>this</strong> 回指语引入
+到所提供的作用域中。当我们忘记创建的的回指语时，就有不想要的变量捕获问题的风险。为了避免这些问题，我们可以选择使用
+一种叫做 <em>回指闭合</em>  <sup>（18）</sup> 的技术。当要我们关闭一个回指语时，我们不需要改变我们的回指宏函数，只是限制他们组合的方式。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（18）
+回指闭合 anaphor closing</p>
+</div>
+<p>因为我们已经把 <strong>alet</strong> 展开式由内而外翻出，我们可以在 <strong>alet-hotpatch</strong> 的定义中从词法上看到
+<strong>this</strong> 回指语的创建。同时因为 <strong>alet-hotpatch</strong> 也包含了使用 <strong>this</strong> 回指实现热补丁的代码，我们因而可以关闭回指语，这样符号 <strong>this</strong> 就不再被宏捕获了。通常该如何避免引
+入预期之外的绑定？当然，我们用 gensyms 来命名绑定。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro! let-hotpatch (letargs &amp;rest body)
+<span class="linenos">2</span>  `(let ((,g!this) ,@letargs)
+<span class="linenos">3</span>    (setq ,g!this ,@(last body))
+<span class="linenos">4</span>    ,@(butlast body)
+<span class="linenos">5</span>    (dlambda
+<span class="linenos">6</span>      (:hotpatch (closure)
+<span class="linenos">7</span>        (setq ,g!this closure))
+<span class="linenos">8</span>      (t (&amp;rest args)
+<span class="linenos">9</span>        (apply ,g!this args)))))
+</pre></div>
+</div>
+<p><strong>let-hotpatch</strong> 是将 <strong>this</strong> 回指语闭合为一个更被包含的版本的示例 —— 一个在只需要进行热补丁
+时，更安全的版本。删掉了名字前面的（字母） <strong>a</strong> ，表示这个新的宏不再在提供的代码的主体中引入回指语。当然，如果我们出于某种
+原因而不是因为热补丁而想要引用 <strong>this</strong> ，就应该让这个回指语保持开启。</p>
+<p>在你编写足够多类似的宏后，这种开启和关闭回指语的技巧就变成了第二天性。就像我们可以编写注入自由变量到其展开式的宏，而不考虑我们将会如何捕捉它们的，直到我们编写在它们将会展开到的词法上下文（时，才会考虑自由变量的捕捉问题），在开发回指宏的组合和自由变量
+注入宏的试验时，我们有时选择保持回指语开启。一旦找到了最适用的组合，我们就可以将宏合并在一起，用 gensyms
+替换开发过程中使用的所有回指语。像 <strong>let-hotpatch</strong> 一样，该技术可以用 <strong>defmacro!</strong> 将回指语
+的作用域从宏展开式移到宏定义。我们没有从词法上引入回指语，而是引入了另一种类型的回指语 —— 这种
+回指语并不是在展开式的整个词法作用域内起生效，而只在另一个更加有限的范围内生效。下节将进一步讲解
+这个有效范围。</p>
+</section>
+<section id="sub-lexical-scope">
+<span id="id6"></span><h2>6.6 子词法作用域<a class="headerlink" href="#sub-lexical-scope" title="Permalink to this heading"></a></h2>
+<p>在  <a class="reference internal" href="chapter03.html#unwanted-capture"><span class="std std-ref">3.5 不想要的捕获</span></a> 中定义的 <strong>defmacro!</strong> 宏中用了 Graham 的 <strong>flatten</strong> 实用工具来查找提供的代
+码中的自动 gensyms 。现在是时候承认本书撒的一个小谎了。在此之前，因为没有解释自由变量注入和回
+指，我们假装在 <strong>defmacro!</strong> 的定义中的 G-bang 符号名称适用于宏定义的词法范围。实质上这是不对的 ——
+<strong>defmacro!</strong> 在略微不同类型的作用域（叫做 <em>子词法作用域</em>  <sup>（19）</sup>）下提供了这
+些绑定。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（19）
+子词法作用域  sub-lexical scope</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>G-bang 指的是以 <strong>g!</strong> 开头的变量， <strong>gensym</strong> 是个宏，会自动生成个随机变量名，防止变量名
+突。</p>
+</div>
+<p>记住，作用域意味着对变量的引用是有效的，而词法作用域是指名称对于一个绑定构造（比如 let 构造）的文本主体内的代码来说是适用的。词法作用域和子词法作用域之间的重要区别是，词法作用域包括了在 <strong>let</strong> 主体中
+代码的所有宏展开式。因此，将词法作用域描述为创建只有在绑定构造文本主体中的代码才能访问的
+变量实际上也是错误的 —— 宏可以 <em>注入</em> 变量引用。这些变量是从绑定构造的文本主体外部被注入的。</p>
+<p>通过限制访问词法变量的可能方式来实现真正的文本作用域，会产生子词法作用域。只有当表示
+子词法作用域变量的符号，出现在，宏展开之前传给 lisp 的原始列表中时，对该子词法作用域变量的引用才有效。</p>
+<p>因为 <strong>defmacro!</strong> 对给出的代码进行预处理，并在代码开始展开之前创建所有 G-bang 的列表，所以
+G-bang 是子词法绑定。我们不能编写将 G-bang 符号注入到 <strong>defmacro!</strong> 的宏，因为
+G-bang 的词法绑定从未创建过。下面是 G-bang 的经典用法：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (defmacro! junk ()
+<span class="linenos">2</span>    `(let ((,g!var))
+<span class="linenos">3</span>      ,g!var))
+<span class="linenos">4</span>
+<span class="linenos">5</span>JUNK
+</pre></div>
+</div>
+<p>两个 G-bang 变量都在 <strong>defmacro!</strong> 的子词法作用域中，所以展开式如我们所料：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (macroexpand &#39;(junk))
+<span class="linenos">2</span>
+<span class="linenos">3</span>(LET ()
+<span class="linenos">4</span>  (LET ((#:VAR1663))
+<span class="linenos">5</span>    #:VAR1663))
+<span class="linenos">6</span>T
+</pre></div>
+</div>
+<p>然而，为了探索子词法作用域的概念，我们将定义一个注入一个 G-bang 符号的宏：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (defmacro injector-for-g!var ()
+<span class="linenos">2</span>    &#39;&#39;g!var)
+<span class="linenos">3</span>
+<span class="linenos">4</span>INJECTOR-FOR-G!VAR
+</pre></div>
+</div>
+<p>现在我们可以编写 <strong>junk2</strong> 。 <strong>junk2</strong> 和 <strong>junk</strong> 基本一致，除了我们用一个展开成一个G-bang符号的宏替换了我们的 G-bang 符号：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (defmacro! junk2 ()
+<span class="linenos">2</span>    `(let ((,(injector-for-g!var)))
+<span class="linenos">3</span>      ,(injector-for-g!var)))
+<span class="linenos">4</span>
+<span class="linenos">5</span>JUNK2
+</pre></div>
+</div>
+<p>但是因为 G-bang 符号是子词法绑定的 —— 因此不必留心结构的宏展开式 —— <strong>defmacro!</strong> 就不会将这些
+符号转换成自动 gensyms：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (macroexpand &#39;(junk2))
+<span class="linenos">2</span>
+<span class="linenos">3</span>(LET ()
+<span class="linenos">4</span>  (LET ((G!VAR))
+<span class="linenos">5</span>G!VAR))
+<span class="linenos">6</span>T
+</pre></div>
+</div>
+<p>虽然上面的代码仍然可以正常工作，但当有些变量引用在子词法作用域中存在，有些不存在时，子词法作用域
+内的变量引用可能会破坏表达式：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>* (defmacro! junk3 ()
+<span class="linenos"> 2</span>  `(let ((,g!var))
+<span class="linenos"> 3</span>      ,(injector-for-g!var)))
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span>JUNK3
+<span class="linenos"> 6</span>* (macroexpand &#39;(junk3))
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span>(LET ()
+<span class="linenos"> 9</span>  (LET ((#:VAR1672))
+<span class="linenos">10</span>G!VAR))
+<span class="linenos">11</span>T
+</pre></div>
+</div>
+<p>子词法作用域在复杂宏中惊人的频繁出现。还有 <strong>defmacro!</strong> ，我们已经至少在另外一个例子中看到过它：在 <a class="reference internal" href="chapter05.html#recursive-solutions"><span class="std std-ref">5.6 递归方案</span></a> 中的
+<strong>with-all-cxrs</strong> 宏的子词法绑定列表访问器函数（中就用到了这个宏）。子词法绑定的结果是，我们不能从宏
+展开式中引用这种绑定。有时这种访问限制很有用，有时不是。在 <strong>with-all-cxrs</strong> 中，子词法可能被
+认为是不可取的。当我们的访问器在 <strong>with-all-cxrs</strong> 的子词法作用域中时，没有问题：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (with-all-cxrs
+<span class="linenos">2</span>    (cadadadr nil))
+<span class="linenos">3</span>
+<span class="linenos">4</span>NIL
+</pre></div>
+</div>
+<p>我们甚至可以编写扩展到这些访问器中的宏，只要宏定义是在 <strong>with-all-cxrs</strong> 的子词法范围内的:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (with-all-cxrs
+<span class="linenos">2</span>    (macrolet ((accessor (l)
+<span class="linenos">3</span>                `(cadadadr ,l)))
+<span class="linenos">4</span>      (accessor nil)))
+<span class="linenos">5</span>
+<span class="linenos">6</span>NIL
+</pre></div>
+</div>
+<p>但要注意， <strong>with-all-cxrs</strong> 以子词法的方式绑定访问器函数，所以我们不能定义宏来注入访问器：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (macrolet ((accessor (l)
+<span class="linenos">2</span>              `(cadadadr ,l)))
+<span class="linenos">3</span>    (with-all-cxrs
+<span class="linenos">4</span>      (accessor nil)))
+<span class="linenos">5</span>
+<span class="linenos">6</span>This function is undefined: CADADADR
+</pre></div>
+</div>
+<p>既然已经熟悉了 <em>回指</em> ，并且也见过这么多复杂宏的例子 —— 包括一些使用子词汇范围的宏 ——
+我们可以讨论个有趣的理论宏： <strong>sublet</strong> 。这个宏设计用来为使用类似 let 结构语法的语法的代码创建子词法绑定。与许多 lisp 宏一样，对 <strong>sublet</strong> 的讨论先从一个实用程序
+开始。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defun let-binding-transform (bs)
+<span class="linenos"> 2</span>  (if bs
+<span class="linenos"> 3</span>    (cons
+<span class="linenos"> 4</span>      (cond ((symbolp (car bs))
+<span class="linenos"> 5</span>              (list (car bs)))
+<span class="linenos"> 6</span>            ((consp (car bs))
+<span class="linenos"> 7</span>              (car bs))
+<span class="linenos"> 8</span>            (t
+<span class="linenos"> 9</span>              (error &quot;Bad let bindings&quot;)))
+<span class="linenos">10</span>      (let-binding-transform (cdr bs)))))
+</pre></div>
+</div>
+<p><strong>let-binding-transform</strong> 是个简单的实用工具，用于处理 let 结构绑定单个符号的情况。
+在下面代码中， <strong>a</strong> 被归一化为 <strong>(a)</strong> ：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (let-binding-transform
+<span class="linenos">2</span>    &#39;(a (b) (c nil)))
+<span class="linenos">3</span>
+<span class="linenos">4</span>((A) (B) (C NIL))
+</pre></div>
+</div>
+<p><strong>sublet</strong> 还需要用到  <a class="reference internal" href="chapter05.html#implicit-contexts"><span class="std std-ref">5.3 隐式上下文</span></a> 中的 <strong>tree-leaves</strong> 。回想一下，
+<strong>tree-leaves</strong> 宏有三个参数：一个任意的列表结构，一个用 <strong>x</strong> 变量来确定是否应该更改叶子
+的表达式，以及另一个用不同的 <strong>x</strong> 来确定应该更改哪些有效叶子的表达式。</p>
+<p>选择隐式化具有相同名称 <strong>x</strong> 的绑定证明是一种有用的 <em>语法二义性</em> 。
+当不用通用的方式在表达式中分解公共代码时，有时我们可以用其他方式使用语法对偶来获得这种简洁的优势。
+<strong>sublet</strong> 的定义用到了  <a class="reference internal" href="chapter04.html#cyclic-expressions"><span class="std std-ref">4.5 循环表达式</span></a> 中的自引用读取宏。特别是对于像访问器
+这样在编写程序的过程中可以多次更改的东西，读取宏允许我们有且只有一种结构来表示访问器。幸亏使用了 <em>隐式的</em>
+<strong>tree-leaves</strong> 宏，很容易找到和理解代码重复，因为代码紧密地结合在一起。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defmacro sublet (bindings% &amp;rest body)
+<span class="linenos"> 2</span>  (let ((bindings (let-binding-transform
+<span class="linenos"> 3</span>                    bindings %)))
+<span class="linenos"> 4</span>    (setq bindings
+<span class="linenos"> 5</span>      (mapcar
+<span class="linenos"> 6</span>        (lambda (x)
+<span class="linenos"> 7</span>          (cons (gensym (symbol -name (car x))) x))
+<span class="linenos"> 8</span>        bindings ))
+<span class="linenos"> 9</span>    `(let (,@(mapcar #&#39;list
+<span class="linenos">10</span>                    (mapcar #&#39;car bindings)
+<span class="linenos">11</span>                    (mapcar #&#39;caddr bindings)))
+<span class="linenos">12</span>      ,@(tree-leaves
+<span class="linenos">13</span>          body
+<span class="linenos">14</span>          #1=(member x bindings :key #&#39;cadr)
+<span class="linenos">15</span>          (caar #1#)))))
+</pre></div>
+</div>
+<p><strong>sublet</strong> 接受表示let绑定的结构，并应用我们的 <strong>let-binding-transform</strong> 工具，在这个过程中生成新的
+列表结构。然后，将gensym 前置拼接到每个绑定 <sup>【14】</sup> ，并带有与绑定名称相对应的打印名称。 <strong>sublet</strong> 展开
+为 let 结构，通过 let 结构将这些 gensym 符号绑定到传递给绑定结构的值，然后用
+<strong>tree-leaves</strong> 将代码中所有出现的绑定名称符号替换为对应的 gensym 。 <strong>sublet</strong> 不会展开任
+何宏或解析主体中的任何特殊结构来查找这些绑定名称符号的出现，因为 <strong>sublet</strong> 会创建子词法绑
+定。例如，如果所有 <strong>a</strong> 的引用都是子词法的，将用 gensym 替换它们:</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【14】
+前置拼接而不是附加拼接，因此我们仍然可以支持没有默认值的绑定，例如( a )。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (macroexpand
+<span class="linenos">2</span>    &#39;(sublet ((a 0))
+<span class="linenos">3</span>          (list a)))
+<span class="linenos">4</span>
+<span class="linenos">5</span>(LET ((#:A1657 0))
+<span class="linenos">6</span>  (LIST #:A1657))
+<span class="linenos">7</span>T
+</pre></div>
+</div>
+<p>但是，由于子词法作用域不涉及展开宏，因此不可避免地不会解析 <strong>quote</strong> 这样的特殊结构，不被认为是变量引用的
+符号 <strong>a</strong> 的实例也会被改变：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (macroexpand
+<span class="linenos">2</span>  &#39;(sublet ((a 0))
+<span class="linenos">3</span>      (list &#39;a)))
+<span class="linenos">4</span>
+<span class="linenos">5</span>(LET ((#:A1658 0))
+<span class="linenos">6</span>  (LIST &#39;#:A1658))
+<span class="linenos">7</span>T
+</pre></div>
+</div>
+<p>子词法作用域在列表结构被系统代码遍历程序解释为 lisp 代码之前生效。这是个重要的观测结果，
+但其结果仍未被完全探索。 <strong>sublet</strong> 对代码的解释不同于 COMMON LISP 的代码遍历程序。</p>
+<p>这里，我们处于宏理解的众多边缘之一。在未扩展的子词法作用域和完全扩展的词法作用域之间有哪些
+有趣的作用域类型？因为没有更好的名称，我们将这个无限大的范围称为 <em>超级子词法作用域</em> （ <em>super sub-lexical scope</em> ） <sup>【15】</sup> 。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【15】
+我给它起这个愚蠢的名字是因为我希望当这个概念被更好地理解时，更好的名字会开始显现</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro sublet*
+<span class="linenos">2</span>  (bindings &amp;rest body)
+<span class="linenos">3</span>  `(sublet ,bindings
+<span class="linenos">4</span>    ,@(mapcar #&#39;macroexpand -1 body)))
+</pre></div>
+</div>
+<p>一个相当明显的超级子词法作用域使用 <strong>sublet*</strong> 。这个宏底层使用 <strong>sublet</strong> ，但是用
+<strong>macroexpand-1</strong> 函数的宏展开来修改主体中对应的结构。现在，对符号的引用必须出现在宏展开的第
+一步之后，而不是出现在原始列表结构中。这种类型的超级子词法作用域允许每个 let 结构主体中的宏从作用
+域中注入或移除引用。如果宏没有做这两件事 —— 或者如果结构根本不是宏 —— 这种超级子词法作用域的行为
+就像子词法作用域：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (macroexpand
+<span class="linenos">2</span>  &#39;(sublet* ((a 0))
+<span class="linenos">3</span>      (list a)))
+<span class="linenos">4</span>
+<span class="linenos">5</span>(LET ((#:A1659 0))
+<span class="linenos">6</span>  (LIST #:A1659))
+<span class="linenos">7</span>T
+</pre></div>
+</div>
+<p>但我们可以定义另一个注入器（ injector ）宏来测试这个超子词法作用域：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (defmacro injector-for-a ()
+<span class="linenos">2</span>    &#39;a)
+<span class="linenos">3</span>
+<span class="linenos">4</span>INJECTOR-FOR-A
+</pre></div>
+</div>
+<p><strong>sublet*</strong> 将展开这个注入器宏:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (macroexpand-1
+<span class="linenos">2</span>  &#39;(sublet* ((a 0))
+<span class="linenos">3</span>      (injector-for-a)))
+<span class="linenos">4</span>
+<span class="linenos">5</span>(SUBLET ((A 0))
+<span class="linenos">6</span>  A)
+<span class="linenos">7</span>T
+</pre></div>
+</div>
+<p>然后，通过 <strong>sublet</strong> 将对其进行子词法解释，这意味着插入的变量 <strong>a</strong> 存在于 <strong>sublet*</strong> 提供的
+超级子词法作用域的类型中：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (macroexpand-1 *)
+<span class="linenos">2</span>
+<span class="linenos">3</span>(LET ((#:A1663 0))
+<span class="linenos">4</span>  #:A1663)
+</pre></div>
+</div>
+<p>但是表达式中的嵌套宏不会被 <strong>macroexpand-1</strong> 展开，所以 <strong>sublet*</strong> 不会把嵌套宏放到
+<strong>sublet</strong> 的子词法作用域中：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (macroexpand-1
+<span class="linenos">2</span>  &#39;(sublet* ((a 0))
+<span class="linenos">3</span>      (list (injector-for-a))))
+<span class="linenos">4</span>
+<span class="linenos">5</span>(SUBLET ((A 0))
+<span class="linenos">6</span>  (LIST (INJECTOR-FOR-A)))
+<span class="linenos">7</span>T
+</pre></div>
+</div>
+<p>所以 <strong>a</strong> 不会被子词法捕获 <sup>【16】</sup> ：</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【16】
+Walker:macroexpand-all 是 CMUCL 中具有完整代码遍历功能的组成部分。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (walker:macroexpand-all *)
+<span class="linenos">2</span>
+<span class="linenos">3</span>(LET ((#:A1666 0))
+<span class="linenos">4</span>  (LIST A))
+</pre></div>
+</div>
+<p>依托 <strong>sublet</strong> 和 <strong>sublet*</strong> ，我们可以用词法作用域或超词法作用域来控制在什么级别的宏展开式中变
+量 <strong>a</strong> 是有效的。如上所述，超级子词法作用域实际上是一个无限类的范围，一个几乎完全未被智力探索的
+范围。超级子词法作用域的方法和遍历代码的方法（很多）一样多。这类作用域引出了另一类基本未被探索的
+宏：这类宏改变 lisp 宏如何执行，何时展开，引用在哪里有效，特殊形式如何解释等。最终，就有了个可
+编程宏（ macro-programmable ）的宏展开器。</p>
+</section>
+<section id="pandoric-macros">
+<span id="id7"></span><h2>6.7 潘多拉宏<a class="headerlink" href="#pandoric-macros" title="Permalink to this heading"></a></h2>
+<p><em>潘多拉魔盒</em>  <sup>（20）</sup>  是个关于世界上第一个女人的希腊神话：潘多拉。潘朵拉，U 语言的符号，希腊语
+翻译过来是全能。潘多拉，这个女人，在好奇心的诱惑下，打开了一个小盒子，无可挽回地释放
+了人类所有的邪恶和罪恶。虽然本节中描述的宏非常强大，可能会教你一种永远不会忘记的编程
+方法，但请放心，结果要比可怜的潘多拉好得多。现在开始，打开这个盒子。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（20）
+潘多拉魔盒  Pandora’s box</p>
+</div>
+<p>首先，稍微绕过另一本著名的 lisp 书： Christian Queinnec  <sup>（21）</sup> 的《Lisp in Small Pieces》。
+Queinnec 是一位广受尊敬的 lisp 专家，对 lisp 知识做出了很大的贡献。Queinnec 的书的内容
+是在 Scheme 编程语言中实现各种复杂的编译器和解释器 <sup>【17】</sup> 。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【17】
+虽然它有时会描述其他 lisp 及其特征。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（21）
+克里斯蒂安·奎奈克，人名</p>
+</div>
+<blockquote>
+<div><p>Lisp in Small Pieces: <a class="reference external" href="https://pages.lip6.fr/Christian.Queinnec/WWW/LiSP.html">https://pages.lip6.fr/Christian.Queinnec/WWW/LiSP.html</a></p>
+</div></blockquote>
+<p>《Lisp In Small Pieces》中有个简短但有趣的宏的讨论。感谢 Scheme 宏规范的模糊性 <sup>【18】</sup> ，这本书中提及到描述不同的宏系统变化，但是也有许多有趣的注意事项，关于为什么我们可能想要使用宏以及如何使用它们。如果你已经阅读并理解了 <a class="reference internal" href="chapter03.html"><span class="doc">第三章：宏基础</span></a> ，那么 《Lisp in Small
+Pieces》章节中介绍的大多数宏，对你来说，都属于微不足道的类别，除了我们现在要讨论的这个诱人的宏。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【18】
+感谢，但是不必谢.</p>
+</div>
+<p>和许多编程书籍一样，《Lisp in Small Pieces》将我们带到并留在了一个 <em>面向对象</em> 编程系统的实现中。
+通常这些实现用来概述 CLOS（ COMMON LISP  Object System）的一个子集。Queinnec
+称他的子集为 MEROONET 。 Queinnec 指出，在为 MEROONET 类定义方法时，最好能够
+直接引用所定义对象的字段，而不是使用访问器。把 Queinnec 的话翻译过来就是:
+让我们以 CLOS 中的 <strong>with-slots</strong> 宏为例；我们会改变它使之适应 MEROONET 的上下文（环境）。对象的字段 ——
+比方说 <strong>Point</strong> 实例的字段 —— 是通过像 <strong>Point-x</strong> 或 <strong>set-Point-y!</strong> 这样的读取和写入函数
+来处理的。在定义方法的上下文中，直接通过字段的名称(例如 <strong>x</strong> 或 <strong>y</strong> )来处理会更简单。</p>
+<p>下面是 Queinnec 预想的接口（他称之为 <strong>define-handy-method</strong> ）定义新方法 <strong>double</strong> ：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(define-handy-method (double (o Point))
+<span class="linenos">2</span>  (set! x (* 2 x))
+<span class="linenos">3</span>  (set! y (* 2 y))
+<span class="linenos">4</span>  o)
+</pre></div>
+</div>
+<p>这比必需的 MEROONET 语法更让程序员高兴:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(define-method (double (o Point))
+<span class="linenos">2</span>  (set-Point-x! o (* 2 (Point-x o)))
+<span class="linenos">3</span>  (set-Point-y! o (* 2 (Point-y o)))
+<span class="linenos">4</span>  o)
+</pre></div>
+</div>
+<p>换句话说，如果我们可以使用宏来访问外部绑定（在本例中是对象槽），就像是词法绑定一样，那就
+太好了。虽然，不可否认的是这对缩写的目的很有用，但最重要的含义是它能够为现有的和未来
+的宏提供语法二义性。</p>
+<p>正如 Queinnec 所提出的， COMMON LISP  通过 <strong>with-slots</strong> 宏为 CLOS 实现了这个功能。
+这是  COMMON LISP  实现其设计目的的一个例子：允许基于精炼的、标准化的宏系统进行抽象。
+大多数语言被设计成易于实现，而  COMMON LISP  被设计成具有强大的编程功能。Queinnec
+的结论是，语言的限制使得 Scheme 几乎不可能实现这一点，特别是在需要可移植性的地方。</p>
+<p>缺乏关于语言及其实现的反射性信息，我们无法在 Scheme 中编写可移植的代码遍历程序，
+因此我们不得不放弃编写 <strong>define-handy-method</strong> 。</p>
+<p>尽管  COMMON LISP  仍然允许使用大量合法的方式来实现宏系统，但它的设计目的是提供通用
+的元编程工具，这些工具以标准和可移植的方式组合在一起。这两个先进  COMMON LISP  宏特性
+允许我们实现像 CLOS 的 <strong>with-slots</strong> 一样的东西，它们是 <em>泛化变量</em> <sup>（22.1）</sup>  和 <em>符号宏</em>  <sup>（22.2）</sup> 。本节就借此机会展示  COMMON LISP  特性的奇妙组合，
+并将我们迄今为止见过所有关于回指宏的内容集合在一起，在这个过程中发现了一个有趣的宏类，称为
+<em>潘多拉宏</em> <sup>（22.3）</sup> 。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（22.1）
+泛化变量 generalised variables；符号宏 symbol macro；潘多拉宏 pandoric macros.</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defmacro pandoriclet (letargs &amp;rest body)
+<span class="linenos"> 2</span>  (let ((letargs (cons
+<span class="linenos"> 3</span>                  &#39;(this)
+<span class="linenos"> 4</span>                  (let-binding-transform
+<span class="linenos"> 5</span>                    letargs))))
+<span class="linenos"> 6</span>    `(let (,@letargs)
+<span class="linenos"> 7</span>        (setq this ,@(last body))
+<span class="linenos"> 8</span>        ,@(butlast body)
+<span class="linenos"> 9</span>        (dlambda
+<span class="linenos">10</span>          (:pandoric-get (sym)
+<span class="linenos">11</span>            ,(pandoriclet-get letargs))
+<span class="linenos">12</span>          (:pandoric-set (sym val)
+<span class="linenos">13</span>            ,(pandoriclet-set letargs))
+<span class="linenos">14</span>          (t (&amp;rest args)
+<span class="linenos">15</span>            (apply this args))))))
+</pre></div>
+</div>
+<p><strong>pandoriclet</strong> 背后的思想是 <em>打开闭包</em>，允许外部访问它们别的封闭的词法变量。与之前的一些宏
+（如 <strong>alet-hotpatch</strong> ）一样， <strong>pandoriclet</strong> 编译一个间接环境，根据传递的参数选择不同的运行时行为。</p>
+<p>我们再次从 <strong>alet</strong> <em>由内而外</em> 的展开式开始，记住这里引入了个叫 <strong>this</strong> 的回指语。
+<strong>pandoriclet</strong> 与我们见过的其他宏类似。和所有的回指 <strong>let</strong> 变体一样，我们假设
+<strong>pandoriclet</strong> 主体中的最后的结构将是一个 lambda 结构。就像 <strong>alet-hotpatch</strong> 一样，
+<strong>pandoriclet</strong> 用 <strong>dlambda</strong> 宏来在 <strong>pandoriclet</strong> 被调用返回闭包时分发执行不同可能的代
+码。 <strong>pandoriclet</strong> 还用了上一节介绍的 <strong>let-binding-transform</strong> 实用函数来处理已创建的
+空绑定，如 <strong>(let (a) …)</strong> 。这个实用函数对 <strong>pandoriclet</strong> 是必需的，原因与需要
+<strong>sublet</strong> 一样：这些宏遍历提供给 <strong>let</strong> 的绑定，而之前的宏盲目地将绑定拼接到另一个 <strong>let</strong> 。</p>
+<p>我们调用了两个没定义的创建列表的实用函数： <strong>pandoriclet-get</strong> 和 <strong>pandoriclet-set</strong> ，
+它们分别接受一个 <strong>let</strong> 绑定列表。注意，我们可以引用还不存在的函数，只要在宏展开之前定义
+它们就可以，显然，在使用宏之前不能这样做。使用辅助函数来帮助定义宏是一个很好的习惯。
+它不仅可以使定义更具可读性，还可以在测试宏的组件时提供帮助，并可以在将来的宏中证明是
+有用的。这种抽象最好的部分是，当组合宏时，保持词法上下文可供实用程序使用。</p>
+<p>因此，记住这个词法上下文，我们编写 <strong>pandoriclet-get</strong> 和 <strong>pandoriclet-set</strong> 。对于
+<strong>pandoriclet-get</strong> ，我们牢记 <strong>dlambda</strong> 已经绑定了变量 <strong>sym</strong> ，在这里列表将被拼接进去。我们在
+<strong>case</strong> 结构中使用 <strong>sym</strong> ，将其与传递给 <strong>pandoriclet</strong> 的符号进行比较 <sup>【19】</sup> 。如果找到这个符号，则返回它所引用的绑定的当前值。如果没找到，则抛出错误。 <strong>pandoriclet-set</strong> 差不多一样，除
+了 <strong>dlambda</strong> 为它绑定了一个额外的符号： <strong>val</strong> 。 <strong>pandoriclet-set</strong> 用 <strong>setq</strong>
+将 <strong>sym</strong> 引用的绑定更改为 <strong>val</strong> 。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【19】
+回想一下，带有符号的 case 编译为每个 case 的单个指针比较。</p>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defun pandoriclet-get (letargs)
+<span class="linenos"> 2</span>  `(case sym
+<span class="linenos"> 3</span>    ,@(mapcar #`((,(car a1)) ,(car a1))
+<span class="linenos"> 4</span>              letargs)
+<span class="linenos"> 5</span>    (t (error
+<span class="linenos"> 6</span>          &quot;Unknown pandoric get: ~a&quot;
+<span class="linenos"> 7</span>          sym))))
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span>(defun pandoriclet-set (letargs)
+<span class="linenos">10</span>  `(case sym
+<span class="linenos">11</span>    ,@(mapcar #`((,(car a1))
+<span class="linenos">12</span>                  (setq ,(car a1) val))
+<span class="linenos">13</span>              letargs)
+<span class="linenos">14</span>    (t (error
+<span class="linenos">15</span>        &quot;Unknown pandoric set: ~a&quot;
+<span class="linenos">16</span>        sym val))))
+</pre></div>
+</div>
+<p><strong>prandoriclet</strong> 提供和我们所有的回指 let 变体一样的接口，因此可以使用它来创建常见的 counter 闭包：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (setf (symbol-function &#39;pantest)
+<span class="linenos">2</span>    (pandoriclet ((acc 0))
+<span class="linenos">3</span>      (lambda (n) (incf acc n))))
+<span class="linenos">4</span>
+<span class="linenos">5</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>如预期般：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (pantest 3)
+<span class="linenos">2</span>3
+<span class="linenos">3</span>* (pantest 5)
+<span class="linenos">4</span>8
+</pre></div>
+</div>
+<p>但是，现在在创建闭包时我们直接访问被称为 <strong>acc</strong> 的绑定：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (pantest :pandoric-get &#39;acc)
+<span class="linenos">2</span>8
+</pre></div>
+</div>
+<p>然后我们可以类似地修改这个绑定的值：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (pantest :pandoric-set &#39;acc 100)
+<span class="linenos">2</span>100
+<span class="linenos">3</span>* (pantest 3)
+<span class="linenos">4</span>103
+</pre></div>
+</div>
+<p>甚至， <strong>this</strong> 回指语的值是可访问的，因为我们特意保持这个回指语开启，并且在宏被展开时将符号 <strong>this</strong>
+添加到 <strong>letargs</strong> 绑定列表中：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (pantest :pandoric-get &#39;this)
+<span class="linenos">2</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>所以我们用 <strong>pandoriclet</strong> 创建的这个闭包已经不再闭合了。这个闭包所使用的环境 —— 即使在编译器
+已经删除了所有的词法变量符号时 —— 仍然可以通过 <strong>pandoriclet</strong> 返回的匿名函数来访问。这是
+怎么做到的呢？依托 pandoric 宏，额外的代码被编译进来，以提供从外部访问闭包的方法。但 pandoric 宏的威力并不能从这个
+正在发生的事情的低层次视角被看到。我们所做的是创建一个 <em>闭包间协议</em>  <sup>（23）</sup> ，
+或消息传递系统，用于闭包之间的通信。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（23）
+闭包间协议 inter-closure protocol</p>
+</div>
+<p>在继续讨论 pandoric 宏之前，首先我们需要指出一个在 COMMON LISP中， 语法二又性的最重要的例子：
+<em>泛化变量</em>  <sup>（24）</sup> 。这方面的细节很复杂，这里不会做详细的介绍。为此，
+推荐去阅读 Graham 的  OnLisp* ，这是目前所知道的最好的解决方法。细节是微妙的，想法
+很简单：访问一个泛化变量是在语法上双重的设置它。只有一种 setter 结构： <strong>setf</strong> ， <strong>setf</strong> 能够通过
+使用与你访问变量时使用的相同语法设置所有类型的变量。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>（24）
+泛化变量，也是广义变量 generalised variables</p>
+</div>
+<p>例如，对于常规的变量你通常通过它的符号来访问其值，比方说 <strong>x</strong> 。可以用 <strong>(setf x 5)</strong> 来
+设置 <strong>x</strong> 的值为 5。同样，要想访问某个调用的 cons 的 car 单元，假设也为 <strong>x</strong> ，可以使用
+<strong>(car x)</strong> ，也可以通过 <strong>(setf (car x) 5)</strong> 来设置其值。这隐藏了一个事实，设置 cons 的
+实际方法是使用 <strong>rplaca</strong> 函数。通过实现这种二义性语法，我们将需要记住的访问器和设置器的数量
+减少了一半，更重要的是，为使用宏提供了的新方法。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(declaim (inline get-pandoric))
+<span class="linenos">2</span>
+<span class="linenos">3</span>(defun get-pandoric (box sym)
+<span class="linenos">4</span>  (funcall box :pandoric -get sym))
+<span class="linenos">5</span>
+<span class="linenos">6</span>(defsetf get-pandoric (box sym) (val)
+<span class="linenos">7</span>  `(progn
+<span class="linenos">8</span>      (funcall ,box :pandoric -set ,sym ,val)
+<span class="linenos">9</span>      ,val))
+</pre></div>
+</div>
+<p><strong>get-pandoric</strong> 函数是对内部闭包协议 getter 语法的封装。它被定义为内联，以消除这种封装所造
+成的任何性能影响。</p>
+<p><strong>defsetf</strong> 是一个有趣的 COMMON LISP 宏，完全不像由 <strong>defmacro</strong> 扩展出的 <strong>defmacro!</strong>
+那样隐式地将 gensyms 绑定在提供的结构周围。 <strong>defsetf</strong> 非常适合定义泛化变量二元性的 setter 端，只要
+getter 可以表示为一个函数或者所有参数都只求解一次的宏。注意，虽然可以将 <strong>get-pandoric</strong> 定义
+为宏，但这样做的唯一原因是为了内联。宏不是用来内联的，编译器是用来内联的。</p>
+<p>所以回到在符号函数 <strong>pantest</strong> 中存储的 pandoric 计数器，我们可以使用这个新的 getter 函数来获
+取 <strong>pantest</strong> 中 <strong>acc</strong> 当前绑定的值：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (get-pandoric #&#39;pantest &#39;acc)
+<span class="linenos">2</span>103
+</pre></div>
+</div>
+<p>并且现在，多亏了泛型变量和 <strong>defsetf</strong> ，可以用一个语法对偶来设置 <strong>acc</strong> 的值:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (setf (get-pandoric #&#39;pantest &#39;acc) -10)
+<span class="linenos">2</span>-10
+<span class="linenos">3</span>* (pantest 3)
+<span class="linenos">4</span>-7
+</pre></div>
+</div>
+<p>由函数封闭的环境 —— 我们在 <em>let over lambda</em> 中调用的 let —— 开始看起来像常规可访问
+的通用变量，就像 cons 单元格或哈希表条目。闭包现在是比过去更 <em>一流的</em> 数据结构。以前对外部代码封闭
+的绑定现在对我们开放，即使这些绑定被编译成高效的东西，或者它们的访问器符号早就被遗忘了。</p>
+<p>但是，任何关于泛型变量的讨论，如果不提到它的近亲：<em>符号宏</em> ，都是不完整的。像其名字所
+提示的那样， <strong>symbol-macrolet</strong> 可以将符号扩展成一般的 lisp 结构。因为它很直观以及更灵活的
+使用形式，看起来像函数调用来代表宏转换 <sup>【20】</sup> ， <strong>symbol-macrolet</strong> 没有太多用处，除了它至关重要的一个重要应用是：符号宏让我们隐藏了泛型变量，这样宏的使用者认为他们正在访问常规词法变量。</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>【20】
+符号宏不带参数，因此符号宏定义始终扩展相同</p>
+</div>
+<p>符号宏的引入导致了 COMMON LISP 语言中最奇怪的组合之一：通常在设置个通过常规符号访问的变量时，
+比如 <strong>(setf x t)</strong> ， <strong>setf</strong> 将展开成 <strong>setq</strong> 结构，因为这就是设计 <strong>setq</strong> 最初目
+的：设置词法变量和动态变量（总是由符号引用）。但是 <strong>setq</strong> 特殊结构不能设置泛型变量，所以当引入符
+号宏时，对于符号来说，不仅表达词法/动态绑定，而且表达任何泛化变量都变得可能，有必要指出的是，通过 <strong>setq</strong>
+结构设置由符号宏定义的符号会被转换回 <strong>setf</strong> 结构。奇怪的是，这确实是 <em>正确的</em> 做法，因为它允许宏
+对宏的用户完全隐藏泛型变量的存在，即使他们选择使用 <strong>setq</strong> 。<em>真正正确的</em> 解决办法是从语言中删除冗余的
+<strong>setq</strong> 结构，支持的更通用的 <strong>setf</strong> ，但这不会发生，原因是明显的兼容性以及宏创建期间，
+<strong>setq</strong> 也可以是个有用的安全快捷方式 —— <strong>setf</strong> 加上对已被拼接符号的检查，而不是列表结构。
+在使用 <strong>setq</strong> 时，记住只有在其拼接安全属性有用；正如我们所看到的，多亏了
+<strong>symbol-macrolet</strong> ，符号可以引用任何泛型变量。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro! with-pandoric (syms o!box &amp;rest body)
+<span class="linenos">2</span>  `(symbol -macrolet
+<span class="linenos">3</span>    (,@(mapcar #`(,a1 (get-pandoric ,g!box &#39;,a1))
+<span class="linenos">4</span>              syms ))
+<span class="linenos">5</span>    ,@body))
+</pre></div>
+</div>
+<p><strong>with-pandoric</strong> 宏会展开成一个 <strong>symbol-macrolet</strong> ， <strong>symbol-macrolet</strong> 为
+<strong>syms</strong> 中提供的每个符号定义了符号宏。每个符号宏会把在symbol-macrolet词法作用域中的符号的引用展开为使用我们的get-pandoric 访问器/设置器的泛型变量的引用，来访问宏的第二个参数的求值结果： <strong>o!box</strong> （保存在
+<strong>g!box</strong> 中）。</p>
+<p>因此 <strong>with-pandoric</strong> 让我们窥探到了闭包的封闭变量绑定：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (with-pandoric (acc) #&#39;pantest
+<span class="linenos">2</span>    (format t &quot;Value of acc: ~a~%&quot; acc))
+<span class="linenos">3</span>Value of acc: -7
+<span class="linenos">4</span>NIL
+</pre></div>
+</div>
+<p>正如我们使用广义变量来塑造这个变量的 setting 和 getting 的语法对偶的设计，我们甚至可以假装它是个常规的词法变
+量，然后通过 setq 设置它：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (with-pandoric (acc) #&#39;pantest
+<span class="linenos">2</span>    (setq acc 5))
+<span class="linenos">3</span>5
+<span class="linenos">4</span>* (pantest 1)
+<span class="linenos">5</span>6
+</pre></div>
+</div>
+<p>现在，我们已经研究了构成 pandemic 宏的大多数部分（组成）。首先，用于创建闭包的宏：
+<strong>pandoriclet</strong> ，这个宏捕获回指语： <strong>this</strong> ， <strong>this</strong> 引用在调用闭包时使用的实际
+函数。这个宏还会编译成一些特殊的代码，这些代码会拦截这个闭包的某些调用，而访问或修改它的封闭的词
+法变量。其次， <strong>get-pandoric</strong> 和 <strong>defsetf</strong> 实现了访问和设置访问器的单一语法。最后，
+<strong>with-pandoric</strong> 宏使用 <strong>symbol-macrolet</strong> 来将这些泛型变量设置为与封闭变量同名的看似新的词法变量。这些变量引用 <strong>pandoriclet</strong> 创建的原始环境，但是，来自分开的词法上下文。</p>
+<p>作为示例，通过与 <a class="reference internal" href="#hotpatching-closures"><span class="std std-ref">6.5 热修复闭包</span></a> 中的 <em>热补丁</em> 宏对比，我们将这种能力同开启闭包相关联。回顾一下 <strong>alet-hotpatch</strong> 及其相近的回指语表亲： <strong>let-hotpatch</strong> ，这两个宏使用间接
+环境创建闭包，以便可以动态更改在调用闭包时调用的函数。这些宏的最大限制是，当你对它热补丁时，它们会强制抛出所有在先前匿名函数上封闭的词法绑定。这种情况是不可避免的，因为在编写这些宏时，闭包
+对我们关闭了。</p>
+<p>对于 <strong>let-hotpatch</strong> 和 <strong>let-hotpatch</strong> ，我们不得不将特殊目的的代码编译到每个闭包中，这些闭包
+能够将 <strong>this</strong> 回指的词法绑定设置为它的新值。但是由于我们现在可以打开由 <strong>pandoriclet</strong> 定义
+的闭包并在外部运行这个 <strong>setter</strong> 代码，所以我们可以定义一个将会处理任何 pandoric 闭包的热补
+丁函数 <strong>pandoric-hotpatch</strong> 。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defun pandoric-hotpatch (box new)
+<span class="linenos">2</span>  (with-pandoric (this) box
+<span class="linenos">3</span>    (setq this new)))
+</pre></div>
+</div>
+<p>有时抽象在感觉很对，很难确切地说出为什么。也许是因为大多数编程都是不相交部分的不和谐
+组合，当你碰巧发现抽象完美地结合在一起的时，它是令人惊讶和愉快的。 <strong>pandoric-hotpatch</strong>
+看起来和其工作原理完全一样：它打开一个 pandoric 接口，从闭包 box 的词法作用域中取出变量 <strong>this</strong> ，
+然后使用 <strong>setq</strong> 将 <strong>this</strong> 设置为要热补丁的闭包 <strong>new</strong> 。</p>
+<p>甚至在我们意识到我们想要它成为可热补丁之前，我们可以在 pandoric 闭包上使用 <strong>pandoric-hotpatch</strong> 。还记得
+贯穿本章节的我们已经打交道的计数器闭包吗？它仍应该被绑定到 <strong>pantest</strong> 的符号函数。上次的结果是 6：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (pantest 0)
+<span class="linenos">2</span>6
+</pre></div>
+</div>
+<p>现在设置个新闭包 —— 一个拥有新的 acc 绑定，初始值为 100，之后就递减的闭包：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (pandoric-hotpatch #&#39;pantest
+<span class="linenos">2</span>    (let ((acc 100))
+<span class="linenos">3</span>      (lambda (n) (decf acc n))))
+<span class="linenos">4</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>果不其然，热补丁成功了：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (pantest 3)
+<span class="linenos">2</span>97
+</pre></div>
+</div>
+<p>因此现在，我们的 counter 闭包中有个新值绑定到 <strong>this</strong> 上，它用来执行计数。但是，这个 hotpatch
+改变了 <strong>acc</strong> 变量绑定的 pandoric 值吗?</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (with-pandoric (acc) #&#39;pantest
+<span class="linenos">2</span>    acc)
+<span class="linenos">3</span>6
+</pre></div>
+</div>
+<p>并没有。 <strong>acc</strong> 还是之前的值 6，因为这里只修改了 pandoric 环境中 <strong>this</strong> 的绑定，并且我们更改成一个拥有自己的 acc 绑定的新闭包。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro pandoric-recode (vars box new)
+<span class="linenos">2</span>  `(with-pandoric (this ,@vars) ,box
+<span class="linenos">3</span>    (setq this ,new)))
+</pre></div>
+</div>
+<p><strong>pandoric-recode</strong> 宏采用种略微不同方法来热补丁。它保留了代码的原始词法环境，
+同时还要在闭包被一些编码的事物调用和外部编译时，设法改变将要执行的函数。听起来有点
+难以置信？记住，在原来的 pandoric 环境中， <strong>acc</strong> 的当前值是 6，我们可以使用
+<strong>pandoric-recode</strong> 设置一个利用这个原始值的新函数，哦，或者说，缩减计数器中提供的n值的一半:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (pandoric-recode (acc) #&#39;pantest
+<span class="linenos">2</span>    (lambda (n)
+<span class="linenos">3</span>      (decf acc (/ n 2))))
+<span class="linenos">4</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>果然，我们有了新的行为，即将 <strong>acc</strong> 减去 <strong>(* 1/2 2)</strong> ，从 6 变为 5:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (pantest 2)
+<span class="linenos">2</span>5
+</pre></div>
+</div>
+<p>那这和最初的 pandoric 绑定有关联吗？</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (with-pandoric (acc) #&#39;pantest
+<span class="linenos">2</span>    acc)
+<span class="linenos">3</span>5
+</pre></div>
+</div>
+<p>对的，有关联。那 <strong>pandorc-code</strong> 是如何工作的呢？它封闭带有原始闭包的潘多拉式开启的绑定所提供的 lambda 形式。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defmacro plambda (largs pargs &amp;rest body)
+<span class="linenos"> 2</span>  (let ((pargs (mapcar #&#39;list pargs)))
+<span class="linenos"> 3</span>    `(let (this self)
+<span class="linenos"> 4</span>      (setq
+<span class="linenos"> 5</span>        this (lambda ,largs ,@body)
+<span class="linenos"> 6</span>        self (dlambda
+<span class="linenos"> 7</span>                (:pandoric-get (sym)
+<span class="linenos"> 8</span>                  ,(pandoriclet-get pargs))  ;;; 原翻译此处代码错误
+<span class="linenos"> 9</span>                (:pandoric-set (sym val)
+<span class="linenos">10</span>                  ,(pandoriclet-set pargs))
+<span class="linenos">11</span>                (t (&amp;rest args)
+<span class="linenos">12</span>                  (apply this args)))))))
+</pre></div>
+</div>
+<p>到目前为止，用来创建 pandoric 闭包的宏是 <strong>pandoriclet</strong> 。 <strong>plambda</strong> 是个由内到外
+重写的 <strong>pandoriclet</strong> ，增加了一些重要的特性。首先也是最重要的， <strong>plambda</strong> 不再
+创建 pandoric 访问器使用的 let 环境。相反， <strong>plambda</strong> 接受一组符号的列表，这些符号指向期望会在调用者的词法环境中的变量。 <strong>plambda</strong> 可以导出任何在你的词法环境中的变量，使它们对于其他词法作用域是透明地可访问的——甚至是在 <strong>plambda</strong> 结构之前或之后编写和编译的（变量）。</p>
+<p>这是对 <em>let over lambda</em> 闭包系统的一个增量改进，该系统旨在最大化二元语法。多亏了
+pandoric 宏（其中最重要的是 <strong>plambda</strong> 和 <strong>with-pandoric</strong> ），我们可以在需要时轻松而
+有效地超越词法作用域的界限。闭包不再关闭；我们可以轻松地开启闭包，就像将
+lambda 结构重写为 plambda 结构一样。我们使用 <strong>plambda</strong> <em>导出</em> （ <em>export</em> ）词法变量，然后用
+<strong>with-pandoric</strong> 将它们作为完全等价的词汇变量导入。事实上，这些新变量是
+如此等价，以至于它们甚至一点都不是真正的新变量。理解 pandoric 变量的一种更好的方法是，它们只是
+原始词法作用域的扩展。以 <strong>plambda</strong> 的使用做个简单示例，这是一个 pandoric 计数器，
+它从两个潜在不同的词法环境导出变量：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (setf (symbol-function &#39;pantest)
+<span class="linenos">2</span>    (let ((a 0))
+<span class="linenos">3</span>      (let ((b 1))
+<span class="linenos">4</span>        (plambda (n) (a b)
+<span class="linenos">5</span>          (incf a n)
+<span class="linenos">6</span>          (setq b (* b n))))))
+<span class="linenos">7</span>#&lt;Interpreted Function&gt;
+</pre></div>
+</div>
+<p>请注意，导出这些词法引用是多么容易。让闭包潘多拉化就像在 <strong>lambda</strong> 之前添加个
+<strong>p</strong> 字符，或者在 <strong>lambda</strong> 参数后添加一个要导出的变量列表一样简单。
+我们可以打开这个闭包 —— 或者是任何导出 <strong>a</strong> 和 <strong>b</strong> 的 pandoric 闭包 —— 通过
+使用 <strong>with-pandoric</strong> ：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (defun pantest-peek ()
+<span class="linenos">2</span>    (with-pandoric (a b) #&#39;pantest
+<span class="linenos">3</span>      (format t &quot;a=~a, b=~a~%&quot; a b)))
+<span class="linenos">4</span>PANTEST-PEEK
+<span class="linenos">5</span>* (pantest-peek)
+<span class="linenos">6</span>a=0, b=1
+<span class="linenos">7</span>NIL
+</pre></div>
+</div>
+<p><strong>plambda</strong> 是一个（表明）分解宏展开式的常规组成部分可以是如何有帮助的的例子。还记得在我们编写 <strong>pandoriclet</strong>
+时决定将 getter 和 setter 代码的 case 语句的创建移动到 pandoriclet-get 函数中吗？
+<strong>plambda</strong> 利用这些相同的函数。尽管这些宏将函数的结果拼接到相当不同的词法上下
+文中，但由于两个宏都已经被编写为使用相同的变量命名约定和内部闭包协议，所以代码是可重
+用的。</p>
+<p>因此，pandoric 宏打破了词法边界。它们允许你在需要的时候打开闭包，同时也代表了各种
+COMMON LISP 语言特性的美丽融合：回指宏、泛型变量和符号宏。但它们到底有什么好
+的呢?</p>
+<p>pandoric 的宏很重要，因为它们在我们不需要脱离更自然的 let-lambda 组合编程风格的情况下，
+给我们（提供） CLOS 等对象系统的主要优势。尤其是在不必重新实例化已经创建了的对象实例的情
+况下，就可以为闭包添加功能或方法。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defun make-stats-counter
+<span class="linenos">2</span>      (&amp;key (count 0)
+<span class="linenos">3</span>            (sum 0)
+<span class="linenos">4</span>            (sum-of-squares 0))
+<span class="linenos">5</span>  (plambda (n) (sum count sum-of-squares)
+<span class="linenos">6</span>    (incf sum-of-squares (expt n 2))
+<span class="linenos">7</span>    (incf sum n)
+<span class="linenos">8</span>    (incf count)))
+</pre></div>
+</div>
+<p><strong>make-stats-counter</strong> 是一个我们已经创建的用来创建计数器的 lambda over let over plambda，只不过
+它维护了三条信息。除求和外，还保留平方和以及到目前为止处理的项目数。如果我们在
+<strong>make-stats-counter</strong> 的定义中已经使用 <strong>lambda</strong> 而不是 <strong>plambda</strong> ，那么可能大多数信息对我们
+是不可访问的。我们可能被拒之门外，因为可能这些变量对我们是关闭。</p>
+<p>那么我们要怎么编写 <strong>pandoric</strong> 方法？我们可以像上面演示的那样简单地使用 <strong>with-pandoric</strong>
+访问变量，或者，既然这是 lisp，那么就设计个更具体的接口。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defmacro defpan (name args &amp;rest body)
+<span class="linenos">2</span>  `(defun ,name (self)
+<span class="linenos">3</span>    ,(if args
+<span class="linenos">4</span>      `(with-pandoric ,args self
+<span class="linenos">5</span>        ,@body)
+<span class="linenos">6</span>    `(progn ,@body))))
+</pre></div>
+</div>
+<p><strong>defpan</strong> 是 <strong>defun</strong> 和 <strong>with-pandoric</strong> 两个宏的 <em>组合</em> 。 <strong>defpan</strong> 的主要目的是在
+使用 <strong>defun</strong> 编写函数和使用 <strong>with-pandoric</strong> 访问外部词法范围之间实现 <em>语法二义性</em> 。尽管我们像在 lambda 结构中那样使用相同的语法——符号列表——将参数提供给 <strong>defpan</strong> ，但 <strong>defpan</strong> 参数的含义
+不同。这些 <em>pandoric 函数</em> 不是创建了新的词法环境，而是扩展了它们所应用的 pandoric
+闭包的词法环境。对于 <strong>defun</strong> 和常规的 lambda 结构，你给的变量的名称（符号）是不重要的。但
+在 pandoric 函数中，变量名称就是一切。此外，在 pandoric 函数中，参数的顺序并不重
+要，你可以如愿地选择使用尽可能少或者尽可能多的“导出的词法变量”。</p>
+<p><strong>defpan</strong> 还有一个称之为 <strong>self</strong> 的回指语，允许我们可以执行一种叫做 <em>回指链</em> （ anophor chaining ） 的有用
+技术。通过在 pandoric 函数之间隐式地传递 <strong>self</strong> 的值，就可以在整个函数调用链中维护
+这个回指语的值。与所有的链接结构一样，要确保这个链不会以无限循环结束。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defpan stats-counter-mean (sum count)
+<span class="linenos"> 2</span>  (/ sum count ))
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span>(defpan stats-counter-variance
+<span class="linenos"> 5</span>        (sum-of-squares sum count)
+<span class="linenos"> 6</span>  (if (&lt; count 2)
+<span class="linenos"> 7</span>  0
+<span class="linenos"> 8</span>  (/ (- sum-of-squares
+<span class="linenos"> 9</span>        (* sum
+<span class="linenos">10</span>          (stats-counter-mean self)))
+<span class="linenos">11</span>    (- count 1))))
+<span class="linenos">12</span>
+<span class="linenos">13</span>(defpan stats-counter-stddev ()
+<span class="linenos">14</span>  (sqrt (stats-counter-variance self)))
+</pre></div>
+</div>
+<p>本文给出了三种方法，它们可以用于 <strong>make-stats-counter</strong> 创建的闭包或任何其他导出
+必要变量名的 pandoric 闭包。 <strong>stats-counter-mean</strong> 只是返回传递给闭包的所有值的
+平均值。 <strong>stats-counter-variance</strong> 通过跟踪链中的链接来计算这些值的方差，而
+<strong>stats-counter-stddev</strong> 通过跟踪另一个链接来计算标准差。注意，链中的每个链接
+只需要传递一个回指 <strong>self</strong> 来引用闭包的完整词法上下文。我们可以看到，单个的 pandoric
+函数只需要引用它们实际使用的变量，这些变量可以随意调整引用顺序。</p>
+<p>所以 <strong>plambda</strong> 创建了另一个回指语 —— <strong>self</strong> 。 <strong>this</strong> 指向的是要调用的实际闭包，而
+<strong>self</strong> 指的是调用这个闭包的间接环境。虽然听起来有点奇怪，但 <strong>plambda</strong> 内部的代码
+可以使用 <strong>self</strong> 来大规模访问它自己的词法环境，而不是直接访问它。到目前为止，这似乎
+只对为在词法作用域内工作而编写的 <strong>defpan</strong> 方法有用。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>(defun make-noisy-stats-counter
+<span class="linenos"> 2</span>      (&amp;key (count 0)
+<span class="linenos"> 3</span>            (sum 0)
+<span class="linenos"> 4</span>            (sum-of-squares 0))
+<span class="linenos"> 5</span>  (plambda (n) (sum count sum-of-squares)
+<span class="linenos"> 6</span>    (incf sum-of-squares (expt n 2))
+<span class="linenos"> 7</span>    (incf sum n)
+<span class="linenos"> 8</span>    (incf count)
+<span class="linenos"> 9</span>    (format t
+<span class="linenos">10</span>      &quot;~&amp;MEAN=~a~%VAR=~a~%STDDEV=~a~%&quot;
+<span class="linenos">11</span>          (stats-counter-mean self)
+<span class="linenos">12</span>          (stats-counter-variance self)
+<span class="linenos">13</span>          (stats-counter-stddev self))))
+</pre></div>
+</div>
+<p><strong>make-noise-stats-counter</strong> 和 <strong>make-stats-counter</strong> 类似，不同之处是
+<strong>make-noisy-stats-counter</strong> 用 <strong>self</strong> 回指来调用 <strong>defpan</strong> 函数
+<strong>stats-counter-mean</strong> 、 <strong>stats-counter-variance</strong> 和 <strong>stats-counter-stddev</strong> 。
+<strong>plambda</strong> 和 <strong>with-pandoric</strong> 可以随意改写词汇范围。我们以这样一个例子结束本章。
+词法作用域的一个局限性有时令人遗憾，即当 COMMON LISP 函数 <strong>eval</strong> 求解传递给
+它的结构时，它会丢弃当前的词法环境。换句话说， <strong>eval</strong> 在 <em>空词法环境</em> 中求解结构。
+在 COMMON LISP 中没有其他方法： <strong>eval</strong> 是一个函数。那么问题就来了:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (let ((x 1))
+<span class="linenos">2</span>    (eval
+<span class="linenos">3</span>      &#39;(+ x 1)))
+<span class="linenos">4</span>Error: The variable X is unbound.
+</pre></div>
+</div>
+<p>有时，将词法环境扩展到 <strong>eval</strong> 显然是可取的。但是要小心。经常有人说，如果你正在
+使用 <strong>eval</strong> ，那么你可能正在做一些错误的事情。 <strong>eval</strong> 的误用会导致程序速度变慢，
+因为 <strong>eval</strong> 是非常昂贵的操作 —— 主要是因为它需要展开出现在传递给它的结构中的宏。
+假如在编程时突然发现需要 <strong>eval</strong> ，问一下自己，为什么不能早点做想做的事情。
+如果答案是你不能，比如说因为刚刚读取了结构，那么恭喜，你找到了 <strong>eval</strong> 的一个
+罕见的合法用法。其他任何答案都将直接导致可能一开始就应该使用的方法：使用宏。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>(defvar pandoric-eval-tunnel)
+<span class="linenos">2</span>
+<span class="linenos">3</span>(defmacro pandoric-eval (vars expr)
+<span class="linenos">4</span>  `(let ((pandoric-eval-tunnel
+<span class="linenos">5</span>          (plambda () ,vars t)))
+<span class="linenos">6</span>    (eval `(with-pandoric
+<span class="linenos">7</span>              ,&#39;,vars pandoric-eval-tunnel
+<span class="linenos">8</span>              ,,expr))))
+</pre></div>
+</div>
+<p>但是假设你真的想要求解（ <strong>eval</strong> ）某样东西，只要你能使用那个讨厌的词法上下文。
+<strong>pandoric-eval</strong> 宏是一个使用 <strong>plambda</strong> 和 <strong>with-pandoric</strong> 的有趣示例。
+<strong>pandoric-eval</strong> 使用被我们命名为 <strong>pandoric-eval-tunnel</strong> 的特殊变量，通过动态环境使
+<strong>pandoric</strong> 闭包对于 <strong>eval</strong> 函数是可用的。通过提供所有符号的列表
+作为 <strong>pandoric-eval</strong> 的第一个参数，我们可以精确地选择要在动态环境中使用的词法
+变量。这里我们将它应用到前面的例子中:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (let ((x 1))
+<span class="linenos">2</span>    (pandoric-eval (x)
+<span class="linenos">3</span>      &#39;(+ 1 x)))
+<span class="linenos">4</span>2
+</pre></div>
+</div>
+<p>同时通过 <strong>pandoric-eval</strong> 求解的表达式会修改原有的词汇环境； <strong>pandoric-eval</strong>
+是一个双向隧道:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>* (let ((x 1))
+<span class="linenos">2</span>    (pandoric-eval (x)
+<span class="linenos">3</span>      &#39;(incf x))
+<span class="linenos">4</span>    x)
+<span class="linenos">5</span>2
+</pre></div>
+</div>
+<p>这一节虽然很长，但仍然只触及了 <strong>pandoric</strong> 宏及其许多可能的变体的皮毛。
+我期待他们在未来的许多有趣的发展。</p>
+<p>思考1： <strong>pandoric-eval</strong> 可以嵌套调用吗？也就是说，可以使用 <strong>pandoric-eval</strong>
+来计算 <strong>pandoric-eval</strong> 的结构吗？为什么或为什么不？</p>
+<p>思考2：虽然这里的 pandoric 宏的实现效率很高，但还可以改进。可以尝试改进
+<strong>pandoriclet-get</strong> 和 <strong>pandoriclet-set</strong> ，以生成使用哈希表而不是 <strong>case</strong>
+的代码，然后对这两个实现分别进行小量和大量的 pandoric 变量进行基准测试。
+研究你最喜欢的 CLOS 实现，模拟调度是如何进行的，重新进行基准测试。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="chapter05.html" class="btn btn-neutral float-left" title="第五章：Programs that program （1）" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="chapter07.html" class="btn btn-neutral float-right" title="第七章：宏的效率" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2022, oneforalone, Treyenuo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
